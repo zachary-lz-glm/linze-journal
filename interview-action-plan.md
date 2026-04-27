@@ -58,9 +58,10 @@
 
 ---
 
-## 二、W1（4/27 - 5/3）：Eval 真实数据 + 简历定稿
+## 二、W1（4/27 - 5/3）：Eval 真实数据 + 简历定稿 + 全景架构图
 
-> 你已有完整的 Eval 系统（src/eval/），这周的任务是 **跑通、拿数据、填简历**。
+> 你已有完整的 3-Skill 体系（build-reference + prd-distill + bff-gen）+ Eval + Auto-Tune。
+> 这周的任务是 **跑通 Eval 拿真实数据 + 画全景架构图 + 填简历**。
 
 ### 2.1 周一 4/27 · Day 1 · Eval 系统联调
 
@@ -116,19 +117,21 @@
 
 | 时段 | 任务 | 交付 | 完成 |
 |------|------|------|------|
-| T+0:00 ~ T+1:00 | 补充更多 evalset（courier-rush / shift-checkin 类型），凑到 30+ | evalset 30 条 | [ ] |
-| T+1:00 ~ T+2:00 | 跑全量 Eval + Auto-Tune 二轮 | report-v0.2.json | [ ] |
-| T+2:00 ~ T+3:00 | 写《Eval 报告分析 v0.2》：各层 pass rate + 改进方向 | 分析文档 | [ ] |
-| T+3:00 ~ T+4:00 | 用 auto-tune 结果更新简历数字 | 简历 v1.1 | [ ] |
-| T+4:00 ~ T+4:30 | 画 Harness 6 层架构 Mermaid 图 | PNG | [ ] |
-| T+4:30 ~ T+5:00 | 画 4 层 Eval 流程 Mermaid 图 | PNG | [ ] |
+| T+0:00 ~ T+0:30 | 画 **3-Skill 全景架构图**（build-reference → prd-distill → bff-gen + 反馈回流） | Mermaid PNG | [ ] |
+| T+0:30 ~ T+1:30 | 补充更多 evalset（courier-rush / shift-checkin 类型），凑到 30+ | evalset 30 条 | [ ] |
+| T+1:30 ~ T+2:30 | 跑全量 Eval + Auto-Tune 二轮 | report-v0.2.json | [ ] |
+| T+2:30 ~ T+3:30 | 写《Eval 报告分析 v0.2》：各层 pass rate + 改进方向 | 分析文档 | [ ] |
+| T+3:30 ~ T+4:00 | 画 Harness 6 层 + 4 层 Eval 两张详细架构图 | 2 PNG | [ ] |
+| T+4:00 ~ T+4:30 | 用 auto-tune 结果更新简历数字 | 简历 v1.1 | [ ] |
+| T+4:30 ~ T+5:00 | 画 Reference 7 维度知识结构图 | PNG | [ ] |
 
 ### 2.7 W1 硬交付清单
 
+- [ ] **3-Skill 全景架构图**（最重要，贯穿整个面试准备）
 - [ ] Eval 全量跑通 + report-v0.2.json 真实数据
 - [ ] Auto-Tune 至少 1 轮，有前后对比
 - [ ] 简历 v1.1 PDF（所有数字有源头）
-- [ ] Harness + Eval 两张架构图
+- [ ] Harness + Eval + Reference 三套架构图
 - [ ] A 组第 1-5 题能脱稿说核心答案
 
 ---
@@ -370,23 +373,25 @@
 
 ## 十一、面试题库（结合项目调整）
 
-### A 组：AI 工程（11 题，结合 prd2code-gen 项目）
+### A 组：AI 工程（15 题，覆盖完整体系）
 
 | # | 题目 | 项目映射 |
 |---|------|---------|
-| 1 | Agent = Model + Harness | Harness 6 步 pipeline |
+| 1 | Agent = Model + Harness | 3 个 Skill = 3 个 Harness，共用 Reference 知识层 |
 | 2 | Harness 6 大组件 | 6 步工作流：蒸馏→分析→规划→生成→验证→报告 |
-| 3 | Guides vs Sensors | 确定性模板（Guide）vs 4 层 Eval（Sensor） |
+| 3 | Guides vs Sensors | Guide: 7 维度 Reference + Handlebars 模板；Sensor: 4 层 Eval + 衰减监控 |
 | 4 | 80% 准确率怎么测 | 4 层 Eval + auto-tune 5 维评分 |
 | 5 | Eval 4 层设计 | structural gate → behavioral → semantic → cost |
-| 6 | AI 改底层组件怎么保证不崩 | integration check + CI regression >5% 阻断 |
-| 7 | 哪些模块禁止 AI 介入 | 确定性优先：Handlebars 模板覆盖常见场景 |
-| 8 | RAG 召回不准怎么优化 | Reference 的真实价值 +9（非 +35），组件架构文档 |
-| 9 | 上下文爆炸怎么解决 | JSON Schema 驱动 + SHA-256 缓存 + 蒸馏 funnel |
-| 10 | Agent 幻觉 3 种缓解 | structural gate 短路 + oscillation 检测 + max 3 retry |
-| 11 | MCP vs Function Call | Skill 架构选择：0 API cost + full context access |
-| 12 | LangChain vs LangGraph | 已搭 demo，能对比讲 |
-| 13 | lm-eval-harness 对比 | 自研 4 层 vs 社区方案的设计取舍 |
+| 6 | AI 改底层组件怎么保证不崩 | Reference 约束层 + 代码锚定 + integration check + CI regression |
+| 7 | 哪些模块禁止 AI 介入 | 确定性路径：模板 + 白名单 + 枚举，AI 只处理无模板新场景 |
+| 8 | RAG 召回不准怎么优化 | 7 维度结构化知识 > 向量检索；衰减监控 > 过期 context |
+| 9 | 上下文爆炸怎么解决 | Reference 按需加载：蒸馏只读 05+01+06，验证只读 04+03 |
+| 10 | Agent 幻觉 3 种缓解 | structural gate + oscillation 检测 + 代码锚定（不猜标 low） |
+| 11 | MCP vs Function Call | Skill 架构：0 API cost + full context + 直接文件读写 |
+| 12 | AI 怎么理解一个陌生项目？ | build-reference 7 维度 + Compass 原则 + 衰减监控 |
+| 13 | 知识过期怎么办？ | 14 天验证 + contradiction 计数 + 反馈回流闭环 |
+| 14 | PRD 到代码最难的一步？ | 变更分类（ADD/MODIFY/DELETE）+ 代码锚定 |
+| 15 | 确定性优先怎么落地？ | Handlebars 22 模板 + 4 层 Validator + Reference 白名单 |
 
 ### B 组：架构设计（6 题）
 
@@ -419,21 +424,26 @@
 
 ## 十二、博客写作指南（结合项目）
 
-### 推荐标题
+### 推荐标题（选一）
 
-**《确定性优先：我是如何用 4 层 Eval + Auto-Tune 闭环验证 AI 代码生成质量的》**
+- **《确定性优先：从领域知识构建到代码生成的 AI 工程体系》**
+- **《我如何让 AI "理解"一个项目：7 维度 Reference + 反馈回流闭环》**
 
 ### 结构建议
 
-1. **引子**（500 字）：从 PRD 到代码的痛点 — 为什么纯 LLM 方案不可靠
-2. **确定性优先架构**（800 字）：Handlebars 模板引擎 + LLM 兜底的双路径设计
-3. **4 层 Eval**（800 字）：structural gate 短路 → behavioral → semantic G-Eval → cost，带真实 pass rate 数据
-4. **Auto-Tune 闭环**（600 字）：5 维评分 → gap 分析 → 自动调参，带雷达图对比
-5. **实验洞察**（600 字）：Reference 的真实价值 +9 vs 泄露的虚假 +35
-6. **总结**（300 字）：AI 工程的未来在 Harness，不在裸模型
+1. **引子**（500 字）：AI 生成代码的三大难题 — 不理解项目 / 不确定变更 / 无法验证质量
+2. **让 AI 理解项目**（800 字）：`/build-reference` 7 维度知识体系 + Meta Compass 原则 + 衰减监控
+3. **结构化 PRD 蒸馏**（600 字）：`/prd-distill` 变更分类 + 代码锚定 + 置信度分级 — "reference 是快速通道，源码是最终权威"
+4. **确定性优先的代码生成**（600 字）：6 步 Harness + Handlebars 22 模板（0 token）+ LLM 兜底
+5. **4 层 Eval + Auto-Tune**（600 字）：structural gate 短路 → 5 维评分 → 自动调参，带真实数据
+6. **实验洞察**（600 字）：Reference 真实价值 +9 vs 泄露虚假 +35 — 数据泄露检测的方法论价值
+7. **反馈回流闭环**（400 字）：从使用经验回流到 Reference，知识越用越准（LLM Wiki 知识复利）
+8. **总结**（300 字）：AI 工程的未来在 Harness + 领域知识，不在裸模型
 
 ### 关键数据点（用你已有的实验结果）
 
+- Reference 7 维度文件数量和覆盖范围
+- 变更分类准确率（ADD/MODIFY/DELETE 的分类正确率）
 - 结构层 pass rate（从 report 中取）
 - Auto-Tune 前后 5 维分数对比
 - Reference 真实提升 +9 分 vs 泄露版本虚假 +35 分
@@ -466,32 +476,115 @@ W？ 周报（日期 ~ 日期）
 
 ---
 
-## 十五、项目资产清单（面试用）
+## 十五、项目全景与面试叙事（核心）
 
-> 以下是你已经拥有的项目资产，面试时可以直接引用。
+> **面试主线不是"我做了一个代码生成工具"，而是"我构建了一套完整的 AI 工程方法论，并在生产中验证了它的有效性"。**
 
-### 代码资产
+### 15.1 3 个 Skill 构成的完整体系
+
+```
+┌──────────────────────────────────────────────────────────────────┐
+│                    完整 AI 工程体系                                │
+│                                                                  │
+│  /build-reference     /prd-distill        /bff-gen               │
+│  ┌─────────────┐     ┌──────────────┐    ┌──────────────┐       │
+│  │ 领域知识构建  │────▶│  PRD 蒸馏     │───▶│ 6 步代码生成  │       │
+│  │ 7 维度 YAML  │     │ 变更分类      │    │ 确定性优先    │       │
+│  │ 知识衰减监控  │◀────│ 代码锚定      │    │ 断点续传     │       │
+│  │ 反馈回流     │     │ 置信度分级    │    │ 4 层验证     │       │
+│  └─────────────┘     └──────────────┘    │ Auto-Tune    │       │
+│       ▲                                   └──────┬───────┘       │
+│       │           反馈回流闭环                    │               │
+│       └─────────────────────────────────────────┘               │
+└──────────────────────────────────────────────────────────────────┘
+```
+
+### 15.2 各 Skill 核心卖点
+
+#### `/build-reference` — AI 怎么"理解"一个项目？
+
+| 维度 | 设计 | 面试讲点 |
+|------|------|---------|
+| 7 维度知识体系 | entities / architecture / conventions / constraints / mapping / glossary | "不是把代码 dump 给 AI，而是按关注点维度组织知识" |
+| Meta Compass 原则 | 每文件 ≤300 行，只写项目特有知识 | "指南针而非百科全书 — Context that decays is worse than no context" |
+| 知识衰减监控 | 14 天周期验证 + contradiction 计数 + 自动标记重建 | "知识会过期，我设计了衰减监控机制" |
+| 反馈回流闭环 | prd-distill 检测矛盾 → build-reference 回流更新 | "知识越用越准，这是复利增长" |
+| 深度 Lint | 代码模式匹配 + 跨文件枚举一致性 + 孤立条目检测 | "不只是路径检查，而是内容一致性验证" |
+| 断点续传 | progress.yaml + 阶段幂等 | "3 阶段可中断恢复" |
+
+#### `/prd-distill` — PRD 怎么变成结构化数据？
+
+| 维度 | 设计 | 面试讲点 |
+|------|------|---------|
+| 变更分类 | ADD / MODIFY / DELETE / NO_CHANGE | "不是简单的文本提取，而是理解变更语义" |
+| 代码锚定 | 每个变更必须有源码依据，reference 只是初始假设 | "reference 是快速通道，源码是最终权威" |
+| 置信度分级 | high / medium / low，low 强制人工确认 | "不确定的绝不猜，宁可标 low 也不美化" |
+| 验证来源透明 | reference_only / code_verified / code_contradicts_reference | "每个判断都标注来源，可追溯" |
+| 通用层感知 | 自动适配 frontend / bff / backend 三层 | "不是只服务 BFF，是一套通用蒸馏方法论" |
+| 后端技术文档融合 | 可选接入后端 API 文档区分数据来源 | "多源信息融合" |
+
+#### `/bff-gen` — 6 步 Harness 完整实现
+
+| 步骤 | 设计 | 面试讲点 |
+|------|------|---------|
+| 1. 蒸馏 | PRD → distilled.json（含置信度） | "LLM 只做翻译，不做生成决策" |
+| 2. 分析 | AST 扫描目标项目结构 | "用 TypeScript Compiler API 而非正则" |
+| 3. 计划 | 规划文件级变更（新增/修改） | "变更最小化原则" |
+| 4. 生成 | Handlebars 确定性 + LLM 兜底 | "有模板走模板，0 token；无模板才用 LLM" |
+| 5. 验证 | 4 层 Validator + 自我修正循环 | "structural gate 短路省钱" |
+| 6. 报告 | 变更报告 + 反馈评分 | "可量化、可追溯" |
+
+### 15.3 代码资产清单
 
 | 资产 | 路径 | 面试价值 |
 |------|------|---------|
-| 4 层 Eval 完整实现 | src/eval/ | 证明 Eval 不是纸上谈兵 |
-| Auto-Tune 闭环 | src/auto-tune/ | 独有卖点：AI 工具能自我优化 |
+| **Reference 构建系统** | .claude/skills/build-reference/ | 7 维度知识提取 + 衰减监控 + 反馈回流 — **最独特** |
+| **PRD 蒸馏系统** | .claude/skills/prd-distill/ | 变更分类 + 代码锚定 + 置信度 — **核心链路** |
+| **6 步 Harness** | .claude/skills/bff-gen/ | 完整工程化落地 — **工程能力** |
+| **Reference 知识库** | .claude/skills/bff-gen/reference/ | 8 个领域知识文件 — "AI 的项目记忆" |
+| 4 层 Eval 完整实现 | src/eval/ | 评估体系不是纸上谈兵 |
+| Auto-Tune 闭环 | src/auto-tune/ | AI 工具能自我优化 |
 | 22 个 Handlebars 模板 | src/templates/ | 确定性优先的实际落地 |
 | 4 层 Validator | src/validators/ | 工程严谨性的证明 |
 | 实验数据 | experiments/ | 有真实数据支撑的叙事 |
 
-### 数据资产
+### 15.4 数据资产
 
 | 资产 | 位置 | 价值 |
 |------|------|------|
-| 油站三组对比实验 | experiments/results/ | "Reference 真实价值 +9" 的数据支撑 |
-| Eval report JSON | _bff-gen-output/eval/ | 真实的 pass rate 数据 |
-| Auto-Tune 评分 | auto-tune 输出 | 5 维雷达图的前后对比 |
+| 油站三组对比实验 | experiments/results/ | "Reference 真实价值 +9 vs 泄露 +35" |
+| Eval report JSON | _bff-gen-output/eval/ | 真实 pass rate 数据 |
+| Auto-Tune 评分 | auto-tune 输出 | 5 维雷达图前后对比 |
+| Ground Truth | experiments/ground_truth/ | feature 分支 diff 自动提取 |
 
-### 叙事资产（待产出）
+### 15.5 面试核心叙事（30 秒版）
+
+> 我构建了一套完整的 AI 工程体系：先用 `/build-reference` 从项目源码提取 7 维度领域知识（实体、架构、规范、约束、映射、术语），这套知识有衰减监控和反馈回流机制，越用越准；然后用 `/prd-distill` 把运营 PRD 蒸馏成带变更分类（ADD/MODIFY/DELETE）和置信度的结构化数据，每个判断都锚定到源码；最后通过 `/bff-gen` 的 6 步 Harness pipeline 生成代码，确定性模板优先（0 token），LLM 兜底。整个系统有 4 层 Eval 评估和 Auto-Tune 自动优化闭环。实验数据证明 Reference 的真实价值是 +9 分，而不是数据泄露版本的虚假 +35 分。
+
+### 15.6 叙事资产（待产出）
 
 | 资产 | 产出时间 | 价值 |
 |------|---------|------|
 | 掘金博客 | W3 | 面试官主动看的活名片 |
-| 架构图 PNG | W1 周末 | 简历 + 博客 + 面试 PPT 共用 |
+| 3-Skill 全景架构图 | W1 周末 | 简历 + 博客 + 面试共用 |
+| Harness + Eval 架构图 | W1 周末 | 深挖时展示 |
 | STAR 讲稿录音 | W3 周末 | 面试不卡壳 |
+
+### 15.7 面试题库映射（补充）
+
+原 A 组题目主要集中在 Eval/Auto-Tune，需要补充覆盖完整体系：
+
+| # | 题目 | 项目映射（补充） |
+|---|------|---------|
+| A1 | Agent = Model + Harness | **3 个 Skill = 3 个 Harness**，共用 Reference 知识层 |
+| A3 | Guides vs Sensors | Guide: 7 维度 Reference + Handlebars 模板；Sensor: 4 层 Eval + 衰减监控 |
+| A6 | AI 改底层组件怎么保证不崩 | Reference 约束层 + 代码锚定 + integration check |
+| A7 | 哪些模块禁止 AI 介入 | Reference 驱动的确定性路径（模板 + 白名单 + 枚举），AI 只处理无模板的新场景 |
+| A8 | RAG 召回不准怎么优化 | **这就是 /build-reference 解决的问题**：7 维度结构化知识 > 向量检索；衰减监控 > 过期 context |
+| A9 | 上下文爆炸怎么解决 | **Reference 按需加载**：每个工作流步骤只加载相关维度（蒸馏加载 05+01+06，验证加载 04+03） |
+| A10 | Agent 幻觉 3 种缓解 | structural gate + oscillation 检测 + **代码锚定（不猜，标 low）** |
+| A11 | MCP vs Function Call | Skill 架构：0 API cost + full context + 直接读写文件（不需要序列化） |
+| **新 A12** | **AI 怎么理解一个陌生项目？** | **build-reference 7 维度 + Compass 原则 + 知识衰减监控** |
+| **新 A13** | **知识过期怎么办？** | **14 天验证周期 + contradiction 计数 + 反馈回流闭环** |
+| **新 A14** | **PRD 到代码最难的一步是什么？** | **变更分类（ADD/MODIFY/DELETE）+ 代码锚定 — 不是文本提取，是语义理解** |
+| **新 A15** | **你的确定性优先策略具体怎么落地？** | **Handlebars 22 模板（0 token）+ 4 层 Validator（0 LLM）+ Reference 白名单约束** |
