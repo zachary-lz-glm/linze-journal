@@ -1,0 +1,819 @@
+# 面试题库详解（25 题）
+
+> 目标公司：字节 / 快手 / 百度
+> 每题结构：题目 → 核心答案 → 面试说法（口语化）→ 加分点
+
+---
+
+## A 组：项目深挖（10 题）
+
+---
+
+### A1. Monorepo 怎么管理 15+ 业务模块？
+
+**核心答案：**
+
+营销平台 是滴滴国际化营销中台的前端主项目，用 Lerna + Nx 管理 15+ 业务模块（dive、captain、ride_pass、integrated_incentive 等），采用 Yarn workspace 做依赖管理。
+
+架构分两层：
+- `app/` 目录：15+ 业务 App，每个是独立子包（dive、captain、agb 等）
+- `packages/` 目录：共享包（components、RichText、utils）
+
+关键设计决策：
+1. **独立版本**：`lerna.json` 配置 `"version": "independent"`，每个业务模块独立发版
+2. **Nx 加速**：`"useNx": true` 开启构建缓存，只构建变更影响的包
+3. **Yarn 锁版本**：强制用 yarn，`yarn.lock` 锁定依赖版本，避免第三方包升级导致环境崩溃（踩过 `@yarnpkg/parsers` 升级不兼容 node16 的坑）
+4. **共享组件抽离**：公共组件放 `packages/components`，业务模块通过 workspace 协议引用
+5. **统一工具链**：根目录统一 ESLint + Prettier + Husky + commitlint，所有子包继承
+
+**面试说法：**
+
+> 营销平台 是我们营销中台的前端主项目，用 Lerna + Nx 管理。架构分两层：app 目录放 15 个业务模块，packages 放共享组件和工具。每个业务模块独立版本、独立部署，通过 workspace 协议引用公共包。选 Lerna 而不是纯 Turborepo 的原因是历史遗留——项目启动时 Turborepo 还不够成熟。我们开了 Nx 加速构建缓存，只构建变更影响的部分。
+
+**加分点：** 提到踩过的 `@yarnpkg/parsers` 版本坑 → 体现真实工程经验
+
+---
+
+### A2. Schema 驱动架构怎么设计？
+
+**核心答案：**
+
+marketing-bff 采用三层 Schema 驱动架构：
+
+```
+后端 API (原始数据) → BFF 层 (Schema 生成) → 前端层 (Schema 渲染)
+```
+
+BFF 层的核心职责：
+1. **Schema 生成**：根据活动类型 + 后端数据，生成字段结构（组件类型、校验规则、联动关系）
+2. **字段联动**：visible/disabled/API 联动，通过 `linkageSchema/` 目录下的 17 个联动文件管理
+3. **模板渲染**：每种活动类型有对应的 render 模板，组合基础字段 + 规则字段 + 联动配置
+
+关键组件：
+- **field-registry.ts**：字段注册中心，统一管理所有字段，跨活动类型复用
+- **template/render/**：按活动类型渲染，`basic.ts` 是基础信息模板
+- **template/linkageSchema/**：17 个联动文件（campaignType、triggerType、push、rewardCondition 等）
+- **controller/service/model**：标准的 MVC 分层，Controller 用 `@company/serverless-framework` 装饰器
+
+技术栈：
+- `@company/schema-builder`：滴滴内部 Schema 构建工具
+- `@company/serverless-framework`：装饰器风格的 Serverless 路由
+- esbuild 构建，Serverless 部署
+
+**面试说法：**
+
+> marketing-bff 是 Schema 驱动架构。核心思路是后端返回原始数据，BFF 层生成 Schema（字段结构 + 组件类型 + 联动关系），前端拿到 Schema 直接渲染，不用写表单代码。这样做的好处是新增活动类型时前端基本不用改代码，只要 BFF 配好 Schema 就行。联动引擎有 17 种联动规则，比如活动类型变了，触发类型选项跟着变；选了推送，推送模板字段才显示出来。
+
+**加分点：** 提到 17 个联动文件的规模 → 体现系统复杂度
+
+---
+
+### A3. 400+ 权益的组件库怎么设计？
+
+**核心答案：**
+
+ibt-benefit-sdk（`@company/benefit-sdk` v1.2.2）是营销平台的权益组件库，管理 400+ 权益的创建、编辑、复制、查看全生命周期。
+
+架构设计：
+1. **Register 注册模式**：`RegisteredComponents` 全局注册表，动态注册权益组件
+2. **双模打包**：Rollup 构建，同时输出 ESM（`es/index.js`）和 CJS（`dist/index.js`），通过 `package.json` 的 `exports` 字段分发
+3. **权限分层导出**：
+   - `BenefitAdmin`：新版统一入口（推荐）
+   - `ViewBenefit / CopyBenefit / EditBenefit / CreateBenefit`：旧版按操作分（已标记 deprecated）
+4. **设计系统集成**：深度依赖 `@company/design-system`，保持跨业务线 UI 一致
+5. **i18n 管线**：自定义 i18n 插件，支持 key 提取 + 运行时语言切换
+6. **版本管理**：Changesets 管理版本 + yalc 本地联调 + alpha/release 双环境发布
+
+**面试说法：**
+
+> benefit-sdk 是我们的权益组件库，覆盖 400 多种权益的 CRUD。打包用 Rollup 做双模输出，ESM 给现代项目用，CJS 兼容老项目。组件注册用了 Register 模式，动态注册扩展点。以前是按操作导出（View/Edit/Create），后来统一成 BenefitAdmin 一个入口，旧 API 标了 deprecated 但保持兼容。发版用 Changesets，本地联调用 yalc push。
+
+**加分点：** 提到 deprecated 迁移策略 → 体现 API 设计的成熟度
+
+---
+
+### A4. AI 生成代码怎么保证可靠性？
+
+**核心答案：**
+
+prd2code-gen 的核心原则是**确定性优先**：
+
+1. **模板引擎兜底**：用 Handlebars 模板覆盖已知场景（加油站/骑手冲单/班次签到共 22 个模板），模板是纯字符串拼接，0 token 消耗，100% 准确
+2. **白名单 + 枚举**：活动类型枚举、字段名枚举、组件名白名单，所有映射都是确定性的
+3. **变更分类 + 代码锚定**：PRD 蒸馏阶段不是直接生成代码，而是先分类（ADD/MODIFY/DELETE/NO_CHANGE），每个分类必须锚定到实际源码
+4. **4 层验证**：
+   - Structural（gate，阈值 1.0）：文件存在、编译通过
+   - Behavioral（阈值 0.8）：字段覆盖、类型正确
+   - Semantic（G-Eval CoT，阈值 0.7）：语义一致性
+   - Cost（$0.05/case）：成本控制
+5. **自我修正循环**：验证不通过时自动修正，最多 3 轮
+6. **Reference 是快速通道，源码是最终权威**：领域知识帮 AI 快速理解项目，但关键判断必须验证源码
+
+**面试说法：**
+
+> 核心原则是确定性优先。已知场景用 Handlebars 模板生成，0 token、100% 准确；只有新场景才走 LLM。变更分类不是直接生成代码，而是先判断这个 PRD 要求的是 ADD 还是 MODIFY，每个判断锚定到源码验证。验证有 4 层：结构层看编译、行为层看字段覆盖、语义层用 G-Eval、最后看成本。不通过就自动修正，最多 3 轮。
+
+**加分点：** 提到"确定性优先"的设计哲学 → 体现工程判断力
+
+---
+
+### A5. 你做过最有技术挑战的项目？
+
+**两种讲法，看面试官兴趣选：**
+
+**选法 A（选 marketing-bff）：**
+
+> 最有挑战的是 marketing-bff 的 Schema 驱动架构设计。23 种活动类型，每种有不同的字段组合和联动规则。难点是联动引擎——字段之间的显隐、禁用、选项联动关系非常复杂，比如选了"推送"活动类型，要联动显示推送模板字段，推送模板的 placeholder 又根据操作系统不同而不同。我们设计了 17 个联动文件，每个文件管理一种联动维度。字段注册中心统一管理所有字段的复用，同个字段在不同活动类型下可以有不同的行为。
+
+**选法 B（选 prd2code-gen）：**
+
+> 最有挑战的是 prd2code-gen，一个从 PRD 到代码的 AI 工程工具。核心挑战是怎么让 AI 可靠地生成生产级代码。我的解法是"确定性优先"——已知场景用模板引擎，只有新场景走 LLM。但最大的难点其实是"让 AI 理解项目"，我设计了 7 个维度的领域知识体系（实体、架构、规范、约束、映射、术语），每个维度一个 YAML 文件，还有知识衰减监控——超过 14 天没验证就标记为可能过期。做了对照实验验证效果：干净的领域知识能提升 +9 分（38→47），但如果不小心泄露了 ground truth 数据会虚假提升 +26 分。
+
+**加分点：** 两种都能讲，根据面试官反应灵活切换
+
+---
+
+### A6. Monorepo 的包依赖管理怎么做？
+
+**核心答案：**
+
+营销平台 的依赖管理策略：
+
+1. **Yarn workspace**：根目录 `package.json` 声明 `"workspaces": ["packages/*", "app/*"]`，所有子包自动链接
+2. **workspace 协议引用**：子包间引用用 `"@company/ui-components": "workspace:*"`，本地开发直接 symlink
+3. **yarn.lock 锁版本**：严格锁定第三方依赖版本，遇到过 `@yarnpkg/parsers` 从 rc.31 升到 rc.48 导致不兼容 node16 的事故
+4. **resolutions 强制统一**：根目录 `"resolutions": {"@types/react": "^18.0.0"}` 确保所有子包用同一个 react 类型
+5. **Lerna bootstrap**：`lerna bootstrap` 处理嵌套依赖（Yarn workspace 覆盖不到的场景）
+6. **CI 策略**：Lerna `npmClientArgs: ["--no-lockfile"]` 避免 CI 环境锁文件冲突
+
+**面试说法：**
+
+> 依赖管理主要靠 Yarn workspace + yarn.lock。workspace 做子包间的 symlink，yarn.lock 锁第三方版本。踩过一个坑：yarn.lock 里锁的 `@yarnpkg/parsers` 从 rc.31 被升到 rc.48，而 rc.48 要求 node>=18，我们 node16 环境直接崩了。所以项目强制不删 yarn.lock，用 yarn 不用 npm。还用 resolutions 强制统一 @types/react 版本，避免多个版本导致类型冲突。
+
+**加分点：** 有真实的版本事故案例 → 说服力强
+
+---
+
+### A7. 联动引擎怎么设计？
+
+**核心答案：**
+
+marketing-bff 的联动引擎在 `config/linkage-templates/` 目录下，共 17 个联动文件：
+
+```
+budgetAllocation.ts  campaignType.ts  cycleType.ts  description.ts
+effectMode.ts  foodRiderType.ts  guaranteeType.ts  os2pushPlaceholder.ts
+push.ts  pushPlaceholder.ts  rewardCondition.ts  rules.ts  title.ts
+triggerType.ts  descriptionPlaceholder.ts  titlePlaceholder.ts
+```
+
+联动类型：
+1. **visible 联动**：字段根据条件显示/隐藏（如选了"推送"才显示推送模板）
+2. **disabled 联动**：字段根据条件启用/禁用
+3. **API 联动**：字段选项从后端动态获取（如城市列表根据国家联动）
+4. **placeholder 联动**：占位文案根据上下文变化（如推送文案根据操作系统变化）
+
+设计模式：
+- 每个联动维度独立文件，关注点分离
+- 联动规则在 Schema 中声明，前端 Schema 渲染器自动执行
+- 后端只负责提供 options 数据，联动逻辑完全在 BFF 层控制
+
+**面试说法：**
+
+> 联动引擎按维度拆成 17 个文件，每个文件管一种联动。联动有三种类型：visible 控制显隐，disabled 控制启用禁用，还有 API 联动动态获取选项。比如选了"推送"活动类型，push.ts 的联动规则会让推送模板字段显示出来；选了不同操作系统，pushPlaceholder.ts 会改变推送文案的 placeholder。联动规则在 BFF 的 Schema 里声明，前端渲染器拿到 Schema 自动执行，不需要前端写联动逻辑。
+
+**加分点：** 能说出具体的联动文件名和联动逻辑 → 体现深入代码的细节
+
+---
+
+### A8. 组件库的版本管理和发布流程？
+
+**核心答案：**
+
+ibt-benefit-sdk 的发版流程：
+
+1. **Changesets 管理版本**：
+   - `npx changeset`：开发者选择变更的包 + 填写变更描述
+   - `npx changeset version`：自动 bump 版本号 + 生成 CHANGELOG
+   - `npx changeset publish`：发布到 npm registry
+
+2. **双环境发布**：
+   - `release:alpha`：发布 alpha 版本到内网 registry，用于联调
+   - `release`：发布正式版，使用 zx 脚本 `scripts/publish.mjs` 自动化
+
+3. **本地联调**：
+   - `build+yalc`：Rollup 构建后 `yalc push` 发布到本地 yalc 仓库
+   - 目标项目 `yalc add @company/benefit-sdk` 拉取本地版本
+   - 避免 npm link 的符号链接问题
+
+4. **Rollup 双模构建**：
+   - ESM 输出：`es/index.js` + `es/index.d.ts`（类型声明）
+   - CJS 输出：`dist/index.js`
+   - `rollup-plugin-dts` 生成类型声明
+   - `rollup-plugin-postcss` 处理样式
+
+**面试说法：**
+
+> 版本管理用 Changesets，开发者执行 changeset 选择变更的包和语义版本，然后 changeset version 自动 bump 版本号和 CHANGELOG。发布分两步：先 build+yalc 本地联调确认没问题，再走 publish 脚本发布。有 alpha 和正式两个环境，alpha 给联调用，确认后发正式版。构建用 Rollup，同时出 ESM 和 CJS，还有类型声明。
+
+**加分点：** 提到 yalc 解决 npm link 问题 → 体现实际踩坑经验
+
+---
+
+### A9. AI 生成代码怎么验证质量？
+
+**核心答案：**
+
+prd2code-gen 的验证体系：
+
+1. **4 层 Eval Pipeline**：
+
+| 层级 | 类型 | 阈值 | 检查内容 |
+|------|------|------|---------|
+| L1 | Structural（gate） | 1.0（必须通过） | 文件存在、TypeScript 编译通过、无 import 错误 |
+| L2 | Behavioral | 0.8 | 字段覆盖率、枚举类型正确、联动配置完整 |
+| L3 | Semantic（G-Eval CoT） | 0.7 | 语义一致性（AI 判断生成代码是否符合 PRD 意图） |
+| L4 | Cost | $0.05/case | 单 case 成本控制 |
+
+2. **Auto-Tune 5 维评分**：
+   - 文件覆盖率 20%：生成文件 vs 实际需要文件
+   - 字段准确率 30%：字段名、类型、组件是否正确
+   - 模式正确性 20%：代码模式是否符合项目约定
+   - 可编译性 15%：TypeScript 编译是否通过
+   - 结构相似度 15%：与 ground truth 的结构对比
+
+3. **对照实验验证**：
+   - 基线组（无 Reference）：38 分
+   - 干净 Reference：47 分（+9）
+   - 泄露 Reference：73 分（虚假 +26）
+   - 结论：领域知识的真实贡献是 +9 分
+
+**面试说法：**
+
+> 验证分 4 层。第一层结构检查，文件在不在、能不能编译，这是 gate 必须通过。第二层行为检查，字段覆盖率、枚举是否正确。第三层语义检查，用 G-Eval 让 AI 判断生成代码是否符合 PRD 意图。第四层成本控制，单 case 不超过 5 美分。还做了对照实验：没有领域知识 38 分，有干净领域知识 47 分，如果不小心泄露了答案会到 73 分——这说明 +26 是虚假提升，真实贡献只有 +9。
+
+**加分点：** 有真实的对照实验数据 → 甩开 90% 的候选人
+
+---
+
+### A10. 从 PRD 到上线的完整链路？
+
+**核心答案：**
+
+四项目串联的完整链路：
+
+```
+运营写 PRD (飞书文档)
+    ↓
+prd2code-gen: PRD 蒸馏 → 结构化 JSON (变更分类 + 置信度)
+    ↓
+prd2code-gen: 代码生成 → BFF 代码 (模板/LLM)
+    ↓
+marketing-bff: Schema 生成 → 字段结构 + 联动关系 + 组件类型
+    ↓
+营销平台: Schema 渲染 → 动态表单页面
+    ↓
+ibt-benefit-sdk: 权益组件 → 创建/编辑/查看权益
+```
+
+具体流程：
+1. 运营在飞书写 PRD（如"加油站新人完单领券"）
+2. `/prd-distill` 解析 PRD，结合 `05-mapping.yaml` 路由匹配，产出带变更分类的结构化文档
+3. `/bff-gen` 根据蒸馏结果生成 BFF 代码：活动类型枚举 + 字段模板 + 联动配置
+4. marketing-bff 在运行时根据活动类型组合 Schema，返回给前端
+5. 营销平台 的 Schema 渲染器根据 Schema 动态生成表单
+6. 如果涉及权益，调用 ibt-benefit-sdk 的组件
+
+**面试说法：**
+
+> 完整链路是这样的：运营在飞书写 PRD，我的 prd2code-gen 先做蒸馏，把 PRD 变成结构化的变更指令——这个字段是 ADD 还是 MODIFY，置信度多少。然后 bff-gen 根据蒸馏结果生成 BFF 代码。BFF 运行时生成 Schema，前端 Schema 渲染器直接渲染成表单，不用写页面代码。如果涉及权益，调 benefit-sdk 组件库。从 PRD 到上线，新增一个活动类型基本只需要配 Schema 和加枚举值。
+
+**加分点：** 四个项目串联成一条线 → 体现系统级思维
+
+---
+
+## B 组：系统设计（5 题）
+
+---
+
+### B11. 设计一个前端组件库
+
+**核心答案（以 ibt-benefit-sdk 为实战基础）：**
+
+组件库设计的 5 个维度：
+
+**1. 架构设计**
+- Register 注册模式：`new Register()` 全局注册表，支持运行时动态注册组件
+- 分层导出：核心 API + 按需加载 + 完整包
+- 向后兼容：deprecated 标记 + 迁移指南
+
+**2. 打包策略**
+- Rollup 构建（不是 Webpack，Rollup 更适合库打包）
+- 双模输出：ESM（tree-shakable）+ CJS（兼容老项目）
+- `exports` 字段做条件导出
+- `peerDependencies` 声明 react/react-dom，避免重复打包
+
+**3. 样式方案**
+- `rollup-plugin-postcss`：CSS 提取/内联
+- 设计系统集成：依赖 `@company/design-system`
+- Less 预处理
+
+**4. 版本管理**
+- Changesets：语义化版本 + 自动 CHANGELOG
+- alpha/release 双环境
+- yalc 本地联调
+
+**5. 类型系统**
+- `rollup-plugin-dts` 生成 `.d.ts`
+- TypeScript strict 模式
+- 类型随包发布（`types: "es/index.d.ts"`）
+
+**面试说法：**
+
+> 我实际做过 benefit-sdk 组件库。架构上用 Register 模式做组件注册，支持运行时扩展。打包用 Rollup 双模输出，ESM 给现代项目做 tree-shaking，CJS 兼容老项目。peerDependencies 声明 react 避免重复打包。版本管理用 Changesets，本地联调用 yalc 而不是 npm link，因为 link 的符号链接有时候会出问题。类型用 rollup-plugin-dts 直接从源码生成，保证类型和代码同步。
+
+**加分点：** 提到 peerDependencies 避免重复打包 → 体现库设计经验
+
+---
+
+### B12. 设计 Schema 驱动 BFF
+
+**核心答案（以 marketing-bff 为实战基础）：**
+
+Schema 驱动 BFF 的核心是**把表单配置从代码里抽出来，变成数据驱动**。
+
+```
+后端 API → BFF Schema 生成 → 前端 Schema 渲染
+```
+
+**1. Schema 生成层**
+- 字段注册中心（field-registry）：统一管理所有字段定义
+- 模板系统（template/render）：按活动类型组合字段
+- 联动引擎（linkageSchema）：17 种联动规则
+
+**2. 数据流**
+- 请求流程：前端请求 → BFF 拉取后端数据 → BFF 生成 Schema（合并数据 + 字段结构） → 返回
+- 提交流程：前端提交 → BFF 转发后端 → 后端校验存储
+
+**3. 扩展性设计**
+- 新增活动类型：加枚举值 + 配模板 + 配联动，不改前端代码
+- 新增字段：注册到 field-registry，引用到模板即可
+- 新增联动：加一个 linkageSchema 文件
+
+**4. 边界划分**
+- BFF 负责：Schema 结构、字段类型、联动关系、i18n key
+- BFF 不负责：options 内容（后端返回）、校验逻辑（后端实现）、国际化内容（只传 key）
+
+**面试说法：**
+
+> Schema 驱动 BFF 的核心是数据驱动表单。后端返回原始数据，BFF 层根据活动类型生成 Schema——字段结构、组件类型、联动关系。前端拿到 Schema 直接渲染，不用写表单代码。扩展性很好：新增活动类型就加枚举值 + 配模板 + 配联动，前端零改动。BFF 只管结构不管内容，options 由后端返回，校验也是后端做。
+
+**加分点：** 清晰的边界划分 → 体现架构设计的成熟度
+
+---
+
+### B13. 设计 Monorepo 架构
+
+**核心答案（以 营销平台 为实战基础）：**
+
+**1. 目录结构**
+```
+营销平台/
+├── app/              # 15+ 业务模块（dive, captain, ride_pass...）
+│   ├── dive/         # 营销活动模块
+│   ├── captain/      # 司机模块
+│   └── ...
+├── packages/         # 共享包
+│   ├── components/   # 公共组件
+│   ├── RichText/     # 富文本编辑器
+│   └── utils/        # 工具函数
+├── lerna.json        # Lerna 配置
+└── package.json      # 根 workspace 配置
+```
+
+**2. 版本策略**
+- `version: "independent"`：每个包独立版本，避免一个改动全量发版
+- `useNx: true`：Nx 构建缓存，只构建变更影响范围
+- `useWorkspaces: true`：Yarn workspace 做依赖链接
+
+**3. 依赖管理**
+- Yarn workspace + yarn.lock 严格锁版本
+- resolutions 强制统一冲突的依赖（如 @types/react）
+- `npmClientArgs: ["--no-lockfile"]` 避免 CI 锁文件冲突
+
+**4. 代码质量**
+- 根目录统一 ESLint + Prettier + Husky + commitlint
+- lint-staged 只检查暂存文件
+- conventional commits 强制规范提交信息
+
+**面试说法：**
+
+> 营销平台 用 Lerna + Yarn workspace 做 Monorepo。app 目录放 15 个业务模块，packages 放共享组件。每个模块独立版本，避免一个改动全量发版。开了 Nx 缓存加速构建。依赖管理有个原则：只用 yarn，不删 yarn.lock——踩过第三方包自动升级导致 node16 不兼容的坑。代码质量靠根目录统一配置 ESLint + Prettier + commitlint，子包直接继承。
+
+**加分点：** 有真实踩坑经验 → 不是纸上谈兵
+
+---
+
+### B14. 微前端方案对比
+
+**核心答案：**
+
+三种主流方案对比：
+
+| 维度 | iframe | qiankun | Module Federation |
+|------|--------|---------|-------------------|
+| **隔离性** | 完美（浏览器级） | JS 沙箱（Proxy） | 无（共享运行时） |
+| **性能** | 差（独立进程） | 中等 | 好（共享依赖） |
+| **通信** | postMessage | props/initGlobalState | 共享模块 + 事件 |
+| **接入成本** | 低（一个标签） | 中等 | 中高（需 Webpack 5） |
+| **SEO** | 差 | 好 | 好 |
+| **适用场景** | 完全独立的第三方系统 | 大型应用拆分 | 细粒度模块共享 |
+
+营销平台 的选择：没有用标准微前端方案，而是用 Lerna workspace + iframe 嵌套。原因是业务模块都在同一个 git 仓库，不需要运行时独立部署，编译时共享更高效。麦哲伦（Magellan）平台通过 iframe 嵌入 营销平台 的页面，通过 URL 参数传递公参（country、lang、username）。
+
+**面试说法：**
+
+> 微前端有三种主流方案。iframe 隔离最完美但性能差；qiankun 用 JS 沙箱做隔离，适合大型应用拆分；Module Federation 基于 Webpack 5 做运行时模块共享，性能最好但接入成本高。营销平台 没用标准微前端，因为 15 个模块在同一个仓库，不需要独立部署，编译时共享更简单。实际是宿主平台通过 iframe 嵌入我们的页面，URL 参数传公参。
+
+**加分点：** 能结合实际项目解释为什么没选某个方案 → 体现技术判断力
+
+---
+
+### B15. 设计前端监控体系
+
+**核心答案：**
+
+监控体系四层：
+
+**1. 数据采集**
+- JS 错误：`window.onerror` + `window.addEventListener('unhandledrejection')`
+- 接口错误：axios 拦截器捕获 4xx/5xx
+- 性能指标：Performance API 采集 FCP/LCP/CLS
+- 用户行为：关键路径埋点（PV/点击/表单提交）
+
+**2. 数据处理**
+- 聚合：相同错误栈合并，减少数据量
+- 降采样：高频错误按比例采样（如只上报 10%）
+- 丰富：附加环境信息（浏览器/OS/页面URL/用户ID）
+
+**3. 告警**
+- 错误率阈值：错误数/UV > X% 触发告警
+- 新错误检测：错误栈不在已知列表中立即告警
+- 告警降噪：相同告警合并，避免轰炸
+
+**4. 看板**
+- 错误趋势图：按时间/版本/页面维度
+- Top N 错误排行
+- 性能 P50/P90/P99 分布
+
+**面试说法：**
+
+> 监控体系分四步：采集、处理、告警、看板。采集靠 window.onerror 和 axios 拦截器。采集后做聚合和降采样——相同错误栈合并，高频错误按比例上报，不然数据量爆炸。告警看两个指标：错误率超阈值和新出现的错误栈。最关键的是告警降噪，我们做过把误报率从 95% 降到 12% 的优化，主要是调阈值 + 加上下文过滤。
+
+**加分点：** 提到具体的误报优化数据 → 有真实优化经验
+
+---
+
+## C 组：前端基础（5 题）
+
+---
+
+### C16. React 18 并发模式 + Fiber 架构 + Scheduler
+
+**核心答案：**
+
+**Fiber 架构**：
+- React 16 引入，把递归的 vdom 树改为链表结构的 Fiber 树
+- 每个 Fiber 节点有 `child`、`sibling`、`return` 三个指针
+- 可中断的增量渲染：每次处理一个 Fiber 节点，处理完检查是否需要让出主线程
+
+**Scheduler（调度器）**：
+- 基于 `MessageChannel`（不是 setTimeout，因为 setTimeout 最小 4ms）
+- 优先级调度：Immediate / UserBlocking / Normal / Low / Idle
+- `shouldYield()` 判断是否需要让出主线程
+
+**React 18 并发特性**：
+- `createRoot` 开启并发模式
+- `useTransition`：标记低优先级更新，不阻塞用户输入
+- `useDeferredValue`：延迟更新值，让紧急更新先处理
+- Automatic Batching：所有状态更新自动批处理（不只是事件处理函数内）
+
+**面试说法：**
+
+> Fiber 是 React 16 引入的链表结构替代递归 vdom。每个节点有 child/sibling/return 指针，可以中断和恢复。调度器用 MessageChannel 做优先级调度，比 setTimeout 精度高。React 18 的并发模式在此基础上加了 useTransition 和 useDeferredValue，让非紧急更新不阻塞用户输入。还有 Automatic Batching，所有状态更新自动批处理，不再限于事件处理函数内。
+
+**加分点：** 提到 MessageChannel 而不是 setTimeout → 体现源码级理解
+
+---
+
+### C17. useEffect vs useLayoutEffect
+
+**核心答案：**
+
+| 维度 | useEffect | useLayoutEffect |
+|------|-----------|-----------------|
+| **执行时机** | DOM 更新后异步执行 | DOM 更新后同步执行 |
+| **阻塞渲染** | 不阻塞 | 阻塞 |
+| **用途** | 数据请求、事件监听、日志 | 读取/修改 DOM 布局 |
+| **SSR** | 正常 | 会警告（用 useIsomorphicLayoutEffect） |
+
+执行顺序：
+1. React 更新 DOM
+2. useLayoutEffect 回调同步执行（浏览器还没绘制）
+3. 浏览器绘制
+4. useEffect 回调异步执行
+
+为什么不能在条件里用 Hook：React 靠调用顺序匹配 Hook 和 Fiber 节点的 state。如果条件里用，顺序变了，state 对不上。
+
+**面试说法：**
+
+> useEffect 在浏览器绘制后异步执行，不阻塞渲染，适合做数据请求。useLayoutEffect 在 DOM 更新后同步执行但绘制前，适合读 DOM 布局或修改样式。如果 useEffect 里改了 DOM 样式，用户会看到闪烁——先渲染旧样式再变新样式，用 useLayoutEffect 就不会有这个问题。Hook 不能在条件里用是因为 React 靠调用顺序匹配 state，顺序变了就乱了。
+
+---
+
+### C18. 浏览器渲染管线
+
+**核心答案：**
+
+```
+HTML → DOM树
+CSS → CSSOM树    } → Render树 → Layout(布局) → Paint(绘制) → Composite(合成)
+```
+
+**关键步骤**：
+1. **Parse**：HTML 解析成 DOM，CSS 解析成 CSSOM
+2. **Render Tree**：DOM + CSSOM 合并，去掉不可见元素（display:none）
+3. **Layout（Reflow）**：计算每个节点的位置和大小
+4. **Paint（Repaint）**：填充像素（颜色、文字、图片）
+5. **Composite**：图层合成，GPU 加速
+
+**触发条件**：
+- Reflow：改几何属性（width/height/margin/padding/position）
+- Repaint：改视觉属性（color/background/visibility）
+- Composite only：transform/opacity（最佳性能）
+
+**优化**：
+- `transform` 替代 `top/left` 做动画（只触发 composite）
+- `will-change` 提升图层
+- 批量 DOM 修改用 `requestAnimationFrame`
+- 读写分离：先读布局信息再写，避免强制同步布局
+
+**面试说法：**
+
+> 渲染管线分五步：解析、Render 树、Layout、Paint、Composite。Reflow 是布局计算，改几何属性触发；Repaint 是绘制，改视觉属性触发。性能最好的是只触发 Composite，transform 和 opacity 就是。所以动画用 transform 别用 top/left。优化核心是减少 Reflow，批量改 DOM、读写分离。
+
+---
+
+### C19. HTTP 缓存策略
+
+**核心答案：**
+
+**强缓存（不发请求）**：
+- `Cache-Control: max-age=3600`（秒数）
+- `Cache-Control: no-cache`（跳过强缓存，走协商）
+- `Cache-Control: no-store`（完全不缓存）
+- `Expires`（HTTP/1.0，已被 Cache-Control 取代）
+
+**协商缓存（发请求，304 则用缓存）**：
+- `ETag / If-None-Match`：内容哈希，精确但计算成本高
+- `Last-Modified / If-Modified-Since`：最后修改时间，精度秒级
+
+**优先级**：Cache-Control > Expires > ETag > Last-Modified
+
+**实战配置**：
+- HTML：`Cache-Control: no-cache`（每次协商）
+- JS/CSS（带 hash）：`Cache-Control: max-age=31536000`（强缓存一年）
+- API：`Cache-Control: no-store` 或短时间 max-age
+
+**面试说法：**
+
+> 缓存分强缓存和协商缓存。强缓存不发请求，Cache-Control 的 max-age 控制有效期。协商缓存发请求，服务端返回 304 就用缓存。ETag 比内容哈希，Last-Modified 比时间，ETag 更精确但计算成本高。实战配置一般是 HTML 不缓存（每次协商），带 hash 的静态资源强缓存一年，API 不缓存。
+
+---
+
+### C20. TypeScript 高级类型
+
+**核心答案：**
+
+**1. infer（类型推断）**
+```typescript
+type ReturnType<T> = T extends (...args: any[]) => infer R ? R : never;
+type Unpacked<T> = T extends Array<infer U> ? U : T;
+```
+
+**2. 条件类型**
+```typescript
+type IsString<T> = T extends string ? true : false;
+type NonNullable<T> = T extends null | undefined ? never : T;
+```
+
+**3. 模板字面量类型**
+```typescript
+type EventName = `on${Capitalize<string>}`;  // "onClick" | "onChange" ...
+type CSSProperty = `${string}-${string}`;     // "margin-top" ...
+```
+
+**4. 映射类型**
+```typescript
+type Readonly<T> = { readonly [P in keyof T]: T[P] };
+type Partial<T> = { [P in keyof T]?: T[P] };
+type Pick<T, K extends keyof T> = { [P in K]: T[P] };
+```
+
+**5. 实战用法（marketing-bff 中）**：
+- 字段类型映射：`FormDComponentType` 枚举 → 不同组件的 props 类型
+- 联动类型：`LinkageType = 'visible' | 'disabled' | 'api'`
+
+**面试说法：**
+
+> infer 用于在条件类型里推断子类型，比如 ReturnType 推断函数返回值。条件类型类似三元表达式，对类型做判断。模板字面量类型是 TS 4.1 引入的，可以在类型层面做字符串拼接，比如自动生成事件处理器类型。实战中最常用的是映射类型——Pick、Omit、Partial 这些内置工具类型的原理就是映射类型。
+
+---
+
+## D 组：AI 工程（5 题）
+
+---
+
+### D21. AI 怎么理解一个陌生项目？
+
+**核心答案：**
+
+build-reference 的 7 维度领域知识体系：
+
+| 维度 | 文件 | 解决什么 |
+|------|------|---------|
+| 实体 | `01-entities.yaml` | 枚举、核心类型、数据结构 |
+| 架构 | `02-architecture.yaml` | 目录结构、模块依赖、数据流 |
+| 规范 | `03-conventions.yaml` | 命名规范、代码模式、反模式 |
+| 约束 | `04-constraints.yaml` | 白名单、校验规则、致命错误 |
+| 映射 | `05-mapping.yaml` | PRD 路由表、能力边界、字段映射 |
+| 术语 | `06-glossary.yaml` | 业务术语、同义词 |
+| 索引 | `00-index.md` | 导航索引、实体索引 |
+
+**关键设计原则**：
+1. **Compass 原则**：每个文件 ≤300 行，只写项目特有知识
+2. **按需加载**：蒸馏只读 05+01+06，验证只读 04+03，不一次全塞上下文
+3. **知识衰减监控**：14 天未验证标记为可能过期，`last_verified` 字段跟踪
+4. **反馈回流**：prd-distill 发现矛盾 → build-reference 回流更新 → 下次蒸馏更准
+5. **深度 Lint**：代码模式匹配 + 跨文件枚举一致性 + 孤立条目检测
+
+**面试说法：**
+
+> 我设计了 7 个维度的领域知识体系，从源码里提取。不是把所有知识塞一个大文件，而是按关注点分离：实体放一个文件，架构放一个，规范约束各一个。每个文件不超过 300 行。关键是按需加载——蒸馏 PRD 时只读路由表和枚举，验证时只读约束和规范，不一次全塞。还有知识衰减监控，14 天没验证就标记可能过期，通过 prd-distill 的反馈回流来更新。
+
+---
+
+### D22. PRD 到代码最难的一步？
+
+**核心答案：**
+
+最难的是**变更分类**——判断 PRD 里的每个功能点到底是 ADD（新增）、MODIFY（修改已有）、还是 DELETE（删除）。
+
+为什么难：
+1. **需要理解项目现状**：不知道现在有什么字段，就没法判断是新增还是修改
+2. **PRD 描述模糊**：运营写"增加奖励配置"，可能是新增字段，也可能是修改已有字段的选项
+3. **跨模块影响**：改一个枚举值可能影响联动规则、i18n、预览配置
+
+解决方案（prd-distill 的设计）：
+1. **代码锚定**：每个变更分类必须验证源码，`verification_source` 标注来源
+   - `reference_only`：只查了领域知识
+   - `code_verified`：验证了源码确认
+   - `code_contradicts_reference`：源码与领域知识矛盾
+2. **置信度分级**：high/medium/low，不确定的标 low，强制人工确认
+3. **"reference 是快速通道，源码是最终权威"**：Reference 帮快速理解，但最终判断要验证代码
+
+**面试说法：**
+
+> 最难的是变更分类——判断 PRD 里每个功能点是 ADD/MODIFY/DELETE。运营写"增加奖励配置"，你不知道是新增字段还是修改已有字段的选项。我的解法是代码锚定：每个判断都验证源码，标注 verification_source。还有置信度分级，不确定的标 low，强制人工确认。核心原则是"reference 是快速通道，源码是最终权威"——领域知识帮你快，但关键判断要看代码。
+
+---
+
+### D23. 确定性优先怎么落地？
+
+**核心答案：**
+
+确定性优先 = 能用模板就不用 LLM。
+
+**1. 模板引擎（Handlebars）**
+- 22 个模板覆盖已知场景（加油站、骑手冲单、班次签到等）
+- 模板是纯字符串拼接，0 token 消耗，100% 准确
+- 模板匹配规则：活动类型枚举 → 对应模板
+
+**2. 白名单 + 枚举**
+- 活动类型枚举：`CampaignType` 23 种
+- 字段名枚举：field-registry 注册的所有字段
+- 组件名白名单：只允许生成已注册的组件
+- 不在白名单里的 → 标记为需要人工确认
+
+**3. LLM 兜底**
+- 无模板的新场景才走 LLM
+- 即使走 LLM，输出也要经过 4 层验证
+- 验证不通过自动修正，最多 3 轮
+
+**为什么适合 B 端**：
+- B 端对准确率要求高（错了影响运营配置）
+- B 端场景相对稳定，模板覆盖率高
+- B 端用户能容忍"这个场景暂时不支持"，但不能容忍"生成了错误代码"
+
+**面试说法：**
+
+> 确定性优先就是能用模板就不用 LLM。已知场景用 Handlebars 模板，纯字符串拼接，0 token、100% 准确。我们做了 22 个模板覆盖常见活动类型。字段名、组件名都在白名单里，不在白名单的标为需要人工确认。只有完全新的场景才走 LLM，而且输出要过 4 层验证。为什么这样设计？B 端对准确率要求高，宁可说"不支持"也不能生成错误代码。
+
+---
+
+### D24. 知识过期怎么办？
+
+**核心答案：**
+
+知识衰减监控 + 反馈回流闭环：
+
+**1. 衰减监控**
+- 每个 reference 文件有 `last_verified` 字段
+- 超过 14 天未验证 → 标记为 `stale`
+- 检测方式：
+  - 对比 `last_verified` 与 git log，识别代码变更
+  - 检查 `code_contradicts_reference` 计数（prd-distill 发现的矛盾数）
+
+**2. 反馈回流**
+```
+prd-distill 蒸馏 → 发现 code_contradicts_reference
+    ↓
+build-reference 反馈回流模式 → 人工确认矛盾
+    ↓
+更新 reference 文件 → 下次蒸馏更准
+```
+
+**3. 深度 Lint**
+- 代码模式匹配：reference 描述的代码模式到源码验证
+- 跨文件枚举一致性：01 的枚举 vs 04 的校验规则
+- 孤立条目检测：05 标记 implemented 但从未被引用
+
+**4. 健康报告**
+```
+Reference 健康状态：
+- 文件路径有效性：N/M 通过
+- 上次验证：X 天前
+- 蒸馏矛盾报告：X 次
+- 状态：✅ 健康 / ⚠️ 需更新 / ❌ 需重建
+```
+
+**面试说法：**
+
+> 知识过期是个大问题。每个 reference 文件记录 last_verified 时间，14 天没验证就标 stale。但被动监控不够，我还做了反馈回流——prd-distill 蒸馏时如果发现代码和 reference 矛盾，会标记 code_contradicts_reference，然后 build-reference 的反馈回流模式会把这些矛盾提取出来，人工确认后更新 reference。这样越用越准，形成了闭环。
+
+---
+
+### D25. Reference 的真实价值是多少？
+
+**核心答案：**
+
+油站 PRD 三组对照实验：
+
+| 组别 | 变更分类(35%) | 影响范围(25%) | 变更描述(25%) | 工作量(15%) | 综合 |
+|------|-------------|-------------|-------------|-----------|------|
+| 基线（无 ref） | 45 | 30 | 30 | 50 | **38** |
+| 干净 ref | 50 | 40 | 40 | 60 | **47** |
+| 泄露 ref | 70 | 70 | 70 | 90 | **73** |
+
+**核心结论**：
+- Reference 真实贡献：**+9 分**（38→47）
+- 如果不小心泄露了 ground truth：**虚假 +26 分**（47→73）
+- 干净 ref 真正有效的部分：
+  - `new_campaign_type_checklist`：通用新增活动类型清单（+3-4 分）
+  - `schema_driven` 机制说明：帮 AI 准确判断哪些不需要前端代码（+3-4 分）
+  - 组件路由映射：PRD 描述→具体组件（+1-2 分）
+- 干净 ref 仍然缺失的：
+  - 组件扩展模式文档（不知道 CustomRewardRule 怎么扩展）
+  - 工作量参考案例（没有历史案例 AI 倾向低估）
+
+**实验设计**：
+- Ground Truth 从 feature 分支 git diff 自动提取
+- 泄露清理：移除 CompleteOrderGas=44、549 行、flatOutput 等来自实现分支的信息
+- 4 维度评分：变更分类/影响范围/具体描述/工作量
+
+**面试说法：**
+
+> 我做了严格的对照实验。基线组无领域知识 38 分，加了干净的领域知识 47 分，真实贡献 +9。但如果不小心泄露了答案数据，会到 73 分，虚假提升 +26。这说明两件事：一是领域知识确实有用，二是评测必须防泄露。真正有效的是通用的新增活动类型清单和 schema_driven 机制说明，组件级扩展模式还是缺——这块我后续准备用其他活动类型的 diff 做参考案例。
+
+**加分点：** 有严格的实验设计 + 对照组 + 防泄露意识 → 甩开 99% 的候选人
+
+---
+
+## 附：面试答题节奏指南
+
+### 时间控制
+
+| 题目类型 | 建议时长 | 结构 |
+|---------|---------|------|
+| 项目深挖 | 2-3 分钟 | 结论先行 → 架构图 → 关键决策 → 数据 |
+| 系统设计 | 5-8 分钟 | 需求确认 → 整体架构 → 核心模块 → 扩展性 → 取舍 |
+| 前端基础 | 1-2 分钟 | 直接答 → 补充原理 → 关联实战 |
+| AI 工程 | 2-3 分钟 | 问题定义 → 解决方案 → 设计决策 → 实验数据 |
+
+### 万能框架
+
+1. **"这个问题我实际遇到过..."** → 开头就锚定实战
+2. **"核心思路是..."** → 一句话说清方案
+3. **"具体的做法是..."** → 展开细节
+4. **"踩过一个坑..."** → 加分项
+5. **"如果让我重新设计..."** → 体现反思能力
