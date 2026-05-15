@@ -164,10 +164,10 @@ repo root
 ### 白板图
 
 ```text
-build-reference
+reference plugin (构建知识库)
   |
   v
-_reference/ v4.0
+_reference/ v4.0 (6 文件 SSOT)
   |-- 01-codebase
   |-- 02-coding-rules
   |-- 03-contracts
@@ -175,37 +175,48 @@ _reference/ v4.0
   |-- 05-domain
   |
   v
-prd-distill
-  |-- PRD ingestion
+build-index.py (静态分析)
+  |-- entities.json (代码实体)
+  |-- edges.json (跨文件调用边)
+  |-- inverted-index.json (BM25 检索)
+  |
+  v
+prd-distill plugin (PRD 蒸馏, 11步)
+  |-- PRD ingestion (Python zipfile, 零依赖)
   |-- evidence.yaml
-  |-- requirement IR
-  |-- layer impact
-  |-- contract delta
-  |-- plan.md / questions.md / report.md
+  |-- requirement IR (ADD/MODIFY/DELETE)
+  |-- code search → layer impact → contract delta
+  |-- context-pack.py → query-plan.yaml + context-pack.md
+  |-- report.md (渐进式披露)
+  |-- [Report Review Gate — 硬停止]
+  |-- plan.md + questions.md
+  |-- quality-gate.py final (5项加权评分)
+  |-- reference update suggestions
   |
   v
-reference update suggestions
-  |
-  v
-人工确认后回流
+人工确认后回流 → 下次蒸馏更准
 ```
 
 ### 讲解顺序
 
 1. 先澄清：不是 AI 直接生成代码。
-2. build-reference 构建长期知识库。
-3. prd-distill 消费 PRD + reference，输出结构化计划。
-4. 可靠性靠证据链、质量门控、反馈回流。
-5. 图谱只是发现层，reference 才是精选知识库。
+2. reference 构建长期知识库（6 文件 SSOT + Evidence Index）。
+3. prd-distill 消费 PRD + reference，11 步蒸馏出结构化计划。
+4. 代码锚定：build-index.py 提取实体，context-pack.py 精准匹配。
+5. 多层质量门控：quality-gate.py 5 项加权评分 + benchmark 回归。
+6. 图谱只是发现层，reference 才是精选知识库。
+7. 团队模式：T 聚合 / T2 继承，跨仓库知识只维护一份。
 
 ### 追问防御
 
 | 问题 | 回答方向 |
 |---|---|
-| 为什么不用向量库？ | 向量适合召回，不适合做权威事实源 |
-| 知识过期怎么办？ | 健康检查、源码冲突 fatal、反馈回流 |
-| AI 错了怎么办？ | evidence、contract delta、人工确认 |
-| 怎么量化收益？ | 目前强调工程化原型和方法论，避免硬编数据 |
+| 为什么不用向量库？ | 向量适合召回，不适合做权威事实源；用 BM25 倒排索引做精确检索 |
+| 知识过期怎么办？ | 健康检查、源码冲突 fatal、反馈回流、benchmark 回归 |
+| AI 错了怎么办？ | evidence、contract delta、Report Review Gate 硬停止、人工确认 |
+| 怎么量化收益？ | 目前强调工程化原型和方法论，benchmark 评分做质量回归 |
+| Evidence Index 为什么用正则不用 AST？ | 零依赖、跨语言（TS/JS/Go）、增量构建快；AST 精度更高但依赖重 |
+| 团队模式怎么工作的？ | T 模式聚合成员仓库 reference 到团队仓库，T2 模式继承回来，跨仓库公共知识只维护一份 |
 
 ---
 
