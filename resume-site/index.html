@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>邓泽霖 — 高级全栈工程师</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+:root {
+  --primary: #2563eb;
+  --primary-light: #dbeafe;
+  --text: #1e293b;
+  --text-secondary: #64748b;
+  --bg: #ffffff;
+  --bg-alt: #f8fafc;
+  --border: #e2e8f0;
+  --tag-bg: #f1f5f9;
+}
+@media print {
+  body { font-size: 11px; }
+  .no-print { display: none !important; }
+  .container { box-shadow: none; max-width: 100%; padding: 0; }
+}
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+  color: var(--text);
+  background: #f1f5f9;
+  line-height: 1.6;
+  font-size: 15px;
+}
+.container {
+  max-width: 900px;
+  margin: 40px auto;
+  background: var(--bg);
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  overflow: hidden;
+}
+@media (max-width: 640px) {
+  .container { margin: 0; border-radius: 0; }
+}
+
+/* Header */
+.header {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding: 32px 40px;
+  border-bottom: 1px solid var(--border);
+}
+@media (max-width: 640px) {
+  .header { flex-direction: column; text-align: center; padding: 24px 20px; gap: 16px; }
+}
+.photo {
+  width: 100px; height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid var(--primary-light);
+  flex-shrink: 0;
+}
+.header-info h1 { font-size: 24px; font-weight: 700; margin-bottom: 4px; }
+.title-line {
+  font-size: 14px; color: var(--text-secondary); margin-bottom: 8px;
+}
+.title-line strong { color: var(--primary); }
+.contact {
+  display: flex; flex-wrap: wrap; gap: 16px;
+  font-size: 13px; color: var(--text-secondary);
+}
+.contact a { color: var(--primary); text-decoration: none; }
+.contact a:hover { text-decoration: underline; }
+
+/* Body layout */
+.body {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+}
+@media (max-width: 768px) {
+  .body { grid-template-columns: 1fr; }
+}
+
+/* Sidebar */
+.sidebar {
+  padding: 28px 24px;
+  border-right: 1px solid var(--border);
+  background: var(--bg-alt);
+}
+@media (max-width: 768px) {
+  .sidebar { border-right: none; border-bottom: 1px solid var(--border); }
+}
+
+/* Main */
+.main { padding: 28px 32px; }
+@media (max-width: 640px) {
+  .main { padding: 20px; }
+}
+
+/* Section */
+.section { margin-bottom: 24px; }
+.section:last-child { margin-bottom: 0; }
+.section-title {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--primary);
+  margin-bottom: 12px;
+  padding-bottom: 6px;
+  border-bottom: 2px solid var(--primary-light);
+}
+
+/* Highlights */
+.highlights {
+  list-style: none;
+}
+.highlights li {
+  position: relative;
+  padding-left: 16px;
+  margin-bottom: 10px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--text);
+}
+.highlights li::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 7px;
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--primary);
+}
+
+/* Skills */
+.skill-group { margin-bottom: 12px; }
+.skill-group:last-child { margin-bottom: 0; }
+.skill-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: 6px;
+}
+.tags {
+  display: flex; flex-wrap: wrap; gap: 6px;
+}
+.tag {
+  font-size: 12px;
+  padding: 3px 10px;
+  border-radius: 4px;
+  background: var(--tag-bg);
+  color: var(--text);
+}
+
+/* Experience */
+.exp-header {
+  display: flex; justify-content: space-between; align-items: baseline;
+  margin-bottom: 6px; flex-wrap: wrap; gap: 4px;
+}
+.exp-company { font-weight: 700; font-size: 15px; }
+.exp-role { color: var(--text-secondary); font-size: 13px; }
+.exp-date { color: var(--text-secondary); font-size: 12px; white-space: nowrap; }
+.exp-desc { font-size: 13px; line-height: 1.6; margin-bottom: 4px; }
+
+/* Project */
+.project { margin-bottom: 20px; }
+.project:last-child { margin-bottom: 0; }
+.project-header {
+  font-weight: 700; font-size: 14px; margin-bottom: 2px;
+}
+.project-tech {
+  font-size: 12px; color: var(--text-secondary); margin-bottom: 8px;
+  font-style: italic;
+}
+.project-section { margin-bottom: 6px; }
+.project-section-title {
+  font-size: 12px; font-weight: 600; color: var(--primary);
+  margin-bottom: 2px;
+}
+.project-section p {
+  font-size: 13px; line-height: 1.5;
+}
+.project-section ul {
+  padding-left: 16px; font-size: 13px; line-height: 1.5;
+}
+.project-section ul li { margin-bottom: 2px; }
+
+/* Result highlight */
+.result {
+  font-size: 13px;
+  padding: 8px 12px;
+  background: var(--primary-light);
+  border-radius: 6px;
+  border-left: 3px solid var(--primary);
+  line-height: 1.5;
+}
+
+/* Print button */
+.print-btn {
+  position: fixed;
+  top: 16px; right: 16px;
+  padding: 8px 16px;
+  background: var(--primary);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 13px;
+  cursor: pointer;
+  z-index: 100;
+}
+.print-btn:hover { opacity: 0.9; }
+</style>
+</head>
+<body>
+
+<button class="print-btn no-print" onclick="window.print()">导出 PDF</button>
+
+<div class="container">
+  <!-- Header -->
+  <div class="header">
+    <img class="photo" src="assets/photo.jpg" alt="邓泽霖">
+    <div class="header-info">
+      <h1>邓泽霖</h1>
+      <div class="title-line">高级全栈工程师 · 4 年经验 · 连续 <strong>2 年 A 绩效</strong></div>
+      <div class="contact">
+        <span>188-4617-4594</span>
+        <span>2597419838@qq.com</span>
+        <a href="https://github.com/zachary-lz-glm" target="_blank">GitHub</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Body -->
+  <div class="body">
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <div class="section">
+        <div class="section-title">个人优势</div>
+        <ul class="highlights">
+          <li>独立设计 AI 工程工作流，PRD 到开发计划转化效率提升 <strong>60%+</strong></li>
+          <li>Schema 驱动全栈架构落地，新活动上线周期从 <strong>2 周缩短到 3 天</strong></li>
+          <li>主导 400+ 营销权益组件库，覆盖 <strong>8 个业务项目</strong>，新权益接入 <strong>2 天→2 小时</strong></li>
+        </ul>
+      </div>
+
+      <div class="section">
+        <div class="section-title">专业技能</div>
+        <div class="skill-group">
+          <div class="skill-label">全栈</div>
+          <div class="tags">
+            <span class="tag">React</span>
+            <span class="tag">TypeScript</span>
+            <span class="tag">Node.js</span>
+            <span class="tag">Serverless BFF</span>
+            <span class="tag">Lerna + Nx</span>
+            <span class="tag">Rollup</span>
+            <span class="tag">Webpack</span>
+          </div>
+        </div>
+        <div class="skill-group">
+          <div class="skill-label">AI 工程</div>
+          <div class="tags">
+            <span class="tag">Claude API</span>
+            <span class="tag">MCP 协议</span>
+            <span class="tag">知识图谱</span>
+            <span class="tag">证据链</span>
+            <span class="tag">质量门控</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">教育背景</div>
+        <div style="font-size:13px;">
+          <strong>黑龙江大学</strong><br>
+          计算机科学与技术 · 本科<br>
+          <span style="color:var(--text-secondary)">2018.09 - 2022.06</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main">
+      <div class="section">
+        <div class="section-title">工作经历</div>
+        <div class="exp-header">
+          <span class="exp-company">滴滴出行 · 国际化事业部</span>
+          <span class="exp-date">2022.03 - 至今</span>
+        </div>
+        <div class="exp-role">高级前端工程师</div>
+        <div class="exp-desc">
+          主导国际化营销中台前端架构，从 0 到 1 落地 Schema 驱动架构（BFF 动态生成 + 前端动态渲染 + 联动引擎），独立设计 AI 工程工作流，主导 400+ 营销权益组件库架构。最终覆盖 <strong>10+ 国家、20+ 种活动类型</strong>，新活动上线效率提升 <strong>70%+</strong>。
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">项目经历</div>
+
+        <!-- Project 1 -->
+        <div class="project">
+          <div class="project-header">AI 工程工作流 — PRD 蒸馏与领域知识管理</div>
+          <div class="project-tech">独立设计 + 开发 · TypeScript · Claude API · MCP 协议</div>
+          <div class="project-section">
+            <div class="project-section-title">背景</div>
+            <p>B 端 PRD 到代码的核心痛点是业务词与代码字段不一致、前后端认知分歧、历史经验没有沉淀，导致需求理解偏差和返工。</p>
+          </div>
+          <div class="project-section">
+            <div class="project-section-title">行动</div>
+            <ul>
+              <li>双 Skill 体系：知识库构建（6 种模式）+ PRD 蒸馏（8 步工作流），反馈回流闭环</li>
+              <li>6 文件 SSOT 架构：每个事实只存在一处，5 条边界规则避免知识污染</li>
+              <li>能力面适配器：前端/BFF/后端通过 20+ 能力面统一描述，跨项目可复用</li>
+              <li>证据链 + 质量门控：8 种证据类型，PRD 入口三级门禁</li>
+            </ul>
+          </div>
+          <div class="project-section">
+            <div class="project-section-title">结果</div>
+            <div class="result">
+              PRD 转化效率提升 <strong>60%+</strong>，需求返工减少 <strong>50%+</strong>，知识库已积累 <strong>200+</strong> 条可复用领域知识。
+            </div>
+          </div>
+        </div>
+
+        <!-- Project 2 -->
+        <div class="project">
+          <div class="project-header">Schema 驱动营销中台 — BFF 动态生成 + 前端动态渲染</div>
+          <div class="project-tech">前端架构 + BFF 设计 · React · TypeScript · Node.js · Serverless</div>
+          <div class="project-section">
+            <div class="project-section-title">背景</div>
+            <p>营销中台覆盖 10+ 国家、20+ 种活动类型，每种活动有不同字段组合和联动规则。传统方式每新增一种活动需要前后端各写一套，开发周期长。</p>
+          </div>
+          <div class="project-section">
+            <div class="project-section-title">行动</div>
+            <ul>
+              <li>BFF 模板引擎：模板驱动 Schema 生成，字段分布式管理，handler 复用</li>
+              <li>双重求值联动：一次声明，BFF 端求初始状态 + 前端运行时联动，支持 fetchApi 型和 state 型</li>
+              <li>前端渲染引擎：35+ 组件注册表，发布订阅模式执行联动</li>
+              <li>Monorepo：Lerna + Nx + Yarn workspace 管理 15+ 模块</li>
+            </ul>
+          </div>
+          <div class="project-section">
+            <div class="project-section-title">结果</div>
+            <div class="result">
+              新增活动类型前端 <strong>零代码</strong>，上线周期 <strong>2 周→3 天</strong>，累计支撑 <strong>20+ 种活动</strong>，联动配置复用率 <strong>80%+</strong>。
+            </div>
+          </div>
+        </div>
+
+        <!-- Project 3 -->
+        <div class="project">
+          <div class="project-header">营销权益组件库 — 400+ 权益 React 组件库</div>
+          <div class="project-tech">架构设计 + 核心开发 · React · TypeScript · Rollup · Changesets</div>
+          <div class="project-section">
+            <div class="project-section-title">背景</div>
+            <p>营销平台管理 400+ 种营销权益（优惠券、折扣、积分、立减等），权益类型持续增长，原有方案每新增一种权益需硬编码。</p>
+          </div>
+          <div class="project-section">
+            <div class="project-section-title">行动</div>
+            <ul>
+              <li>Register 注册模式：内置 24 组件 + 运行时注册，新增权益无需修改 SDK</li>
+              <li>Schema 同构渲染：组件库与活动表单共享 Schema 渲染架构</li>
+              <li>Rollup 双模打包（ESM + CJS + 类型声明），peerDependencies 避免依赖爆炸</li>
+            </ul>
+          </div>
+          <div class="project-section">
+            <div class="project-section-title">结果</div>
+            <div class="result">
+              覆盖 <strong>8 个业务项目</strong>，接入 <strong>400+ 种权益</strong>，新权益接入 <strong>2 天→2 小时</strong>，零 breaking change 运行 <strong>18 个月+</strong>。
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
