@@ -1,0 +1,80 @@
+# post-implementation.yaml — 蒸馏「实施复盘」模板
+# 用法：复制到 _prd-tools/distill/<slug>/context/post-implementation.yaml，开发/上线后填写
+# 配合：2026-05-19-prd-tools-蒸馏准确率定义与复盘.md
+
+schema_version: "1.0"
+
+# ── 元信息 ──────────────────────────────────────────────
+distill_slug: ""                    # 与 distill 目录名一致
+project: ""                         # 如 marketing-bff / 营销平台/app/soda_coupon / dive-drv-reference
+mode: single | team                 # 单仓 / 团队
+prd_ref: ""                         # PRD 路径或链接
+filled_at: ""                       # ISO8601，复盘填写日期
+filled_by: ""                       # 填写人
+implementation_status: not_started | in_progress | shipped | cancelled
+
+# ── 蒸馏当时快照（填复盘时从 readiness / final-quality-gate 抄录）──
+distill_snapshot:
+  readiness_score: null             # readiness-report.yaml score
+  readiness_status: ""              # ready_for_dev | warning | conditional_go
+  final_quality_gate_score: null    # final-quality-gate.yaml overall_score，无则 null
+  blocking_oq_count: 0
+  contract_delta_needs_confirmation: 0   # 团队模式：needs_confirmation 条数
+  contract_delta_total: 0
+
+# ── 五维准确率（0–100，开发结束后人工评估）────────────────
+# 定义见 journal：2026-05-19-prd-tools-蒸馏准确率定义与复盘.md
+accuracy_dimensions:
+  prd_fidelity:                     # A. PRD 保真：漏需求、错解业务规则
+    score: null
+    missed_requirements: []         # 例：["REQ-xxx 上线前补做"]
+    false_positives: []             # 例：["report 纳入但 PRD 实际不做"]
+
+  scope_boundary:                   # B. 范围边界：✅/❌ 过滤是否正确
+    score: null
+    wrongly_included: []            # 做了不该做的
+    wrongly_excluded: []            # 漏纳入 scope
+
+  code_anchor:                      # C. 代码锚点：file:line、符号、注册点
+    score: null
+    sampled_anchors: 20             # 抽样数，建议固定 20
+    anchor_errors: []               # 例：["details/index.ts:82 行号漂移"]
+    anchor_error_rate: null         # errors / sampled，自动或手算
+
+  plan_executability:               # D. 方案可执行：按 plan 做是否要推翻架构
+    score: null
+    planned_imp_count: 0            # plan 中 IMP/任务总数
+    imp_discarded: 0                # 完全废弃
+    imp_major_rewrite: 0            # 方案级重写（非小改）
+    imp_added_unplanned: 0          # 计划外新增
+    implementation_accuracy: null   # 1 - (discarded+major+added*0.5)/planned，见 journal
+
+  cross_repo_contract:              # E. 跨仓契约（单仓填 null / not_applicable）
+    score: null
+    applicable: true
+    alignment_resolved: 0           # 开发中已对齐条数
+    alignment_still_open: 0
+    rework_days_cross_repo: null    # 因契约不一致返工人天
+
+# ── OQ 复盘 ───────────────────────────────────────────
+open_questions_review:
+  - oq_id: ""                       # 对应 readiness / report 中的 OQ-xxx
+    predicted_blocking: true
+    actually_blocked: null            # true | false
+    resolution: ""                    # 最终结论一句话
+    days_to_resolve: null
+
+# ── 综合 ─────────────────────────────────────────────
+overall:
+  weighted_accuracy: null           # 见 journal 加权公式
+  would_use_distill_again: null     # yes | yes_with_review | no
+  notes: ""
+
+# ── 可选：与 quality-gate 对照 ─────────────────────
+quality_gate_rerun:
+  ran: false
+  final_score_after_impl: null
+  command: |
+    python3 .prd-tools/scripts/quality-gate.py final \
+      --distill-dir _prd-tools/distill/<slug> \
+      --repo-root .

@@ -1,5 +1,8 @@
 # 04 · prd-tools AI 工程工作流 — 2026-05-06
 
+> **延伸阅读**：[2026-05-19-prd-tools-技术实现精读.md](./2026-05-19-prd-tools-技术实现精读.md)（实现架构、11 步流水线、5 个技术节点、学习路径）  
+> [2026-05-19-prd-tools-蒸馏准确率定义与复盘.md](./2026-05-19-prd-tools-蒸馏准确率定义与复盘.md)（五维定义、三案例 80%/60%、post-implementation 模板）
+
 ## 一、今日核心事件
 
 **prd-tools 源码深度复盘**。读完 reference + prd-distill 双插件全部源码（SKILL.md / workflow.md / steps / references / templates / ADR），梳理出 7 个核心讲点，发现 3 个与之前认知的重大差异。
