@@ -1,0 +1,972 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=3,user-scalable=yes">
+<title>面试速查板 · 邓泽霖</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{
+  --blue:#3B82F6;--green:#10B981;--amber:#F59E0B;--red:#EF4444;
+  --purple:#8B5CF6;--gray:#6B7280;--pink:#EC4899;--cyan:#0EA5E9;--orange:#F97316;
+  --bg:#F8FAFC;--card:#fff;--text:#1E293B;--text2:#64748B;--text3:#94A3B8;
+  --border:#E2E8F0;--shadow:0 1px 3px rgba(0,0,0,.06);
+  --radius:12px;--fs:17px;
+}
+.dark{--bg:#0F172A;--card:#1E293B;--text:#E2E8F0;--text2:#94A3B8;--text3:#64748B;--border:#334155;--shadow:0 1px 3px rgba(0,0,0,.3)}
+body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","PingFang SC",sans-serif;background:var(--bg);color:var(--text);font-size:var(--fs);line-height:1.6;padding:128px 0 70px;transition:background .2s,color .2s}
+/* ===== TOP BAR ===== */
+.topbar{position:fixed;top:0;left:0;right:0;z-index:100;background:var(--bg);border-bottom:1px solid var(--border);transition:background .2s}
+.topbar-top{display:flex;gap:6px;padding:6px 10px;align-items:center}
+.search{flex:1;position:relative}
+.search input{width:100%;padding:9px 12px;padding-right:32px;border:1.5px solid var(--border);border-radius:10px;font-size:var(--fs);background:var(--card);color:var(--text);outline:none}
+.search input::placeholder{color:var(--text3)}
+.clear-x{position:absolute;right:8px;top:50%;transform:translateY(-50%);background:none;border:none;font-size:18px;color:var(--text3);cursor:pointer;display:none;padding:4px}
+.ctrl-btn{padding:6px 10px;border:1.5px solid var(--border);border-radius:8px;background:var(--card);color:var(--text2);font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap}
+.ctrl-btn.active{background:var(--text);color:var(--bg);border-color:transparent}
+.font-ctrl{display:flex;align-items:center;gap:0;border:1.5px solid var(--border);border-radius:8px;overflow:hidden}
+.font-ctrl button{padding:6px 8px;background:var(--card);color:var(--text);border:none;font-size:15px;font-weight:700;cursor:pointer}
+.font-ctrl span{padding:0 4px;font-size:12px;color:var(--text3);background:var(--card);min-width:28px;text-align:center}
+/* Tabs */
+.tabs{display:flex;gap:4px;padding:4px 10px 6px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{padding:5px 12px;border-radius:7px;font-size:13px;font-weight:600;white-space:nowrap;background:var(--card);color:var(--text2);border:1.5px solid var(--border);cursor:pointer;transition:all .12s}
+.tab.on{color:#fff;border-color:transparent}
+.tab[data-c="all"].on{background:#334155}
+.tab[data-c="open"].on{background:var(--pink)}
+.tab[data-c="proj"].on{background:var(--blue)}
+.tab[data-c="bagu"].on{background:var(--green)}
+.tab[data-c="algo"].on{background:var(--amber);color:#1E293B}
+.tab[data-c="ai"].on{background:var(--red)}
+.tab[data-c="sys"].on{background:var(--purple)}
+.tab[data-c="emer"].on{background:var(--gray)}
+.tab[data-c="comp"].on{background:var(--cyan)}
+.tab[data-c="soft"].on{background:var(--orange)}
+/* ===== CARDS ===== */
+.container{padding:6px 10px;max-width:860px;margin:0 auto}
+.card{background:var(--card);border-radius:var(--radius);margin-bottom:8px;border:1.5px solid var(--border);box-shadow:var(--shadow);overflow:hidden;transition:background .2s,border-color .2s}
+.card.hide{display:none}
+.card-head{padding:12px 14px 8px;display:flex;align-items:flex-start;gap:8px;cursor:pointer}
+.tag{display:inline-block;padding:2px 7px;border-radius:4px;font-size:11px;font-weight:700;color:#fff;letter-spacing:.3px;flex-shrink:0}
+.tag.proj{background:var(--blue)}.tag.bagu{background:var(--green)}.tag.algo{background:var(--amber);color:#1E293B}
+.tag.ai{background:var(--red)}.tag.sys{background:var(--purple)}.tag.emer{background:var(--gray)}
+.tag.comp{background:var(--cyan)}.tag.soft{background:var(--orange)}.tag.special{background:var(--pink)}
+.card-title{font-size:var(--fs);font-weight:700;flex:1}
+.core{margin:0 14px 8px;padding:8px 12px;border-radius:8px;font-weight:600;border-left:4px solid var(--blue);background:#EFF6FF;color:var(--blue)}
+.dark .core{background:#1E3A5F}
+.core.algo-c{border-left-color:var(--amber);background:#FFFBEB;color:#92400E}
+.dark .core.algo-c{background:#422006;color:#FDE68A}
+/* 念稿区域 */
+.script-btn{display:flex;align-items:center;gap:4px;margin:0 14px 6px;padding:6px 0;color:var(--red);font-size:14px;font-weight:700;background:none;border:none;cursor:pointer;font-family:inherit}
+.script-btn::before{content:"🎤";font-size:15px}
+.script-btn::after{content:"念稿 ▸";font-size:13px}
+.script-btn.open::after{content:"念稿 ▾"}
+.script-box{display:none;margin:0 14px 10px;padding:14px;border-radius:8px;background:linear-gradient(135deg,#FEF3C7,#FDE68A);color:#78350F;font-size:calc(var(--fs) - 1px);line-height:1.8;border:1px solid #F59E0B}
+.dark .script-box{background:linear-gradient(135deg,#422006,#78350F);color:#FDE68A;border-color:#92400E}
+.script-box.show{display:block}
+.script-box p{margin-bottom:6px}
+.script-box .hint{color:#92400E;font-size:12px;margin-top:6px;font-style:italic}
+.dark .script-box .hint{color:#FBBF24}
+/* 追问 */
+.follow-btn{display:flex;align-items:center;gap:4px;margin:0 14px 6px;padding:6px 0;color:var(--text2);font-size:13px;font-weight:600;background:none;border:none;cursor:pointer;font-family:inherit}
+.follow-btn::before{content:"▸";transition:transform .12s}
+.follow-btn.open::before{transform:rotate(90deg)}
+.follow-body{display:none;margin:0 14px 10px;padding:10px 12px;border-radius:8px;background:var(--bg);font-size:calc(var(--fs) - 2px);color:var(--text2)}
+.follow-body.show{display:block}
+.follow-body li{padding:2px 0}
+.follow-body .warn{color:var(--red);font-weight:600}
+/* 通用 */
+.points{margin:0 14px 8px;padding-left:20px}
+.points li{padding:2px 0;font-size:calc(var(--fs) - 1px)}
+.code-blk{background:#1E293B;color:#E2E8F0;padding:10px 12px;margin:0 14px 8px;border-radius:8px;font-family:"SF Mono",Menlo,monospace;font-size:12px;overflow-x:auto;white-space:pre;line-height:1.5}
+.dark .code-blk{background:#0F172A;border:1px solid #334155}
+table{width:calc(100% - 28px);margin:4px 14px 8px;border-collapse:collapse;font-size:calc(var(--fs) - 2px)}
+th,td{padding:5px 8px;text-align:left;border-bottom:1px solid var(--border)}
+th{font-weight:600;color:var(--text2);font-size:12px}
+.dark table{background:var(--card);border-radius:8px;overflow:hidden}
+.dark th{background:#1a2744}
+.no-result{text-align:center;padding:40px;color:var(--text3);display:none}
+.text-s{font-size:calc(var(--fs) - 2px)}.text-m{font-size:calc(var(--fs) - 1px)}.text-muted{color:var(--text2)}
+/* ===== BOTTOM BAR ===== */
+.bottombar{position:fixed;bottom:0;left:0;right:0;z-index:100;background:var(--card);border-top:1px solid var(--border);display:flex;padding:4px 4px;padding-bottom:max(4px,env(safe-area-inset-bottom));transition:background .2s}
+.bb{flex:1;padding:6px 0;border:none;background:none;font-size:11px;font-weight:600;color:var(--text2);cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:1px;border-radius:6px}
+.bb:active{background:var(--bg)}
+.bb .ic{font-size:18px}
+/* ===== INDEX PANEL ===== */
+.idx-overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:300;display:none}
+.idx-overlay.show{display:block}
+.idx-panel{position:fixed;top:0;right:0;bottom:0;width:320px;max-width:85vw;background:var(--card);z-index:301;overflow-y:auto;padding:16px;transform:translateX(100%);transition:transform .2s}
+.idx-panel.show{transform:translateX(0)}
+.idx-panel h3{font-size:16px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center}
+.idx-panel a{display:block;padding:6px 8px;color:var(--text);text-decoration:none;font-size:14px;border-radius:6px}
+.idx-panel a:hover,.idx-panel a:active{background:var(--bg)}
+.idx-cat{font-size:12px;font-weight:700;color:var(--text3);padding:12px 8px 4px;text-transform:uppercase;letter-spacing:.5px}
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="topbar-top">
+    <div class="search">
+      <input type="text" id="si" placeholder="搜索关键词…" autocomplete="off">
+      <button class="clear-x" id="cx" onclick="doClear()">✕</button>
+    </div>
+    <div class="font-ctrl">
+      <button onclick="fontS(-1)">A-</button>
+      <span id="fsLabel">17</span>
+      <button onclick="fontS(1)">A+</button>
+    </div>
+    <button class="ctrl-btn" id="darkBtn" onclick="toggleDark()">🌙</button>
+    <button class="ctrl-btn" onclick="toggleIdx()">☰</button>
+  </div>
+  <div class="tabs" id="tabs">
+    <button class="tab on" data-c="all" onclick="setCat('all')">全部</button>
+    <button class="tab" data-c="open" onclick="setCat('open')">🎤开场</button>
+    <button class="tab" data-c="proj" onclick="setCat('proj')">📦项目</button>
+    <button class="tab" data-c="bagu" onclick="setCat('bagu')">📗八股</button>
+    <button class="tab" data-c="algo" onclick="setCat('algo')">🧮算法</button>
+    <button class="tab" data-c="ai" onclick="setCat('ai')">🤖AI</button>
+    <button class="tab" data-c="sys" onclick="setCat('sys')">🏗️系统</button>
+    <button class="tab" data-c="soft" onclick="setCat('soft')">🧠软技能</button>
+    <button class="tab" data-c="emer" onclick="setCat('emer')">🆘应急</button>
+    <button class="tab" data-c="comp" onclick="setCat('comp')">🏢公司</button>
+  </div>
+</div>
+
+<!-- INDEX PANEL -->
+<div class="idx-overlay" id="idxOv" onclick="toggleIdx()"></div>
+<div class="idx-panel" id="idxPn"></div>
+
+<!-- CARDS -->
+<div class="container" id="cards">
+
+<!-- ==================== 开场白 ==================== -->
+<div class="card" data-c="open" data-kw="开场白 自我介绍 项目经历 Schema AI 介绍">
+  <div class="card-head" onclick="togCard(this)">
+    <span class="tag special">开场白</span>
+    <div class="card-title">30 秒项目开场白</div>
+  </div>
+  <div class="core">Schema 驱动架构 → BFF 生成 → 前端渲染 → AI 工程化</div>
+  <button class="script-btn" onclick="togScript(this)">🎤</button>
+  <div class="script-box">
+    <p>我在滴滴国际化做了四年营销中台前端，核心做的是一套 Schema 驱动的全栈架构。</p>
+    <p>简单说就是：BFF 层用模板引擎生成 Schema，前端通过渲染引擎动态消费。中间最核心的设计叫 injectDActions，是一次声明、双重求值——BFF 端先算一次保证初始状态正确，序列化给前端运行时再算一次做联动。联动分两种，需要后端数据的走 fetchApi 回调 BFF 重生成，纯前端的走本地 eval。这样新增活动类型，前端基本不用写新代码。</p>
+    <p>这套 Schema 架构后来也复用到了权益组件库 benefit SDK，支持 400 多种权益的组件化接入，内置 24 个组件加运行时注册扩展。</p>
+    <p>在这个基础上我又做了 prd-tools，用 AI 把 PRD 转成有证据、可执行、可回流的结构化开发计划。不是让 AI 写代码，而是工程化地管理从需求到代码的全链路。</p>
+    <p class="hint">语速 250 字/分钟，这段约 45 秒。面试官追问时顺势展开。</p>
+  </div>
+  <button class="follow-btn" onclick="togFollow(this)">追问方向</button>
+  <div class="follow-body">
+    <ul>
+      <li>偏传统前端 → 展开 Schema 渲染、组件库、Monorepo</li>
+      <li>偏 AI → 展开 prd-tools 证据链、质量门控、reference 知识库</li>
+      <li class="warn">不要一上来讲太多细节，先立住主线</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ==================== 项目 A 组 (10) ==================== -->
+<div class="card" data-c="proj" data-kw="Monorepo 管理 Lerna Nx Yarn workspace 模块 独立版本">
+  <div class="card-head" onclick="togCard(this)"><span class="tag proj">项目A1</span><div class="card-title">Monorepo 怎么管理 15+ 模块？</div></div>
+  <div class="core">Lerna 管版本 + Nx 管加速 + Yarn 管依赖</div>
+  <button class="script-btn" onclick="togScript(this)">🎤</button>
+  <div class="script-box">
+    <p>我们用 Lerna + Nx + Yarn workspace 来管理。app 目录放 15 个业务模块，每个独立版本、独立部署；packages 目录放共享组件和工具。Lerna 用 independent version 让各业务独立发版，Nx 做构建缓存只构建变更影响的部分。</p>
+    <p>踩过一个印象很深的坑：有个 yarn 解析器依赖从 rc.31 升到 rc.48，直接不兼容 node16，整个项目构建全挂。所以后来我们锁死了 yarn.lock，不允许随便删。</p>
+    <p class="hint">最后一句"踩过的坑"是加分项，体现真实工程经验。</p>
+  </div>
+  <button class="follow-btn" onclick="togFollow(this)">追问</button>
+  <div class="follow-body">
+    <ul>
+      <li>Lerna vs Turborepo：历史选型 + 独立版本 + Nx 缓存</li>
+      <li>共享组件放 packages，通过 workspace 协议引用</li>
+      <li class="warn">风险：依赖漂移、类型版本冲突、构建缓存失效</li>
+    </ul>
+  </div>
+</div>
+
+<div class="card" data-c="proj" data-kw="Schema 驱动 架构 BFF 生成 渲染 模板引擎 injectDActions 联动">
+  <div class="card-head" onclick="togCard(this)"><span class="tag proj">项目A2</span><div class="card-title">Schema 驱动架构怎么设计？</div></div>
+  <div class="core">BFF 生成 Schema，前端消费 Schema，新增活动类型前端零代码</div>
+  <button class="script-btn" onclick="togScript(this)">🎤</button>
+  <div class="script-box">
+    <p>这套架构分三层：后端 API 给原始数据，BFF 层负责生成 Schema，前端负责按 Schema 渲染。</p>
+    <p>BFF 不是手写 JSON，是用模板引擎驱动的。每个步骤有独立模板——basic、group、rules、message、preview——Builder 编译出 content_schema。最核心的设计是 injectDActions，一次声明、双重求值：BFF 端先 safeEval 算一次设初始状态，然后序列化 d_actions 给前端，前端运行时字段变化再算一次。联动分两种，fetchApi 型回调 BFF 重生成，state 型前端本地 eval。一共 16 个联动模板。</p>
+    <p>前端拿到 Schema 后通过 formatName 把嵌套路径拍平成 dot path，然后用 Listener 发布订阅执行联动。组件渲染是双轨制，基础走 switch-case，业务走 RegisteredComponents 注册表，35 个组件动态渲染。</p>
+    <p>最大的好处是新增活动类型，前端基本不用写新代码，主要改 BFF 模板和联动就行。</p>
+    <p class="hint">如果面试官追问性能：局部字段重渲染，按依赖触发，不全表单刷新。</p>
+  </div>
+  <button class="follow-btn" onclick="togFollow(this)">追问</button>
+  <div class="follow-body">
+    <ul>
+      <li>为什么不用传统表单：23 种活动类型、字段组合和联动变化太快</li>
+      <li>两种联动：fetchApi 型（需后端数据）+ state 型（纯前端条件）</li>
+      <li class="warn">风险：Schema 过度动态会牺牲类型安全和可调试性</li>
+    </ul>
+  </div>
+</div>
+
+<div class="card" data-c="proj" data-kw="组件库 benefit SDK 权益 Register Rollup Changesets">
+  <div class="card-head" onclick="togCard(this)"><span class="tag proj">项目A3</span><div class="card-title">400+ 权益组件库怎么设计？</div></div>
+  <div class="core">Register 扩展 + Schema 同构，两个消费者共享架构</div>
+  <button class="script-btn" onclick="togScript(this)">🎤</button>
+  <div class="script-box">
+    <p>benefit SDK 支撑 400 多种权益的创建、编辑、查看和复制。核心设计是 Register 模式——内置 24 个组件，同时允许业务运行时注册自己的权益组件。</p>
+    <p>它和活动表单共享同一套 Schema 渲染架构，后端返回 form_data 和 content_schema，前端按 d_component 映射组件。这点很关键，意味着两个消费者共享同一套架构，维护成本很低。</p>
+    <p>打包用 Rollup 输出 ESM、CJS 和类型声明。peerDependencies 避免重复打包 React 和设计系统。发版用 Changesets，alpha 环境联调，yalc 本地验证，正式 release 发布。</p>
+  </div>
+</div>
+
+<div class="card" data-c="proj" data-kw="AI 可靠性 证据链 质量门控 benchmark 锚定 质量保证">
+  <div class="card-head" onclick="togCard(this)"><span class="tag proj">项目A4</span><div class="card-title">AI 工程怎么保证可靠性？</div></div>
+  <div class="core">不押宝模型聪明不聪明，靠流程约束它</div>
+  <button class="script-btn" onclick="togScript(this)">🎤</button>
+  <div class="script-box">
+    <p>我没有把可靠性押在模型"聪不聪明"上，而是用流程来约束它。第一层是证据链——每个非显然事实都要能追到 PRD、源码、技术文档或人工确认，搜不到也可以作为负向证据，不确定的标 low。</p>
+    <p>第二层是代码锚定。build-index.py 做静态分析提取代码实体和调用边，context-pack.py 把每个需求匹配到具体的代码位置，按 must、should、optional 分层。</p>
+    <p>第三层是质量门控。quality-gate.py 有三个子命令，final 做五项加权评分——代码锚点覆盖率占 25%，计划可执行性占 25%。</p>
+    <p>第四层是反馈回流。蒸馏发现的新知识和矛盾会变成 reference 更新建议。还有 benchmark 系统做回归，用 oracle 用例评分防止质量退步。</p>
+  </div>
+  <button class="follow-btn" onclick="togFollow(this)">追问</button>
+  <div class="follow-body">
+    <ul>
+      <li>审计不是评分：重点是可追溯、可复查</li>
+      <li>图谱是发现层，reference 是精选知识库，两者互补</li>
+      <li class="warn">不要说已有明确量化提效数据，除非能拿出证据</li>
+    </ul>
+  </div>
+</div>
+
+<div class="card" data-c="proj" data-kw="挑战 最难 技术挑战 项目选择 prd-tools BFF">
+  <div class="card-head" onclick="togCard(this)"><span class="tag proj">项目A5</span><div class="card-title">最有技术挑战的项目？</div></div>
+  <div class="core">根据面试官兴趣选：AI 工程差异化 或 Schema 架构深度</div>
+  <button class="script-btn" onclick="togScript(this)">🎤</button>
+  <div class="script-box">
+    <p>方案 A——选 prd-tools，适合面试官对 AI 方向感兴趣的时候：</p>
+    <p>"最有挑战的是变更分类这一步。从 PRD 文本判断代码需要改哪里，核心难点是业务术语和代码字段不一致，比如 PRD 说'增加奖励配置'，可能是新增字段也可能是改选项。我的解法是 reference 路由匹配加代码锚定，每个需求都精准匹配到代码位置。"</p>
+    <p>方案 B——选 Schema 联动引擎，适合面试官偏传统前端的时候：</p>
+    <p>"联动引擎跨 BFF 和前端两层，既要保证 SSR 初始状态正确，又要前端运行时流畅。我的解法是 injectDActions 双重求值。"</p>
+    <p class="hint">优先选 A，AI 方向是你最大的差异化。</p>
+  </div>
+</div>
+
+<div class="card" data-c="proj" data-kw="依赖管理 yarn.lock workspace symlink resolutions 版本">
+  <div class="card-head" onclick="togCard(this)"><span class="tag proj">项目A6</span><div class="card-title">Monorepo 包依赖管理？</div></div>
+  <div class="core">Yarn workspace + yarn.lock 锁版本，踩过版本事故</div>
+  <button class="script-btn" onclick="togScript(this)">🎤</button>
+  <div class="script-box">
+    <p>Yarn workspace 做子包间 symlink 引用。yarn.lock 锁定第三方版本——这个必须锁死，因为我们踩过一次解析器升级直接崩掉 node16 的事故。resolutions 用来强制统一 @types/react 这种公共类型依赖。CI 环境加 --no-lockfile 避免锁文件冲突。</p>
+  </div>
+</div>
+
+<div class="card" data-c="proj" data-kw="联动引擎 injectDActions 双重求值 fetchApi state eval 联动">
+  <div class="card-head" onclick="togCard(this)"><span class="tag proj">项目A7</span><div class="card-title">联动引擎怎么设计？</div></div>
+  <div class="core">一次声明，两端求值</div>
+  <button class="script-btn" onclick="togScript(this)">🎤</button>
+  <div class="script-box">
+    <p>联动引擎是横跨 BFF 和前端两层的设计。BFF 端 injectDActions 声明式注入联动配置，然后双重求值：BFF 先 safeEval 算一次保证 SSR 初始状态正确，序列化 d_actions 给前端，前端运行时字段变化再算一次。</p>
+    <p>联动分两种类型。fetchApi 型——字段依赖后端数据，比如选项需要从服务端取，就走回调 BFF 重新生成。state 型——纯前端条件判断，比如根据某个字段值决定显隐禁用，就本地 eval。</p>
+    <p>一共 16 个联动模板，12 个重渲染型，4 个 Placeholder 重置型。联动模板从 render 模板提取 handler 复用，保证结构一致。前端 listener.on 支持链式联动，a 变了触发 b，b 变了触发 c。</p>
+  </div>
+</div>
+
+<div class="card" data-c="proj" data-kw="版本管理 Changesets 发版 alpha release yalc Rollup">
+  <div class="card-head" onclick="togCard(this)"><span class="tag proj">项目A8</span><div class="card-title">组件库版本管理和发布？</div></div>
+  <div class="core">Changesets 管理 + alpha/release 双环境</div>
+  <button class="script-btn" onclick="togScript(this)">🎤</button>
+  <div class="script-box">
+    <p>用 Changesets 管版本流程：先 changeset 记录变更，再 version 更新版本号，最后 publish 发布。双环境策略：alpha 给联调用，release 是正式版。本地联调不用 npm link——它有 symlink 问题——而是用 yalc push。打包用 Rollup 输出 ESM + CJS + 类型声明三份产物。</p>
+  </div>
+</div>
+
+<div class="card" data-c="proj" data-kw="AI 代码 质量 验证 审计 锚定 门控 回归">
+  <div class="card-head" onclick="togCard(this)"><span class="tag proj">项目A9</span><div class="card-title">AI 生成代码怎么验证质量？</div></div>
+  <div class="core">不是打分，是审计 + 锚定 + 门控 + 回归</div>
+  <button class="script-btn" onclick="togScript(this)">🎤</button>
+  <div class="script-box">
+    <p>这套体系不是给代码打分，而是做四件事。第一，证据链审计——每个需求有 PRD 证据，每个影响有源码证据。第二，代码锚定——build-index 做静态分析，context-pack 做分层锚定。第三，多层质量门控——quality-gate 三个子命令，变更分类必须锚定源码，11 步工作流里有 Report Review Gate 硬停止。第四，benchmark 回归——用 oracle 用例加 snapshot 评分，总分低了说明质量退步。</p>
+  </div>
+</div>
+
+<div class="card" data-c="proj" data-kw="PRD 上线 链路 蒸馏 distill 回流 完整流程">
+  <div class="card-head" onclick="togCard(this)"><span class="tag proj">项目A10</span><div class="card-title">从 PRD 到上线的完整链路？</div></div>
+  <div class="core">PRD → reference → 蒸馏 → 锚定 → 门控 → 实施 → 回流</div>
+  <button class="script-btn" onclick="togScript(this)">🎤</button>
+  <div class="script-box">
+    <p>完整链路是这样的：产品经理在飞书写 PRD，然后 reference 先构建知识库——六文件 SSOT 加 Evidence Index 静态分析。接着 prd-distill 做 11 步蒸馏，把 PRD 转成结构化报告。然后 context-pack 做精准锚定，每个需求匹配到具体代码位置。quality-gate 做五项评分，Review Gate 硬停止——人确认了才生成计划。</p>
+    <p>开发按 plan.md 实施，BFF 配模板和联动，前端渲染。做完之后回流建议更新 reference。核心是：prd-tools 把 PRD 从自然语言变成有证据的结构化开发计划，不是让 AI 直接写代码。</p>
+  </div>
+</div>
+
+<!-- ==================== 八股 C+F 组 ==================== -->
+<div class="card" data-c="bagu" data-kw="React 18 并发 Fiber Scheduler 中断 调度 优先级 链表">
+  <div class="card-head" onclick="togCard(this)"><span class="tag bagu">八股C16</span><div class="card-title">React 18 并发 + Fiber</div></div>
+  <div class="core">Fiber 把递归变成链表，Scheduler 按优先级调度</div>
+  <button class="script-btn" onclick="togScript(this)">🎤</button>
+  <div class="script-box">
+    <p>之前 React 的虚拟 DOM diff 是递归调用，一旦开始就停不下来。Fiber 把节点组织成 child、sibling、return 这种链表结构，每个 Fiber 节点就是一个可拆分的工作单元，React 可以处理一部分后把控制权交还给浏览器。</p>
+    <p>Scheduler 用 MessageChannel 做优先级调度——注意不是 setTimeout，因为 setTimeout 最少 4ms 延迟。高优先级任务比如用户输入，可以打断低优先级渲染。</p>
+    <p>React 18 在这基础上加了三个能力：useTransition 标记低优先级更新、useDeferredValue 延迟渲染、Automatic Batching 自动合并 setState，不管在什么上下文里都只触发一次渲染。</p>
+  </div>
+</div>
+
+<div class="card" data-c="bagu" data-kw="useEffect useLayoutEffect 同步 异步 渲染 绘制 阻塞">
+  <div class="card-head" onclick="togCard(this)"><span class="tag bagu">八股C17</span><div class="card-title">useEffect vs useLayoutEffect</div></div>
+  <div class="core">useLayoutEffect 绘制前同步阻塞，useEffect 绘制后异步</div>
+  <button class="script-btn" onclick="togScript(this)">🎤</button>
+  <div class="script-box">
+    <p>执行顺序是：DOM 更新完了，先执行 useLayoutEffect，然后浏览器绘制，最后执行 useEffect。所以 useLayoutEffect 会阻塞绘制，useEffect 不会。</p>
+    <p>实际使用就是：需要读 DOM 布局或者做同步修改防止闪烁的，用 useLayoutEffect。其他所有情况都用 useEffect。</p>
+  </div>
+</div>
+
+<div class="card" data-c="bagu" data-kw="浏览器 渲染 DOM CSSOM Layout Paint Composite Reflow Repaint 管线">
+  <div class="card-head" onclick="togCard(this)"><span class="tag bagu">八股C18</span><div class="card-title">浏览器渲染管线</div></div>
+  <div class="core">DOM+CSSOM → Render Tree → Layout → Paint → Composite</div>
+  <button class="script-btn" onclick="togScript(this)">🎤</button>
+  <div class="script-box">
+    <p>HTML 解析成 DOM，CSS 解析成 CSSOM，两棵树合并成 Render Tree。然后 Layout 算几何位置，Paint 画像素，Composite 合成图层。</p>
+    <p>性能影响最大的区分是：改 width、height 这种几何属性会触发 Reflow，最贵，整个 Layout 重新算。改 color 这种视觉属性只触发 Repaint。如果只改 transform 或 opacity，只触发 Composite，性能最好。</p>
+  </div>
+</div>
+
+<div class="card" data-c="bagu" data-kw="HTTP 缓存 强缓存 协商缓存 Cache-Control ETag max-age no-cache 304">
+  <div class="card-head" onclick="togCard(this)"><span class="tag bagu">八股C19</span><div class="card-title">HTTP 缓存</div></div>
+  <div class="core">强缓存不请求，协商缓存可能 304 不下载</div>
+  <button class="script-btn" onclick="togScript(this)">🎤</button>
+  <div class="script-box">
+    <p>强缓存通过 Cache-Control 的 max-age 直接用本地缓存，不发请求。协商缓存发请求但可能返回 304 不下载内容，用 ETag 加 If-None-Match 做精确比对。</p>
+    <p>实战配置口诀：HTML 用 no-cache 每次都协商，带 hash 的 JS/CSS 设 max-age 一年强缓存，API 用 no-store 不缓存。</p>
+  </div>
+</div>
+
+<div class="card" data-c="bagu" data-kw="TypeScript 高级类型 infer 条件类型 映射 Pick Omit Partial">
+  <div class="card-head" onclick="togCard(this)"><span class="tag bagu">八股C20</span><div class="card-title">TypeScript 高级类型</div></div>
+  <div class="core">infer 推断 + 条件三元 + 映射遍历</div>
+  <button class="script-btn" onclick="togScript(this)">🎤</button>
+  <div class="script-box">
+    <p>infer 是在条件类型里"推断"一个子类型，比如从函数类型里推断返回值类型。条件类型就是类型层面的三元表达式，T extends X ? A : B。映射类型可以遍历联合类型生成新类型——我们常用的 Pick、Omit、Partial 本质都是映射类型。</p>
+  </div>
+</div>
+
+<div class="card" data-c="bagu" data-kw="Hooks 条件调用 调用顺序 状态对齐 链表 memoizedState">
+  <div class="card-head" onclick="togCard(this)"><span class="tag bagu">八股</span><div class="card-title">Hooks 为什么不能条件调用？</div></div>
+  <div class="core">React 靠调用顺序匹配 state，顺序变了状态就错位</div>
+  <button class="script-btn" onclick="togScript(this)">🎤</button>
+  <div class="script-box">
+    <p>React 不是按变量名保存 Hook 状态的，而是按每次 render 的调用顺序。第一次 render 第一个 Hook 对应第一个状态，第二个对应第二个。你把 Hook 放在条件里，条件变了调用顺序就变了，状态全乱了。所以 Hook 必须在组件顶层调用，条件逻辑放到 Hook 内部。</p>
+  </div>
+</div>
+
+<div class="card" data-c="bagu" data-kw="eval 安全 隐患 newFunction DSL Zustand 历史债">
+  <div class="card-head" onclick="togCard(this)"><span class="tag bagu">八股</span><div class="card-title">eval 安全隐患怎么处理？</div></div>
+  <div class="core">承认历史债，收敛表达能力</div>
+  <button class="script-btn" onclick="togScript(this)">🎤</button>
+  <div class="script-box">
+    <p>eval 确实是历史技术债，我不会把它包装成最佳实践。当时它解决的是快速表达显隐和禁用条件的问题，但安全和可维护性都有边界。实际处理上要限制表达式来源、限制可访问变量。更理想的方向是用受限 DSL 或 JSON 规则描述联动，再由解释器执行。新版本已经用 Zustand 加 new Function 替代 Redux 加 eval。</p>
+  </div>
+</div>
+
+<div class="card" data-c="bagu" data-kw="事件循环 Event Loop 微任务 宏任务 Promise setTimeout async">
+  <div class="card-head" onclick="togCard(this)"><span class="tag bagu">八股F1</span><div class="card-title">事件循环代码输出分析</div></div>
+  <div class="core">微任务先于宏任务，同一轮微任务全清完才执行下一个宏任务</div>
+  <button class="script-btn" onclick="togScript(this)">🎤</button>
+  <div class="script-box">
+    <p>执行顺序：同步代码先跑完，然后清空所有微任务（Promise.then、MutationObserver），最后取一个宏任务执行（setTimeout、setInterval）。每轮循环都是先清微任务再取宏任务。async/await 本质是 Promise 语法糖，await 后面的相当于 .then。</p>
+    <p>常考陷阱：Promise 构造函数里的代码是同步执行的，.then 才是微任务。</p>
+  </div>
+  <div class="code-blk">console.log('1');
+setTimeout(() => console.log('2'), 0);
+Promise.resolve().then(() => {
+  console.log('3');
+  Promise.resolve().then(() => console.log('4'));
+});
+console.log('5');
+// 输出：1 5 3 4 2</div>
+</div>
+
+<div class="card" data-c="bagu" data-kw="Promise 并发 控制 调度器 手写 上传 批量">
+  <div class="card-head" onclick="togCard(this)"><span class="tag bagu">八股F2</span><div class="card-title">Promise 并发控制（手撕高频）</div></div>
+  <div class="core">计数器 + 等待队列，完成一个放一个</div>
+  <div class="code-blk">class Scheduler {
+  constructor(max) { this.max = max; this.count = 0; this.queue = []; }
+  add(fn) {
+    return new Promise(resolve => {
+      if (this.count < this.max) {
+        this.count++;
+        fn().then(() => { this.count--; resolve(); this.next(); });
+      } else { this.queue.push({ fn, resolve }); }
+    });
+  }
+  next() {
+    if (this.queue.length && this.count < this.max) {
+      const { fn, resolve } = this.queue.shift();
+      this.count++;
+      fn().then(() => { this.count--; resolve(); this.next(); });
+    }
+  }
+}</div>
+</div>
+
+<div class="card" data-c="bagu" data-kw="React 19 Server Components RSC Compiler Form Actions use">
+  <div class="card-head" onclick="togCard(this)"><span class="tag bagu">八股F3</span><div class="card-title">React 19 新特性</div></div>
+  <div class="core">Server Components + React Compiler + Form Actions</div>
+  <button class="script-btn" onclick="togScript(this)">🎤</button>
+  <div class="script-box">
+    <p>三个核心变化。一是 Server Components，组件可以在服务端渲染，减少客户端 JS 体积。它和 SSR 不同——RSC 只在服务端运行，不发 JS 到客户端。二是 React Compiler，自动优化重渲染，减少手动 useMemo、useCallback。三是 Form Actions，表单提交直接绑定 server action，简化数据变更。还有 use() Hook 支持 Promise 和 Context 的条件调用。</p>
+  </div>
+</div>
+
+<div class="card" data-c="bagu" data-kw="XSS CSRF CSP 安全 注入 脚本 Cookie HttpOnly SameSite">
+  <div class="card-head" onclick="togCard(this)"><span class="tag bagu">八股F4</span><div class="card-title">XSS / CSRF / CSP 安全</div></div>
+  <div class="core">XSS 注入脚本，CSRF 冒充请求，CSP 限制加载</div>
+  <button class="script-btn" onclick="togScript(this)">🎤</button>
+  <div class="script-box">
+    <p>XSS 是攻击者往页面注入恶意 JS，防护靠输出转义加 CSP 加 HttpOnly Cookie。CSRF 是利用用户已登录状态，诱导浏览器发请求，防护靠 CSRF Token 加 SameSite Cookie 加 Referer 检查。CSP 通过 HTTP 头限制页面能加载哪些资源，从根本上阻止 XSS。Token 放 Cookie 加 HttpOnly 比 LocalStorage 更安全。</p>
+  </div>
+</div>
+
+<div class="card" data-c="bagu" data-kw="Webpack Vite 构建 打包 ESM HMR Tree Shaking">
+  <div class="card-head" onclick="togCard(this)"><span class="tag bagu">八股F5</span><div class="card-title">Webpack vs Vite</div></div>
+  <div class="core">Webpack 打包构建，Vite 开发时原生 ESM 按需加载</div>
+  <button class="script-btn" onclick="togScript(this)">🎤</button>
+  <div class="script-box">
+    <p>Webpack 的核心是打包——从入口开始递归解析依赖，把所有模块打成一个或多个 bundle。Vite 开发模式下不做打包，利用浏览器原生 ESM，请求哪个模块才编译哪个，所以启动极快。生产构建 Vite 用 Rollup。HMR 机制也不同：Webpack 是模块级热替换，Vite 精确到修改的模块。Tree Shaking 都依赖 ESM 的静态分析。</p>
+  </div>
+</div>
+
+<div class="card" data-c="bagu" data-kw="性能优化 首屏 LCP FID CLS CDN 懒加载 虚拟列表 代码分割">
+  <div class="card-head" onclick="togCard(this)"><span class="tag bagu">八股F6</span><div class="card-title">前端性能优化全链路</div></div>
+  <div class="core">网络 → 渲染 → 资源 → 代码，四个维度</div>
+  <button class="script-btn" onclick="togScript(this)">🎤</button>
+  <div class="script-box">
+    <p>四个维度。网络层：CDN、DNS 预解析、HTTP/2 多路复用、Preload 关键资源。渲染层：SSR 或 SSG 首屏、骨架屏、图片懒加载、虚拟列表。资源层：代码分割 dynamic import、Tree Shaking、图片压缩用 WebP、字体子集化。代码层：React.memo、useMemo 防不必要重渲染、Web Worker 处理耗时计算。</p>
+    <p>核心指标：LCP 小于 2.5 秒、FID 小于 100 毫秒、CLS 小于 0.1。Preload 是当前页面必须的资源，Prefetch 是下个页面可能需要的。</p>
+  </div>
+</div>
+
+<div class="card" data-c="bagu" data-kw="手写 深拷贝 防抖 节流 instanceof EventEmitter">
+  <div class="card-head" onclick="togCard(this)"><span class="tag bagu">八股F7</span><div class="card-title">手写题四件套</div></div>
+  <div class="core">深拷贝（循环引用）+ 防抖 + instanceof + EventEmitter</div>
+  <div class="code-blk">// 深拷贝（处理循环引用）
+function deepClone(obj, map = new WeakMap()) {
+  if (obj === null || typeof obj !== 'object') return obj;
+  if (map.has(obj)) return map.get(obj);
+  const clone = Array.isArray(obj) ? [] : {};
+  map.set(obj, clone);
+  for (const key of Reflect.ownKeys(obj)) clone[key] = deepClone(obj[key], map);
+  return clone;
+}
+
+// 防抖
+function debounce(fn, delay) {
+  let timer;
+  return function(...args) { clearTimeout(timer); timer = setTimeout(() => fn.apply(this, args), delay); };
+}</div>
+</div>
+
+<div class="card" data-c="bagu" data-kw="HTTP/2 HTTP/3 QUIC 多路复用 队头阻塞">
+  <div class="card-head" onclick="togCard(this)"><span class="tag bagu">八股F8</span><div class="card-title">HTTP/2 和 HTTP/3</div></div>
+  <div class="core">HTTP/2 多路复用+头部压缩，HTTP/3 用 QUIC 解决队头阻塞</div>
+  <button class="script-btn" onclick="togScript(this)">🎤</button>
+  <div class="script-box">
+    <p>HTTP/2 核心改进：多路复用一个 TCP 连接并行多个请求、头部压缩用 HPACK、服务端推送、二进制分帧。但 HTTP/2 还有 TCP 层的队头阻塞——一个包丢了阻塞所有流。</p>
+    <p>HTTP/3 把 TCP 换成 QUIC 基于 UDP，每个流独立，一个流丢了不影响其他流。还支持连接迁移——网络切换不断连，和 0-RTT 建连。HTTP/2 下雪碧图反而有害，小文件分开更好。</p>
+  </div>
+</div>
+
+<!-- ==================== 算法 ==================== -->
+<div class="card" data-c="algo" data-kw="哈希 Map 两数之和 配对 重复 统计">
+  <div class="card-head" onclick="togCard(this)"><span class="tag algo">算法T1</span><div class="card-title">哈希表 — 找配对/重复/统计</div></div>
+  <div class="core algo-c">遇到"找配对/找重复/统计次数"→ 开 Map</div>
+  <div class="code-blk">function twoSum(nums, target) {
+  const map = new Map();
+  for (let i = 0; i < nums.length; i++) {
+    if (map.has(target - nums[i])) return [map.get(target - nums[i]), i];
+    map.set(nums[i], i);
+  }
+}</div>
+</div>
+
+<div class="card" data-c="algo" data-kw="双指针 对撞 快慢 三数之和 反转链表">
+  <div class="card-head" onclick="togCard(this)"><span class="tag algo">算法T2</span><div class="card-title">双指针 — 排序后两端夹</div></div>
+  <div class="core algo-c">排序后左右两端往中间夹（对撞）或快慢走（链表）</div>
+  <div class="code-blk">nums.sort((a, b) => a - b);
+for (let i = 0; i < nums.length - 2; i++) {
+  let l = i + 1, r = nums.length - 1;
+  while (l < r) {
+    const s = nums[i] + nums[l] + nums[r];
+    if (s === 0) { /* 收集 */ } else if (s < 0) l++; else r--;
+  }
+}</div>
+</div>
+
+<div class="card" data-c="algo" data-kw="BFS 队列 层序 岛屿 最短路径">
+  <div class="card-head" onclick="togCard(this)"><span class="tag algo">算法T3</span><div class="card-title">BFS 队列 — 层序/岛屿</div></div>
+  <div class="core algo-c">队列 + while 循环 + 逐层处理</div>
+  <div class="code-blk">function levelOrder(root) {
+  if (!root) return [];
+  const q = [root], res = [];
+  while (q.length) {
+    const lv = [], sz = q.length;
+    for (let i = 0; i < sz; i++) {
+      const n = q.shift(); lv.push(n.val);
+      if (n.left) q.push(n.left); if (n.right) q.push(n.right);
+    }
+    res.push(lv);
+  }
+  return res;
+}</div>
+</div>
+
+<div class="card" data-c="algo" data-kw="滑动窗口 子串 无重复 最长子串">
+  <div class="card-head" onclick="togCard(this)"><span class="tag algo">算法T4</span><div class="card-title">滑动窗口 — 子串/子数组</div></div>
+  <div class="core algo-c">右指针一直走，遇到重复就缩左</div>
+  <div class="code-blk">function lengthOfLongestSubstring(s) {
+  const set = new Set(); let l = 0, max = 0;
+  for (let r = 0; r < s.length; r++) {
+    while (set.has(s[r])) set.delete(s[l++]);
+    set.add(s[r]); max = Math.max(max, r - l + 1);
+  }
+  return max;
+}</div>
+</div>
+
+<div class="card" data-c="algo" data-kw="DFS 回溯 排列 组合 子集">
+  <div class="card-head" onclick="togCard(this)"><span class="tag algo">算法T5</span><div class="card-title">DFS 回溯 — 排列/组合</div></div>
+  <div class="core algo-c">选了标记 → 往下走 → 回来撤销</div>
+  <div class="code-blk">function permute(nums) {
+  const res = [], used = Array(nums.length).fill(false);
+  function bt(path) {
+    if (path.length === nums.length) { res.push([...path]); return; }
+    for (let i = 0; i < nums.length; i++) {
+      if (used[i]) continue;
+      used[i] = true; path.push(nums[i]);
+      bt(path); path.pop(); used[i] = false;
+    }
+  }
+  bt([]); return res;
+}</div>
+</div>
+
+<div class="card" data-c="algo" data-kw="快排 快速排序 分治 partition 原地">
+  <div class="card-head" onclick="togCard(this)"><span class="tag algo">算法T6</span><div class="card-title">快速排序（美团第 1 名）</div></div>
+  <div class="core algo-c">选基准，小的左大的右，递归</div>
+  <div class="code-blk">function qs(arr, lo = 0, hi = arr.length - 1) {
+  if (lo >= hi) return;
+  let i = lo, j = hi, p = arr[lo];
+  while (i < j) {
+    while (i < j && arr[j] >= p) j--; arr[i] = arr[j];
+    while (i < j && arr[i] <= p) i++; arr[j] = arr[i];
+  }
+  arr[i] = p; qs(arr, lo, i - 1); qs(arr, i + 1, hi);
+}</div>
+</div>
+
+<div class="card" data-c="algo" data-kw="算法 面试 口诀 速览 全部模板">
+  <div class="card-head" onclick="togCard(this)"><span class="tag algo">速览</span><div class="card-title">面试前 1 分钟算法速览</div></div>
+  <div class="core algo-c">10 个套路，每个一句话</div>
+  <ul class="points">
+    <li><strong>找配对</strong> → Map</li>
+    <li><strong>两端夹</strong> → 双指针（排序后）</li>
+    <li><strong>层次走</strong> → BFS 队列</li>
+    <li><strong>子串</strong> → 滑动窗口（右扩左缩）</li>
+    <li><strong>排列</strong> → 回溯 DFS（选→走→撤）</li>
+    <li><strong>树路径</strong> → DFS 带参数往下传</li>
+    <li><strong>合并有序</strong> → 从后往前填</li>
+    <li><strong>字符串</strong> → 按位处理，注意进位</li>
+    <li><strong>最大子序</strong> → 接前面或从自己开始</li>
+    <li><strong>快排</strong> → 分治原地</li>
+  </ul>
+</div>
+
+<!-- ==================== AI 工程 D+E 组 ==================== -->
+<div class="card" data-c="ai" data-kw="AI 理解项目 Reference SSOT Evidence Index 知识库 六文件">
+  <div class="card-head" onclick="togCard(this)"><span class="tag ai">AI D21</span><div class="card-title">AI 怎么理解陌生项目？</div></div>
+  <div class="core">Reference v4.0 六文件 SSOT + Evidence Index 静态分析</div>
+  <button class="script-btn" onclick="togScript(this)">🎤</button>
+  <div class="script-box">
+    <p>Reference v4.0 从多文件收敛成六个文件的 SSOT，目标是每个事实只存在一处。codebase 放静态清单，coding-rules 放编码规则，contracts 放跨层契约——字段级唯一定义，routing-playbooks 放 PRD 路由，domain 放业务领域知识，portal 放导航。</p>
+    <p>除了六个 YAML，还有 Evidence Index——build-index.py 对 TypeScript 和 JavaScript 做正则扫描，提取代码实体、构建调用边和 BM25 倒排索引，支持文件哈希增量构建。这样新项目只要跑一遍就有完整的代码知识图谱。</p>
+  </div>
+</div>
+
+<div class="card" data-c="ai" data-kw="PRD 代码 变更分类 蒸馏 最难一步">
+  <div class="card-head" onclick="togCard(this)"><span class="tag ai">AI D22</span><div class="card-title">PRD 到代码最难的一步？</div></div>
+  <div class="core">变更分类（ADD/MODIFY/DELETE/NO_CHANGE）</div>
+  <button class="script-btn" onclick="togScript(this)">🎤</button>
+  <div class="script-box">
+    <p>最难的其实是变更分类——判断 PRD 里每句话对应代码是新增、修改还是删除。为什么难？因为你不知道项目现状就无法判断，PRD 描述又经常模糊，比如"增加奖励配置"可能是加字段也可能是改选项，而且跨模块影响很难预估。</p>
+    <p>我的解法是 reference 路由匹配加 BM25 检索加 context-pack 精准锚定，最后代码锚定验证、置信度分级、Contract Delta，到 Review Gate 硬停止，人确认了才继续。</p>
+  </div>
+</div>
+
+<div class="card" data-c="ai" data-kw="能力面 适配器 目录 架构 映射 路径">
+  <div class="card-head" onclick="togCard(this)"><span class="tag ai">AI D23</span><div class="card-title">能力面适配器怎么设计？</div></div>
+  <div class="core">目录千差万别，能力面相对稳定</div>
+  <button class="script-btn" onclick="togScript(this)">🎤</button>
+  <div class="script-box">
+    <p>核心洞察是：不同项目的目录结构千差万别，但前端开发涉及的能力面是相对稳定的。所以我们不按目录路径去匹配，而是按能力面去适配。</p>
+    <p>前端定义了 9 个能力面：ui_route、view_component、form_or_schema、state_flow、client_contract 等等。BFF 有 10 个，后端有 10 个。路径只是搜索候选，最终结论必须读源码确认。这样新项目只要做一次能力面映射就能接入。</p>
+  </div>
+</div>
+
+<div class="card" data-c="ai" data-kw="知识过期 衰减 监控 健康检查 回流 更新">
+  <div class="card-head" onclick="togCard(this)"><span class="tag ai">AI D24</span><div class="card-title">知识过期怎么办？</div></div>
+  <div class="core">被动监控 + 主动回流 + 守门门控 + 回归测试</div>
+  <button class="script-btn" onclick="togScript(this)">🎤</button>
+  <div class="script-box">
+    <p>四层机制。被动：14 天衰减验证加健康检查对比源码。主动：蒸馏发现矛盾就回流建议，人工确认后更新 reference。守门：质量门控里 enum、field、contract 和源码冲突的直接标记 fatal 不通过。回归：benchmark 用 oracle 加 snapshot 评分，总分降了就说明质量退步。团队模式下 T 聚合成员仓库，T2 继承团队知识，跨仓库公共知识只维护一份。</p>
+  </div>
+</div>
+
+<div class="card" data-c="ai" data-kw="图谱 知识库 关系 Graph Reference 发现 精选">
+  <div class="card-head" onclick="togCard(this)"><span class="tag ai">AI D25</span><div class="card-title">图谱和知识库的关系？</div></div>
+  <div class="core">图谱 = 原始发现层，Reference = 精选企业知识库</div>
+  <button class="script-btn" onclick="togScript(this)">🎤</button>
+  <div class="script-box">
+    <p>图谱是原始发现层，用于快速发现知识。Reference 是精选后的权威知识库，经过人工审计。两者是互补关系不是替代关系。两套独立证据：EV 是可审计证据，关键条目必须有；GEV 是图谱溯源，不能替代 EV。Provider 可替换，不绑定 GitNexus 或 Graphify，图谱挂了可以完全回退到 rg、glob 源码扫描。</p>
+  </div>
+</div>
+
+<div class="card" data-c="ai" data-kw="SSE 流式 EventSource ReadableStream ChatGPT token 打字机">
+  <div class="card-head" onclick="togCard(this)"><span class="tag ai">2026E1</span><div class="card-title">SSE 流式输出前端架构</div></div>
+  <div class="core">连接 → 解析 → 渲染 → 可靠性，四层分离</div>
+  <button class="script-btn" onclick="togScript(this)">🎤</button>
+  <div class="script-box">
+    <p>分四层做。连接层用 fetch 加 ReadableStream 或者 EventSource，处理断线重连、超时和取消。解析层按 chunk 维护 buffer，处理 data 前缀、事件 id 和心跳。渲染层不能每个 token 都全量 re-render，要用 requestAnimationFrame 节流、增量 Markdown 解析，代码块没闭合的时候不能渲染 Markdown。可靠性上要处理 Last-Event-ID 消息去重、AbortController 取消、指数退避重试。</p>
+    <p>项目桥接："我的 Schema 联动也是事件流进前端的分层处理，核心思路一样：分层解耦、状态化管理。"</p>
+  </div>
+</div>
+
+<div class="card" data-c="ai" data-kw="Agent ReAct MCP XState 状态机 工具调用 可视化">
+  <div class="card-head" onclick="togCard(this)"><span class="tag ai">2026E2</span><div class="card-title">AI Agent 前端架构</div></div>
+  <div class="core">把 Agent 过程显式状态化，不能只展示最终答案</div>
+  <button class="script-btn" onclick="togScript(this)">🎤</button>
+  <div class="script-box">
+    <p>核心模型分五层：conversation、message、run、step、tool call。每步都有状态——streaming、waiting_tool、executing、done、failed。工具调用要展示输入输出、参数、耗时和错误，敏感操作需要用户二次确认。状态机推荐 XState，支持暂停恢复回滚。</p>
+    <p>项目桥接："prd-tools 双 Skill 本质就是 Agent 工作流——build-reference 是知识采集 Agent，prd-distill 是分析 Agent，通过 reference 共享上下文协作。"</p>
+  </div>
+</div>
+
+<div class="card" data-c="ai" data-kw="RAG 检索增强 向量 Embedding BM25 用户体验 反馈">
+  <div class="card-head" onclick="togCard(this)"><span class="tag ai">2026E3</span><div class="card-title">RAG 检索增强生成前端能做什么？</div></div>
+  <div class="core">前端负责向量检索的用户体验和反馈闭环</div>
+  <button class="script-btn" onclick="togScript(this)">🎤</button>
+  <div class="script-box">
+    <p>RAG 核心链路：用户提问 → 向量化 → 检索文档 → 拼 context → LLM 生成。前端能做三件事：一是本地向量化，用 TensorFlow.js 或 ONNX Runtime；二是交互层反馈收集，用户对回答的点赞踩、来源展示、纠正入口；三是检索结果可视化，展示命中文档片段和相似度分数。</p>
+    <p>项目桥接："prd-tools 的 evidence 机制就是 RAG 的工程化落地——不用向量检索，用 BM25 倒排索引做精确检索，每个结论锚定到源码位置。"</p>
+  </div>
+</div>
+
+<div class="card" data-c="ai" data-kw="MCP Function Calling 协议 工具 Skills A2A 区别">
+  <div class="card-head" onclick="togCard(this)"><span class="tag ai">2026E4</span><div class="card-title">MCP 协议 vs Function Calling</div></div>
+  <div class="core">MCP 是标准化工具协议，Function Calling 是模型能力，互补</div>
+  <button class="script-btn" onclick="togScript(this)">🎤</button>
+  <div class="script-box">
+    <p>MCP 是 Anthropic 提出的开放协议，目标是让 AI 应用标准化连接外部工具和数据源。Client-Server 架构，通过 JSON-RPC 通信。Function Calling 是 OpenAI 定义的一种模型能力，让模型输出结构化工具调用请求。区别：Function Calling 绑定模型厂商，MCP 不绑定；Function Calling 是单次调用，MCP 支持长连接和工具发现。还有 A2A 是 Google 提出的 Agent 间通信协议，和 MCP 互补。</p>
+  </div>
+</div>
+
+<div class="card" data-c="ai" data-kw="Prompt 注入 攻击 防御 输入清洗 输出审核 安全">
+  <div class="card-head" onclick="togCard(this)"><span class="tag ai">2026E5</span><div class="card-title">Prompt 注入攻击怎么防御？</div></div>
+  <div class="core">输入清洗 + 分层策略 + 输出审核，三层防御</div>
+  <button class="script-btn" onclick="togScript(this)">🎤</button>
+  <div class="script-box">
+    <p>分三层。第一层输入清洗，过滤特殊标记、限制输入长度和格式。第二层分层策略，把用户输入和系统指令隔离，用不同管道处理。第三层输出审核，检查回答有没有泄露敏感信息或偏离预期范围。不要说能完全防止——这是一场持续的攻防。和 XSS 的思路类似，都是注入攻击但目标不同。</p>
+  </div>
+</div>
+
+<div class="card" data-c="ai" data-kw="AI 辅助开发 工具 Cursor Copilot Claude Code 日常 效率">
+  <div class="card-head" onclick="togCard(this)"><span class="tag ai">2026E6</span><div class="card-title">平时怎么用 AI 辅助开发？</div></div>
+  <div class="core">AI 是工程工作流的一部分，不是替代品</div>
+  <button class="script-btn" onclick="togScript(this)">🎤</button>
+  <div class="script-box">
+    <p>三个核心用法。一是代码补全和重构建议，提高编码效率。二是 AI Code Review，让 AI 帮我检查边界条件和安全问题。三是 prd-tools 这种 AI 工程工具，把 AI 集成到工作流里做需求分析和知识管理。但我不会直接复制粘贴 AI 生成的代码——我会审查、测试、理解每一段，确保我知道它在做什么。</p>
+    <p>项目桥接："prd-tools 就是我用 AI 最深的实践——不是用 AI 写代码，而是设计了一套 AI 工程工作流。"</p>
+  </div>
+</div>
+
+<div class="card" data-c="ai" data-kw="AI 代码 审查 幻觉 安全 泄露 逻辑 权限 审查方法">
+  <div class="card-head" onclick="togCard(this)"><span class="tag ai">2026E7</span><div class="card-title">AI 代码怎么审查？（5 类问题）</div></div>
+  <div class="core">不信任，要验证——幻觉/注入/泄露/逻辑/权限</div>
+  <button class="script-btn" onclick="togScript(this)">🎤</button>
+  <div class="script-box">
+    <p>审 AI 代码看五点。一是幻觉库或幻觉 API——AI 编造不存在的库或方法，查 npm 看包名存不存在。二是安全漏洞——eval、new Function 用了未过滤输入。三是敏感信息泄露——API Key 硬编码在代码里。四是逻辑漏洞——边界条件、竞态条件、内存泄漏。五是权限绕过——前端做了鉴权但后端没做。</p>
+    <p>我会搜关键词 eval、Function、exec、key、token、secret，跑测试用例，验证边界条件。</p>
+  </div>
+</div>
+
+<div class="card" data-c="ai" data-kw="前端 本地 AI 模型 WebAssembly ONNX WebGPU 推理 浏览器">
+  <div class="card-head" onclick="togCard(this)"><span class="tag ai">2026E8</span><div class="card-title">前端本地能跑 AI 模型吗？</div></div>
+  <div class="core">能，WebAssembly + ONNX Runtime 跑小型模型</div>
+  <button class="script-btn" onclick="togScript(this)">🎤</button>
+  <div class="script-box">
+    <p>可以用 WebAssembly 在浏览器里跑 ONNX Runtime，加载量化后的小型模型做离线推理，比如本地文本分类、情感分析。也可以用 TensorFlow.js。但限制很明显：模型大小受限于网络和内存，推理速度比 GPU 慢，复杂任务还得后端。前端更适合做特征提取、向量化预处理这类轻量计算。下一代的方案是 WebGPU 直接访问 GPU。</p>
+  </div>
+</div>
+
+<div class="card" data-c="ai" data-kw="多轮对话 上下文 窗口 滑动 摘要 Token 管理">
+  <div class="card-head" onclick="togCard(this)"><span class="tag ai">2026E9</span><div class="card-title">多轮对话上下文怎么管理？</div></div>
+  <div class="core">滑动窗口 + 关键信息提取 + 自动摘要</div>
+  <button class="script-btn" onclick="togScript(this)">🎤</button>
+  <div class="script-box">
+    <p>三种策略。滑动窗口保留最近 N 轮；关键信息提取把重要实体、决策、约束持久化；自动摘要压缩历史对话。实际落地时摘要和关键信息放系统消息，当前对话放用户消息。前端需要管消息状态——发送中、已发送、失败，展示 token 消耗，支持编辑历史消息重新提交。对比项目：prd-tools 的 reference 就是"关键信息提取"的工程化版本。</p>
+  </div>
+</div>
+
+<div class="card" data-c="ai" data-kw="AI 聊天 应用 设计 系统 消息 流式">
+  <div class="card-head" onclick="togCard(this)"><span class="tag ai">2026E10</span><div class="card-title">设计一个 AI 聊天前端</div></div>
+  <div class="core">消息模型 + 流式渲染 + 工具调用 + 状态管理</div>
+  <button class="script-btn" onclick="togScript(this)">🎤</button>
+  <div class="script-box">
+    <p>四层。消息模型：每条消息有 role、content、status（loading/streaming/done/error）、tool_calls。流式渲染：SSE 逐 token 输出，增量 Markdown 解析，代码块高亮。工具调用展示：哪个工具在执行、参数、结果、耗时。状态管理：对话列表、当前对话、消息列表、streaming 状态、错误重试。还要考虑消息编辑重发、对话分支、token 统计、虚拟列表加 Web Worker 解析。</p>
+  </div>
+</div>
+
+<!-- ==================== 系统设计 B 组 ==================== -->
+<div class="card" data-c="sys" data-kw="组件库 设计 Register Schema Rollup Changesets 从零">
+  <div class="card-head" onclick="togCard(this)"><span class="tag sys">系统B11</span><div class="card-title">设计前端组件库</div></div>
+  <div class="core">Register 注册 + Schema 同构 + Rollup 双模</div>
+  <button class="script-btn" onclick="togScript(this)">🎤</button>
+  <div class="script-box">
+    <p>五个维度。架构：Register 注册加 Schema 同构渲染，组件库也是 Schema 消费者。打包：Rollup 出 ESM 加 CJS 加 d.ts，peerDependencies 避免重复打包 React。样式：PostCSS 加设计系统集成。版本：Changesets 管理，alpha 和 release 双环境。类型：rollup-plugin-dts 加 strict 模式。差异化在于：两个消费者共享 Schema 架构，维护成本很低。</p>
+  </div>
+</div>
+
+<div class="card" data-c="sys" data-kw="BFF Schema 驱动 模板 引擎 设计 三层">
+  <div class="card-head" onclick="togCard(this)"><span class="tag sys">系统B12</span><div class="card-title">设计 Schema 驱动 BFF</div></div>
+  <div class="core">生成层 → 联动层 → 适配层</div>
+  <button class="script-btn" onclick="togScript(this)">🎤</button>
+  <div class="script-box">
+    <p>三层设计。生成层：模板引擎加步骤分发加分布式字段管理。联动层：injectDActions 双重求值加 16 个 linkageSchema。适配层：多场景数据适配。扩展性保障：新活动类型只要加枚举、模板和联动，前端零改动。BFF 管结构、联动和初始状态，不管 options 内容和校验逻辑。</p>
+  </div>
+</div>
+
+<div class="card" data-c="sys" data-kw="Monorepo 架构 设计 目录 版本 缓存">
+  <div class="card-head" onclick="togCard(this)"><span class="tag sys">系统B13</span><div class="card-title">设计 Monorepo 架构</div></div>
+  <div class="core">app/(业务) + packages/(共享)，独立版本 + 缓存加速</div>
+  <button class="script-btn" onclick="togScript(this)">🎤</button>
+  <div class="script-box">
+    <p>app 目录放业务模块，packages 放共享组件和工具。版本管理用 independent 支持各模块独立发版，Nx 做构建缓存只构建变更影响部分。依赖管理用 workspace 协议引用、yarn.lock 锁版本、resolutions 强制统一公共类型。质量保障：根目录统一 ESLint、Prettier、Husky、commitlint。</p>
+  </div>
+</div>
+
+<div class="card" data-c="sys" data-kw="微前端 iframe qiankun Module Federation 隔离 通信">
+  <div class="card-head" onclick="togCard(this)"><span class="tag sys">系统B14</span><div class="card-title">微前端方案对比</div></div>
+  <div class="core">iframe（隔离）/ qiankun（拆分）/ MF（共享），看场景选</div>
+  <table><tr><th>维度</th><th>iframe</th><th>qiankun</th><th>MF</th></tr>
+  <tr><td>隔离</td><td>完美</td><td>JS 沙箱</td><td>无</td></tr>
+  <tr><td>性能</td><td>差</td><td>中等</td><td>好</td></tr>
+  <tr><td>通信</td><td>postMsg</td><td>props</td><td>共享模块</td></tr>
+  <tr><td>场景</td><td>第三方</td><td>大应用拆分</td><td>模块共享</td></tr></table>
+</div>
+
+<div class="card" data-c="sys" data-kw="监控 错误 告警 看板 onerror Performance">
+  <div class="card-head" onclick="togCard(this)"><span class="tag sys">系统B15</span><div class="card-title">前端监控体系</div></div>
+  <div class="core">采集 → 处理 → 告警 → 看板</div>
+  <button class="script-btn" onclick="togScript(this)">🎤</button>
+  <div class="script-box">
+    <p>四步。采集：window.onerror 加 unhandledrejection 加 axios 拦截器加 Performance API。处理：错误栈聚合、降采样、附加环境信息。告警：错误率阈值加新错误检测加降噪合并同类。看板：趋势图加 Top N 加 P50、P90、P99。</p>
+  </div>
+</div>
+
+<!-- ==================== 软技能 G 组 ==================== -->
+<div class="card" data-c="soft" data-kw="AI 取代 前端 未来 转型 Vibe Coding 观点">
+  <div class="card-head" onclick="togCard(this)"><span class="tag soft">软技能G1</span><div class="card-title">前端会被 AI 取代吗？</div></div>
+  <div class="core">会取代重复性编码，不会取代系统设计能力</div>
+  <button class="script-btn" onclick="togScript(this)">🎤</button>
+  <div class="script-box">
+    <p>会取代的部分：重复性 DOM 操作、基础组件开发、简单 CRUD 页面、模板代码，这些其实已经在被取代了。</p>
+    <p>不会被取代的：Schema 架构设计需要理解业务本质做抽象，联动引擎设计需要理解前后端协同的约束，AI 工程工作流需要设计证据链和质量门控。这些需要系统级架构思维的，AI 做不了。</p>
+    <p>前端工程师的转型方向：从写代码到设计 AI 工作流，从 DOM 工程师到 AI 产品架构师。核心竞争力从"会写代码"变成"能设计 AI 解决不了的问题"。</p>
+  </div>
+</div>
+
+<div class="card" data-c="soft" data-kw="团队 协作 合作 沟通 评审 后端">
+  <div class="card-head" onclick="togCard(this)"><span class="tag soft">软技能G3</span><div class="card-title">你和团队怎么协作的？</div></div>
+  <div class="core">我主导架构决策，团队参与评审和落地</div>
+  <button class="script-btn" onclick="togScript(this)">🎤</button>
+  <div class="script-box">
+    <p>Schema 架构和 benefit SDK 上我负责从零到一的架构设计，包括模板引擎、联动引擎和注册表模式。设计完拉评审，收集前端和后端的反馈。prd-tools 是我独立完成的，但团队模式 team-reference 是为支持多仓库协作设计的。协作中最大的挑战是让后端理解 BFF 层的职责边界——不是简单的数据透传，而是有 Schema 编排和联动计算的。</p>
+  </div>
+</div>
+
+<div class="card" data-c="soft" data-kw="学习 持续 新技术 方法 项目驱动">
+  <div class="card-head" onclick="togCard(this)"><span class="tag soft">软技能G4</span><div class="card-title">怎么持续学习新技术？</div></div>
+  <div class="core">带着项目问题学，不是泛泛看文章</div>
+  <button class="script-btn" onclick="togScript(this)">🎤</button>
+  <div class="script-box">
+    <p>我的学习方式是项目驱动——遇到问题先深入，再横向扩展。比如 prd-tools 不是先学 AI 再做的，而是在做需求分析时发现业务词和代码字段不一致这个问题，然后研究知识库、RAG、Agent 工作流来解。学完后写复盘文档沉淀，比如我有个 journal 仓库就是持续学习的过程记录。</p>
+  </div>
+</div>
+
+<div class="card" data-c="soft" data-kw="职业规划 发展 方向 目标">
+  <div class="card-head" onclick="togCard(this)"><span class="tag soft">软技能G5</span><div class="card-title">职业规划是什么？</div></div>
+  <div class="core">前端架构 + AI 工程双线发展</div>
+  <button class="script-btn" onclick="togScript(this)">🎤</button>
+  <div class="script-box">
+    <p>短期一两年：深入 AI 工程工作流，把 prd-tools 的方法论在更大团队验证。中期三到五年：成为前端和 AI 交叉领域的架构师，不只写代码，更设计 AI 和工程的融合方案。长期：推动前端工程师从"实现者"变成"AI 工作流设计者"——这个转型已经在发生了。</p>
+  </div>
+</div>
+
+<!-- ==================== 应急话术 ==================== -->
+<div class="card" data-c="emer" data-kw="不会 说不出 印象 话术 救命 应急">
+  <div class="card-head" onclick="togCard(this)"><span class="tag emer">应急L1</span><div class="card-title">有点印象但说不准确</div></div>
+  <div class="core">说确定部分 → 给合理推测 → 展示验证方向</div>
+  <button class="script-btn" onclick="togScript(this)">🎤</button>
+  <div class="script-box">
+    <p>"这个知识点我之前在项目中遇到过，我理解的核心思路是——[说你能想起来的]，但具体到实现细节我可能说得不够精确。不过从使用场景来看，我觉得它主要解决的是——[合理推测]的问题。"</p>
+  </div>
+</div>
+
+<div class="card" data-c="emer" data-kw="不会 完全没概念 算法 做不出 暴力">
+  <div class="card-head" onclick="togCard(this)"><span class="tag emer">应急L2</span><div class="card-title">完全没概念（算法不会）</div></div>
+  <div class="core">先说暴力思路，再问优化方向</div>
+  <button class="script-btn" onclick="togScript(this)">🎤</button>
+  <div class="script-box">
+    <p>"这道题我一时想不出最优解，但我先说一下我的初步思路——[说暴力解法或部分想法]。如果时间允许，我想请问一下这道题期望的时间复杂度是多少？这样我可以往那个方向优化。"</p>
+  </div>
+</div>
+
+<div class="card" data-c="emer" data-kw="追问 死角 盲区 卡住">
+  <div class="card-head" onclick="togCard(this)"><span class="tag emer">应急L3</span><div class="card-title">被追问到死角</div></div>
+  <div class="core">承认盲区 + 合理推测 + 学习方向</div>
+  <button class="script-btn" onclick="togScript(this)">🎤</button>
+  <div class="script-box">
+    <p>"这个问题确实触及了我的知识盲区，我之前的理解可能不够深入。我回去会重点补一下这块。不过基于我目前的项目经验，我的理解是——[合理推测]，不知道这个方向对不对？"</p>
+  </div>
+</div>
+
+<div class="card" data-c="emer" data-kw="系统设计 没思路 类比 决策点">
+  <div class="card-head" onclick="togCard(this)"><span class="tag emer">应急L4</span><div class="card-title">系统设计没思路</div></div>
+  <div class="core">类比已知架构 + 列关键决策点</div>
+  <button class="script-btn" onclick="togScript(this)">🎤</button>
+  <div class="script-box">
+    <p>"这个场景我确实没有直接设计过，但我可以从 Schema 驱动架构类比一下——核心都是分层解耦加可扩展。如果让我来设计，我会先确定这几个关键问题：[列 2-3 个关键设计决策点]。"</p>
+  </div>
+</div>
+
+<div class="card" data-c="emer" data-kw="万能 兜底 任何 引导 经验">
+  <div class="card-head" onclick="togCard(this)"><span class="tag emer">万能</span><div class="card-title">万能兜底句式</div></div>
+  <button class="script-btn" onclick="togScript(this)">🎤</button>
+  <div class="script-box">
+    <p><strong>"这个问题我实际遇到过…"</strong> → 锚定你的项目经验，把话题往你熟悉的领域引导。</p>
+    <p><strong>"如果让我重新设计…"</strong> → 展现反思能力，即使答得不好也能加分。</p>
+    <p class="hint">铁律：永远不要说"我不会"就停了，永远要给出下一步动作。</p>
+  </div>
+</div>
+
+<!-- ==================== 公司专项 ==================== -->
+<div class="card" data-c="comp" data-kw="字节跳动 字节 bytedance 追问 算法 豆包 AI">
+  <div class="card-head" onclick="togCard(this)"><span class="tag comp">字节</span><div class="card-title">字节跳动 — 连环追问 + 算法必考</div></div>
+  <div class="core">3-4 轮技术，算法中等偏难，AI 几乎必问</div>
+  <ul class="points">
+    <li>prd-tools 每个设计决策的 WHY</li>
+    <li>Schema 架构 trade-off（eval vs AST？性能瓶颈？）</li>
+    <li>算法至少 5 道 Medium</li>
+    <li>2026 必考：SSE 流式 + AI Agent + "你怎么用 AI？"</li>
+  </ul>
+  <button class="follow-btn" onclick="togFollow(this)">经典追问链</button>
+  <div class="follow-body">
+    <ul>
+      <li>"injectDActions 双重求值"</li>
+      <li>→ "为什么不在前端单独做？" → SSR 初始状态会闪</li>
+      <li>→ "state 型为什么不用服务端？" → 纯判断不需要网络</li>
+      <li>→ "eval 安全？" → 新版 Zustand + new Function</li>
+    </ul>
+  </div>
+</div>
+
+<div class="card" data-c="comp" data-kw="快手 kuaishou 工程 稳定性 微前端 性能">
+  <div class="card-head" onclick="togCard(this)"><span class="tag comp">快手</span><div class="card-title">快手 — 重工程化 + 稳定性</div></div>
+  <div class="core">3 轮技术 + HR，算法中等，重工程落地</div>
+  <ul class="points">
+    <li>Monorepo 治理（Lerna vs Turborepo vs Nx）</li>
+    <li>微前端实战（iframe + workspace 选型理由）</li>
+    <li>工程化：CI/CD、构建优化、代码质量</li>
+    <li>性能优化：SPA 白屏、bundle size</li>
+  </ul>
+</div>
+
+<div class="card" data-c="comp" data-kw="百度 baidu 基础 原理 白板 系统设计 源码">
+  <div class="card-head" onclick="togCard(this)"><span class="tag comp">百度</span><div class="card-title">百度 — 重基础原理 + 系统设计</div></div>
+  <div class="core">4-5 轮（含交叉面），原理深挖到源码级</div>
+  <ul class="points">
+    <li>React 源码级：Fiber 调度、Hooks 实现、Concurrent</li>
+    <li>浏览器原理：渲染管线、V8、内存管理</li>
+    <li>BFF 架构：能白板画完整架构图</li>
+    <li>组件库：从 0 到 1 讲清楚每个决策</li>
+  </ul>
+</div>
+
+<div class="card" data-c="comp" data-kw="刁钻 不足 重新设计 对比 Formily 追问">
+  <div class="card-head" onclick="togCard(this)"><span class="tag comp">追问</span><div class="card-title">高频刁钻问题速查</div></div>
+  <table>
+    <tr><th style="width:28%">刁难问题</th><th>一句话防御</th></tr>
+    <tr><td>项目有什么不足？</td><td>eval 已用 Zustand+newFunction 替代；reference 构建依赖人工确认</td></tr>
+    <tr><td>重新设计改什么？</td><td>1.联动用 JSON Schema 替代 eval 2.Reference 加自动化 3.BFF 加 Schema diff 可视化</td></tr>
+    <tr><td>和 XX 开源比？</td><td>23 种活动类型高频配置，不是通用表单，双重求值是 BFF-前端协同特化</td></tr>
+    <tr><td>为什么不用 Formily？</td><td>有 BFF 层联动需求，纯前端解决不了 SSR 初始状态</td></tr>
+    <tr><td>AI 代码敢上线吗？</td><td>prd-tools 不生成代码，产出结构化开发计划</td></tr>
+  </table>
+</div>
+
+<div class="no-result" id="noRes">没找到匹配卡片，换个关键词</div>
+</div>
+
+<!-- BOTTOM BAR -->
+<div class="bottombar">
+  <button class="bb" onclick="setCat('open')"><span class="ic">🎤</span>开场</button>
+  <button class="bb" onclick="setCat('emer')"><span class="ic">🆘</span>应急</button>
+  <button class="bb" onclick="setCat('proj')"><span class="ic">📦</span>项目</button>
+  <button class="bb" onclick="setCat('ai')"><span class="ic">🤖</span>AI</button>
+  <button class="bb" onclick="setCat('algo')"><span class="ic">🧮</span>算法</button>
+  <button class="bb" onclick="setCat('soft')"><span class="ic">🧠</span>软技能</button>
+</div>
+
+<script>
+let curCat='all',fs=17;
+// FILTER
+function setCat(c){curCat=c;document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('on',t.dataset.c===c));apply();window.scrollTo({top:0,behavior:'smooth'})}
+function apply(){
+  const s=document.getElementById('si').value.trim().toLowerCase(),cards=document.querySelectorAll('.card');
+  let n=0;
+  cards.forEach(c=>{const mc=curCat==='all'||c.dataset.c===curCat,ms=!s||c.dataset.kw.toLowerCase().includes(s)||c.textContent.toLowerCase().includes(s);const v=mc&&ms;c.classList.toggle('hide',!v);if(v)n++});
+  document.getElementById('noRes').style.display=n===0?'block':'none';
+}
+// SEARCH
+const si=document.getElementById('si'),cx=document.getElementById('cx');
+si.addEventListener('input',function(){const v=this.value.trim();cx.style.display=v?'block':'none';apply()});
+function doClear(){si.value='';cx.style.display='none';apply();si.focus()}
+// TOGGLE
+function togScript(b){b.classList.toggle('open');b.nextElementSibling.classList.toggle('show')}
+function togFollow(b){b.classList.toggle('open');b.nextElementSibling.classList.toggle('show')}
+function togCard(h){/* no-op, keep for potential future use */}
+// FONT SIZE
+function fontS(d){fs=Math.max(13,Math.min(24,fs+d));document.documentElement.style.setProperty('--fs',fs+'px');document.getElementById('fsLabel').textContent=fs}
+// DARK MODE
+function toggleDark(){document.body.classList.toggle('dark');document.getElementById('darkBtn').textContent=document.body.classList.contains('dark')?'☀️':'🌙'}
+// INDEX PANEL
+function toggleIdx(){const o=document.getElementById('idxOv'),p=document.getElementById('idxPn');const show=!p.classList.contains('show');o.classList.toggle('show',show);p.classList.toggle('show',show)}
+function buildIdx(){
+  const cats={open:'🎤 开场白',proj:'📦 项目深挖',bagu:'📗 前端八股',algo:'🧮 算法模板',ai:'🤖 AI 工程',sys:'🏗️ 系统设计',soft:'🧠 软技能',emer:'🆘 应急话术',comp:'🏢 公司专项'};
+  const pn=document.getElementById('idxPn');let html='<h3>快速索引 <button onclick="toggleIdx()" style="border:none;background:none;font-size:18px;cursor:pointer">✕</button></h3>';
+  let lastCat='';
+  document.querySelectorAll('.card').forEach((c,i)=>{
+    const cat=c.dataset.c;if(cat!==lastCat){html+=`<div class="idx-cat">${cats[cat]||cat}</div>`;lastCat=cat}
+    const title=c.querySelector('.card-title')?.textContent||'';
+    html+=`<a href="javascript:void(0)" onclick="jumpTo(${i})">${title}</a>`;
+  });
+  pn.innerHTML=html;
+}
+function jumpTo(i){const cards=document.querySelectorAll('.card');let vis=0;cards.forEach((c,idx)=>{if(!c.classList.contains('hide')){if(vis===i){c.scrollIntoView({behavior:'smooth',block:'center'});toggleIdx()}vis++}})}
+// INIT
+buildIdx();
+// Show all script boxes in "open" card by default
+document.querySelector('.card[data-c="open"] .script-btn')?.classList.add('open');
+document.querySelector('.card[data-c="open"] .script-box')?.classList.add('show');
+</script>
+</body>
+</html>

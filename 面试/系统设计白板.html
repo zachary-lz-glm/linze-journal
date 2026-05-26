@@ -1,0 +1,1019 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>系统设计白板</title>
+<style>
+/* ========== CSS Variables ========== */
+:root {
+  --bg: #f8fafc;
+  --card-bg: #ffffff;
+  --primary: #3b82f6;
+  --primary-light: rgba(59,130,246,0.15);
+  --text: #1e293b;
+  --text-secondary: #64748b;
+  --border: #e2e8f0;
+  --border-strong: #cbd5e1;
+  --highlight-bg: #eff6ff;
+  --highlight-border: #bfdbfe;
+  --shadow: 0 1px 3px rgba(0,0,0,0.08);
+  --shadow-lg: 0 4px 12px rgba(0,0,0,0.1);
+  --tree-line: #94a3b8;
+  --node-main-bg: #3b82f6;
+  --node-main-color: #fff;
+  --node-branch-bg: #f1f5f9;
+  --node-branch-border: #cbd5e1;
+  --node-branch-color: #334155;
+  --check-done: #22c55e;
+  --search-match: #fbbf24;
+}
+[data-theme="dark"] {
+  --bg: #0f172a;
+  --card-bg: #1e293b;
+  --primary: #60a5fa;
+  --primary-light: rgba(96,165,250,0.15);
+  --text: #e2e8f0;
+  --text-secondary: #94a3b8;
+  --border: #334155;
+  --border-strong: #475569;
+  --highlight-bg: #1e3a5f;
+  --highlight-border: #2563eb;
+  --shadow: 0 1px 3px rgba(0,0,0,0.3);
+  --shadow-lg: 0 4px 12px rgba(0,0,0,0.4);
+  --tree-line: #475569;
+  --node-main-bg: #3b82f6;
+  --node-main-color: #fff;
+  --node-branch-bg: #1e293b;
+  --node-branch-border: #475569;
+  --node-branch-color: #e2e8f0;
+  --check-done: #4ade80;
+  --search-match: #f59e0b;
+}
+
+/* ========== Reset & Base ========== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  transition: background 0.3s, color 0.3s;
+  min-height: 100vh;
+}
+
+/* ========== Header ========== */
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: var(--card-bg);
+  border-bottom: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  padding: 12px 20px;
+}
+.header-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+.header h1 {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text);
+}
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.search-box {
+  position: relative;
+}
+.search-box input {
+  padding: 8px 12px 8px 34px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 14px;
+  width: 200px;
+  transition: border-color 0.2s, width 0.2s;
+  -webkit-appearance: none;
+}
+.search-box input:focus {
+  outline: none;
+  border-color: var(--primary);
+  width: 260px;
+}
+.search-icon {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 16px;
+  height: 16px;
+  color: var(--text-secondary);
+}
+.search-results {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  margin-top: 4px;
+  box-shadow: var(--shadow-lg);
+  display: none;
+  z-index: 200;
+  max-height: 240px;
+  overflow-y: auto;
+}
+.search-results.visible { display: block; }
+.search-result-item {
+  padding: 8px 12px;
+  cursor: pointer;
+  font-size: 14px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text);
+}
+.search-result-item:last-child { border-bottom: none; }
+.search-result-item:hover { background: var(--primary-light); }
+.search-result-item mark {
+  background: var(--search-match);
+  color: var(--text);
+  border-radius: 2px;
+  padding: 0 2px;
+}
+.theme-btn {
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+}
+.theme-btn:hover { background: var(--primary-light); }
+
+/* ========== Tab Navigation ========== */
+.tab-nav {
+  display: flex;
+  gap: 4px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: 2px;
+}
+.tab-btn {
+  padding: 8px 14px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--bg);
+  color: var(--text-secondary);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+}
+.tab-btn:hover { background: var(--primary-light); color: var(--text); }
+.tab-btn.active {
+  background: var(--primary);
+  color: #fff;
+  border-color: var(--primary);
+}
+.tab-btn.search-hit {
+  box-shadow: 0 0 0 2px var(--search-match);
+}
+
+/* ========== Main Content ========== */
+.main { padding: 20px; max-width: 960px; margin: 0 auto; }
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+
+/* ========== Summary Bar ========== */
+.summary-bar {
+  background: var(--highlight-bg);
+  border: 1px solid var(--highlight-border);
+  border-radius: 10px;
+  padding: 14px 18px;
+  margin-bottom: 20px;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--primary);
+  line-height: 1.5;
+}
+
+/* ========== Section Titles ========== */
+.section-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 12px;
+  margin-top: 28px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.section-title::before {
+  content: '';
+  width: 4px;
+  height: 16px;
+  background: var(--primary);
+  border-radius: 2px;
+}
+
+/* ========== Tree Diagram ========== */
+.tree-container {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: var(--shadow);
+  overflow-x: auto;
+}
+.tree { list-style: none; padding: 0; }
+.tree ul { list-style: none; padding-left: 28px; position: relative; }
+.tree ul::before {
+  content: '';
+  position: absolute;
+  left: 12px;
+  top: 0;
+  bottom: 14px;
+  width: 2px;
+  background: var(--tree-line);
+}
+.tree li {
+  position: relative;
+  padding: 5px 0 5px 28px;
+}
+.tree li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 18px;
+  width: 20px;
+  height: 2px;
+  background: var(--tree-line);
+}
+.tree li::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: var(--tree-line);
+}
+.tree li:last-child::after {
+  bottom: calc(100% - 18px);
+}
+.tree li:only-child::after {
+  display: none;
+}
+.tree > li::before { display: none; }
+.tree > li::after { display: none; }
+.tree > li { padding-left: 0; }
+
+/* Node Styles */
+.tree-node {
+  display: inline-block;
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 14px;
+  min-height: 44px;
+  line-height: 1.4;
+  vertical-align: middle;
+  user-select: none;
+}
+.tree-node.main {
+  background: var(--node-main-bg);
+  color: var(--node-main-color);
+  font-weight: 600;
+}
+.tree-node.branch {
+  background: var(--node-branch-bg);
+  border: 1px solid var(--node-branch-border);
+  color: var(--node-branch-color);
+}
+.tree-node:hover {
+  transform: scale(1.04);
+  box-shadow: var(--shadow);
+}
+.tree-node.active {
+  box-shadow: 0 0 0 3px var(--primary-light), var(--shadow-lg);
+}
+
+/* Node description popup */
+.node-desc {
+  display: none;
+  background: var(--highlight-bg);
+  border: 1px solid var(--highlight-border);
+  border-radius: 8px;
+  padding: 10px 14px;
+  margin: 6px 0 4px 0;
+  font-size: 13px;
+  color: var(--text);
+  line-height: 1.5;
+}
+.node-desc.visible { display: block; }
+
+/* Arrow indicators in tree */
+.tree-arrow {
+  display: block;
+  text-align: center;
+  color: var(--tree-line);
+  font-size: 18px;
+  line-height: 1;
+  padding: 2px 0;
+}
+
+/* ========== Checklist ========== */
+.checklist {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px 20px;
+  box-shadow: var(--shadow);
+}
+.checklist-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+  min-height: 44px;
+}
+.checklist-item:last-child { border-bottom: none; }
+.checklist-item input[type="checkbox"] {
+  width: 22px;
+  height: 22px;
+  margin-top: 2px;
+  cursor: pointer;
+  flex-shrink: 0;
+  accent-color: var(--check-done);
+}
+.checklist-item.done label {
+  text-decoration: line-through;
+  color: var(--text-secondary);
+}
+.checklist-item label {
+  cursor: pointer;
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+/* ========== Defense Table ========== */
+.defense-table {
+  width: 100%;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  border-collapse: separate;
+  border-spacing: 0;
+}
+.defense-table th {
+  background: var(--primary);
+  color: #fff;
+  padding: 12px 16px;
+  text-align: left;
+  font-size: 14px;
+  font-weight: 600;
+}
+.defense-table td {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+  font-size: 14px;
+  line-height: 1.6;
+  vertical-align: top;
+}
+.defense-table tr:last-child td { border-bottom: none; }
+.defense-table tr:hover td { background: var(--primary-light); }
+.defense-table td:first-child {
+  font-weight: 600;
+  white-space: nowrap;
+  width: 35%;
+}
+
+/* ========== Responsive ========== */
+@media (max-width: 768px) {
+  .header { padding: 10px 14px; }
+  .main { padding: 14px; }
+  .tab-btn { font-size: 13px; padding: 8px 10px; }
+  .search-box input { width: 140px; }
+  .search-box input:focus { width: 180px; }
+  .tree-node { font-size: 13px; padding: 7px 12px; }
+  .defense-table td:first-child { white-space: normal; }
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-top">
+    <h1>系统设计白板</h1>
+    <div class="header-actions">
+      <div class="search-box">
+        <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" id="searchInput" placeholder="搜索关键词..." autocomplete="off" />
+        <div class="search-results" id="searchResults"></div>
+      </div>
+      <button class="theme-btn" id="themeBtn" aria-label="切换主题">&#9790;</button>
+    </div>
+  </div>
+  <div class="tab-nav" id="tabNav">
+    <button class="tab-btn active" data-tab="0">1. Schema BFF</button>
+    <button class="tab-btn" data-tab="1">2. Benefit SDK</button>
+    <button class="tab-btn" data-tab="2">3. Monorepo</button>
+    <button class="tab-btn" data-tab="3">4. prd-tools</button>
+    <button class="tab-btn" data-tab="4">5. SSE 流式</button>
+  </div>
+</div>
+
+<div class="main">
+
+<!-- ==================== Tab 0: Schema BFF ==================== -->
+<div class="tab-panel active" id="panel-0">
+  <div class="summary-bar">BFF 负责生成结构和初始状态，前端负责动态渲染和运行时联动。</div>
+
+  <div class="section-title">架构图</div>
+  <div class="tree-container">
+    <ul class="tree">
+      <li>
+        <span class="tree-node main" data-desc="上游提供原始业务数据">后端 API</span>
+        <ul>
+          <li>
+            <span class="tree-node main" data-desc="BFF 层聚合多个后端接口数据">BFF 数据聚合</span>
+            <ul>
+              <li>
+                <span class="tree-node main" data-desc="模板引擎根据活动类型选择模板">模板引擎 Builder</span>
+                <ul>
+                  <li><span class="tree-node branch">basic template</span></li>
+                  <li><span class="tree-node branch">group template</span></li>
+                  <li><span class="tree-node branch">rules template</span></li>
+                  <li><span class="tree-node branch">message template</span></li>
+                  <li><span class="tree-node branch">preview template</span></li>
+                </ul>
+              </li>
+              <li>
+                <span class="tree-node main" data-desc="注入联动行为，BFF 端计算初始状态并序列化">injectDActions</span>
+                <ul>
+                  <li><span class="tree-node branch">BFF safeEval 初始 visible/disabled</span></li>
+                  <li><span class="tree-node branch">序列化 d_actions 给前端</span></li>
+                </ul>
+              </li>
+              <li>
+                <span class="tree-node main" data-desc="最终输出结构化 Schema 给前端消费">content_schema</span>
+              </li>
+              <li>
+                <span class="tree-node main" data-desc="前端根据 Schema 动态渲染表单">前端 Schema Renderer</span>
+                <ul>
+                  <li><span class="tree-node branch">formatName dot path</span></li>
+                  <li><span class="tree-node branch">RegisteredComponents</span></li>
+                  <li><span class="tree-node branch">Listener 发布订阅</span></li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+
+  <div class="section-title">讲解顺序</div>
+  <div class="checklist" id="checklist-0">
+    <div class="checklist-item"><input type="checkbox" id="c0-0" /><label for="c0-0">先讲背景：23 种活动类型，字段和联动变化快。</label></div>
+    <div class="checklist-item"><input type="checkbox" id="c0-1" /><label for="c0-1">再讲职责：BFF 生成 Schema，前端消费 Schema。</label></div>
+    <div class="checklist-item"><input type="checkbox" id="c0-2" /><label for="c0-2">重点讲联动：fetchApi 型和 state 型。</label></div>
+    <div class="checklist-item"><input type="checkbox" id="c0-3" /><label for="c0-3">最后讲 trade-off：扩展性强，但调试、类型和安全需要治理。</label></div>
+  </div>
+
+  <div class="section-title">追问防御</div>
+  <table class="defense-table">
+    <thead><tr><th style="width:30%">问题</th><th>回答方向</th></tr></thead>
+    <tbody>
+      <tr><td>为什么不用纯前端表单库？</td><td>核心问题不是"怎么画表单"，而是 BFF 和前端怎么共同编排活动规则。很多字段的初始显隐、选项和联动依赖后端数据，必须由 BFF 参与生成。injectDActions 的双重求值就是为了解决跨层联动：BFF 保证初始状态，前端保证运行时体验。</td></tr>
+      <tr><td>injectDActions 双重求值是什么？</td><td>一次声明联动配置，BFF 端 safeEval 求初始状态（SSR 就是对的），同时序列化 d_actions 给前端运行时再次求值。联动分 fetchApi 型（回调 BFF 重生成）和 state 型（前端本地 eval），避免前后端各写一套联动逻辑。</td></tr>
+      <tr><td>性能怎么保证？</td><td>按字段依赖局部触发，不全表单刷新。state 型联动前端本地 eval 不走网络。formatName 拍平路径做 listener 事件名，发布订阅按需触发，只有依赖该字段的组件才会重新渲染。</td></tr>
+      <tr><td>eval 安全怎么办？</td><td>承认是历史技术债，不包装成最佳实践。实际处理：限制表达式来源、限制可访问变量、避免用户输入直接进入表达式。重构方向是用受限 DSL 或 JSON 规则描述联动，再由解释器执行。</td></tr>
+      <tr><td>怎么保证 Schema 正确？</td><td>联动模板从 render 模板提取 handler 复用，保证联动返回与初始渲染的 Schema 结构一致。16 个 linkageSchema 文件按维度拆分，每新增活动类型只需加模板文件和联动文件，前端零改动。后续加强 Schema diff 和类型生成。</td></tr>
+      <tr><td>怎么扩展新活动类型？</td><td>加枚举值 + 在 rules/details/ 加规则模板 + 配 linkageSchema 联动文件。联动模板从 render 模板提取 handler 复用，保证结构一致。前端通过 Schema 渲染引擎自动适配，不需要为新活动类型写页面代码。</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ==================== Tab 1: Benefit SDK ==================== -->
+<div class="tab-panel" id="panel-1">
+  <div class="summary-bar">核心是 Register 扩展、Schema 同构、打包发版治理。</div>
+
+  <div class="section-title">架构图</div>
+  <div class="tree-container">
+    <ul class="tree">
+      <li>
+        <span class="tree-node main" data-desc="上层业务系统通过 SDK 接入权益能力">业务系统</span>
+        <ul>
+          <li>
+            <span class="tree-node main" data-desc="权益 SDK 对外统一入口">benefit SDK</span>
+            <ul>
+              <li><span class="tree-node branch">BenefitAdmin 入口</span></li>
+              <li><span class="tree-node branch">App 组件模式</span></li>
+              <li><span class="tree-node branch">Modal 函数调用模式</span></li>
+            </ul>
+          </li>
+          <li>
+            <span class="tree-node main" data-desc="运行时注册机制，支持扩展组件而不改 SDK 核心">Register</span>
+            <ul>
+              <li><span class="tree-node branch">24 内置组件</span></li>
+              <li><span class="tree-node branch">add / addMultipleCmps 运行时扩展</span></li>
+            </ul>
+          </li>
+          <li>
+            <span class="tree-node main" data-desc="根据 d_component 字段映射到实际组件，迭代渲染 content_schema">Schema Renderer</span>
+            <ul>
+              <li><span class="tree-node branch">d_component -&gt; Component</span></li>
+              <li><span class="tree-node branch">content_schema 迭代渲染</span></li>
+            </ul>
+          </li>
+          <li>
+            <span class="tree-node main" data-desc="Rollup 打包输出多格式产物">Rollup 输出</span>
+            <ul>
+              <li><span class="tree-node branch">ESM</span></li>
+              <li><span class="tree-node branch">CJS</span></li>
+              <li><span class="tree-node branch">.d.ts</span></li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+
+  <div class="section-title">讲解顺序</div>
+  <div class="checklist" id="checklist-1">
+    <div class="checklist-item"><input type="checkbox" id="c1-0" /><label for="c1-0">背景：400+ 权益，权益类型持续增长。</label></div>
+    <div class="checklist-item"><input type="checkbox" id="c1-1" /><label for="c1-1">扩展：Register 模式避免改 SDK 核心。</label></div>
+    <div class="checklist-item"><input type="checkbox" id="c1-2" /><label for="c1-2">复用：和活动表单共享 Schema 渲染思路。</label></div>
+    <div class="checklist-item"><input type="checkbox" id="c1-3" /><label for="c1-3">工程：Rollup 双模、peerDependencies、Changesets、alpha/release。</label></div>
+  </div>
+
+  <div class="section-title">追问防御</div>
+  <table class="defense-table">
+    <thead><tr><th style="width:30%">问题</th><th>回答方向</th></tr></thead>
+    <tbody>
+      <tr><td>怎么避免依赖爆炸？</td><td>peerDependencies 声明 react/react-dom，避免重复打包。Rollup 打包时 external 化设计系统库。resolutions 强制统一 @types/react 版本，避免多个版本导致类型冲突。</td></tr>
+      <tr><td>怎么支持业务自定义？</td><td>Register 模式：构造时注册 24 个内置组件（通用 16 + 业务线 8），业务通过 add()/addMultipleCmps() 运行时注册自定义权益组件，不侵入 SDK 核心代码。</td></tr>
+      <tr><td>Schema 渲染怎么和活动表单复用？</td><td>SDK 本身也是 Schema 驱动渲染的消费者——后端返回 form_data 含 d_component 和 content_schema，前端用 FieldWrapper 迭代渲染，和 营销平台(dive) 完全同构。两个消费者共享一个架构。</td></tr>
+      <tr><td>怎么发版？</td><td>Changesets 管理版本：开发者选变更包 + 填描述，changeset version 自动 bump 版本号和 CHANGELOG。先 build+yalc 本地联调确认没问题，再发 alpha 联调，最后正式 release。zx 脚本自动化流程。</td></tr>
+      <tr><td>怎么回滚？</td><td>锁版本到上一 release，业务侧灰度控制。yalc 本地联调可以在发版前发现问题，alpha 环境联调确认后才能进正式版。</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ==================== Tab 2: Monorepo ==================== -->
+<div class="tab-panel" id="panel-2">
+  <div class="summary-bar">业务包独立发版，共享包统一复用，构建只跑受影响部分。</div>
+
+  <div class="section-title">架构图</div>
+  <div class="tree-container">
+    <ul class="tree">
+      <li>
+        <span class="tree-node main" data-desc="Monorepo 根目录，管理所有业务和共享包">repo root</span>
+        <ul>
+          <li>
+            <span class="tree-node main" data-desc="业务应用目录">app/</span>
+            <ul>
+              <li><span class="tree-node branch">dive</span></li>
+              <li><span class="tree-node branch">captain</span></li>
+              <li><span class="tree-node branch">ride_pass</span></li>
+            </ul>
+          </li>
+          <li>
+            <span class="tree-node main" data-desc="共享能力包目录">packages/</span>
+            <ul>
+              <li><span class="tree-node branch">components</span></li>
+              <li><span class="tree-node branch">utils</span></li>
+              <li><span class="tree-node branch">rich-text</span></li>
+            </ul>
+          </li>
+          <li><span class="tree-node branch">package.json workspaces</span></li>
+          <li><span class="tree-node branch">yarn.lock</span></li>
+          <li><span class="tree-node branch">lerna.json independent</span></li>
+          <li><span class="tree-node branch">nx cache / affected</span></li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+
+  <div class="section-title">讲解顺序</div>
+  <div class="checklist" id="checklist-2">
+    <div class="checklist-item"><input type="checkbox" id="c2-0" /><label for="c2-0">app 放业务模块，packages 放共享能力。</label></div>
+    <div class="checklist-item"><input type="checkbox" id="c2-1" /><label for="c2-1">Yarn workspace 做本地链接和依赖安装。</label></div>
+    <div class="checklist-item"><input type="checkbox" id="c2-2" /><label for="c2-2">Lerna independent 支持业务独立版本。</label></div>
+    <div class="checklist-item"><input type="checkbox" id="c2-3" /><label for="c2-3">Nx 做缓存和 affected 构建。</label></div>
+    <div class="checklist-item"><input type="checkbox" id="c2-4" /><label for="c2-4">yarn.lock 和 resolutions 处理依赖一致性。</label></div>
+  </div>
+
+  <div class="section-title">追问防御</div>
+  <table class="defense-table">
+    <thead><tr><th style="width:30%">问题</th><th>回答方向</th></tr></thead>
+    <tbody>
+      <tr><td>为什么 Lerna + Nx？</td><td>历史选型（项目启动时 Turborepo 还不够成熟）+ Lerna independent 支持业务模块独立版本避免全量发版 + Nx 做构建缓存只跑受影响部分。Yarn workspace 做依赖链接。</td></tr>
+      <tr><td>怎么避免包互相污染？</td><td>包边界清晰：app/ 放业务模块，packages/ 放共享组件和工具。子包显式声明 workspace 协议引用。根目录统一 ESLint + Prettier + Husky + commitlint，子包继承，CI 跑 lint 和类型检查。</td></tr>
+      <tr><td>构建慢怎么办？</td><td>Nx affected 只构建变更影响范围。构建缓存避免重复编译。共享组件抽离到 packages/ 减少重复编译。支持并行构建。踩过 @yarnpkg/parsers 升级不兼容 node16 的坑，所以锁版本是硬要求。</td></tr>
+      <tr><td>依赖冲突怎么办？</td><td>强制用 yarn 不用 npm，yarn.lock 严格锁定版本。resolutions 强制统一冲突依赖（如 @types/react 统一 ^18.0.0）。peerDependencies 处理包间共享的大型依赖。CI 用 --no-lockfile 避免锁文件冲突。</td></tr>
+      <tr><td>怎么做本地联调？</td><td>组件库 build+yalc 推到本地仓库，目标项目 yalc add 拉取本地版本。避免 npm link 的符号链接问题（符号链接会导致 react 多实例）。</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ==================== Tab 3: prd-tools ==================== -->
+<div class="tab-panel" id="panel-3">
+  <div class="summary-bar">AI 不直接拍脑袋写代码，而是生成有证据的开发计划。</div>
+
+  <div class="section-title">架构图</div>
+  <div class="tree-container">
+    <ul class="tree">
+      <li>
+        <span class="tree-node main" data-desc="Reference 插件构建长期知识库">reference plugin (构建知识库)</span>
+        <ul>
+          <li>
+            <span class="tree-node main" data-desc="6 个文件构成的唯一事实来源 (Single Source of Truth)">_reference/ v4.0 (6 文件 SSOT)</span>
+            <ul>
+              <li><span class="tree-node branch">01-codebase</span></li>
+              <li><span class="tree-node branch">02-coding-rules</span></li>
+              <li><span class="tree-node branch">03-contracts</span></li>
+              <li><span class="tree-node branch">04-routing-playbooks</span></li>
+              <li><span class="tree-node branch">05-domain</span></li>
+            </ul>
+          </li>
+          <li>
+            <span class="tree-node main" data-desc="静态分析脚本，提取代码实体和调用关系">build-index.py (静态分析)</span>
+            <ul>
+              <li><span class="tree-node branch">entities.json (代码实体)</span></li>
+              <li><span class="tree-node branch">edges.json (跨文件调用边)</span></li>
+              <li><span class="tree-node branch">inverted-index.json (BM25 检索)</span></li>
+            </ul>
+          </li>
+          <li>
+            <span class="tree-node main" data-desc="PRD 蒸馏插件，11 步流程将 PRD 转为结构化开发计划">prd-distill plugin (PRD 蒸馏, 11步)</span>
+            <ul>
+              <li><span class="tree-node branch">PRD ingestion (Python zipfile, 零依赖)</span></li>
+              <li><span class="tree-node branch">evidence.yaml</span></li>
+              <li><span class="tree-node branch">requirement IR (ADD/MODIFY/DELETE)</span></li>
+              <li><span class="tree-node branch">code search &rarr; layer impact &rarr; contract delta</span></li>
+              <li><span class="tree-node branch">context-pack.py &rarr; query-plan.yaml + context-pack.md</span></li>
+              <li><span class="tree-node branch">report.md (渐进式披露)</span></li>
+              <li><span class="tree-node branch">[Report Review Gate &mdash; 硬停止]</span></li>
+              <li><span class="tree-node branch">plan.md + questions.md</span></li>
+              <li><span class="tree-node branch">quality-gate.py final (5项加权评分)</span></li>
+              <li><span class="tree-node branch">reference update suggestions</span></li>
+            </ul>
+          </li>
+          <li>
+            <span class="tree-node main" data-desc="人工确认后知识回流，提升下次蒸馏准确度">人工确认后回流 &rarr; 下次蒸馏更准</span>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+
+  <div class="section-title">讲解顺序</div>
+  <div class="checklist" id="checklist-3">
+    <div class="checklist-item"><input type="checkbox" id="c3-0" /><label for="c3-0">先澄清：不是 AI 直接生成代码。</label></div>
+    <div class="checklist-item"><input type="checkbox" id="c3-1" /><label for="c3-1">reference 构建长期知识库（6 文件 SSOT + Evidence Index）。</label></div>
+    <div class="checklist-item"><input type="checkbox" id="c3-2" /><label for="c3-2">prd-distill 消费 PRD + reference，11 步蒸馏出结构化计划。</label></div>
+    <div class="checklist-item"><input type="checkbox" id="c3-3" /><label for="c3-3">代码锚定：build-index.py 提取实体，context-pack.py 精准匹配。</label></div>
+    <div class="checklist-item"><input type="checkbox" id="c3-4" /><label for="c3-4">多层质量门控：quality-gate.py 5 项加权评分 + benchmark 回归。</label></div>
+    <div class="checklist-item"><input type="checkbox" id="c3-5" /><label for="c3-5">图谱只是发现层，reference 才是精选知识库。</label></div>
+    <div class="checklist-item"><input type="checkbox" id="c3-6" /><label for="c3-6">团队模式：T 聚合 / T2 继承，跨仓库知识只维护一份。</label></div>
+  </div>
+
+  <div class="section-title">追问防御</div>
+  <table class="defense-table">
+    <thead><tr><th style="width:30%">问题</th><th>回答方向</th></tr></thead>
+    <tbody>
+      <tr><td>为什么不用向量库？</td><td>向量适合模糊召回，不适合做权威事实源。BM25 倒排索引做精确检索，可审计、可重现、支持增量构建。向量搜索和 BM25 可以共存，但 reference 作为 SSOT 必须是精确匹配。</td></tr>
+      <tr><td>知识过期怎么办？</td><td>三层机制：被动监控（last_verified 14 天过期 + B2 健康检查对比源码发现矛盾）、主动回流（蒸馏发现矛盾生成 reference-update-suggestions.yaml + 人工确认后更新）、守门（质量门控检查 enum/field/contract 与源码冲突为致命项不通过）。</td></tr>
+      <tr><td>AI 错了怎么办？</td><td>多层兜底：证据链（8 种证据类型，搜不到也是 negative_code_search 证据）+ 代码锚定（build-index 精准匹配到代码位置，context-pack 按 must/should/optional 分层）+ Report Review Gate 硬停止（用户确认报告后才能生成 plan）+ 反馈回流闭环让知识库越用越准。</td></tr>
+      <tr><td>怎么量化收益？</td><td>目前强调工程化原型和方法论。quality-gate.py final 做 5 项加权评分（代码锚点覆盖率 25% + 计划可执行性 25% + 必需文件 20% + context pack 消耗 15% + 阻塞项质量 15%）。benchmark 用 oracle 用例跑完整蒸馏链路，需求召回 35 分 + 代码锚点准确率 30 分，总分低了说明退步。</td></tr>
+      <tr><td>Evidence Index 为什么用正则不用 AST？</td><td>零依赖（Python 标准库即够）、跨语言（TS/JS/Go 统一处理，AST 通常绑定特定语言）、文件哈希增量构建快（只重建变化部分）。AST 精度更高但引入 tree-sitter 等重依赖，当前规模下正则够用。</td></tr>
+      <tr><td>团队模式怎么工作的？</td><td>T 模式将成员仓库 reference 聚合到团队仓库，跨仓库公共知识只维护一份。T2 模式反向继承团队知识到成员仓库。build-index 和 context-pack 都支持多仓库索引加载，团队级 reference 可以覆盖多个子项目。</td></tr>
+      <tr><td>PRD 蒸馏最难的一步是什么？</td><td>变更分类（ADD/MODIFY/DELETE）。需要理解项目现状 + PRD 描述可能模糊 + 跨模块影响。解法：reference 路由信号快速定位 + Evidence Index BM25 精准搜索 + 负向搜索（搜不到也是证据）+ 置信度分级（low 强制进入 questions.md）。</td></tr>
+      <tr><td>图谱和知识库的关系？</td><td>图谱是原始发现层，reference 是精选后的企业知识库。GitNexus 提供代码结构，Graphify 提供业务语义，prd-tools 做证据治理。图谱结论不能直接用，需要精选、审计、确认后才能进入 reference。图谱不可用时回退到 rg/glob 源码扫描。</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ==================== Tab 4: SSE 流式 ==================== -->
+<div class="tab-panel" id="panel-4">
+  <div class="summary-bar">SSE 负责流，状态机负责过程，渲染层负责不卡。</div>
+
+  <div class="section-title">架构图</div>
+  <div class="tree-container">
+    <ul class="tree">
+      <li>
+        <span class="tree-node main" data-desc="用户输入发起对话请求">User Input</span>
+        <ul>
+          <li>
+            <span class="tree-node main" data-desc="对话状态管理">Conversation Store</span>
+            <ul>
+              <li>
+                <span class="tree-node main" data-desc="SSE 连接层，负责流式数据传输">SSE / ReadableStream</span>
+                <ul>
+                  <li><span class="tree-node branch">reconnect</span></li>
+                  <li><span class="tree-node branch">Last-Event-ID</span></li>
+                  <li><span class="tree-node branch">heartbeat</span></li>
+                </ul>
+              </li>
+              <li>
+                <span class="tree-node main" data-desc="流数据解析层，处理分块和增量更新">Stream Parser</span>
+                <ul>
+                  <li><span class="tree-node branch">chunk buffer</span></li>
+                  <li><span class="tree-node branch">message delta</span></li>
+                  <li><span class="tree-node branch">tool call delta</span></li>
+                </ul>
+              </li>
+              <li>
+                <span class="tree-node main" data-desc="渲染层，保证流畅的用户体验">Renderer</span>
+                <ul>
+                  <li><span class="tree-node branch">markdown incremental</span></li>
+                  <li><span class="tree-node branch">rAF throttle</span></li>
+                  <li><span class="tree-node branch">virtual list</span></li>
+                  <li><span class="tree-node branch">code block guard</span></li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+
+  <div class="section-title">追问防御</div>
+  <table class="defense-table">
+    <thead><tr><th style="width:30%">问题</th><th>回答方向</th></tr></thead>
+    <tbody>
+      <tr><td>SSE vs WebSocket？</td><td>SSE 是单向服务器推送，协议简单（HTTP + text/event-stream），浏览器原生支持自动重连，适合 AI 流式输出。WebSocket 是双向实时通信，适合多人协作编辑场景。单向流式输出用 SSE 更轻量，不需要 WebSocket 的双向能力。</td></tr>
+      <tr><td>Markdown 卡怎么办？</td><td>不能每个 token 都全量 re-render。用 requestAnimationFrame 节流渲染频率，虚拟列表处理长对话，增量 Markdown 解析只处理新增部分。Worker 线程做解析不阻塞主线程。代码块未闭合时要做渲染保护。</td></tr>
+      <tr><td>断线怎么办？</td><td>EventSource 自动重连 + Last-Event-ID 告诉服务器从哪续传。解析层按 chunk 维护 buffer 处理去重。网络恢复后重建状态，不丢消息。超时和取消也要处理。</td></tr>
+      <tr><td>Tool call 怎么展示？</td><td>把 Agent 过程显式状态化：conversation → message → run → step → tool call，每步都有状态（streaming/waiting_tool/executing/done/failed）。工具调用展示输入输出和耗时，敏感操作需要用户二次确认。和 prd-tools 类似——每个结论都要可追溯。</td></tr>
+      <tr><td>和 Agent 架构怎么衔接？</td><td>流式输出是 Agent 过程的一部分。前端要把执行过程状态化——不能只展示最终答案，tool call 的输入输出、权限、耗时、错误都要展示。核心模型包括 conversation、message、run、step，每一步都有状态机管理。</td></tr>
+    </tbody>
+  </table>
+</div>
+
+</div><!-- /main -->
+
+<script>
+(function() {
+  'use strict';
+
+  // ===== Data for search =====
+  var boardData = [
+    {
+      title: 'Schema BFF',
+      summary: 'BFF 负责生成结构和初始状态，前端负责动态渲染和运行时联动。',
+      items: ['后端 API', 'BFF 数据聚合', '模板引擎 Builder', 'basic template', 'group template', 'rules template', 'message template', 'preview template', 'injectDActions', 'safeEval', 'd_actions', 'content_schema', 'Schema Renderer', 'formatName', 'RegisteredComponents', 'Listener 发布订阅', '23 种活动类型', 'fetchApi', 'state 型联动', 'trade-off'],
+      qa: ['纯前端表单库', '性能', 'eval 安全', 'Schema 正确']
+    },
+    {
+      title: 'Benefit SDK',
+      summary: '核心是 Register 扩展、Schema 同构、打包发版治理。',
+      items: ['业务系统', 'benefit SDK', 'BenefitAdmin', 'App 组件模式', 'Modal 函数调用模式', 'Register', '24 内置组件', 'addMultipleCmps', 'Schema Renderer', 'd_component', 'content_schema', 'Rollup', 'ESM', 'CJS', '.d.ts', '400+ 权益', 'peerDependencies', 'Changesets', 'alpha/release'],
+      qa: ['依赖爆炸', '业务自定义', '发版', '回滚']
+    },
+    {
+      title: 'Monorepo',
+      summary: '业务包独立发版，共享包统一复用，构建只跑受影响部分。',
+      items: ['repo root', 'app/', 'dive', 'captain', 'ride_pass', 'packages/', 'components', 'utils', 'rich-text', 'Yarn workspace', 'lerna.json independent', 'nx cache', 'affected', 'yarn.lock', 'resolutions'],
+      qa: ['Lerna + Nx', '包互相污染', '构建慢', '依赖冲突']
+    },
+    {
+      title: 'prd-tools',
+      summary: 'AI 不直接拍脑袋写代码，而是生成有证据的开发计划。',
+      items: ['reference plugin', '_reference/ v4.0', 'SSOT', 'codebase', 'coding-rules', 'contracts', 'routing-playbooks', 'domain', 'build-index.py', 'entities.json', 'edges.json', 'inverted-index.json', 'BM25', 'prd-distill', 'PRD ingestion', 'Python zipfile', 'evidence.yaml', 'requirement IR', 'ADD/MODIFY/DELETE', 'code search', 'layer impact', 'contract delta', 'context-pack.py', 'query-plan.yaml', 'context-pack.md', 'report.md', 'Report Review Gate', 'plan.md', 'questions.md', 'quality-gate.py', '5项加权评分', 'reference update', 'T 聚合', 'T2 继承'],
+      qa: ['向量库', '知识过期', 'AI 错了', '量化收益', '正则不用 AST', '团队模式']
+    },
+    {
+      title: 'SSE 流式',
+      summary: 'SSE 负责流，状态机负责过程，渲染层负责不卡。',
+      items: ['User Input', 'Conversation Store', 'SSE', 'ReadableStream', 'reconnect', 'Last-Event-ID', 'heartbeat', 'Stream Parser', 'chunk buffer', 'message delta', 'tool call delta', 'Renderer', 'markdown incremental', 'rAF throttle', 'virtual list', 'code block guard'],
+      qa: ['SSE vs WebSocket', 'Markdown 卡', '断线', 'Tool call']
+    }
+  ];
+
+  // ===== Theme =====
+  var themeBtn = document.getElementById('themeBtn');
+  var savedTheme = localStorage.getItem('wb-theme') || 'light';
+  document.documentElement.setAttribute('data-theme', savedTheme);
+  themeBtn.textContent = savedTheme === 'dark' ? '☀' : '☾';
+
+  themeBtn.addEventListener('click', function() {
+    var current = document.documentElement.getAttribute('data-theme');
+    var next = current === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', next);
+    localStorage.setItem('wb-theme', next);
+    themeBtn.textContent = next === 'dark' ? '☀' : '☾';
+  });
+
+  // ===== Tabs =====
+  var tabBtns = document.querySelectorAll('.tab-btn');
+  var panels = document.querySelectorAll('.tab-panel');
+
+  function switchTab(index) {
+    tabBtns.forEach(function(b, i) {
+      b.classList.toggle('active', i === index);
+    });
+    panels.forEach(function(p, i) {
+      p.classList.toggle('active', i === index);
+    });
+  }
+
+  tabBtns.forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      switchTab(parseInt(this.getAttribute('data-tab')));
+    });
+  });
+
+  // ===== Tree Node Click =====
+  document.addEventListener('click', function(e) {
+    var node = e.target.closest('.tree-node');
+    if (!node) return;
+    // Toggle active
+    var wasActive = node.classList.contains('active');
+    // Deactivate siblings in the same tree-container
+    var container = node.closest('.tree-container');
+    if (container) {
+      container.querySelectorAll('.tree-node.active').forEach(function(n) {
+        n.classList.remove('active');
+      });
+      container.querySelectorAll('.node-desc.visible').forEach(function(d) {
+        d.classList.remove('visible');
+      });
+    }
+    if (!wasActive) {
+      node.classList.add('active');
+      // Show description
+      var desc = node.getAttribute('data-desc');
+      if (desc) {
+        var descEl = node.nextElementSibling;
+        if (!descEl || !descEl.classList.contains('node-desc')) {
+          descEl = document.createElement('div');
+          descEl.className = 'node-desc';
+          node.parentNode.insertBefore(descEl, node.nextSibling);
+        }
+        descEl.textContent = desc;
+        descEl.classList.add('visible');
+      }
+    }
+  });
+
+  // ===== Checklist State =====
+  function loadChecklistState() {
+    var state = {};
+    try { state = JSON.parse(localStorage.getItem('wb-checklist') || '{}'); } catch(e) {}
+    for (var key in state) {
+      var cb = document.getElementById(key);
+      if (cb) {
+        cb.checked = true;
+        cb.closest('.checklist-item').classList.add('done');
+      }
+    }
+  }
+
+  function saveChecklistState() {
+    var state = {};
+    document.querySelectorAll('.checklist input[type="checkbox"]').forEach(function(cb) {
+      if (cb.checked) state[cb.id] = true;
+    });
+    localStorage.setItem('wb-checklist', JSON.stringify(state));
+  }
+
+  document.querySelectorAll('.checklist input[type="checkbox"]').forEach(function(cb) {
+    cb.addEventListener('change', function() {
+      this.closest('.checklist-item').classList.toggle('done', this.checked);
+      saveChecklistState();
+    });
+    var label = cb.closest('.checklist-item').querySelector('label');
+    if (label) {
+      label.addEventListener('click', function() {
+        cb.checked = !cb.checked;
+        cb.dispatchEvent(new Event('change'));
+      });
+    }
+  });
+
+  loadChecklistState();
+
+  // ===== Search =====
+  var searchInput = document.getElementById('searchInput');
+  var searchResults = document.getElementById('searchResults');
+
+  function escapeHtml(s) {
+    return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
+  function doSearch(query) {
+    if (!query.trim()) {
+      searchResults.classList.remove('visible');
+      searchResults.innerHTML = '';
+      tabBtns.forEach(function(b) { b.classList.remove('search-hit'); });
+      return;
+    }
+    var q = query.toLowerCase();
+    var results = [];
+
+    boardData.forEach(function(board, idx) {
+      var matches = [];
+      // Search summary
+      if (board.summary.toLowerCase().indexOf(q) !== -1) {
+        matches.push({ type: 'summary', text: board.summary });
+      }
+      // Search items
+      board.items.forEach(function(item) {
+        if (item.toLowerCase().indexOf(q) !== -1) {
+          matches.push({ type: 'component', text: item });
+        }
+      });
+      // Search QA
+      board.qa.forEach(function(qa) {
+        if (qa.toLowerCase().indexOf(q) !== -1) {
+          matches.push({ type: 'QA', text: qa });
+        }
+      });
+
+      if (matches.length > 0) {
+        results.push({ boardIdx: idx, matches: matches });
+        tabBtns[idx].classList.add('search-hit');
+      } else {
+        tabBtns[idx].classList.remove('search-hit');
+      }
+    });
+
+    if (results.length === 0) {
+      searchResults.innerHTML = '<div class="search-result-item" style="color:var(--text-secondary)">未找到匹配内容</div>';
+      searchResults.classList.add('visible');
+      return;
+    }
+
+    var html = '';
+    results.forEach(function(r) {
+      r.matches.slice(0, 5).forEach(function(m) {
+        var highlighted = escapeHtml(m.text).replace(
+          new RegExp('(' + escapeHtml(query).replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')', 'gi'),
+          '<mark>$1</mark>'
+        );
+        html += '<div class="search-result-item" data-goto="' + r.boardIdx + '">' +
+          '<strong>' + boardData[r.boardIdx].title + '</strong> ' +
+          '<span style="color:var(--text-secondary);font-size:12px">[' + m.type + ']</span><br>' +
+          highlighted + '</div>';
+      });
+    });
+
+    searchResults.innerHTML = html;
+    searchResults.classList.add('visible');
+
+    // Click to navigate
+    searchResults.querySelectorAll('.search-result-item[data-goto]').forEach(function(item) {
+      item.addEventListener('click', function() {
+        switchTab(parseInt(this.getAttribute('data-goto')));
+        searchResults.classList.remove('visible');
+        searchInput.value = '';
+        tabBtns.forEach(function(b) { b.classList.remove('search-hit'); });
+      });
+    });
+  }
+
+  searchInput.addEventListener('input', function() {
+    doSearch(this.value);
+  });
+
+  searchInput.addEventListener('focus', function() {
+    if (this.value.trim()) doSearch(this.value);
+  });
+
+  document.addEventListener('click', function(e) {
+    if (!e.target.closest('.search-box')) {
+      searchResults.classList.remove('visible');
+    }
+  });
+
+})();
+</script>
+</body>
+</html>

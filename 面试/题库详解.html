@@ -1,0 +1,1674 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>题库详解</title>
+<style>
+:root {
+  --bg: #f8fafc;
+  --card-bg: #ffffff;
+  --text: #1e293b;
+  --text-secondary: #64748b;
+  --border: #e2e8f0;
+  --primary: #3b82f6;
+  --primary-light: #dbeafe;
+  --code-bg: #1e293b;
+  --code-text: #e2e8f0;
+  --table-header-bg: #f1f5f9;
+  --table-stripe: #f8fafc;
+  --blockquote-bg: #eff6ff;
+  --blockquote-border: #3b82f6;
+  --bonus-bg: #f0fdf4;
+  --bonus-border: #10b981;
+  --shadow: 0 1px 3px rgba(0,0,0,0.1);
+  --shadow-hover: 0 4px 12px rgba(0,0,0,0.12);
+  --group-a: #3b82f6;
+  --group-b: #8b5cf6;
+  --group-c: #10b981;
+  --group-d: #f59e0b;
+  --search-highlight: #fef08a;
+}
+
+[data-theme="dark"] {
+  --bg: #0f172a;
+  --card-bg: #1e293b;
+  --text: #e2e8f0;
+  --text-secondary: #94a3b8;
+  --border: #334155;
+  --primary: #60a5fa;
+  --primary-light: #1e3a5f;
+  --code-bg: #0f172a;
+  --code-text: #e2e8f0;
+  --table-header-bg: #334155;
+  --table-stripe: #1e293b;
+  --blockquote-bg: #172554;
+  --blockquote-border: #60a5fa;
+  --bonus-bg: #052e16;
+  --bonus-border: #34d399;
+  --shadow: 0 1px 3px rgba(0,0,0,0.3);
+  --shadow-hover: 0 4px 12px rgba(0,0,0,0.4);
+  --search-highlight: #854d0e;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  transition: background 0.3s, color 0.3s;
+  -webkit-font-smoothing: antialiased;
+}
+
+.container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 20px 16px 60px;
+}
+
+/* Header */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.header h1 {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.theme-toggle {
+  width: 40px;
+  height: 40px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--card-bg);
+  cursor: pointer;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+.theme-toggle:hover { box-shadow: var(--shadow-hover); }
+
+/* Search */
+.search-wrapper {
+  position: relative;
+  margin-bottom: 12px;
+}
+.search-input {
+  width: 100%;
+  padding: 12px 44px 12px 16px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--card-bg);
+  color: var(--text);
+  font-size: 15px;
+  outline: none;
+  transition: all 0.2s;
+}
+.search-input:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(59,130,246,0.15);
+}
+.search-icon {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 16px;
+  color: var(--text-secondary);
+  pointer-events: none;
+}
+
+/* Filter bar */
+.filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.filter-btn {
+  padding: 8px 16px;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  background: var(--card-bg);
+  color: var(--text-secondary);
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+  -webkit-tap-highlight-color: transparent;
+}
+.filter-btn:hover { border-color: var(--primary); color: var(--primary); }
+.filter-btn.active {
+  background: var(--primary);
+  color: #fff;
+  border-color: var(--primary);
+}
+.filter-btn[data-group="a"].active { background: var(--group-a); border-color: var(--group-a); }
+.filter-btn[data-group="b"].active { background: var(--group-b); border-color: var(--group-b); }
+.filter-btn[data-group="c"].active { background: var(--group-c); border-color: var(--group-c); }
+.filter-btn[data-group="d"].active { background: var(--group-d); border-color: var(--group-d); }
+
+/* Utility bar */
+.util-bar {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+.util-btn {
+  padding: 6px 14px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--card-bg);
+  color: var(--text-secondary);
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.util-btn:hover { border-color: var(--primary); color: var(--primary); }
+
+/* Card */
+.card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  margin-bottom: 12px;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  transition: box-shadow 0.2s;
+}
+.card:hover { box-shadow: var(--shadow-hover); }
+.card.hidden { display: none; }
+
+.card-header {
+  display: flex;
+  align-items: center;
+  padding: 14px 16px;
+  cursor: pointer;
+  gap: 12px;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+.card-header:hover { background: var(--primary-light); }
+
+.tag {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 36px;
+  height: 28px;
+  padding: 0 8px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #fff;
+  flex-shrink: 0;
+}
+.tag-a { background: var(--group-a); }
+.tag-b { background: var(--group-b); }
+.tag-c { background: var(--group-c); }
+.tag-d { background: var(--group-d); }
+
+.card-title {
+  flex: 1;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text);
+  line-height: 1.4;
+}
+
+.card-arrow {
+  font-size: 12px;
+  color: var(--text-secondary);
+  transition: transform 0.3s;
+  flex-shrink: 0;
+}
+.card.expanded .card-arrow { transform: rotate(90deg); }
+
+.card-body {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s ease;
+}
+.card.expanded .card-body {
+  max-height: 5000px;
+}
+
+.card-content {
+  padding: 0 16px 16px;
+}
+
+.section-label {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--primary);
+  margin: 16px 0 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.section-label:first-child { margin-top: 0; }
+
+.answer-text {
+  font-size: 14px;
+  line-height: 1.8;
+  color: var(--text);
+}
+.answer-text p { margin-bottom: 8px; }
+.answer-text ul, .answer-text ol { margin: 8px 0 8px 20px; }
+.answer-text li { margin-bottom: 4px; }
+
+/* Code blocks */
+pre {
+  background: var(--code-bg);
+  color: var(--code-text);
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-family: "SF Mono", "Menlo", monospace;
+  font-size: 13px;
+  overflow-x: auto;
+  white-space: pre-wrap;
+  margin: 8px 0;
+  line-height: 1.5;
+}
+
+code {
+  font-family: "SF Mono", "Menlo", monospace;
+  font-size: 0.9em;
+}
+:not(pre) > code {
+  background: var(--primary-light);
+  color: var(--primary);
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+/* Tables */
+.table-wrapper {
+  overflow-x: auto;
+  margin: 8px 0;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+th, td {
+  border: 1px solid var(--border);
+  padding: 8px 12px;
+  text-align: left;
+}
+th {
+  background: var(--table-header-bg);
+  font-weight: 600;
+  white-space: nowrap;
+}
+tr:nth-child(even) { background: var(--table-stripe); }
+
+/* Blockquote (oral expression) */
+.blockquote-styled {
+  border-left: 4px solid var(--blockquote-border);
+  background: var(--blockquote-bg);
+  padding: 12px 16px;
+  margin: 8px 0;
+  border-radius: 0 8px 8px 0;
+  font-size: 14px;
+  line-height: 1.8;
+  color: var(--text);
+}
+
+/* Bonus */
+.bonus {
+  background: var(--bonus-bg);
+  border-left: 4px solid var(--bonus-border);
+  padding: 10px 16px;
+  margin: 8px 0;
+  border-radius: 0 8px 8px 0;
+  font-size: 14px;
+  color: var(--text);
+}
+.bonus strong { color: var(--bonus-border); }
+
+/* Appendix */
+.appendix {
+  margin-top: 40px;
+  padding: 24px;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+}
+.appendix h2 {
+  font-size: 20px;
+  margin-bottom: 16px;
+  color: var(--text);
+}
+.appendix h3 {
+  font-size: 16px;
+  margin: 20px 0 8px;
+  color: var(--text);
+}
+.appendix ol { margin-left: 20px; }
+.appendix ol li { margin-bottom: 6px; font-size: 14px; line-height: 1.7; }
+
+/* Search highlight mark */
+mark.search-hl {
+  background: var(--search-highlight);
+  padding: 1px 2px;
+  border-radius: 2px;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .container { padding: 12px 8px 40px; }
+  .header h1 { font-size: 20px; }
+  .card-header { padding: 12px; }
+  .card-content { padding: 0 12px 12px; }
+  .filter-btn { padding: 6px 12px; font-size: 13px; }
+}
+
+/* Stats */
+.stats {
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: 13px;
+  margin-bottom: 16px;
+}
+</style>
+</head>
+<body>
+<div class="container">
+
+<div class="header">
+  <h1>题库详解</h1>
+  <div class="header-actions">
+    <button class="theme-toggle" onclick="toggleTheme()" title="切换暗色模式">&#9790;</button>
+  </div>
+</div>
+
+<div class="search-wrapper">
+  <input type="text" class="search-input" id="searchInput" placeholder="搜索题目、答案、口语化表述、加分点..." oninput="handleSearch()">
+  <span class="search-icon">&#128269;</span>
+</div>
+
+<div class="filter-bar">
+  <button class="filter-btn active" data-group="all" onclick="filterGroup('all', this)">全部</button>
+  <button class="filter-btn" data-group="a" onclick="filterGroup('a', this)">A-项目深挖</button>
+  <button class="filter-btn" data-group="b" onclick="filterGroup('b', this)">B-系统设计</button>
+  <button class="filter-btn" data-group="c" onclick="filterGroup('c', this)">C-前端基础</button>
+  <button class="filter-btn" data-group="d" onclick="filterGroup('d', this)">D-AI工程</button>
+</div>
+
+<div class="util-bar">
+  <button class="util-btn" onclick="expandAll()">全部展开</button>
+  <button class="util-btn" onclick="collapseAll()">全部折叠</button>
+</div>
+
+<div class="stats" id="stats">共 25 题 &middot; A组10题 B组5题 C组5题 D组5题</div>
+
+<div id="cardList">
+
+<!-- A1 -->
+<div class="card" data-group="a" data-id="A1">
+  <div class="card-header" onclick="toggleCard(this)">
+    <span class="tag tag-a">A1</span>
+    <span class="card-title">Monorepo 怎么管理 15+ 业务模块？</span>
+    <span class="card-arrow">&#9654;</span>
+  </div>
+  <div class="card-body">
+    <div class="card-content">
+      <div class="section-label">核心答案</div>
+      <div class="answer-text">
+        <p>营销平台 是滴滴国际化营销中台的前端主项目，用 Lerna + Nx 管理 15+ 业务模块（营销、司机、乘客、激励等），采用 Yarn workspace 做依赖管理。</p>
+        <p>架构分两层：</p>
+        <ul>
+          <li><code>app/</code> 目录：15+ 业务 App，每个是独立子包（营销、司机、激励等）</li>
+          <li><code>packages/</code> 目录：共享包（components、RichText、utils）</li>
+        </ul>
+        <p>关键设计决策：</p>
+        <ol>
+          <li><strong>独立版本</strong>：<code>lerna.json</code> 配置 <code>"version": "independent"</code>，每个业务模块独立发版</li>
+          <li><strong>Nx 加速</strong>：<code>"useNx": true</code> 开启构建缓存，只构建变更影响的包</li>
+          <li><strong>Yarn 锁版本</strong>：强制用 yarn，<code>yarn.lock</code> 锁定依赖版本，避免第三方包升级导致环境崩溃（踩过 <code>@yarnpkg/parsers</code> 升级不兼容 node16 的坑）</li>
+          <li><strong>共享组件抽离</strong>：公共组件放 <code>packages/components</code>，业务模块通过 workspace 协议引用</li>
+          <li><strong>统一工具链</strong>：根目录统一 ESLint + Prettier + Husky + commitlint，所有子包继承</li>
+        </ol>
+      </div>
+      <div class="section-label">口语化表述</div>
+      <div class="blockquote-styled">营销平台 是我们营销中台的前端主项目，用 Lerna + Nx 管理。架构分两层：app 目录放 15 个业务模块，packages 放共享组件和工具。每个业务模块独立版本、独立部署，通过 workspace 协议引用公共包。选 Lerna 而不是纯 Turborepo 的原因是历史遗留——项目启动时 Turborepo 还不够成熟。我们开了 Nx 加速构建缓存，只构建变更影响的部分。</div>
+      <div class="section-label">加分点</div>
+      <div class="bonus">提到踩过的 <code>@yarnpkg/parsers</code> 版本坑 → 体现真实工程经验</div>
+    </div>
+  </div>
+</div>
+
+<!-- A2 -->
+<div class="card" data-group="a" data-id="A2">
+  <div class="card-header" onclick="toggleCard(this)">
+    <span class="tag tag-a">A2</span>
+    <span class="card-title">Schema 驱动架构怎么设计？</span>
+    <span class="card-arrow">&#9654;</span>
+  </div>
+  <div class="card-body">
+    <div class="card-content">
+      <div class="section-label">核心答案</div>
+      <div class="answer-text">
+        <p>marketing-bff + 营销平台 采用三层 Schema 驱动架构：</p>
+<pre>后端 API (原始数据) → BFF 层 (Schema 生成) → 前端层 (Schema 渲染)</pre>
+        <p><strong>BFF 层 — Schema 生成（marketing-bff）：</strong></p>
+        <p>BFF 用 <code>自研模板引擎</code> 模板引擎驱动 Schema 生成，不是手写 JSON。每个步骤有独立模板函数（basic/group/rules/message/preview），模板定义字段的取值路径 + 生成逻辑。</p>
+        <p><strong>1. 模板驱动 + 步骤分发</strong>：</p>
+<pre>前端请求 Schema 渲染 API（指定步骤）
+    ↓
+getRenderSchemaTemplate(step, ctx)
+    ↓ switch(step)
+    ├── BASIC  → basic.ts   // ~1200 行，20+ 字段
+    ├── GROUP  → group.ts    // 目标人群
+    ├── RULES  → rules/      // 规则（最大最复杂，25 种活动类型各有子模板）
+    ├── MESSAGE → message.ts // 推送/标题/描述 ~980 行
+    └── PREVIEW → preview.ts</pre>
+        <p>每个模板返回 <code>TemplateStuff</code>（hooks + template entries），Builder.parseOnce 遍历 entries 执行 handler，hooks 自动合并后端数据（mixinDefaultFields 合并 visible/disabled/options，mixinValue 合并 value）。</p>
+        <p><strong>2. 字段管理 — 分布式定义 + handler 复用</strong>：</p>
+        <p>字段定义按模板分布式管理（不存在集中注册中心）：</p>
+        <ul>
+          <li><code>basic.ts</code>：city, campaign_type, trigger_type, budget 等 20+ 字段</li>
+          <li><code>group.ts</code>：range_type, target_group, control</li>
+          <li><code>message.ts</code>：title, description, push, os2_push</li>
+          <li><code>rules/details/*.ts</code>：25 种活动类型各自的规则详情</li>
+        </ul>
+        <p>联动模板（linkageSchema）从 render 模板中<strong>提取单个 handler 复用</strong>，保证联动返回与初始渲染的 Schema 结构一致。</p>
+        <p><strong>3. injectDActions — 联动双重求值机制</strong>（BFF 最精巧的设计）：</p>
+        <p>联动配置通过 <code>injectDActions</code> 声明式注入，<strong>一次声明、双重求值</strong>：</p>
+        <ul>
+          <li><strong>BFF 端</strong>：safeEval 用当前值求值 → 设置初始 visible/disabled 状态（SSR 初始状态正确）</li>
+          <li><strong>序列化到 d_actions</strong> → 前端运行时再次求值（客户端联动）</li>
+        </ul>
+        <p>联动分两种：</p>
+        <ul>
+          <li><strong>fetchApi 型</strong>（重服务端）：依赖变化 → 前端调 BFF 接口 → BFF 重新生成该字段 Schema → 前端替换</li>
+          <li><strong>state 型</strong>（纯前端）：依赖变化 → 前端本地 eval 表达式 → 更新 visible/disabled</li>
+        </ul>
+        <p><strong>4. 联动模板 — 16 个 linkageSchema 文件</strong>：</p>
+        <ul>
+          <li>字段重渲染型 12 个（campaignType, triggerType, rewardCondition, rules 等）：从 render 模板提取 handler 用新数据重新生成</li>
+          <li>Placeholder 重置型 4 个（titlePlaceholder, descriptionPlaceholder, pushPlaceholder, os2pushPlaceholder）：只清空 value</li>
+        </ul>
+        <p><strong>前端层 — Schema 渲染引擎（营销平台/app/dive）：</strong></p>
+        <p><strong>1. Schema 迭代渲染</strong>（<code>StepForm</code>）：BFF 返回 content_schema 数组，前端遍历渲染。映射方式是<strong>双轨制</strong>：</p>
+        <ul>
+          <li><strong>switch-case</strong>：基础组件（Radio、Select、DatePicker 等）按 <code>d_component</code> switch</li>
+          <li><strong>RegisteredComponents 注册表</strong>：35+ 业务组件按名字注册，支持动态加载</li>
+        </ul>
+        <p><strong>2. 字段路径拍平 — formatName</strong>（核心设计）：</p>
+        <p>页面有层级（步骤 → 卡片 → Form.List 行 → 字段），<code>formatName</code> 拍平为 dot 路径：</p>
+<pre>"rules.reward.0.method" → 规则 &gt; 奖励 &gt; 第 0 行 &gt; 发放方式</pre>
+        <p>这个路径同时是 Redux 存储 key 和 listener 事件名。</p>
+        <p><strong>3. 联动引擎 — d_actions + listener 发布订阅</strong>：</p>
+<pre>字段A 变值 → onFormChange → listener.emit("basic.campaign_type", data)
+                                         ↓
+字段B 的 d_actions.dependencies 包含 "campaign_type"
+→ FieldWrapper 挂载时 listener.on("basic.campaign_type", parseCallback)
+→ parseCallback → fetchApi 型回调 BFF / state 型本地 eval</pre>
+        <p><strong>4. 联动表达式解析</strong>：state 型联动通过 eval 轻量解析（正则提取 <code>{{...}}</code> → 变量替换 → eval），四套解析函数（RuleCard 的 parseVisible / RewardCondition 的 getExpression / FuelReward 的 parseVisible / tools.ts 的 schemaExpression），eval 可访问的变量因组件而异（dataSet / rowValue / formInstance / props）。</p>
+        <p><strong>5. 状态管理三层</strong>：</p>
+        <ul>
+          <li><strong>Redux</strong>（<code>saveFormData</code>）：全局表单数据，key 是拍平路径</li>
+          <li><strong>Form 实例</strong>（<code>Form.useForm()</code>）：字段级操作</li>
+          <li><strong>Listener 事件</strong>：字段变更通知 + 联动触发</li>
+        </ul>
+      </div>
+      <div class="section-label">口语化表述</div>
+      <div class="blockquote-styled">Schema 驱动架构分 BFF 生成和前端渲染两层。BFF 层用模板引擎驱动——每个步骤有独立模板，模板定义字段取值路径和生成逻辑，Builder 编译出 content_schema。字段定义按模板分布式管理，联动模板从 render 模板提取 handler 复用，保证结构一致。BFF 最精巧的设计是 injectDActions 双重求值——一次声明联动配置，BFF 端用 safeEval 求初始状态（SSR 就是对的），同时序列化为 d_actions 给前端运行时联动。联动分 fetchApi 型回调 BFF 重生成和 state 型前端本地 eval。前端拿到 Schema 后通过 formatName 拍平嵌套路径，用 listener 发布订阅执行联动。这样新增活动类型前端零代码，BFF 配模板和联动就行。</div>
+      <div class="section-label">加分点</div>
+      <div class="bonus">讲清楚 injectDActions 双重求值 + fetchApi/state 两种联动类型 + 模板 handler 复用 → 体现对 BFF+前端全链路的深度理解</div>
+    </div>
+  </div>
+</div>
+
+<!-- A3 -->
+<div class="card" data-group="a" data-id="A3">
+  <div class="card-header" onclick="toggleCard(this)">
+    <span class="tag tag-a">A3</span>
+    <span class="card-title">400+ 权益的组件库怎么设计？</span>
+    <span class="card-arrow">&#9654;</span>
+  </div>
+  <div class="card-body">
+    <div class="card-content">
+      <div class="section-label">核心答案</div>
+      <div class="answer-text">
+        <p>权益组件库（v1.x）是营销平台的权益组件库，管理 400+ 权益的创建、编辑、复制、查看全生命周期。</p>
+        <p>架构设计：</p>
+        <ol>
+          <li><strong>Register 注册模式 — 内置 24 组件 + 运行时扩展</strong>：构造时注册 24 个内置组件（通用 16 + 3个业务线 8），<code>add()</code>/<code>addMultipleCmps()</code> 支持消费方运行时注册自定义权益组件</li>
+          <li><strong>Schema 驱动渲染 — 和 营销平台(dive) 完全同构</strong>：SDK 也是 Schema 渲染引擎的消费者——后端返回 <code>form_data</code>（含 <code>d_component</code> + <code>content_schema</code>），前端通过 FieldWrapper 迭代渲染。和 营销平台(dive) 用同一套 Schema 渲染模式，两个消费者共享一个架构</li>
+          <li><strong>双入口设计 + CRUD 独立 Schema</strong>：
+            <ul>
+              <li>组件模式（<code>&lt;App&gt;</code> 内嵌）+ 函数调用模式（<code>Modal.info</code> 命令式），统一用 <code>BenefitAdmin</code> 分发</li>
+              <li>每个 CRUD 操作（创建/查看/编辑/复制）从不同 API 获取专用 Schema</li>
+            </ul>
+          </li>
+          <li><strong>Rollup 双模打包 + 三输出</strong>：ESM（<code>es/index.js</code>）+ CJS（<code>dist/index.js</code>）+ <code>.d.ts</code>（<code>rollup-plugin-dts</code>），<code>exports</code> 字段条件导出</li>
+          <li><strong>设计系统集成</strong>：深度依赖 <code>公司设计系统库</code>，保持跨业务线 UI 一致</li>
+          <li><strong>Changesets + zx 发版</strong>：alpha/release 双环境，本地 yalc 联调，zx 脚本自动化</li>
+        </ol>
+      </div>
+      <div class="section-label">口语化表述</div>
+      <div class="blockquote-styled">benefit-sdk 是我们的权益组件库，覆盖 400 多种权益的 CRUD。核心设计是 Register 注册模式——构造时注册 24 个内置组件，同时支持运行时扩展。最关键的是，SDK 本身也是 Schema 驱动渲染的消费者——后端返回的 form_data 里有 d_component 和 content_schema，前端用 FieldWrapper 迭代渲染，和 营销平台(dive) 完全同构。也就是说 Schema 驱动不是"某个前端项目的事"，而是横跨整个营销中台的统一架构。打包用 Rollup 双模输出 ESM+CJS+类型声明，发版用 Changesets + zx 脚本自动化。</div>
+      <div class="section-label">加分点</div>
+      <div class="bonus">提到"两个消费者共享 Schema 渲染模式" → 体现系统级架构思维，不只是组件库设计</div>
+    </div>
+  </div>
+</div>
+
+<!-- A4 -->
+<div class="card" data-group="a" data-id="A4">
+  <div class="card-header" onclick="toggleCard(this)">
+    <span class="tag tag-a">A4</span>
+    <span class="card-title">AI 工程工作流怎么保证可靠性？</span>
+    <span class="card-arrow">&#9654;</span>
+  </div>
+  <div class="card-body">
+    <div class="card-content">
+      <div class="section-label">核心答案</div>
+      <div class="answer-text">
+        <p>prd-tools（v2.19.9）是一套 PRD 工程工作流，核心不是"生成代码"，而是把 PRD 转成有证据、可执行、可回流的结构化开发计划。可靠性靠<strong>证据链 + 代码锚定 + 多层质量门控 + 反馈回流闭环</strong>：</p>
+        <ol>
+          <li><strong>证据链驱动</strong>：每个非显然事实必须有证据（8 种类型：code/prd/tech_doc/git_diff/negative_code_search/human/api_doc/reference），搜不到也是证据（negative_code_search），不确定标 low confidence</li>
+          <li><strong>变更分类 + 代码锚定</strong>：PRD 蒸馏阶段不是直接生成代码，而是先分类（ADD/MODIFY/DELETE/NO_CHANGE），每个分类必须锚定到实际源码</li>
+          <li><strong>PRD Ingestion 质量门禁</strong>：不把 .docx 直接丢给 LLM，先用 Python zipfile 提取（零第三方依赖）+ 图片提取 + 质量门禁（pass/warn/block），保证可追溯</li>
+          <li><strong>Reference v4.0 SSOT 架构</strong>：6 文件（codebase/coding-rules/contracts/routing-playbooks/domain/portal），每个事实只存在一处，跨文件通过 ID 引用，避免矛盾</li>
+          <li><strong>Evidence Index 静态分析</strong>：<code>build-index.py</code> 对 TypeScript/JavaScript/Go 做正则扫描，提取 enums/classes/interfaces/functions/constants/imports/switch-cases，构建 entities.json + edges.json（含跨文件 RESOLVED_IMPORT）+ inverted-index.json（BM25 检索），支持文件哈希增量构建</li>
+          <li><strong>Context Pack 精准锚定</strong>：<code>context-pack.py</code> 合并蒸馏产物和 Evidence Index，输出 query-plan.yaml（每个需求的匹配实体+置信度）和 context-pack.md（分层代码锚点：must/should/optional），支持团队模式多仓库索引加载</li>
+          <li><strong>多层质量门控</strong>：<code>quality-gate.py</code> 三个子命令——distill（检查产物完整性/IR/layer impact/索引桥接）、final（5项加权评分：required_files 20% + context_pack_consumed 15% + code_anchor_coverage 25% + plan_actionability 25% + blocker_quality 15%）、reference（6文件完整性/索引/YAML可读性/证据声明）</li>
+          <li><strong>反馈回流闭环</strong>：prd-distill 发现新知识/矛盾 → 生成回流建议 → reference 人工确认后更新 → 下次蒸馏更准</li>
+          <li><strong>Benchmark 回归</strong>：oracle 评分（需求召回 35分 + 代码锚点准确率 30分 + 阻塞项质量 20分 + 计划可执行性 15分 + 误报扣分 -10分）+ snapshot 回归防止退步</li>
+        </ol>
+      </div>
+      <div class="section-label">口语化表述</div>
+      <div class="blockquote-styled">prd-tools 的核心不是让 AI 直接生成代码，而是把 PRD 转成有证据的结构化开发计划。可靠性靠多层：第一层是证据链，每个非显然事实必须有证据，搜不到也是证据，不确定就标 low；第二层是代码锚定——<code>build-index.py</code> 做静态分析构建代码实体索引，<code>context-pack.py</code> 把需求匹配到具体代码锚点，按优先级分层（must/should/optional）；第三层是多层质量门控——<code>quality-gate.py</code> 有三个子命令，final 子命令做 5 项加权评分，不是简单的通过/不通过；第四层是反馈回流，蒸馏发现的新知识和矛盾会回流到知识库。还有 benchmark 系统做回归——拿 oracle 用例跑完整蒸馏链路，需求召回 35 分 + 代码锚点准确率 30 分 + 阻塞项质量 20 分 + 计划可执行性 15 分，总分低了就说明知识库质量退步了。</div>
+      <div class="section-label">加分点</div>
+      <div class="bonus">讲清楚"证据链 + 质量门控 + 反馈回流"三层保证 → 体现工程可靠性思维</div>
+    </div>
+  </div>
+</div>
+
+<!-- A5 -->
+<div class="card" data-group="a" data-id="A5">
+  <div class="card-header" onclick="toggleCard(this)">
+    <span class="tag tag-a">A5</span>
+    <span class="card-title">你做过最有技术挑战的项目？</span>
+    <span class="card-arrow">&#9654;</span>
+  </div>
+  <div class="card-body">
+    <div class="card-content">
+      <div class="section-label">核心答案</div>
+      <div class="answer-text">
+        <p><strong>两种讲法，根据追问方向选：</strong></p>
+        <p><strong>选法 A（选 marketing-bff）：</strong></p>
+        <p>最有挑战的是 marketing-bff 的 Schema 驱动架构设计。23 种活动类型，每种有不同的字段组合和联动规则。难点是联动引擎——字段之间的显隐、禁用、选项联动关系非常复杂，比如选了"推送"活动类型，要联动显示推送模板字段，推送模板的 placeholder 又根据操作系统不同而不同。我们设计了 17 个联动文件，每个文件管理一种联动维度。字段注册中心统一管理所有字段的复用，同个字段在不同活动类型下可以有不同的行为。</p>
+        <p><strong>选法 B（选 prd-tools）：</strong></p>
+        <p>最有挑战的是 prd-tools，一套 PRD 工程工作流。核心挑战是怎么让 AI 可靠地分析 PRD 并产出工程可执行的计划。我的解法是"证据链 + 代码锚定"——每个非显然事实必须有证据，8 种证据类型，搜不到也是证据。设计了 reference v4.0，6 文件 SSOT 架构，每个事实只存在一处，跨文件 ID 引用避免矛盾。还做了 <code>build-index.py</code> 静态分析器，正则扫描 TypeScript/JavaScript/Go，提取实体、构建跨文件调用边和倒排索引，让每个需求都能精准锚定到代码位置。<code>context-pack.py</code> 再把蒸馏产物和索引合并，按优先级分层输出代码锚点。质量门控有 5 项加权评分，benchmark 系统做回归防止退步。还做了三层图谱融合——GitNexus 提供代码结构，Graphify 提供业务语义，prd-tools 做证据治理。反馈回流闭环让知识库越用越准。</p>
+      </div>
+      <div class="section-label">加分点</div>
+      <div class="bonus">两种都能讲，根据追问方向灵活切换</div>
+    </div>
+  </div>
+</div>
+
+<!-- A6 -->
+<div class="card" data-group="a" data-id="A6">
+  <div class="card-header" onclick="toggleCard(this)">
+    <span class="tag tag-a">A6</span>
+    <span class="card-title">Monorepo 的包依赖管理怎么做？</span>
+    <span class="card-arrow">&#9654;</span>
+  </div>
+  <div class="card-body">
+    <div class="card-content">
+      <div class="section-label">核心答案</div>
+      <div class="answer-text">
+        <p>营销平台 的依赖管理策略：</p>
+        <ol>
+          <li><strong>Yarn workspace</strong>：根目录 <code>package.json</code> 声明 <code>"workspaces": ["packages/*", "app/*"]</code>，所有子包自动链接</li>
+          <li><strong>workspace 协议引用</strong>：子包间引用用 <code>"@company/ui-components": "workspace:*"</code>，本地开发直接 symlink</li>
+          <li><strong>yarn.lock 锁版本</strong>：严格锁定第三方依赖版本，遇到过 <code>@yarnpkg/parsers</code> 从 rc.31 升到 rc.48 导致不兼容 node16 的事故</li>
+          <li><strong>resolutions 强制统一</strong>：根目录 <code>"resolutions": {"@types/react": "^18.0.0"}</code> 确保所有子包用同一个 react 类型</li>
+          <li><strong>Lerna bootstrap</strong>：<code>lerna bootstrap</code> 处理嵌套依赖（Yarn workspace 覆盖不到的场景）</li>
+          <li><strong>CI 策略</strong>：Lerna <code>npmClientArgs: ["--no-lockfile"]</code> 避免 CI 环境锁文件冲突</li>
+        </ol>
+      </div>
+      <div class="section-label">口语化表述</div>
+      <div class="blockquote-styled">依赖管理主要靠 Yarn workspace + yarn.lock。workspace 做子包间的 symlink，yarn.lock 锁第三方版本。踩过一个坑：yarn.lock 里锁的 <code>@yarnpkg/parsers</code> 从 rc.31 被升到 rc.48，而 rc.48 要求 node>=18，我们 node16 环境直接崩了。所以项目强制不删 yarn.lock，用 yarn 不用 npm。还用 resolutions 强制统一 @types/react 版本，避免多个版本导致类型冲突。</div>
+      <div class="section-label">加分点</div>
+      <div class="bonus">有真实的版本事故案例 → 说服力强</div>
+    </div>
+  </div>
+</div>
+
+<!-- A7 -->
+<div class="card" data-group="a" data-id="A7">
+  <div class="card-header" onclick="toggleCard(this)">
+    <span class="tag tag-a">A7</span>
+    <span class="card-title">联动引擎怎么设计？</span>
+    <span class="card-arrow">&#9654;</span>
+  </div>
+  <div class="card-body">
+    <div class="card-content">
+      <div class="section-label">核心答案</div>
+      <div class="answer-text">
+        <p>联动引擎横跨 BFF + 前端两层，核心是 <strong>injectDActions 声明式注入 + listener 发布订阅 + eval 表达式解析</strong>。</p>
+        <p><strong>BFF 端 — 联动配置生成</strong>：</p>
+        <p>联动配置不是手写 d_actions JSON，而是通过 <code>injectDActions</code> 函数声明式注入：</p>
+<pre>// 模板 handler 中调用
+injectDActions(schema, [
+  {
+    dependencies: ["basic.city", "basic.product_id"],
+    callback: {
+      fetchApi: "/api/linkage/fieldName",  // fetchApi 型：回调 BFF 重生成
+      method: "post"
+    }
+  },
+  {
+    dependencies: ["basic.campaign_type"],
+    callback: {
+      state: { visible: "$deps[0]===32" }    // state 型：前端本地 eval
+    }
+  }
+])</pre>
+        <p><strong>injectDActions 双重求值</strong>：</p>
+        <ol>
+          <li><strong>BFF 端</strong>：safeEval 用当前值求值 → 设置初始 visible/disabled（SSR 初始状态正确，不需要等前端 eval）</li>
+          <li><strong>序列化到 d_actions</strong> → 前端运行时 listener 触发时再次求值</li>
+        </ol>
+        <p><strong>16 个 linkageSchema 文件</strong>（<code>config/linkage-templates/</code>）分两类：</p>
+        <p>字段重渲染型（12 个）— 从 render 模板提取 handler，用新数据重新生成完整 Schema：</p>
+        <div class="table-wrapper"><table>
+          <tr><th>文件</th><th>触发场景</th><th>复用来源</th></tr>
+          <tr><td>campaignType.ts</td><td>城市/产品变化 → 重渲染活动类型选项</td><td>basic.ts</td></tr>
+          <tr><td>triggerType.ts</td><td>活动类型变化 → 重渲染触发方式</td><td>basic.ts</td></tr>
+          <tr><td>rewardCondition.ts</td><td>触发方式变化 → 重渲染奖励条件</td><td>rules/index.ts</td></tr>
+          <tr><td>rules.ts</td><td>多字段变化 → 重渲染规则详情</td><td>rules/index.ts</td></tr>
+          <tr><td colspan="3">budgetAllocation / cycleType / effectMode / guaranteeType / deliveryRiderType / title / description / push 等类似</td></tr>
+        </table></div>
+        <p>Placeholder 重置型（4 个）— 不重新渲染字段，只清空 value：</p>
+        <div class="table-wrapper"><table>
+          <tr><th>文件</th><th>行为</th></tr>
+          <tr><td>titlePlaceholder.ts</td><td>清空标题内容</td></tr>
+          <tr><td>descriptionPlaceholder.ts</td><td>清空描述内容</td></tr>
+          <tr><td>pushPlaceholder.ts</td><td>清空推送模板</td></tr>
+          <tr><td>os2pushPlaceholder.ts</td><td>清空 iOS 推送模板</td></tr>
+        </table></div>
+        <p><strong>联动请求链路</strong>：</p>
+<pre>前端字段变化 → 读取 d_actions.fetchApi → POST BFF联动API
+    ↓
+Controller → 调后端 API 获取新 options
+    ↓
+从 basic.ts 提取 campaign_type handler → 用新数据重新生成 Schema
+    ↓
+返回单个字段 Schema → 前端替换原字段</pre>
+        <p><strong>前端端 — 联动执行</strong>：</p>
+<pre>字段A 变值 → onFormChange → listener.emit(formatName, value)
+    ↓
+FieldWrapper listener.on callback → parseCallback
+    ↓
+├── fetchApi 型 → POST BFF → 返回新 Schema → 替换字段
+└── state 型 → eval 表达式 → 更新 visible/disabled</pre>
+      </div>
+      <div class="section-label">口语化表述</div>
+      <div class="blockquote-styled">联动引擎横跨 BFF 和前端两层。BFF 端核心是 injectDActions——在模板 handler 里声明式注入联动配置，一次声明双重求值：BFF 用 safeEval 求初始状态保证 SSR 就是对的，同时序列化 d_actions 给前端。联动分 fetchApi 型和 state 型：fetchApi 型是字段变化后回调 BFF 重新生成 Schema 前端替换，state 型是前端本地 eval 表达式更新显隐。16 个联动文件按维度拆分，字段重渲染型从 render 模板提取 handler 复用保证结构一致，Placeholder 重置型只清空值。前端通过 listener 发布订阅执行联动，formatName 拍平路径做事件名。</div>
+      <div class="section-label">加分点</div>
+      <div class="bonus">讲清楚 injectDActions 双重求值 + fetchApi/state 两种联动类型的区别 + handler 复用机制 → 体现 BFF+前端全链路理解</div>
+    </div>
+  </div>
+</div>
+
+<!-- A8 -->
+<div class="card" data-group="a" data-id="A8">
+  <div class="card-header" onclick="toggleCard(this)">
+    <span class="tag tag-a">A8</span>
+    <span class="card-title">组件库的版本管理和发布流程？</span>
+    <span class="card-arrow">&#9654;</span>
+  </div>
+  <div class="card-body">
+    <div class="card-content">
+      <div class="section-label">核心答案</div>
+      <div class="answer-text">
+        <p>ibt-benefit-sdk 的发版流程：</p>
+        <ol>
+          <li><strong>Changesets 管理版本</strong>：
+            <ul>
+              <li><code>npx changeset</code>：开发者选择变更的包 + 填写变更描述</li>
+              <li><code>npx changeset version</code>：自动 bump 版本号 + 生成 CHANGELOG</li>
+              <li><code>npx changeset publish</code>：发布到 npm registry</li>
+            </ul>
+          </li>
+          <li><strong>双环境发布</strong>：
+            <ul>
+              <li><code>release:alpha</code>：发布 alpha 版本到内部 registry，用于联调</li>
+              <li><code>release</code>：发布正式版，使用 zx 脚本 <code>scripts/publish.mjs</code> 自动化</li>
+            </ul>
+          </li>
+          <li><strong>本地联调</strong>：
+            <ul>
+              <li><code>build+yalc</code>：Rollup 构建后 <code>yalc push</code> 发布到本地 yalc 仓库</li>
+              <li>目标项目 <code>yalc add @company/benefit-sdk</code> 拉取本地版本</li>
+              <li>避免 npm link 的符号链接问题</li>
+            </ul>
+          </li>
+          <li><strong>Rollup 双模构建</strong>：
+            <ul>
+              <li>ESM 输出：<code>es/index.js</code> + <code>es/index.d.ts</code>（类型声明）</li>
+              <li>CJS 输出：<code>dist/index.js</code></li>
+              <li><code>rollup-plugin-dts</code> 生成类型声明</li>
+              <li><code>rollup-plugin-postcss</code> 处理样式</li>
+            </ul>
+          </li>
+        </ol>
+      </div>
+      <div class="section-label">口语化表述</div>
+      <div class="blockquote-styled">版本管理用 Changesets，开发者执行 changeset 选择变更的包和语义版本，然后 changeset version 自动 bump 版本号和 CHANGELOG。发布分两步：先 build+yalc 本地联调确认没问题，再走 publish 脚本发布。有 alpha 和正式两个环境，alpha 给联调用，确认后发正式版。构建用 Rollup，同时出 ESM 和 CJS，还有类型声明。</div>
+      <div class="section-label">加分点</div>
+      <div class="bonus">提到 yalc 解决 npm link 问题 → 体现实际踩坑经验</div>
+    </div>
+  </div>
+</div>
+
+<!-- A9 -->
+<div class="card" data-group="a" data-id="A9">
+  <div class="card-header" onclick="toggleCard(this)">
+    <span class="tag tag-a">A9</span>
+    <span class="card-title">AI 生成代码怎么验证质量？</span>
+    <span class="card-arrow">&#9654;</span>
+  </div>
+  <div class="card-body">
+    <div class="card-content">
+      <div class="section-label">核心答案</div>
+      <div class="answer-text">
+        <p>prd-tools 的质量验证不是评分，而是<strong>证据链审计 + 代码锚定验证 + 多层质量门控 + Benchmark 回归</strong>：</p>
+        <ol>
+          <li><strong>证据链审计</strong>：
+            <ul>
+              <li>每个产出的 evidence.yaml 记录 8 种证据类型</li>
+              <li>每个 requirement 至少有 PRD 或技术文档证据</li>
+              <li>每个 layer impact 至少有源码或负向搜索证据</li>
+              <li>PRD ingestion 质量门禁（pass/warn/block）</li>
+            </ul>
+          </li>
+          <li><strong>代码锚定验证</strong>（Evidence Index + Context Pack）：
+            <ul>
+              <li><code>build-index.py</code> 正则扫描 TypeScript/JavaScript/Go，提取 enums/classes/interfaces/functions/constants/imports/switch-cases</li>
+              <li>构建跨文件 RESOLVED_IMPORT 调用边和 BM25 倒排索引</li>
+              <li><code>context-pack.py</code> 合并蒸馏产物和索引，输出 query-plan.yaml（需求→实体匹配+置信度）和 context-pack.md（must/should/optional 三层代码锚点）</li>
+              <li>支持增量构建（文件哈希对比，只重建变化部分）</li>
+            </ul>
+          </li>
+          <li><strong>多层质量门控</strong>（quality-gate.py）：
+            <ul>
+              <li><strong>distill 子命令</strong>：检查产物完整性、Requirement IR、Layer Impact、索引桥接、报告确认</li>
+              <li><strong>final 子命令</strong>：5 项加权评分——required_files 20% + context_pack_consumed 15% + code_anchor_coverage 25% + plan_actionability 25% + blocker_quality 15%</li>
+              <li><strong>reference 子命令</strong>：6 文件完整性、索引、YAML 可读性、证据声明、schema_version</li>
+            </ul>
+          </li>
+          <li><strong>Reference 质量</strong>（build-reference）：
+            <ul>
+              <li>致命项：文件缺失、无 evidence、路径不存在、enum/field 与源码冲突、跨文件重复</li>
+              <li>警告项：reference 过期、术语缺同义词、playbook 缺 QA 矩阵</li>
+              <li>边界检查：5 条跨文件边界规则</li>
+              <li>样例回归：用 golden sample 反推 PRD → IR → Layer Impact → Contract Delta 是否走通</li>
+            </ul>
+          </li>
+          <li><strong>PRD 蒸馏质量</strong>（prd-distill）：
+            <ul>
+              <li>变更分类必须由源码或负向搜索支撑</li>
+              <li>多层需求必须有 Contract Delta</li>
+              <li>契约 alignment_status（aligned/needs_confirmation/blocked）</li>
+              <li>低置信度项必须进入 questions.md</li>
+              <li>11 步工作流含独立 Report Review Gate（硬停止，用户确认后才能生成 plan）</li>
+            </ul>
+          </li>
+          <li><strong>Benchmark 回归</strong>：
+            <ul>
+              <li>oracle 评分：需求召回 35分 + 代码锚点准确率 30分 + 阻塞项质量 20分 + 计划可执行性 15分 + 误报扣分 -10分</li>
+              <li>snapshot 回归：对比历史基准，发现退步</li>
+            </ul>
+          </li>
+          <li><strong>图谱证据校验</strong>：
+            <ul>
+              <li>GEV ID 可追溯到图谱查询结果</li>
+              <li>Graphify INFERRED 需源码确认</li>
+              <li>图谱和扫描结果冲突时以源码为准</li>
+            </ul>
+          </li>
+        </ol>
+      </div>
+      <div class="section-label">口语化表述</div>
+      <div class="blockquote-styled">prd-tools 的质量验证不是打分，而是审计+锚定+门控+回归。每个产出都有证据链——requirement 有 PRD 证据，layer impact 有源码证据，契约有 producer/consumer 证据。代码锚定靠 <code>build-index.py</code> 做静态分析，提取代码实体、构建调用边和倒排索引，<code>context-pack.py</code> 再把需求匹配到具体代码位置，按 must/should/optional 分层。质量门控有三个子命令，final 子命令做 5 项加权评分——代码锚点覆盖率占 25%，计划可执行性占 25%，不是简单的通过不通过。PRD 蒸馏 11 步里有独立的 Report Review Gate，用户确认报告后才能生成计划。还有 benchmark 系统做回归，用 oracle 用例跑完整蒸馏链路，需求召回 35 分、代码锚点准确率 30 分，总分低了说明质量退步。</div>
+      <div class="section-label">加分点</div>
+      <div class="bonus">讲清楚"审计不是评分"的设计哲学 → 体现对 AI 工程可靠性的深度理解</div>
+    </div>
+  </div>
+</div>
+
+<!-- A10 -->
+<div class="card" data-group="a" data-id="A10">
+  <div class="card-header" onclick="toggleCard(this)">
+    <span class="tag tag-a">A10</span>
+    <span class="card-title">从 PRD 到上线的完整链路？</span>
+    <span class="card-arrow">&#9654;</span>
+  </div>
+  <div class="card-body">
+    <div class="card-content">
+      <div class="section-label">核心答案</div>
+      <div class="answer-text">
+        <p>四项目串联的完整链路：</p>
+<pre>运营写 PRD (飞书文档)
+    ↓
+prd-tools /reference: 构建项目知识库 → _reference/ (6 文件 SSOT) + Evidence Index
+    ↓
+prd-tools /prd-distill: PRD 蒸馏 → Requirement IR + Layer Impact + Contract Delta
+    ↓
+Context Pack: 合并蒸馏产物 + Evidence Index → query-plan.yaml + context-pack.md
+    ↓
+Quality Gate: quality-gate.py final 5项加权评分
+    ↓
+开发根据蒸馏报告实施 → marketing-bff 配模板/联动 + 营销平台 配组件
+    ↓
+marketing-bff: Schema 生成 → 字段结构 + 联动关系 + 组件类型
+    ↓
+营销平台: Schema 渲染 → 动态表单页面
+    ↓
+ibt-benefit-sdk: 权益组件 → 创建/编辑/查看权益
+    ↓
+Reference 回流: 新知识/矛盾 → reference-update-suggestions.yaml → 人工确认</pre>
+        <p>具体流程：</p>
+        <ol>
+          <li><code>/reference</code> 扫描项目源码，构建 reference v4.0（6 文件 SSOT 架构）+ <code>build-index.py</code> 构建 Evidence Index（代码实体、跨文件调用边、BM25 倒排索引）</li>
+          <li>运营在飞书写 PRD（如"加油站新人完单领券"）</li>
+          <li><code>/prd-distill</code> 做 PRD Ingestion（Python zipfile 提取，零依赖）+ 证据台账，结合 reference 路由匹配，产出 Requirement IR（变更分类 ADD/MODIFY/DELETE）+ Layer Impact（按能力面分层）+ Contract Delta（跨层契约差异）</li>
+          <li><code>context-pack.py</code> 合并蒸馏产物和 Evidence Index，输出 query-plan.yaml（需求→实体匹配）和 context-pack.md（must/should/optional 三层代码锚点）</li>
+          <li><code>quality-gate.py final</code> 做 5 项加权评分（代码锚点覆盖率 25% + 计划可执行性 25% + 必需文件 20% + context pack 消耗 15% + 阻塞项质量 15%）</li>
+          <li>Report Review Gate 硬停止，用户确认报告后才生成 plan.md</li>
+          <li>开发根据蒸馏报告的 plan.md 实施：marketing-bff 加字段模板和联动配置，营销平台 注册新组件（如果需要）</li>
+          <li>marketing-bff 运行时根据活动类型组合 Schema，返回给前端</li>
+          <li>营销平台 的 Schema 渲染器根据 Schema 动态生成表单，新增活动类型前端零代码</li>
+          <li>如果涉及权益，调用 ibt-benefit-sdk 的组件</li>
+          <li>蒸馏发现的新知识/矛盾通过 reference-update-suggestions.yaml 回流</li>
+        </ol>
+      </div>
+      <div class="section-label">口语化表述</div>
+      <div class="blockquote-styled">完整链路分三段。第一段是知识准备：reference 扫描源码构建 reference 知识库（6 文件 SSOT），同时 <code>build-index.py</code> 做静态分析构建代码实体索引（entities/edges/inverted-index）。第二段是 PRD 蒸馏：运营写完 PRD，prd-distill 先做 Ingestion（Python zipfile 零依赖提取），然后结合 reference 做变更分类——每个字段是 ADD 还是 MODIFY，都有源码证据支撑。<code>context-pack.py</code> 再把蒸馏产物和索引合并，输出分层代码锚点（must/should/optional）。<code>quality-gate.py final</code> 做 5 项加权评分，Report Review Gate 硬停止等用户确认。第三段是开发实施和回流：开发按 plan.md 实施，BFF 配模板和联动，前端不用改代码。蒸馏发现的新知识和矛盾回流到 reference，越用越准。</div>
+      <div class="section-label">加分点</div>
+      <div class="bonus">四个项目串联成一条线 + 强调 prd-tools 是"工程工作流"不是"代码生成" → 体现系统级思维和正确的项目定位</div>
+    </div>
+  </div>
+</div>
+
+<!-- B11 -->
+<div class="card" data-group="b" data-id="B11">
+  <div class="card-header" onclick="toggleCard(this)">
+    <span class="tag tag-b">B11</span>
+    <span class="card-title">设计一个前端组件库</span>
+    <span class="card-arrow">&#9654;</span>
+  </div>
+  <div class="card-body">
+    <div class="card-content">
+      <div class="section-label">核心答案</div>
+      <div class="answer-text">
+        <p><strong>以 ibt-benefit-sdk 为实战基础</strong>，组件库设计的 5 个维度：</p>
+        <p><strong>1. 架构设计</strong></p>
+        <ul>
+          <li>Register 注册模式：构造时注册 24 个内置组件（通用 16 + 3个业务线 8），<code>add()</code>/<code>addMultipleCmps()</code> 支持运行时扩展</li>
+          <li>Schema 驱动渲染：组件库本身也是 Schema 消费者，后端返回 <code>form_data</code>（含 <code>d_component</code>），前端 FieldWrapper 迭代渲染</li>
+          <li>双入口设计：组件模式（<code>&lt;App&gt;</code> 内嵌）+ 函数调用模式（<code>Modal.info</code> 命令式），<code>BenefitAdmin</code> 统一分发</li>
+          <li>向后兼容：deprecated 标记（旧 API 标 <code>@deprecated</code> 但不删除）</li>
+        </ul>
+        <p><strong>2. 打包策略</strong></p>
+        <ul>
+          <li>Rollup 构建（不是 Webpack，Rollup 更适合库打包）</li>
+          <li>双模输出：ESM（tree-shakable）+ CJS（兼容老项目）</li>
+          <li><code>exports</code> 字段做条件导出</li>
+          <li><code>peerDependencies</code> 声明 react/react-dom，避免重复打包</li>
+        </ul>
+        <p><strong>3. 样式方案</strong></p>
+        <ul>
+          <li><code>rollup-plugin-postcss</code>：CSS 提取/内联</li>
+          <li>设计系统集成：依赖 <code>公司设计系统库</code></li>
+          <li>Less 预处理</li>
+        </ul>
+        <p><strong>4. 版本管理</strong></p>
+        <ul>
+          <li>Changesets：语义化版本 + 自动 CHANGELOG</li>
+          <li>alpha/release 双环境</li>
+          <li>yalc 本地联调</li>
+        </ul>
+        <p><strong>5. 类型系统</strong></p>
+        <ul>
+          <li><code>rollup-plugin-dts</code> 生成 <code>.d.ts</code></li>
+          <li>TypeScript strict 模式</li>
+          <li>类型随包发布（<code>types: "es/index.d.ts"</code>）</li>
+        </ul>
+      </div>
+      <div class="section-label">口语化表述</div>
+      <div class="blockquote-styled">我实际做过 benefit-sdk 组件库。架构上用 Register 模式，构造时注册 24 个内置组件，同时支持运行时扩展。这个组件库还有一个特别之处——它本身也是 Schema 驱动渲染的消费者，后端返回的 Schema 里有 d_component 字段，前端用 FieldWrapper 迭代渲染，和我们的活动表单渲染完全同构。打包用 Rollup 三输出——ESM、CJS、类型声明。peerDependencies 声明 react 避免重复打包。版本管理用 Changesets，本地联调用 yalc 而不是 npm link。</div>
+      <div class="section-label">加分点</div>
+      <div class="bonus">提到组件库也是 Schema 消费者 → 体现系统级架构思维，不只是组件库设计</div>
+    </div>
+  </div>
+</div>
+
+<!-- B12 -->
+<div class="card" data-group="b" data-id="B12">
+  <div class="card-header" onclick="toggleCard(this)">
+    <span class="tag tag-b">B12</span>
+    <span class="card-title">设计 Schema 驱动 BFF</span>
+    <span class="card-arrow">&#9654;</span>
+  </div>
+  <div class="card-body">
+    <div class="card-content">
+      <div class="section-label">核心答案</div>
+      <div class="answer-text">
+        <p><strong>以 marketing-bff 为实战基础</strong>，Schema 驱动 BFF 的核心是<strong>模板引擎驱动 Schema 生成 + injectDActions 双重求值联动 + 多场景数据适配</strong>。</p>
+<pre>后端 API (原始数据) → BFF 模板引擎 (Schema 生成) → 前端 (Schema 渲染)</pre>
+        <p><strong>1. Schema 生成层 — 模板引擎驱动</strong></p>
+<pre>请求 → Controller → 调后端 API → 拿原始数据
+    ↓
+getRenderSchemaTemplate(step, ctx) → 返回 TemplateStuff
+    ↓
+Builder.parseOnce(template, apiData)
+    ├── 遍历 template entries，每个 entry.handler(ctx) → 生成 Schema 节点
+    ├── afterEach: mixinDefaultFields + mixinValue → 自动合并后端数据
+    └── afterAll: 提取 content_schema 数组
+    ↓
+返回 { content_schema: [...], steps: [...], preview: [...] }</pre>
+        <p>字段定义按模板分布式管理（basic.ts 管理 20+ 基础字段，message.ts 管理推送/标题，rules/details/ 下 25 个文件管理各活动类型规则），不存在集中注册中心。</p>
+        <p><strong>2. 联动引擎 — injectDActions 双重求值</strong></p>
+        <p>联动配置通过 <code>injectDActions</code> 声明式注入，一次声明双重求值：</p>
+        <ul>
+          <li><strong>BFF 端 safeEval</strong>：用当前值求值 → 初始 visible/disabled 就是对的（SSR）</li>
+          <li><strong>序列化 d_actions</strong> → 前端 listener 触发时再次求值</li>
+        </ul>
+        <p>两种联动类型：</p>
+        <ul>
+          <li><strong>fetchApi 型</strong>：依赖变化 → 回调 BFF → BFF 从 render 模板提取 handler 重新生成 Schema → 前端替换</li>
+          <li><strong>state 型</strong>：依赖变化 → 前端本地 eval 表达式 → 更新显隐/禁用</li>
+        </ul>
+        <p>16 个 linkageSchema 文件（12 个字段重渲染型 + 4 个 Placeholder 重置型），从 render 模板提取 handler 复用保证一致性。</p>
+        <p><strong>3. 多场景数据适配</strong></p>
+        <p>同一字段在不同请求场景下数据路径不同（创建/编辑/联动/批量），<code>getAnyDataGadget.ts</code> 按优先级尝试所有路径，<code>injectShadowValue</code> 用双下划线约定注入用户最新选择覆盖后端旧值。</p>
+        <p><strong>4. 扩展性设计</strong></p>
+        <ul>
+          <li>新增活动类型：加枚举值 + 在 rules/details/ 加规则模板 + 配联动，前端零改动</li>
+          <li>新增字段：在对应模板文件加 template entry，联动模板自动可复用</li>
+          <li>新增联动：加 linkageSchema 文件，从 render 模板提取 handler</li>
+        </ul>
+        <p><strong>5. 边界划分</strong></p>
+        <ul>
+          <li>BFF 负责：Schema 结构、字段类型、联动规则声明、i18n key、初始状态求值</li>
+          <li>BFF 不负责：options 内容（后端返回）、校验逻辑（后端实现）、国际化内容（只传 key）、联动表达式执行（前端 eval）</li>
+        </ul>
+      </div>
+      <div class="section-label">口语化表述</div>
+      <div class="blockquote-styled">Schema 驱动 BFF 的核心是模板引擎驱动生成，不是手写 JSON。每个步骤有独立模板，模板定义字段的取值路径和生成逻辑，Builder 编译出 content_schema。最精巧的是 injectDActions 双重求值——一次声明联动配置，BFF 端 safeEval 求初始状态（SSR 就是对的），序列化为 d_actions 给前端运行时联动。联动分 fetchApi 型回调 BFF 重生成和 state 型前端本地 eval。扩展性很好：新增活动类型就加模板文件和联动文件，联动模板从 render 模板提取 handler 复用，前端零改动。</div>
+      <div class="section-label">加分点</div>
+      <div class="bonus">讲清楚模板引擎驱动 + injectDActions 双重求值 + fetchApi/state 两种联动 → 体现 BFF 架构的深度理解，不是背概念</div>
+    </div>
+  </div>
+</div>
+
+<!-- B13 -->
+<div class="card" data-group="b" data-id="B13">
+  <div class="card-header" onclick="toggleCard(this)">
+    <span class="tag tag-b">B13</span>
+    <span class="card-title">设计 Monorepo 架构</span>
+    <span class="card-arrow">&#9654;</span>
+  </div>
+  <div class="card-body">
+    <div class="card-content">
+      <div class="section-label">核心答案</div>
+      <div class="answer-text">
+        <p><strong>以 营销平台 为实战基础</strong>：</p>
+        <p><strong>1. 目录结构</strong></p>
+<pre>营销平台/
+├── app/              # 15+ 业务模块（dive, captain, ride_pass...）
+│   ├── dive/         # 营销活动模块
+│   ├── captain/      # 司机模块
+│   └── ...
+├── packages/         # 共享包
+│   ├── components/   # 公共组件
+│   ├── RichText/     # 富文本编辑器
+│   └── utils/        # 工具函数
+├── lerna.json        # Lerna 配置
+└── package.json      # 根 workspace 配置</pre>
+        <p><strong>2. 版本策略</strong></p>
+        <ul>
+          <li><code>version: "independent"</code>：每个包独立版本，避免一个改动全量发版</li>
+          <li><code>useNx: true</code>：Nx 构建缓存，只构建变更影响范围</li>
+          <li><code>useWorkspaces: true</code>：Yarn workspace 做依赖链接</li>
+        </ul>
+        <p><strong>3. 依赖管理</strong></p>
+        <ul>
+          <li>Yarn workspace + yarn.lock 严格锁版本</li>
+          <li>resolutions 强制统一冲突的依赖（如 @types/react）</li>
+          <li><code>npmClientArgs: ["--no-lockfile"]</code> 避免 CI 锁文件冲突</li>
+        </ul>
+        <p><strong>4. 代码质量</strong></p>
+        <ul>
+          <li>根目录统一 ESLint + Prettier + Husky + commitlint</li>
+          <li>lint-staged 只检查暂存文件</li>
+          <li>conventional commits 强制规范提交信息</li>
+        </ul>
+      </div>
+      <div class="section-label">口语化表述</div>
+      <div class="blockquote-styled">营销平台 用 Lerna + Yarn workspace 做 Monorepo。app 目录放 15 个业务模块，packages 放共享组件。每个模块独立版本，避免一个改动全量发版。开了 Nx 缓存加速构建。依赖管理有个原则：只用 yarn，不删 yarn.lock——踩过第三方包自动升级导致 node16 不兼容的坑。代码质量靠根目录统一配置 ESLint + Prettier + commitlint，子包直接继承。</div>
+      <div class="section-label">加分点</div>
+      <div class="bonus">有真实踩坑经验 → 不是纸上谈兵</div>
+    </div>
+  </div>
+</div>
+
+<!-- B14 -->
+<div class="card" data-group="b" data-id="B14">
+  <div class="card-header" onclick="toggleCard(this)">
+    <span class="tag tag-b">B14</span>
+    <span class="card-title">微前端方案对比</span>
+    <span class="card-arrow">&#9654;</span>
+  </div>
+  <div class="card-body">
+    <div class="card-content">
+      <div class="section-label">核心答案</div>
+      <div class="answer-text">
+        <p>三种主流方案对比：</p>
+        <div class="table-wrapper"><table>
+          <tr><th>维度</th><th>iframe</th><th>qiankun</th><th>Module Federation</th></tr>
+          <tr><td><strong>隔离性</strong></td><td>完美（浏览器级）</td><td>JS 沙箱（Proxy）</td><td>无（共享运行时）</td></tr>
+          <tr><td><strong>性能</strong></td><td>差（独立进程）</td><td>中等</td><td>好（共享依赖）</td></tr>
+          <tr><td><strong>通信</strong></td><td>postMessage</td><td>props/initGlobalState</td><td>共享模块 + 事件</td></tr>
+          <tr><td><strong>接入成本</strong></td><td>低（一个标签）</td><td>中等</td><td>中高（需 Webpack 5）</td></tr>
+          <tr><td><strong>SEO</strong></td><td>差</td><td>好</td><td>好</td></tr>
+          <tr><td><strong>适用场景</strong></td><td>完全独立的第三方系统</td><td>大型应用拆分</td><td>细粒度模块共享</td></tr>
+        </table></div>
+        <p>营销平台 的选择：没有用标准微前端方案，而是用 Lerna workspace + iframe 嵌套。原因是业务模块都在同一个 git 仓库，不需要运行时独立部署，编译时共享更高效。宿主管理平台通过 iframe 嵌入前端平台的页面，通过 URL 参数传递公参（country、lang、username）。</p>
+      </div>
+      <div class="section-label">口语化表述</div>
+      <div class="blockquote-styled">微前端有三种主流方案。iframe 隔离最完美但性能差；qiankun 用 JS 沙箱做隔离，适合大型应用拆分；Module Federation 基于 Webpack 5 做运行时模块共享，性能最好但接入成本高。营销平台 没用标准微前端，因为 15 个模块在同一个仓库，不需要独立部署，编译时共享更简单。实际是宿主平台通过 iframe 嵌入我们的页面，URL 参数传公参。</div>
+      <div class="section-label">加分点</div>
+      <div class="bonus">能结合实际项目解释为什么没选某个方案 → 体现技术判断力</div>
+    </div>
+  </div>
+</div>
+
+<!-- B15 -->
+<div class="card" data-group="b" data-id="B15">
+  <div class="card-header" onclick="toggleCard(this)">
+    <span class="tag tag-b">B15</span>
+    <span class="card-title">设计前端监控体系</span>
+    <span class="card-arrow">&#9654;</span>
+  </div>
+  <div class="card-body">
+    <div class="card-content">
+      <div class="section-label">核心答案</div>
+      <div class="answer-text">
+        <p>监控体系四层：</p>
+        <p><strong>1. 数据采集</strong></p>
+        <ul>
+          <li>JS 错误：<code>window.onerror</code> + <code>window.addEventListener('unhandledrejection')</code></li>
+          <li>接口错误：axios 拦截器捕获 4xx/5xx</li>
+          <li>性能指标：Performance API 采集 FCP/LCP/CLS</li>
+          <li>用户行为：关键路径埋点（PV/点击/表单提交）</li>
+        </ul>
+        <p><strong>2. 数据处理</strong></p>
+        <ul>
+          <li>聚合：相同错误栈合并，减少数据量</li>
+          <li>降采样：高频错误按比例采样（如只上报 10%）</li>
+          <li>丰富：附加环境信息（浏览器/OS/页面URL/用户ID）</li>
+        </ul>
+        <p><strong>3. 告警</strong></p>
+        <ul>
+          <li>错误率阈值：错误数/UV &gt; X% 触发告警</li>
+          <li>新错误检测：错误栈不在已知列表中立即告警</li>
+          <li>告警降噪：相同告警合并，避免轰炸</li>
+        </ul>
+        <p><strong>4. 看板</strong></p>
+        <ul>
+          <li>错误趋势图：按时间/版本/页面维度</li>
+          <li>Top N 错误排行</li>
+          <li>性能 P50/P90/P99 分布</li>
+        </ul>
+      </div>
+      <div class="section-label">口语化表述</div>
+      <div class="blockquote-styled">监控体系分四步：采集、处理、告警、看板。采集靠 window.onerror 和 axios 拦截器。采集后做聚合和降采样——相同错误栈合并，高频错误按比例上报，不然数据量爆炸。告警看两个指标：错误率超阈值和新出现的错误栈。最关键的是告警降噪，我们做过把误报率从 95% 降到 12% 的优化，主要是调阈值 + 加上下文过滤。</div>
+      <div class="section-label">加分点</div>
+      <div class="bonus">提到具体的误报优化数据 → 有真实优化经验</div>
+    </div>
+  </div>
+</div>
+
+<!-- C16 -->
+<div class="card" data-group="c" data-id="C16">
+  <div class="card-header" onclick="toggleCard(this)">
+    <span class="tag tag-c">C16</span>
+    <span class="card-title">React 18 并发模式 + Fiber 架构 + Scheduler</span>
+    <span class="card-arrow">&#9654;</span>
+  </div>
+  <div class="card-body">
+    <div class="card-content">
+      <div class="section-label">核心答案</div>
+      <div class="answer-text">
+        <p><strong>Fiber 架构</strong>：</p>
+        <ul>
+          <li>React 16 引入，把递归的 vdom 树改为链表结构的 Fiber 树</li>
+          <li>每个 Fiber 节点有 <code>child</code>、<code>sibling</code>、<code>return</code> 三个指针</li>
+          <li>可中断的增量渲染：每次处理一个 Fiber 节点，处理完检查是否需要让出主线程</li>
+        </ul>
+        <p><strong>Scheduler（调度器）</strong>：</p>
+        <ul>
+          <li>基于 <code>MessageChannel</code>（不是 setTimeout，因为 setTimeout 最小 4ms）</li>
+          <li>优先级调度：Immediate / UserBlocking / Normal / Low / Idle</li>
+          <li><code>shouldYield()</code> 判断是否需要让出主线程</li>
+        </ul>
+        <p><strong>React 18 并发特性</strong>：</p>
+        <ul>
+          <li><code>createRoot</code> 开启并发模式</li>
+          <li><code>useTransition</code>：标记低优先级更新，不阻塞用户输入</li>
+          <li><code>useDeferredValue</code>：延迟更新值，让紧急更新先处理</li>
+          <li>Automatic Batching：所有状态更新自动批处理（不只是事件处理函数内）</li>
+        </ul>
+      </div>
+      <div class="section-label">口语化表述</div>
+      <div class="blockquote-styled">Fiber 是 React 16 引入的链表结构替代递归 vdom。每个节点有 child/sibling/return 指针，可以中断和恢复。调度器用 MessageChannel 做优先级调度，比 setTimeout 精度高。React 18 的并发模式在此基础上加了 useTransition 和 useDeferredValue，让非紧急更新不阻塞用户输入。还有 Automatic Batching，所有状态更新自动批处理，不再限于事件处理函数内。</div>
+      <div class="section-label">加分点</div>
+      <div class="bonus">提到 MessageChannel 而不是 setTimeout → 体现源码级理解</div>
+    </div>
+  </div>
+</div>
+
+<!-- C17 -->
+<div class="card" data-group="c" data-id="C17">
+  <div class="card-header" onclick="toggleCard(this)">
+    <span class="tag tag-c">C17</span>
+    <span class="card-title">useEffect vs useLayoutEffect</span>
+    <span class="card-arrow">&#9654;</span>
+  </div>
+  <div class="card-body">
+    <div class="card-content">
+      <div class="section-label">核心答案</div>
+      <div class="answer-text">
+        <div class="table-wrapper"><table>
+          <tr><th>维度</th><th>useEffect</th><th>useLayoutEffect</th></tr>
+          <tr><td><strong>执行时机</strong></td><td>DOM 更新后异步执行</td><td>DOM 更新后同步执行</td></tr>
+          <tr><td><strong>阻塞渲染</strong></td><td>不阻塞</td><td>阻塞</td></tr>
+          <tr><td><strong>用途</strong></td><td>数据请求、事件监听、日志</td><td>读取/修改 DOM 布局</td></tr>
+          <tr><td><strong>SSR</strong></td><td>正常</td><td>会警告（用 useIsomorphicLayoutEffect）</td></tr>
+        </table></div>
+        <p>执行顺序：</p>
+        <ol>
+          <li>React 更新 DOM</li>
+          <li>useLayoutEffect 回调同步执行（浏览器还没绘制）</li>
+          <li>浏览器绘制</li>
+          <li>useEffect 回调异步执行</li>
+        </ol>
+        <p>为什么不能在条件里用 Hook：React 靠调用顺序匹配 Hook 和 Fiber 节点的 state。如果条件里用，顺序变了，state 对不上。</p>
+      </div>
+      <div class="section-label">口语化表述</div>
+      <div class="blockquote-styled">useEffect 在浏览器绘制后异步执行，不阻塞渲染，适合做数据请求。useLayoutEffect 在 DOM 更新后同步执行但绘制前，适合读 DOM 布局或修改样式。如果 useEffect 里改了 DOM 样式，用户会看到闪烁——先渲染旧样式再变新样式，用 useLayoutEffect 就不会有这个问题。Hook 不能在条件里用是因为 React 靠调用顺序匹配 state，顺序变了就乱了。</div>
+    </div>
+  </div>
+</div>
+
+<!-- C18 -->
+<div class="card" data-group="c" data-id="C18">
+  <div class="card-header" onclick="toggleCard(this)">
+    <span class="tag tag-c">C18</span>
+    <span class="card-title">浏览器渲染管线</span>
+    <span class="card-arrow">&#9654;</span>
+  </div>
+  <div class="card-body">
+    <div class="card-content">
+      <div class="section-label">核心答案</div>
+      <div class="answer-text">
+<pre>HTML → DOM树
+CSS → CSSOM树    } → Render树 → Layout(布局) → Paint(绘制) → Composite(合成)</pre>
+        <p><strong>关键步骤</strong>：</p>
+        <ol>
+          <li><strong>Parse</strong>：HTML 解析成 DOM，CSS 解析成 CSSOM</li>
+          <li><strong>Render Tree</strong>：DOM + CSSOM 合并，去掉不可见元素（display:none）</li>
+          <li><strong>Layout（Reflow）</strong>：计算每个节点的位置和大小</li>
+          <li><strong>Paint（Repaint）</strong>：填充像素（颜色、文字、图片）</li>
+          <li><strong>Composite</strong>：图层合成，GPU 加速</li>
+        </ol>
+        <p><strong>触发条件</strong>：</p>
+        <ul>
+          <li>Reflow：改几何属性（width/height/margin/padding/position）</li>
+          <li>Repaint：改视觉属性（color/background/visibility）</li>
+          <li>Composite only：transform/opacity（最佳性能）</li>
+        </ul>
+        <p><strong>优化</strong>：</p>
+        <ul>
+          <li><code>transform</code> 替代 <code>top/left</code> 做动画（只触发 composite）</li>
+          <li><code>will-change</code> 提升图层</li>
+          <li>批量 DOM 修改用 <code>requestAnimationFrame</code></li>
+          <li>读写分离：先读布局信息再写，避免强制同步布局</li>
+        </ul>
+      </div>
+      <div class="section-label">口语化表述</div>
+      <div class="blockquote-styled">渲染管线分五步：解析、Render 树、Layout、Paint、Composite。Reflow 是布局计算，改几何属性触发；Repaint 是绘制，改视觉属性触发。性能最好的是只触发 Composite，transform 和 opacity 就是。所以动画用 transform 别用 top/left。优化核心是减少 Reflow，批量改 DOM、读写分离。</div>
+    </div>
+  </div>
+</div>
+
+<!-- C19 -->
+<div class="card" data-group="c" data-id="C19">
+  <div class="card-header" onclick="toggleCard(this)">
+    <span class="tag tag-c">C19</span>
+    <span class="card-title">HTTP 缓存策略</span>
+    <span class="card-arrow">&#9654;</span>
+  </div>
+  <div class="card-body">
+    <div class="card-content">
+      <div class="section-label">核心答案</div>
+      <div class="answer-text">
+        <p><strong>强缓存（不发请求）</strong>：</p>
+        <ul>
+          <li><code>Cache-Control: max-age=3600</code>（秒数）</li>
+          <li><code>Cache-Control: no-cache</code>（跳过强缓存，走协商）</li>
+          <li><code>Cache-Control: no-store</code>（完全不缓存）</li>
+          <li><code>Expires</code>（HTTP/1.0，已被 Cache-Control 取代）</li>
+        </ul>
+        <p><strong>协商缓存（发请求，304 则用缓存）</strong>：</p>
+        <ul>
+          <li><code>ETag / If-None-Match</code>：内容哈希，精确但计算成本高</li>
+          <li><code>Last-Modified / If-Modified-Since</code>：最后修改时间，精度秒级</li>
+        </ul>
+        <p><strong>优先级</strong>：Cache-Control &gt; Expires &gt; ETag &gt; Last-Modified</p>
+        <p><strong>实战配置</strong>：</p>
+        <ul>
+          <li>HTML：<code>Cache-Control: no-cache</code>（每次协商）</li>
+          <li>JS/CSS（带 hash）：<code>Cache-Control: max-age=31536000</code>（强缓存一年）</li>
+          <li>API：<code>Cache-Control: no-store</code> 或短时间 max-age</li>
+        </ul>
+      </div>
+      <div class="section-label">口语化表述</div>
+      <div class="blockquote-styled">缓存分强缓存和协商缓存。强缓存不发请求，Cache-Control 的 max-age 控制有效期。协商缓存发请求，服务端返回 304 就用缓存。ETag 比内容哈希，Last-Modified 比时间，ETag 更精确但计算成本高。实战配置一般是 HTML 不缓存（每次协商），带 hash 的静态资源强缓存一年，API 不缓存。</div>
+    </div>
+  </div>
+</div>
+
+<!-- C20 -->
+<div class="card" data-group="c" data-id="C20">
+  <div class="card-header" onclick="toggleCard(this)">
+    <span class="tag tag-c">C20</span>
+    <span class="card-title">TypeScript 高级类型</span>
+    <span class="card-arrow">&#9654;</span>
+  </div>
+  <div class="card-body">
+    <div class="card-content">
+      <div class="section-label">核心答案</div>
+      <div class="answer-text">
+        <p><strong>1. infer（类型推断）</strong></p>
+<pre>type ReturnType&lt;T&gt; = T extends (...args: any[]) =&gt; infer R ? R : never;
+type Unpacked&lt;T&gt; = T extends Array&lt;infer U&gt; ? U : T;</pre>
+        <p><strong>2. 条件类型</strong></p>
+<pre>type IsString&lt;T&gt; = T extends string ? true : false;
+type NonNullable&lt;T&gt; = T extends null | undefined ? never : T;</pre>
+        <p><strong>3. 模板字面量类型</strong></p>
+<pre>type EventName = `on${Capitalize&lt;string&gt;}`;  // "onClick" | "onChange" ...
+type CSSProperty = `${string}-${string}`;     // "margin-top" ...</pre>
+        <p><strong>4. 映射类型</strong></p>
+<pre>type Readonly&lt;T&gt; = { readonly [P in keyof T]: T[P] };
+type Partial&lt;T&gt; = { [P in keyof T]?: T[P] };
+type Pick&lt;T, K extends keyof T&gt; = { [P in K]: T[P] };</pre>
+        <p><strong>5. 实战用法（marketing-bff 中）</strong>：</p>
+        <ul>
+          <li>字段类型映射：<code>FormDComponentType</code> 枚举 → 不同组件的 props 类型</li>
+          <li>联动类型：<code>LinkageType = 'visible' | 'disabled' | 'api'</code></li>
+        </ul>
+      </div>
+      <div class="section-label">口语化表述</div>
+      <div class="blockquote-styled">infer 用于在条件类型里推断子类型，比如 ReturnType 推断函数返回值。条件类型类似三元表达式，对类型做判断。模板字面量类型是 TS 4.1 引入的，可以在类型层面做字符串拼接，比如自动生成事件处理器类型。实战中最常用的是映射类型——Pick、Omit、Partial 这些内置工具类型的原理就是映射类型。</div>
+    </div>
+  </div>
+</div>
+
+<!-- D21 -->
+<div class="card" data-group="d" data-id="D21">
+  <div class="card-header" onclick="toggleCard(this)">
+    <span class="tag tag-d">D21</span>
+    <span class="card-title">AI 怎么理解一个陌生项目？</span>
+    <span class="card-arrow">&#9654;</span>
+  </div>
+  <div class="card-body">
+    <div class="card-content">
+      <div class="section-label">核心答案</div>
+      <div class="answer-text">
+        <p>reference 构建 reference v4.0（6 文件 SSOT 架构）+ Evidence Index，从源码中提取后续 PRD 蒸馏真正需要的知识：</p>
+        <div class="table-wrapper"><table>
+          <tr><th>文件</th><th>存什么</th><th>不放什么</th></tr>
+          <tr><td>01-codebase.yaml</td><td>目录、枚举、模块、注册点、数据流</td><td>字段级契约、编码规则、步骤</td></tr>
+          <tr><td>02-coding-rules.yaml</td><td>编码规范+约束（severity 区分软硬）、危险区、踩坑</td><td>契约字段、打法步骤</td></tr>
+          <tr><td>03-contracts.yaml</td><td>跨层和外部契约、字段级定义（type/required）</td><td>编码规则、枚举值列表</td></tr>
+          <tr><td>04-routing-playbooks.yaml</td><td>PRD 路由信号、字段映射、场景打法、golden samples</td><td>枚举值、字段契约、编码规则</td></tr>
+          <tr><td>05-domain.yaml</td><td>业务术语、隐式规则、历史决策</td><td>代码路径、编码规则</td></tr>
+          <tr><td>00-portal.md</td><td>导航、按场景阅读指南、健康状态</td><td>大量事实</td></tr>
+        </table></div>
+        <p><strong>6 阶段构建工作流</strong>：</p>
+        <ol>
+          <li>F 上下文收集：历史 PRD/技术方案/分支 diff</li>
+          <li>A 结构扫描：能力面识别 + 图谱查询（GitNexus 代码图谱 + Graphify 业务图谱）</li>
+          <li>A 深度分析：按顺序生成 6 文件，后生成的检查先生成的避免重叠</li>
+          <li>A Evidence Index 构建：<code>build-index.py</code> 正则扫描 TypeScript/JavaScript/Go，提取代码实体（enums/classes/interfaces/functions/constants/imports/switch-cases），构建 entities.json + edges.json（含跨文件 RESOLVED_IMPORT）+ inverted-index.json（BM25），manifest.yaml 记录文件哈希支持增量构建</li>
+          <li>C 质量门控：<code>quality-gate.py reference</code> 检查 6 文件完整性、索引、YAML 可读性、证据声明、schema_version</li>
+          <li>E 反馈回流：从 prd-distill 输出回收新知识</li>
+        </ol>
+        <p><strong>8 种运行模式</strong>：</p>
+        <div class="table-wrapper"><table>
+          <tr><th>模式</th><th>用途</th></tr>
+          <tr><td>F</td><td>上下文收集（历史 PRD/技术方案/分支 diff）</td></tr>
+          <tr><td>A</td><td>全量构建（首次构建 _reference/ + Evidence Index）</td></tr>
+          <tr><td>B</td><td>增量更新（根据代码变化更新部分 reference）</td></tr>
+          <tr><td>B2</td><td>健康检查（判断 reference 是否过期/缺证据）</td></tr>
+          <tr><td>C</td><td>质量门控（检查证据/契约闭环/源码一致性）</td></tr>
+          <tr><td>E</td><td>反馈回流（从 prd-distill 输出回收新知识）</td></tr>
+          <tr><td>T</td><td>团队收集（将成员仓库 reference 聚合到团队仓库）</td></tr>
+          <tr><td>T2</td><td>团队继承（从团队仓库继承知识到成员仓库）</td></tr>
+        </table></div>
+        <p><strong>关键设计</strong>：</p>
+        <ul>
+          <li>SSOT：每个事实只存在一处，其他文件用 <code>contract_ref</code>/<code>ref_rule</code>/<code>playbook_ref</code> 引用</li>
+          <li>能力面适配器：不绑定固定目录，前端/BFF/后端通过 20+ 能力面统一描述</li>
+          <li>图谱融合：GitNexus（代码结构）+ Graphify（业务语义），图谱不可用时回退到 rg/glob</li>
+        </ul>
+      </div>
+      <div class="section-label">口语化表述</div>
+      <div class="blockquote-styled">我设计了 reference v4.0，6 个文件，按关注点分离：代码库静态清单、编码规则、跨层契约、PRD 路由和打法、业务领域知识。核心设计是 SSOT——每个事实只存在一个文件，其他文件通过 ID 引用，避免知识库内部矛盾。构建分 6 步：先收集历史样例，再扫描代码结构，然后深度分析生成 6 文件，接着 <code>build-index.py</code> 做静态分析构建代码实体索引（entities/edges/inverted-index），然后质量门控检查，最后反馈回流。还有团队模式——T 模式把成员仓库的 reference 聚合到团队仓库，T2 模式反向继承。这样跨仓库的公共知识只维护一份。</div>
+    </div>
+  </div>
+</div>
+
+<!-- D22 -->
+<div class="card" data-group="d" data-id="D22">
+  <div class="card-header" onclick="toggleCard(this)">
+    <span class="tag tag-d">D22</span>
+    <span class="card-title">PRD 到代码最难的一步？</span>
+    <span class="card-arrow">&#9654;</span>
+  </div>
+  <div class="card-body">
+    <div class="card-content">
+      <div class="section-label">核心答案</div>
+      <div class="answer-text">
+        <p>最难的是<strong>变更分类</strong>——判断 PRD 里的每个功能点到底是 ADD（新增）、MODIFY（修改已有）、DELETE（删除）还是 NO_CHANGE。</p>
+        <p>为什么难：</p>
+        <ol>
+          <li><strong>需要理解项目现状</strong>：不知道现在有什么字段，就没法判断是新增还是修改</li>
+          <li><strong>PRD 描述模糊</strong>：运营写"增加奖励配置"，可能是新增字段，也可能是修改已有字段的选项</li>
+          <li><strong>跨模块影响</strong>：改一个枚举值可能影响联动规则、i18n、预览配置</li>
+        </ol>
+        <p>prd-tools 的解决方案：</p>
+        <ol>
+          <li><strong>Reference 路由匹配</strong>：<code>04-routing-playbooks.yaml</code> 的 PRD 路由信号 + 字段映射，快速定位到能力面</li>
+          <li><strong>Evidence Index 精准搜索</strong>：<code>build-index.py</code> 构建的倒排索引支持 BM25 检索，<code>context-pack.py</code> 合并蒸馏产物和索引，输出 query-plan.yaml（每个需求的匹配实体+置信度）和分层代码锚点</li>
+          <li><strong>代码锚定</strong>：每个变更分类必须验证源码，<code>evidence.kind</code> 标注来源</li>
+          <li><strong>负向搜索</strong>：搜不到也是证据，用 <code>negative_code_search</code> 记录 query 和范围</li>
+          <li><strong>置信度分级</strong>：high/medium/low，不确定的标 low，强制进入 questions.md</li>
+          <li><strong>Contract Delta</strong>：多层需求必须有契约差异分析，<code>alignment_status</code> 标注对齐状态</li>
+          <li><strong>Report Review Gate</strong>：第 7 步硬停止，用户确认报告后才能生成 plan，避免方向错误</li>
+        </ol>
+      </div>
+      <div class="section-label">口语化表述</div>
+      <div class="blockquote-styled">最难的是变更分类——判断 PRD 里每个功能点是 ADD/MODIFY/DELETE。运营写"增加奖励配置"，你不知道是新增字段还是修改已有字段选项。prd-tools 的解法是分层：先用 reference 的路由信号快速定位到能力面，然后 <code>build-index.py</code> 的倒排索引做 BM25 检索找到相关代码实体，<code>context-pack.py</code> 合并索引和蒸馏产物，按 must/should/optional 分层输出代码锚点。每个变更分类必须验证源码，搜不到就用 negative_code_search 记录。低置信度的强制进入 questions.md 让人确认。还有 Report Review Gate 硬停止——报告确认前不生成计划，避免方向错了白费功夫。</div>
+      <div class="section-label">加分点</div>
+      <div class="bonus">讲清楚"变更分类为什么难" + 多层解决机制 → 体现问题定义能力和工程解法</div>
+    </div>
+  </div>
+</div>
+
+<!-- D23 -->
+<div class="card" data-group="d" data-id="D23">
+  <div class="card-header" onclick="toggleCard(this)">
+    <span class="tag tag-d">D23</span>
+    <span class="card-title">能力面适配器怎么设计？</span>
+    <span class="card-arrow">&#9654;</span>
+  </div>
+  <div class="card-body">
+    <div class="card-content">
+      <div class="section-label">核心答案</div>
+      <div class="answer-text">
+        <p>能力面适配器解决了"不同项目目录结构完全不同，但研发协作中的能力面相对稳定"的问题。</p>
+        <p>设计分三层：</p>
+        <p><strong>1. 统一能力面定义</strong>：前端 9 个 / BFF 10 个 / 后端 10 个能力面，每个能力面描述一种关注维度：</p>
+        <p>前端（9）：ui_route / view_component / form_or_schema / state_flow / client_contract / content_i18n / client_validation / preview_readonly / tracking_permission</p>
+        <p>BFF（10）：edge_api / schema_or_template / orchestration / transform_mapping / linkage_options / upstream_contract / frontend_contract / batch_import_export / config_toggle / bff_observability</p>
+        <p>后端（10）：api_surface / application_service / domain_model / validation_policy / persistence_model / async_event / external_integration / config_toggle / audit_observability / test_surface</p>
+        <p><strong>2. 路径只是候选</strong>：能力面有关联的候选路径（如前端 <code>src/components/**</code>），但最终结论必须来自源码证据，不能凭文件名推断。</p>
+        <p><strong>3. 质量门控</strong>：每个能力面记录 surface、entrypoints、key_files、symbols、evidence、confidence。路径命中但未读源码只能是 candidate，读到实现才能进入 reference。</p>
+      </div>
+      <div class="section-label">口语化表述</div>
+      <div class="blockquote-styled">能力面适配器解决的是"不同项目目录不一样"的问题。核心洞察是：目录结构千差万别，但研发协作中的能力面是稳定的——不管项目怎么组织代码，总得有路由、组件、表单、状态管理、API 调用。所以我们按能力面描述，不按目录。路径只是搜索候选，最终结论必须读源码确认。这样 reference 对不同项目都能用，不需要改模板。</div>
+    </div>
+  </div>
+</div>
+
+<!-- D24 -->
+<div class="card" data-group="d" data-id="D24">
+  <div class="card-header" onclick="toggleCard(this)">
+    <span class="tag tag-d">D24</span>
+    <span class="card-title">知识过期怎么办？</span>
+    <span class="card-arrow">&#9654;</span>
+  </div>
+  <div class="card-body">
+    <div class="card-content">
+      <div class="section-label">核心答案</div>
+      <div class="answer-text">
+        <p>prd-tools 用三层机制应对知识过期：</p>
+        <p><strong>1. 衰减监控</strong>（被动）：</p>
+        <ul>
+          <li>每个文件有 <code>last_verified</code> 和 <code>verify_cadence</code>（默认 14 天）</li>
+          <li>健康检查（B2 模式）对比 reference 和当前源码，发现矛盾</li>
+          <li>质量门控（C 模式）检查 enum/field/contract 是否与源码冲突</li>
+        </ul>
+        <p><strong>2. 反馈回流</strong>（主动）：</p>
+<pre>prd-distill 蒸馏 → 发现 code_contradicts_reference
+    ↓
+生成 reference-update-suggestions.yaml（6 种类型）
+    ↓
+build-reference 反馈回流模式 → 人工确认
+    ↓
+更新 reference → 下次蒸馏更准</pre>
+        <p><strong>3. 质量门控</strong>（守门）：</p>
+        <ul>
+          <li>致命项：enum/field/contract 与源码冲突 → 不通过</li>
+          <li>警告项：last_verified 过期 → 需要更新</li>
+          <li>样例回归：用 golden sample 反推 PRD → IR → Layer Impact → Contract Delta 是否走通</li>
+        </ul>
+      </div>
+      <div class="section-label">口语化表述</div>
+      <div class="blockquote-styled">知识过期分三层处理。第一层被动监控，reference 文件记录 last_verified，14 天没验证就标过期，健康检查对比源码发现矛盾。第二层主动回流，prd-distill 蒸馏时如果发现代码和 reference 矛盾，会生成回流建议，build-reference 人工确认后更新。第三层守门，质量门控检查 enum/field/contract 是否和源码冲突，冲突就是致命项，reference 不能用。还有样例回归，拿 golden sample 反推蒸馏链路，看 reference 够不够用。</div>
+    </div>
+  </div>
+</div>
+
+<!-- D25 -->
+<div class="card" data-group="d" data-id="D25">
+  <div class="card-header" onclick="toggleCard(this)">
+    <span class="tag tag-d">D25</span>
+    <span class="card-title">图谱和知识库的关系是什么？</span>
+    <span class="card-arrow">&#9654;</span>
+  </div>
+  <div class="card-body">
+    <div class="card-content">
+      <div class="section-label">核心答案</div>
+      <div class="answer-text">
+        <p>prd-tools 采用了三层架构：</p>
+<pre>Graphify (业务维度)          GitNexus (代码维度)          prd-tools (治理维度)
+"为什么这样设计"              "代码怎么连接"               "怎么从 PRD 到代码"
+PRD/技术方案/截图/历史文档     代码仓库                     编排 + 证据治理 + 质量门控
+        │                          │                           │
+        └──────────────────────────┼───────────────────────────┘
+                                   ▼
+                         _reference/ 企业级可治理知识库</pre>
+        <p><strong>核心原则：图谱是原始发现层，reference 是精选后的企业知识库。Raw Graph ≠ Reference。</strong></p>
+        <p>两个关键设计：</p>
+        <p><strong>1. 两套独立证据追踪</strong>：</p>
+        <ul>
+          <li><code>evidence: ["EV-xxx"]</code> — 可审计证据（源码/文档/人工确认），关键条目必须至少有 EV</li>
+          <li><code>graph_evidence_refs: ["GEV-xxx"]</code> — 图谱溯源，不能替代 EV</li>
+        </ul>
+        <p><strong>2. 置信度映射</strong>：</p>
+        <ul>
+          <li>GitNexus AST 提取 → high（不需要源码确认）</li>
+          <li>Graphify EXTRACTED + source locator → high</li>
+          <li>Graphify INFERRED ≥ 0.8 → medium（需源码确认）</li>
+          <li>Graphify INFERRED &lt; 0.8 → low（必须确认）</li>
+          <li>Graphify AMBIGUOUS → low（需人工确认）</li>
+        </ul>
+        <p><strong>Provider 可替换</strong>：不绑定 GitNexus/Graphify，未来可换 Neo4j/Sourcegraph/CodeQL。</p>
+      </div>
+      <div class="section-label">口语化表述</div>
+      <div class="blockquote-styled">图谱和知识库的关系是"原始发现层"和"精选企业知识库"的关系。图谱帮你快速发现知识——GitNexus 告诉你代码怎么连接，Graphify 告诉你为什么这样设计——但图谱结论不能直接用，需要精选、审计、确认后才能进入 reference。所以每个条目有两套独立证据：一套是可审计证据（源码/文档确认），一套是图谱溯源（从哪发现来的）。图谱不可用时完全回退到源码扫描，核心流程不受影响。另外 Provider 是可替换的，不绑定具体工具。团队模式下还有 T 模式聚合成员仓库 reference、T2 模式继承团队知识，跨仓库的公共知识只维护一份。<code>build-index.py</code> 和 <code>context-pack.py</code> 都支持团队模式的多仓库索引加载。</div>
+    </div>
+  </div>
+</div>
+
+</div><!-- end cardList -->
+
+<!-- Appendix -->
+<div class="appendix">
+  <h2>答题节奏指南</h2>
+
+  <h3>时间控制</h3>
+  <div class="table-wrapper"><table>
+    <tr><th>题目类型</th><th>建议时长</th><th>结构</th></tr>
+    <tr><td>项目深挖</td><td>2-3 分钟</td><td>结论先行 → 架构图 → 关键决策 → 数据</td></tr>
+    <tr><td>系统设计</td><td>5-8 分钟</td><td>需求确认 → 整体架构 → 核心模块 → 扩展性 → 取舍</td></tr>
+    <tr><td>前端基础</td><td>1-2 分钟</td><td>直接答 → 补充原理 → 关联实战</td></tr>
+    <tr><td>AI 工程</td><td>2-3 分钟</td><td>问题定义 → 解决方案 → 设计决策 → 实验数据</td></tr>
+  </table></div>
+
+  <h3>万能框架</h3>
+  <ol>
+    <li><strong>"这个问题我实际遇到过..."</strong> → 开头就锚定实战</li>
+    <li><strong>"核心思路是..."</strong> → 一句话说清方案</li>
+    <li><strong>"具体的做法是..."</strong> → 展开细节</li>
+    <li><strong>"踩过一个坑..."</strong> → 加分项</li>
+    <li><strong>"如果让我重新设计..."</strong> → 体现反思能力</li>
+  </ol>
+</div>
+
+</div><!-- end container -->
+
+<script>
+// State
+let currentGroup = 'all';
+let searchTerm = '';
+
+// Theme
+function toggleTheme() {
+  const html = document.documentElement;
+  const isDark = html.getAttribute('data-theme') === 'dark';
+  html.setAttribute('data-theme', isDark ? 'light' : 'dark');
+  localStorage.setItem('theme', isDark ? 'light' : 'dark');
+  updateThemeIcon();
+}
+function updateThemeIcon() {
+  const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+  document.querySelector('.theme-toggle').innerHTML = isDark ? '&#9788;' : '&#9790;';
+}
+(function initTheme() {
+  const saved = localStorage.getItem('theme');
+  if (saved) {
+    document.documentElement.setAttribute('data-theme', saved);
+  } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+    document.documentElement.setAttribute('data-theme', 'dark');
+  }
+  updateThemeIcon();
+})();
+
+// Toggle card
+function toggleCard(header) {
+  const card = header.closest('.card');
+  card.classList.toggle('expanded');
+}
+
+// Expand/Collapse all
+function expandAll() {
+  document.querySelectorAll('.card:not(.hidden)').forEach(function(c) {
+    c.classList.add('expanded');
+  });
+}
+function collapseAll() {
+  document.querySelectorAll('.card').forEach(function(c) {
+    c.classList.remove('expanded');
+  });
+}
+
+// Filter by group
+function filterGroup(group, btn) {
+  currentGroup = group;
+  document.querySelectorAll('.filter-btn').forEach(function(b) { b.classList.remove('active'); });
+  btn.classList.add('active');
+  applyFilters();
+}
+
+// Search
+function handleSearch() {
+  searchTerm = document.getElementById('searchInput').value.trim().toLowerCase();
+  applyFilters();
+}
+
+function applyFilters() {
+  var cards = document.querySelectorAll('.card');
+  var visibleCount = 0;
+
+  cards.forEach(function(card) {
+    var group = card.getAttribute('data-group');
+    var text = card.textContent.toLowerCase();
+
+    var matchGroup = (currentGroup === 'all') || (group === currentGroup);
+    var matchSearch = !searchTerm || text.indexOf(searchTerm) !== -1;
+
+    if (matchGroup && matchSearch) {
+      card.classList.remove('hidden');
+      visibleCount++;
+      if (searchTerm) {
+        card.classList.add('expanded');
+      }
+    } else {
+      card.classList.add('hidden');
+      card.classList.remove('expanded');
+    }
+  });
+
+  // Update stats
+  var statsEl = document.getElementById('stats');
+  if (searchTerm) {
+    statsEl.textContent = '匹配 ' + visibleCount + ' 题';
+  } else if (currentGroup === 'all') {
+    statsEl.textContent = '共 25 题 · A组10题 B组5题 C组5题 D组5题';
+  } else {
+    var names = { a: 'A-项目深挖', b: 'B-系统设计', c: 'C-前端基础', d: 'D-AI工程' };
+    statsEl.textContent = names[currentGroup] + ' · ' + visibleCount + ' 题';
+  }
+}
+
+// Clear search on empty
+document.getElementById('searchInput').addEventListener('search', function() {
+  if (!this.value) {
+    searchTerm = '';
+    applyFilters();
+  }
+});
+</script>
+</body>
+</html>
