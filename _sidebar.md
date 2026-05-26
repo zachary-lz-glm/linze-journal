@@ -45,7 +45,13 @@
   - [项目面试材料脱敏版](项目复盘/05-15-项目面试材料-脱敏版.md)
 
 - **AI 情报**
-  - [AI 情报目录](AI情报/)
+  - [AI 情报总览](AI情报/README.md)
+  - [企业级 AI 工程化六大信号](AI情报/2026W21-企业级AI工程化六大信号.md)
+  - [MCP 代码执行与 Token 优化](AI情报/2026-05-25-MCP代码执行与Token优化.md)
+  - [Agent 编排架构模式](AI情报/2026-05-26-Agent编排架构模式.md)
+  - [AI 日报 prompt](AI情报/daily-ai-report-prompt.md)
+  - [AI 周报 prompt](AI情报/weekly-ai-report-prompt.md)
 
 - **定投分析**
-  - [定投分析目录](定投分析/)
+  - [定投分析总览](定投分析/README.md)
+  - [基金日报 prompt](定投分析/daily-fund-report-prompt.md)

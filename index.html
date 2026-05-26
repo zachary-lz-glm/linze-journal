@@ -2,20 +2,135 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
   <title>邓泽霖 · 面试知识库</title>
   <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#1a1a2e">
+  <meta name="theme-color" content="#0f172a">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/docsify-themeable@0/dist/css/theme-simple-dark.css">
   <style>
-    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-    .sidebar-nav > ul > li > p { font-weight: 600; }
-    a { text-decoration: none; }
-    @media (max-width: 768px) {
-      .sidebar { display: none; }
-      body.show-sidebar .sidebar { display: block; position: fixed; z-index: 99; width: 300px; height: 100vh; }
+    :root {
+      --base-font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue", sans-serif;
+      --base-font-size: 16px;
+      --base-line-height: 1.8;
+      --base-color: #e2e8f0;
+      --base-background-color: #0f172a;
+      --heading-font-family: var(--base-font-family);
+      --heading-color: #f1f5f9;
+      --link-color: #38bdf8;
+      --link-color--hover: #7dd3fc;
+      --sidebar-background: #1e293b;
+      --sidebar-name-color: #f8fafc;
+      --sidebar-name-font-size: 18px;
+      --sidebar-nav-link-color: #94a3b8;
+      --sidebar-nav-link-color--active: #38bdf8;
+      --sidebar-nav-link-font-weight--active: 600;
+      --sidebar-nav-link-before-content-l1: "";
+      --sidebar-width: 260px;
+      --sidebar-padding: 16px;
+      --content-max-width: 860px;
+      --content-padding: 24px 32px;
+      --blockquote-border-color: #38bdf8;
+      --code-inline-background: #1e293b;
+      --code-inline-color: #7dd3fc;
+      --code-font-family: "JetBrains Mono", "Fira Code", "SF Mono", Menlo, monospace;
+      --code-font-size: 14px;
+      --notice-border-radius: 8px;
+    }
+
+    /* 侧边栏 */
+    .sidebar {
+      border-right: 1px solid #334155;
+      padding-top: 12px;
+    }
+    .sidebar-nav > ul > li > p {
+      font-weight: 700;
+      font-size: 13px;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      color: #64748b;
+      margin-top: 16px;
+    }
+    .sidebar-nav > ul > li:first-child > p {
+      margin-top: 0;
+    }
+    .sidebar-nav > ul > li > ul > li > p {
+      font-weight: 600;
+      color: #cbd5e1;
+    }
+    .sidebar ul li a {
+      font-size: 14px;
+      padding: 4px 0;
+    }
+
+    /* 内容区 */
+    .content { padding-top: 16px; }
+    .markdown-section h1 { font-size: 1.8rem; margin-bottom: 12px; }
+    .markdown-section h2 { font-size: 1.4rem; margin-top: 40px; padding-bottom: 8px; border-bottom: 1px solid #1e293b; }
+    .markdown-section h3 { font-size: 1.15rem; margin-top: 28px; }
+    .markdown-section p { margin: 12px 0; }
+
+    /* 表格 */
+    .markdown-section table {
+      border-collapse: collapse;
+      width: 100%;
+      margin: 16px 0;
+      font-size: 14px;
+    }
+    .markdown-section th {
+      background: #1e293b;
+      font-weight: 600;
+      text-align: left;
+    }
+    .markdown-section th, .markdown-section td {
+      border: 1px solid #334155;
+      padding: 8px 12px;
+    }
+    .markdown-section tr:nth-child(even) {
+      background: rgba(30, 41, 59, 0.5);
+    }
+
+    /* 代码块 */
+    .markdown-section pre {
+      background: #0f172a;
+      border: 1px solid #1e293b;
+      border-radius: 8px;
+      padding: 16px;
+      overflow-x: auto;
+    }
+    .markdown-section code {
+      font-size: 13px;
+    }
+
+    /* 引用块 */
+    .markdown-section blockquote {
+      border-left: 3px solid var(--blockquote-border-color);
+      background: rgba(56, 189, 248, 0.05);
+      border-radius: 0 8px 8px 0;
+      padding: 12px 16px;
+    }
+
+    /* 搜索框 */
+    .search input {
+      background: #0f172a !important;
+      border: 1px solid #334155 !important;
+      border-radius: 6px !important;
+      color: #e2e8f0 !important;
+      padding: 6px 10px !important;
+    }
+    .search .match-count { color: #64748b; }
+
+    /* 移动端 */
+    @media screen and (max-width: 768px) {
+      :root {
+        --content-padding: 16px;
+        --base-font-size: 15px;
+      }
+      .markdown-section h1 { font-size: 1.5rem; }
+      .markdown-section h2 { font-size: 1.2rem; margin-top: 28px; }
+      .markdown-section th, .markdown-section td { padding: 6px 8px; font-size: 13px; }
+      .markdown-section pre { padding: 12px; font-size: 12px; }
     }
   </style>
 </head>
@@ -24,6 +139,7 @@
   <script>
     window.$docsify = {
       name: '面试知识库',
+      nameLink: '#/README',
       loadSidebar: '_sidebar.md',
       subMaxLevel: 3,
       search: {
@@ -34,12 +150,18 @@
         depth: 6
       },
       auto2top: true,
-      homepage: 'README.md'
+      homepage: 'README.md',
+      alias: {
+        '/AI情报/.*': '/AI情报/README.md',
+        '/定投分析/.*': '/定投分析/README.md'
+      }
     }
   </script>
   <script src="https://cdn.jsdelivr.net/npm/docsify@4/lib/docsify.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/docsify@4/lib/plugins/search.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/docsify@4/lib/plugins/emoji.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-typescript.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-json.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-bash.min.js"></script>
   <script>
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('sw.js');
