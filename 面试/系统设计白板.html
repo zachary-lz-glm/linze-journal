@@ -577,7 +577,7 @@ body {
     <tbody>
       <tr><td>怎么避免依赖爆炸？</td><td>peerDependencies 声明 react/react-dom，避免重复打包。Rollup 打包时 external 化设计系统库。resolutions 强制统一 @types/react 版本，避免多个版本导致类型冲突。</td></tr>
       <tr><td>怎么支持业务自定义？</td><td>Register 模式：构造时注册 24 个内置组件（通用 16 + 业务线 8），业务通过 add()/addMultipleCmps() 运行时注册自定义权益组件，不侵入 SDK 核心代码。</td></tr>
-      <tr><td>Schema 渲染怎么和活动表单复用？</td><td>SDK 本身也是 Schema 驱动渲染的消费者——后端返回 form_data 含 d_component 和 content_schema，前端用 FieldWrapper 迭代渲染，和 营销平台(dive) 完全同构。两个消费者共享一个架构。</td></tr>
+      <tr><td>Schema 渲染怎么和活动表单复用？</td><td>SDK 本身也是 Schema 驱动渲染的消费者——后端返回 form_data 含 d_component 和 content_schema，前端用 FieldWrapper 迭代渲染，和 营销平台 完全同构。两个消费者共享一个架构。</td></tr>
       <tr><td>怎么发版？</td><td>Changesets 管理版本：开发者选变更包 + 填描述，changeset version 自动 bump 版本号和 CHANGELOG。先 build+yalc 本地联调确认没问题，再发 alpha 联调，最后正式 release。zx 脚本自动化流程。</td></tr>
       <tr><td>怎么回滚？</td><td>锁版本到上一 release，业务侧灰度控制。yalc 本地联调可以在发版前发现问题，alpha 环境联调确认后才能进正式版。</td></tr>
     </tbody>

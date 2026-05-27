@@ -2,10 +2,10 @@
 
 ## 一、今日核心事件
 
-**ibt-benefit-sdk 权益组件库深度复盘**。从源码逐文件精读，梳理出 6 个核心讲点，纠正 1 个认知偏差，发现 1 个重大架构洞察。
+**benefit-sdk 权益组件库深度复盘**。从源码逐文件精读，梳理出 6 个核心讲点，纠正 1 个认知偏差，发现 1 个重大架构洞察。
 
 **一个重大发现**：
-1. **ibt-benefit-sdk 自己也是 Schema 渲染引擎的消费者** — `BenefitForm` 接收 `currentSchema`（form_data 数组），通过 `d_component` 映射 Register 注册的 24 个组件，用 `FieldWrapper` 迭代渲染。和 营销平台(dive) 完全同构！这意味着 Schema 驱动不是"前端项目的事"，而是横跨 营销平台 + benefit SDK 的统一架构模式。
+1. **benefit-sdk 自己也是 Schema 渲染引擎的消费者** — `BenefitForm` 接收 `currentSchema`（form_data 数组），通过 `d_component` 映射 Register 注册的 24 个组件，用 `FieldWrapper` 迭代渲染。和 营销平台 完全同构！这意味着 Schema 驱动不是"前端项目的事"，而是横跨 营销平台 + 权益SDK 的统一架构模式。
 
 **一个纠正**：
 1. 复盘文档 A3 说"Register 注册模式，动态注册扩展点" — 实际是构造时静态注册 24 个组件 + `add()`/`addMultipleCmps()` 运行时扩展。不是纯动态注册，而是"内置基础 + 开放扩展"。
@@ -15,7 +15,7 @@
 ## 二、项目结构全景
 
 ```
-ibt-benefit-sdk/
+benefit-sdk/
 ├── src/
 │   ├── index.ts              # 入口：导出 App/ViewBenefit/CopyBenefit/EditBenefit/CreateBenefit/BenefitAdmin
 │   ├── components/
@@ -108,7 +108,7 @@ class Register {
 
 ### 讲点 2：Schema 驱动渲染 — 与 营销平台 完全同构
 
-**这是最关键的发现**：benefit SDK 的 `BenefitForm` 用了和 营销平台(dive) 完全相同的 Schema 渲染模式：
+**这是最关键的发现**：benefit SDK 的 `BenefitForm` 用了和 营销平台 完全相同的 Schema 渲染模式：
 
 ```typescript
 // BenefitForm — 和 营销平台 的 StepForm 同构
@@ -152,7 +152,7 @@ const registeredComponents = RegisteredComponents._components;
 
 **Schema 渲染架构对比**：
 
-| 维度 | 营销平台 (dive) | ibt-benefit-sdk |
+| 维度 | 营销平台 (dive) | benefit-sdk |
 |------|-------------|-------------------|
 | Schema 来源 | marketing-bff 生成 | MIS 后端 API 返回 |
 | 渲染入口 | StepForm | BenefitForm |
@@ -162,7 +162,7 @@ const registeredComponents = RegisteredComponents._components;
 | 表单管理 | Form.useForm() + Redux | Form.useForm() |
 | 联动机制 | d_actions + listener | 暂无（Schema 由后端按操作类型下发） |
 
-**结论**：Schema 驱动不是"前端项目的事"，而是横跨 营销平台 + benefit SDK 的统一架构。两个消费者，一套模式。
+**结论**：Schema 驱动不是"前端项目的事"，而是横跨 营销平台 + 权益SDK 的统一架构。两个消费者，一套模式。
 
 ### 讲点 3：双入口设计 — 组件模式 vs 函数调用模式
 
@@ -346,7 +346,7 @@ alpha 发版（scripts/publish.mjs）:
                              │
               ┌──────────────┼──────────────┐
               ↓              ↓              ↓
-        营销平台(dive)    benefit SDK    MIS 后端
+        营销平台    benefit SDK    MIS 后端
         ┌─────────┐   ┌──────────┐   ┌────────┐
         │marketing-bff │   │MIS BFF   │   │API     │
         │生成     │   │生成      │   │返回    │
@@ -361,7 +361,7 @@ alpha 发版（scripts/publish.mjs）:
 ```
 
 **两个消费者共享同一套模式**：
-- 营销平台(dive)：marketing-bff 生成 Schema → StepForm + FieldWrapper 渲染 → 35+ 组件
+- 营销平台：marketing-bff 生成 Schema → StepForm + FieldWrapper 渲染 → 35+ 组件
 - benefit SDK：MIS 后端返回 Schema → BenefitDetailForm + FieldWrapper 渲染 → 24 组件
 
 ---
@@ -374,7 +374,7 @@ alpha 发版（scripts/publish.mjs）:
 
 **A**:
 1. **Register 注册模式**：构造时注册 24 个内置组件（通用 16 + DLP 3 + UserCamp 1 + Wang 5），`add()` 支持运行时扩展新业务组件
-2. **Schema 驱动渲染**：SDK 也是 Schema 渲染引擎的消费者——后端返回 `form_data`（含 `d_component` + `content_schema`），前端通过 FieldWrapper 迭代渲染，和 营销平台(dive) 完全同构
+2. **Schema 驱动渲染**：SDK 也是 Schema 渲染引擎的消费者——后端返回 `form_data`（含 `d_component` + `content_schema`），前端通过 FieldWrapper 迭代渲染，和 营销平台 完全同构
 3. **双入口设计**：组件模式（`<App>` 内嵌）+ 函数调用模式（`Modal.info` 命令式），统一用 BenefitAdmin 分发
 4. **CRUD 独立 Schema**：每个操作（创建/查看/编辑/复制）从不同 API 获取专用 Schema，编辑有二次确认机制
 5. **Rollup 双模打包**：ESM + CJS + .d.ts 三输出，`exports` 字段条件导出，peerDependencies 避免重复打包
@@ -389,7 +389,7 @@ alpha 发版（scripts/publish.mjs）:
 | 位置 | 原说法 | 修正为 |
 |------|--------|--------|
 | A3 题 | "Register 注册模式，动态注册扩展点" | 构造时静态注册 24 个内置组件 + add()/addMultipleCmps() 运行时扩展 |
-| A3 题 | 未提 benefit SDK 也是 Schema 消费者 | 补充：SDK 和 营销平台(dive) 用完全相同的 Schema 渲染模式（d_component + FieldWrapper） |
+| A3 题 | 未提 benefit SDK 也是 Schema 消费者 | 补充：SDK 和 营销平台 用完全相同的 Schema 渲染模式（d_component + FieldWrapper） |
 | A3 题 | "400+ 权益组件" | 注册了 24 种组件类型，覆盖 400+ 权益的 CRUD（不是 400 个组件） |
 | 规划.md | "400+ 权益组件 / 双模打包 ESM+CJS / Rollup 构建 / Pebble 设计系统集成 / 权益生命周期 CRUD" | 需要升级：补充 Schema 驱动渲染同构 + Register 内置+扩展双模式 |
 
@@ -399,7 +399,7 @@ alpha 发版（scripts/publish.mjs）:
 
 追问时可能会问到："benefit SDK 和 营销平台 的组件库有什么不同？"
 
-| 维度 | 营销平台 (dive) | ibt-benefit-sdk |
+| 维度 | 营销平台 (dive) | benefit-sdk |
 |------|-------------|-------------------|
 | **定位** | 营销活动表单 | 权益 CRUD |
 | **Schema 来源** | marketing-bff 模板引擎生成 | MIS 后端 API 返回 |

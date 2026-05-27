@@ -131,7 +131,7 @@ implementation_accuracy = 1 - (imp_discarded + imp_major_rewrite + 0.5 × imp_ad
 
 | 项 | 值 |
 |----|-----|
-| 路径 | `营销平台/app/soda_coupon/_prd-tools/distill/world-cup-penalty/` |
+| 路径 | `app/soda_coupon/_prd-tools/distill/world-cup-penalty/` |
 | PRD | `docs/世界杯点球大赛玩法_PRD_v2.0.md` |
 | readiness | **83**，`ready_for_dev`，`approved_with_conditions` |
 | final-quality-gate | **PASS 83** |
@@ -230,6 +230,6 @@ OQ 命中率 = 开发中确实成为问题的 OQ 数 / 蒸馏列出 OQ 总数
 |------|------|
 | 复盘模板 | `prd2code-journal/templates/distill-post-implementation.yaml` |
 | BFF distill | `marketing-bff/_prd-tools/distill/gas-station-new-driver-coupon-l1/` |
-| 前端 distill | `营销平台/app/soda_coupon/_prd-tools/distill/world-cup-penalty/` |
+| 前端 distill | `app/soda_coupon/_prd-tools/distill/world-cup-penalty/` |
 | 团队 distill | `dive-drv-reference/_prd-tools/distill/oil-station-new-driver-coupon/` |
 | quality-gate 源码 | `prd-tools/scripts/quality-gate.py` |

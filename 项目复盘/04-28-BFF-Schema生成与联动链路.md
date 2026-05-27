@@ -307,7 +307,7 @@ parseCallback 分发
 
 ## 十一、明日计划（W1 周三）
 
-- [ ] ibt-benefit-sdk 复盘：400+ 权益组件库的 5 个核心讲点
+- [ ] benefit-sdk 复盘：400+ 权益组件库的 5 个核心讲点
 - [ ] 写 benefit SDK 的 STAR 讲稿
 - [ ] 过一遍 rollup.config / src/index.ts / src/modules/
 - [ ] 睡前背第 3 题「400+ 权益的组件库怎么设计？」

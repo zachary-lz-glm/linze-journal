@@ -372,7 +372,7 @@ python3 .prd-tools/scripts/quality-gate.py reference --root .
 **答**：
 
 - 各仓本地 reference + index。
-- team-reference 聚合到团队仓；team-distill 出 `team-plan.md` + `plans/plan-营销平台.md` 等。
+- team-reference 聚合到团队仓；team-distill 出 `team-plan.md` + `plans/plan-marketing.md` 等。
 - 团队模式 distill quality 检查 `plans/plan-*.md` 是否齐。
 
 ### Q9：「AI 会不会幻觉编造 file:line？」

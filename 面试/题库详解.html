@@ -507,7 +507,7 @@ getRenderSchemaTemplate(step, ctx)
           <li>字段重渲染型 12 个（campaignType, triggerType, rewardCondition, rules 等）：从 render 模板提取 handler 用新数据重新生成</li>
           <li>Placeholder 重置型 4 个（titlePlaceholder, descriptionPlaceholder, pushPlaceholder, os2pushPlaceholder）：只清空 value</li>
         </ul>
-        <p><strong>前端层 — Schema 渲染引擎（营销平台/app/dive）：</strong></p>
+        <p><strong>前端层 — Schema 渲染引擎（营销前端/主模块）：</strong></p>
         <p><strong>1. Schema 迭代渲染</strong>（<code>StepForm</code>）：BFF 返回 content_schema 数组，前端遍历渲染。映射方式是<strong>双轨制</strong>：</p>
         <ul>
           <li><strong>switch-case</strong>：基础组件（Radio、Select、DatePicker 等）按 <code>d_component</code> switch</li>
@@ -554,7 +554,7 @@ getRenderSchemaTemplate(step, ctx)
         <p>架构设计：</p>
         <ol>
           <li><strong>Register 注册模式 — 内置 24 组件 + 运行时扩展</strong>：构造时注册 24 个内置组件（通用 16 + 3个业务线 8），<code>add()</code>/<code>addMultipleCmps()</code> 支持消费方运行时注册自定义权益组件</li>
-          <li><strong>Schema 驱动渲染 — 和 营销平台(dive) 完全同构</strong>：SDK 也是 Schema 渲染引擎的消费者——后端返回 <code>form_data</code>（含 <code>d_component</code> + <code>content_schema</code>），前端通过 FieldWrapper 迭代渲染。和 营销平台(dive) 用同一套 Schema 渲染模式，两个消费者共享一个架构</li>
+          <li><strong>Schema 驱动渲染 — 和 营销平台 完全同构</strong>：SDK 也是 Schema 渲染引擎的消费者——后端返回 <code>form_data</code>（含 <code>d_component</code> + <code>content_schema</code>），前端通过 FieldWrapper 迭代渲染。和 营销平台 用同一套 Schema 渲染模式，两个消费者共享一个架构</li>
           <li><strong>双入口设计 + CRUD 独立 Schema</strong>：
             <ul>
               <li>组件模式（<code>&lt;App&gt;</code> 内嵌）+ 函数调用模式（<code>Modal.info</code> 命令式），统一用 <code>BenefitAdmin</code> 分发</li>
@@ -567,7 +567,7 @@ getRenderSchemaTemplate(step, ctx)
         </ol>
       </div>
       <div class="section-label">口语化表述</div>
-      <div class="blockquote-styled">benefit-sdk 是我们的权益组件库，覆盖 400 多种权益的 CRUD。核心设计是 Register 注册模式——构造时注册 24 个内置组件，同时支持运行时扩展。最关键的是，SDK 本身也是 Schema 驱动渲染的消费者——后端返回的 form_data 里有 d_component 和 content_schema，前端用 FieldWrapper 迭代渲染，和 营销平台(dive) 完全同构。也就是说 Schema 驱动不是"某个前端项目的事"，而是横跨整个营销中台的统一架构。打包用 Rollup 双模输出 ESM+CJS+类型声明，发版用 Changesets + zx 脚本自动化。</div>
+      <div class="blockquote-styled">benefit-sdk 是我们的权益组件库，覆盖 400 多种权益的 CRUD。核心设计是 Register 注册模式——构造时注册 24 个内置组件，同时支持运行时扩展。最关键的是，SDK 本身也是 Schema 驱动渲染的消费者——后端返回的 form_data 里有 d_component 和 content_schema，前端用 FieldWrapper 迭代渲染，和 营销平台 完全同构。也就是说 Schema 驱动不是"某个前端项目的事"，而是横跨整个营销中台的统一架构。打包用 Rollup 双模输出 ESM+CJS+类型声明，发版用 Changesets + zx 脚本自动化。</div>
       <div class="section-label">加分点</div>
       <div class="bonus">提到"两个消费者共享 Schema 渲染模式" → 体现系统级架构思维，不只是组件库设计</div>
     </div>
@@ -746,7 +746,7 @@ FieldWrapper listener.on callback → parseCallback
     <div class="card-content">
       <div class="section-label">核心答案</div>
       <div class="answer-text">
-        <p>ibt-benefit-sdk 的发版流程：</p>
+        <p>benefit-sdk 的发版流程：</p>
         <ol>
           <li><strong>Changesets 管理版本</strong>：
             <ul>
@@ -890,7 +890,7 @@ marketing-bff: Schema 生成 → 字段结构 + 联动关系 + 组件类型
     ↓
 营销平台: Schema 渲染 → 动态表单页面
     ↓
-ibt-benefit-sdk: 权益组件 → 创建/编辑/查看权益
+benefit-sdk: 权益组件 → 创建/编辑/查看权益
     ↓
 Reference 回流: 新知识/矛盾 → reference-update-suggestions.yaml → 人工确认</pre>
         <p>具体流程：</p>
@@ -904,7 +904,7 @@ Reference 回流: 新知识/矛盾 → reference-update-suggestions.yaml → 人
           <li>开发根据蒸馏报告的 plan.md 实施：marketing-bff 加字段模板和联动配置，营销平台 注册新组件（如果需要）</li>
           <li>marketing-bff 运行时根据活动类型组合 Schema，返回给前端</li>
           <li>营销平台 的 Schema 渲染器根据 Schema 动态生成表单，新增活动类型前端零代码</li>
-          <li>如果涉及权益，调用 ibt-benefit-sdk 的组件</li>
+          <li>如果涉及权益，调用 benefit-sdk 的组件</li>
           <li>蒸馏发现的新知识/矛盾通过 reference-update-suggestions.yaml 回流</li>
         </ol>
       </div>
@@ -927,7 +927,7 @@ Reference 回流: 新知识/矛盾 → reference-update-suggestions.yaml → 人
     <div class="card-content">
       <div class="section-label">核心答案</div>
       <div class="answer-text">
-        <p><strong>以 ibt-benefit-sdk 为实战基础</strong>，组件库设计的 5 个维度：</p>
+        <p><strong>以 benefit-sdk 为实战基础</strong>，组件库设计的 5 个维度：</p>
         <p><strong>1. 架构设计</strong></p>
         <ul>
           <li>Register 注册模式：构造时注册 24 个内置组件（通用 16 + 3个业务线 8），<code>add()</code>/<code>addMultipleCmps()</code> 支持运行时扩展</li>

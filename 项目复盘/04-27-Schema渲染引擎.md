@@ -135,10 +135,10 @@ schemaList.map((fieldSchema, index) => (
 | 文件 | 路径 | 核心内容 |
 |------|------|----------|
 | StepForm | `dive/src/pages/create/StepForm` | Schema 遍历渲染 + onFormChange |
-| FieldWrapper | `user_camp/src/components/FormField/FieldWrapper/index.tsx` | d_actions 注册 + 联动执行 |
+| FieldWrapper | `user_camp/components/FormField/FieldWrapper/index.tsx` | d_actions 注册 + 联动执行 |
 | listener.js | `dive/src/hooks/listener.js` | EventEmitter 发布订阅 |
 | app.tsx | `dive/src/app.tsx` | RegisteredComponents 注册 35+ 组件 |
-| types.ts | `dive/src/components/FormField/types.ts` | IFormFieldProps（d_component, d_actions） |
+| types.ts | `dive/components/FormField/types.ts` | IFormFieldProps（d_component, d_actions） |
 | dataSet.ts | `dive/src/store/reducers/dataSet.ts` | Redux saveFormData |
 
 ---
@@ -165,7 +165,7 @@ Schema 声明 → 正则提取 {{...}} 内容 → 变量替换 → eval()
 #### parseVisible — 行级联动（RuleCard）
 
 ```typescript
-// RuleCard/index.tsx:217-221
+// RuleCard
 const parseVisible = (str: string, stateName: string, rowKey: number) => {
     return String(str.match(/(?<={{).*?(?=}})/))
         .replaceAll(' ', '')
