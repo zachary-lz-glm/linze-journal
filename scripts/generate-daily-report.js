@@ -184,7 +184,8 @@ async function callDeepSeek(system, user) {
             { role: 'user', content: user },
           ],
           temperature: 0.7,
-          max_tokens: 4096,
+          max_tokens: 16384,
+          reasoning_effort: 'max',
         }),
         signal: AbortSignal.timeout(180000),
       });
