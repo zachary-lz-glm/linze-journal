@@ -11,10 +11,23 @@ if (!DEEPSEEK_API_KEY) {
 }
 
 const API_URL = 'https://api.deepseek.com/chat/completions';
-const MODEL = 'deepseek-v4-pro';
-const ROOT = path.resolve(__dirname, '..');
+const AI_DIR = path.resolve(__dirname, '..', 'AI情报');
 
 // ─── 工具函数 ───
+
+function getISOWeek(date) {
+  const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+  const dayNum = d.getUTCDay() || 7;
+  d.setUTCDate(d.getUTCDate() + 4 - dayNum);
+  const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+  const weekNo = Math.ceil(((d - yearStart) / 86400000 + 1) / 7);
+  return { year: d.getUTCFullYear(), week: weekNo };
+}
+
+function weekDirName(date) {
+  const { year, week } = getISOWeek(date);
+  return `${year}-W${String(week).padStart(2, '0')}`;
+}
 
 async function fetchJSON(url, timeout = 15000) {
   const res = await fetch(url, { signal: AbortSignal.timeout(timeout) });
@@ -88,9 +101,61 @@ async function collectRSS(feeds) {
   return results;
 }
 
-// ─── 调用 DeepSeek 生成报告 ───
+// ─── 调用 DeepSeek ───
 
-async function generateReport(hn, gh, rss, dateStr, model = MODEL) {
+async function callDeepSeek(system, user, model = 'deepseek-v4-pro') {
+  const models = [model, 'deepseek-v4-flash'];
+  let lastErr;
+  for (const m of models) {
+    console.log(`  🤖 调用 ${m}...`);
+    try {
+      const res = await fetch(API_URL, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${DEEPSEEK_API_KEY}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          model: m,
+          messages: [
+            { role: 'system', content: system },
+            { role: 'user', content: user },
+          ],
+          temperature: 0.7,
+          max_tokens: 4096,
+        }),
+        signal: AbortSignal.timeout(180000),
+      });
+
+      if (!res.ok) {
+        const err = await res.text();
+        throw new Error(`API ${res.status}: ${err}`);
+      }
+
+      const data = await res.json();
+      const choice = data.choices?.[0];
+      const content = choice?.message?.content;
+
+      if (!content) {
+        const reason = choice?.finish_reason || 'unknown';
+        const refusal = choice?.message?.refusal;
+        console.error('⚠️ 原始响应:', JSON.stringify(data, null, 2).slice(0, 2000));
+        throw new Error(`返回内容为空 (finish_reason=${reason}, refusal=${refusal || 'none'})`);
+      }
+
+      console.log(`  ✅ ${m} 生成成功`);
+      return content.replace(/^```(?:markdown)?\n?/i, '').replace(/\n?```\s*$/i, '');
+    } catch (e) {
+      console.error(`  ❌ ${m} 失败: ${e.message}`);
+      lastErr = e;
+    }
+  }
+  throw lastErr;
+}
+
+// ─── 生成日报 ───
+
+async function generateDailyReport(hn, gh, rss, dateStr) {
   const system = `你是一位专注于 AI 工程化与前端技术的资深分析师。根据提供的实时数据和你的专业知识，生成一份高质量中文日报。
 
 读者画像：前端工程师，关注 AI 工程化方向，正在准备面试，需要知道行业最新动态和技术趋势。
@@ -158,60 +223,117 @@ ${dataBlock}
 
 > 用 1-2 句话总结今天最值得关注的行业信号。`;
 
-  const res = await fetch(API_URL, {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${DEEPSEEK_API_KEY}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      model,
-      messages: [
-        { role: 'system', content: system },
-        { role: 'user', content: user },
-      ],
-      temperature: 0.7,
-      max_tokens: 4096,
-    }),
-    signal: AbortSignal.timeout(180000),
-  });
+  return callDeepSeek(system, user);
+}
 
-  if (!res.ok) {
-    const err = await res.text();
-    throw new Error(`DeepSeek API ${res.status}: ${err}`);
+// ─── 生成周报 ───
+
+async function generateWeeklyReport(weekPath, weekLabel) {
+  // 收集本周所有日报内容
+  const files = fs.readdirSync(weekPath).filter(f => f.startsWith('日报-') && f.endsWith('.md'));
+  if (files.length === 0) {
+    console.log('⏭️  本周无日报，跳过周报生成');
+    return null;
   }
 
-  const data = await res.json();
-  const choice = data.choices?.[0];
-  const content = choice?.message?.content;
+  const dailyContents = files.map(f => {
+    const content = fs.readFileSync(path.join(weekPath, f), 'utf-8');
+    return `=== ${f} ===\n${content}`;
+  }).join('\n\n');
 
-  if (!content) {
-    const reason = choice?.finish_reason || 'unknown';
-    const refusal = choice?.message?.refusal;
-    console.error('⚠️ DeepSeek 原始响应:', JSON.stringify(data, null, 2).slice(0, 2000));
-    throw new Error(`DeepSeek 返回内容为空 (finish_reason=${reason}, refusal=${refusal || 'none'})`);
-  }
+  const system = `你是一位专注于 AI 工程化与前端技术的资深分析师。根据本周的日报内容，提炼生成一份高质量中文周报。
 
-  // 去掉可能的 markdown 代码块包裹
-  return content.replace(/^```(?:markdown)?\n?/i, '').replace(/\n?```\s*$/i, '');
+读者画像：前端工程师，关注 AI 工程化方向，正在准备面试。
+
+输出要求：
+1. 总字数 1500-2500 字，术语保留英文
+2. 从本周日报中提炼最重要的趋势和信号，去除重复信息
+3. 分板块：本周核心事件回顾、技术趋势总结、招聘市场观察、下周关注点
+4. 每个板块要有深度分析，不只是罗列
+5. 面向有经验的工程师，不要入门科普`;
+
+  const user = `以下是本周（${weekLabel}）的所有日报内容：
+
+${dailyContents}
+
+请生成周报，严格按以下格式输出（不要包裹在代码块中）：
+
+# AI 情报周报 | ${weekLabel}
+
+> **本周概要**：2-3 句话总结本周最重要的趋势。
+
+---
+
+## 一、本周核心事件
+
+（3-5 条本周最重要的行业事件，每条包含标题、详细分析和影响评估）
+
+---
+
+## 二、技术趋势总结
+
+（归纳本周出现的技术方向，分析趋势走向）
+
+---
+
+## 三、招聘市场观察
+
+（总结本周招聘动态、薪资趋势、技能需求变化）
+
+---
+
+## 四、下周关注点
+
+（预测下周可能的热点事件、产品发布、技术趋势）`;
+
+  return callDeepSeek(system, user);
 }
 
 // ─── 更新侧边栏 ───
 
-function updateSidebar(filename, title) {
-  const p = path.join(ROOT, '_sidebar.md');
-  const lines = fs.readFileSync(p, 'utf-8').split('\n');
-  const entry = `  - [${title}](AI情报/${filename})`;
+function updateSidebar() {
+  const sidebarPath = path.join(path.dirname(AI_DIR), '_sidebar.md');
+  const lines = fs.readFileSync(sidebarPath, 'utf-8').split('\n');
 
-  // 避免重复
-  if (lines.some(l => l.includes(filename))) return;
+  // 找到 AI 情报板块的起止位置
+  const aiStart = lines.findIndex(l => l.includes('AI 情报') || l.includes('AI情报'));
+  if (aiStart < 0) return;
 
-  // 在 "AI 日报 prompt" 行之前插入
-  const idx = lines.findIndex(l => l.includes('AI 日报 prompt'));
-  if (idx > 0) {
-    lines.splice(idx, 0, entry);
-    fs.writeFileSync(p, lines.join('\n'));
+  // 找 AI 情报板块结束位置（下一个二级标题或同级别项）
+  let aiEnd = lines.length;
+  for (let i = aiStart + 1; i < lines.length; i++) {
+    if (lines[i].match(/^  - \[/) && !lines[i].includes('AI情报') && !lines[i].includes('W20') && !lines[i].includes('W21') && !lines[i].includes('W22') && !lines[i].includes('周') && !lines[i].includes('日报') && !lines[i].includes('prompt') && !lines[i].includes('Prompt')) {
+      // Check if this is already past the AI section
+      // We look for items that are NOT weekly entries
+    }
+    if (lines[i].match(/^- \[/) && i > aiStart + 1) {
+      aiEnd = i;
+      break;
+    }
   }
+
+  // 扫描 AI情报 目录生成新的导航
+  const weekDirs = fs.readdirSync(AI_DIR)
+    .filter(d => d.match(/^\d{4}-W\d{2}$/) && fs.statSync(path.join(AI_DIR, d)).isDirectory())
+    .sort()
+    .reverse(); // 最新的在前面
+
+  const newEntries = [];
+  for (const week of weekDirs) {
+    const weekPath = path.join(AI_DIR, week);
+    newEntries.push(`  - **${week}**`);
+    const files = fs.readdirSync(weekPath).filter(f => f.endsWith('.md')).sort().reverse();
+    for (const f of files) {
+      const label = f.startsWith('周报') ? `📰 周报` : `📄 ${f.replace('日报-', '').replace('.md', '')}`;
+      newEntries.push(`    - [${label}](AI情报/${week}/${encodeURIComponent(f)})`);
+    }
+  }
+
+  // 保留非 AI 情报相关的行，替换 AI 情报子项
+  const before = lines.slice(0, aiStart + 1);
+  const after = lines.slice(aiEnd);
+  // 也保留 AI 情报标题后面到子项之前的内容
+  fs.writeFileSync(sidebarPath, [...before, ...newEntries, ...after].join('\n'));
 }
 
 // ─── 主流程 ───
@@ -220,58 +342,64 @@ async function main() {
   const now = new Date();
   const pad = n => String(n).padStart(2, '0');
   const dateStr = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`;
-  const filename = `${dateStr}-日报.md`;
-  const filepath = path.join(ROOT, 'AI情报', filename);
+  const dayOfWeek = now.getDay(); // 0=Sun, 5=Fri
+  const weekName = weekDirName(now);
+  const weekPath = path.join(AI_DIR, weekName);
 
-  // 跳过已存在的日报
-  if (fs.existsSync(filepath)) {
+  // 确保周目录存在
+  fs.mkdirSync(weekPath, { recursive: true });
+
+  // ── 生成日报 ──
+  const dailyFile = `日报-${dateStr.slice(5)}.md`; // e.g. 日报-05-27.md
+  const dailyPath = path.join(weekPath, dailyFile);
+
+  if (fs.existsSync(dailyPath)) {
     console.log(`⏭️  ${dateStr} 日报已存在，跳过`);
-    return;
+  } else {
+    console.log(`📅 生成 ${dateStr} AI 情报日报 (目录: ${weekName})...\n`);
+
+    console.log('📡 收集 Hacker News...');
+    const hn = await collectHackerNews().catch(e => (console.log(`  ⚠️ ${e.message}`), []));
+    console.log(`  ✅ ${hn.length} 条`);
+
+    console.log('📡 收集 GitHub Trending...');
+    const gh = await collectGitHubTrending().catch(e => (console.log(`  ⚠️ ${e.message}`), []));
+    console.log(`  ✅ ${gh.length} 条`);
+
+    console.log('📡 收集 RSS...');
+    const rss = await collectRSS([
+      { name: '机器之心', url: 'https://www.jiqizhixin.com/rss' },
+      { name: 'HNRSS', url: 'https://hnrss.org/frontpage?count=15' },
+      { name: 'dev.to', url: 'https://dev.to/feed' },
+    ]);
+    console.log(`  ✅ ${rss.length} 条`);
+
+    const report = await generateDailyReport(hn, gh, rss, dateStr);
+    fs.writeFileSync(dailyPath, report);
+    console.log(`💾 已保存: AI情报/${weekName}/${dailyFile}`);
   }
 
-  console.log(`📅 生成 ${dateStr} AI 情报日报...\n`);
+  // ── 周五或周日自动生成周报 ──
+  const weeklyFile = '周报.md';
+  const weeklyPath = path.join(weekPath, weeklyFile);
 
-  // 1. 收集数据
-  console.log('📡 收集 Hacker News...');
-  const hn = await collectHackerNews().catch(e => (console.log(`  ⚠️ ${e.message}`), []));
-  console.log(`  ✅ ${hn.length} 条`);
-
-  console.log('📡 收集 GitHub Trending...');
-  const gh = await collectGitHubTrending().catch(e => (console.log(`  ⚠️ ${e.message}`), []));
-  console.log(`  ✅ ${gh.length} 条`);
-
-  console.log('📡 收集 RSS...');
-  const rss = await collectRSS([
-    { name: '机器之心', url: 'https://www.jiqizhixin.com/rss' },
-    { name: 'HNRSS', url: 'https://hnrss.org/frontpage?count=15' },
-    { name: 'dev.to', url: 'https://dev.to/feed' },
-  ]);
-  console.log(`  ✅ ${rss.length} 条`);
-
-  // 2. 生成报告（优先 V4-Pro，失败降级 V4-Flash）
-  let report;
-  const models = ['deepseek-v4-pro', 'deepseek-v4-flash'];
-  for (const model of models) {
-    console.log(`\n🤖 调用 ${model} 生成日报...`);
-    try {
-      report = await generateReport(hn, gh, rss, dateStr, model);
-      console.log(`  ✅ ${model} 生成成功`);
-      break;
-    } catch (e) {
-      console.error(`  ❌ ${model} 失败: ${e.message}`);
-      if (model === models[models.length - 1]) throw e;
+  if (!fs.existsSync(weeklyPath)) {
+    // 周五(5)、周六(6)、周日(0) 尝试生成周报
+    if (dayOfWeek === 5 || dayOfWeek === 6 || dayOfWeek === 0) {
+      console.log(`\n📊 今天是${['日','一','二','三','四','五','六'][dayOfWeek]}，尝试生成周报...`);
+      const weeklyReport = await generateWeeklyReport(weekPath, weekName);
+      if (weeklyReport) {
+        fs.writeFileSync(weeklyPath, weeklyReport);
+        console.log(`💾 已保存: AI情报/${weekName}/${weeklyFile}`);
+      }
     }
   }
 
-  // 3. 保存文件
-  fs.writeFileSync(filepath, report);
-  console.log(`💾 已保存: AI情报/${filename}`);
-
-  // 4. 更新侧边栏
-  updateSidebar(filename, `日报 ${dateStr}`);
+  // ── 更新侧边栏 ──
+  updateSidebar();
   console.log('✅ 侧边栏已更新');
 
-  console.log(`\n🎉 ${dateStr} AI 情报日报生成完成！`);
+  console.log(`\n🎉 完成！`);
 }
 
 main().catch(e => {
