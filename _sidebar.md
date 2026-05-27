@@ -69,4 +69,4 @@
     - [拼多多 · 面试记录](learning/interview/定向/拼多多/面试记录.md)
 
 - **工具**
-  - [面试速查板](learning/interview/速查板.html)
+  - [面试速查板](learning/interview/cheat-sheet.html)
