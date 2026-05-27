@@ -124,15 +124,120 @@
     /* 移动端 */
     @media screen and (max-width: 768px) {
       :root {
-        --content-padding: 16px;
+        --content-padding: 16px 20px;
         --base-font-size: 15px;
+        --sidebar-width: 280px;
+        --sidebar-padding: 12px;
       }
-      .markdown-section h1 { font-size: 1.5rem; }
-      .markdown-section h2 { font-size: 1.2rem; margin-top: 28px; }
-      .markdown-section th, .markdown-section td { padding: 6px 8px; font-size: 13px; }
-      .markdown-section pre { padding: 12px; font-size: 12px; white-space: pre-wrap; word-break: break-word; }
-      .markdown-section table { display: block; overflow-x: auto; -webkit-overflow-scrolling: touch; }
-      .markdown-section blockquote { margin: 12px 0; }
+
+      /* 侧边栏：overlay 模式 + 滑入动画 */
+      .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        z-index: 400;
+        background: #1e293b;
+        box-shadow: 4px 0 24px rgba(0,0,0,0.5);
+        -webkit-overflow-scrolling: touch;
+        overscroll-behavior: contain;
+      }
+      .sidebar.show { transform: translateX(0); }
+
+      /* 侧边栏遮罩 */
+      .sidebar-backdrop {
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.5);
+        z-index: 399;
+        opacity: 0;
+        transition: opacity 0.25s ease;
+        pointer-events: none;
+      }
+      .sidebar-backdrop.active {
+        opacity: 1;
+        pointer-events: auto;
+      }
+
+      /* 侧边栏折叠项增加点击区域 */
+      .sidebar-nav > ul > li > p,
+      .sidebar-nav > ul > li > ul > li > p {
+        padding: 10px 8px;
+        margin: 0 -8px;
+        border-radius: 6px;
+      }
+
+      /* 内容区排版 */
+      .content { padding-top: 0; }
+      .markdown-section h1 {
+        font-size: 1.5rem;
+        margin-bottom: 8px;
+        letter-spacing: -0.02em;
+      }
+      .markdown-section h2 {
+        font-size: 1.2rem;
+        margin-top: 28px;
+        padding-bottom: 6px;
+      }
+      .markdown-section h3 { font-size: 1.1rem; margin-top: 20px; }
+      .markdown-section p { margin: 10px 0; line-height: 1.75; }
+      .markdown-section ul, .markdown-section ol {
+        padding-left: 20px;
+        margin: 8px 0;
+      }
+      .markdown-section li { margin: 4px 0; }
+
+      /* 表格：卡片式 */
+      .markdown-section table {
+        display: block;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        border-radius: 8px;
+        font-size: 13px;
+        margin: 12px -8px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+      }
+      .markdown-section th, .markdown-section td {
+        padding: 8px 10px;
+        font-size: 13px;
+      }
+
+      /* 代码块 */
+      .markdown-section pre {
+        padding: 14px;
+        font-size: 12px;
+        white-space: pre-wrap;
+        word-break: break-word;
+        border-radius: 8px;
+        margin: 12px -8px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+      }
+
+      /* 引用块 */
+      .markdown-section blockquote {
+        margin: 12px 0;
+        padding: 10px 14px;
+        border-radius: 0 8px 8px 0;
+      }
+
+      /* 分隔线 */
+      .markdown-section hr { margin: 20px 0; border-color: #1e293b; }
+
+      /* 搜索框 */
+      .search { margin: 0 0 8px; }
+      .search input {
+        font-size: 15px !important;
+        padding: 10px 12px !important;
+        border-radius: 8px !important;
+      }
+
+      /* 顶部 toggle 按钮 */
+      .sidebar-toggle {
+        background: rgba(15, 23, 42, 0.9) !important;
+        backdrop-filter: blur(8px);
+        border-radius: 0 0 8px 0 !important;
+        padding: 12px 14px !important;
+      }
     }
   </style>
 </head>
@@ -170,19 +275,44 @@
     }
   </script>
   <script>
-    // 移动端侧边栏：展开节点时不自动收起
+    // 移动端侧边栏遮罩
+    (function() {
+      var backdrop = document.createElement('div');
+      backdrop.className = 'sidebar-backdrop';
+      document.body.appendChild(backdrop);
+
+      function syncBackdrop() {
+        var sidebar = document.querySelector('.sidebar');
+        var isShow = sidebar && sidebar.classList.contains('show');
+        backdrop.classList.toggle('active', isShow);
+      }
+
+      // 监听 sidebar class 变化
+      var sidebar = document.querySelector('.sidebar');
+      if (sidebar && window.MutationObserver) {
+        new MutationObserver(syncBackdrop).observe(sidebar, {
+          attributes: true, attributeFilter: ['class']
+        });
+      }
+
+      // 点击遮罩关闭侧边栏
+      backdrop.addEventListener('click', function() {
+        var sidebar = document.querySelector('.sidebar');
+        if (sidebar) sidebar.classList.remove('show');
+        backdrop.classList.remove('active');
+      });
+    })();
+  </script>
+  <script>
+    // 移动端侧边栏：展开/折叠节点时不自动收起
     document.addEventListener('click', function(e) {
       if (window.innerWidth > 768) return;
       var sidebar = document.querySelector('.sidebar');
       if (!sidebar || !sidebar.contains(e.target)) return;
-      // 只有点击 <a> 链接才允许收起侧边栏
       var link = e.target.closest('a');
-      if (link) return;
-      // 点击非链接元素（如展开箭头、父节点文字）时阻止收起
-      var body = document.body;
-      if (body.classList.contains('close')) {
-        body.classList.remove('close');
-      }
+      if (link) return; // 点击链接允许 Docsify 正常导航
+      // 点击非链接元素（展开箭头、父节点文字）时阻止 Docsify 关闭侧边栏
+      e.stopImmediatePropagation();
     }, true);
   </script>
 </body>
