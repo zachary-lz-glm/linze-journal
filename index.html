@@ -169,5 +169,21 @@
       navigator.serviceWorker.register('sw.js');
     }
   </script>
+  <script>
+    // 移动端侧边栏：展开节点时不自动收起
+    document.addEventListener('click', function(e) {
+      if (window.innerWidth > 768) return;
+      var sidebar = document.querySelector('.sidebar');
+      if (!sidebar || !sidebar.contains(e.target)) return;
+      // 只有点击 <a> 链接才允许收起侧边栏
+      var link = e.target.closest('a');
+      if (link) return;
+      // 点击非链接元素（如展开箭头、父节点文字）时阻止收起
+      var body = document.body;
+      if (body.classList.contains('close')) {
+        body.classList.remove('close');
+      }
+    }, true);
+  </script>
 </body>
 </html>
