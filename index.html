@@ -130,7 +130,7 @@
         --sidebar-padding: 12px;
       }
 
-      /* 侧边栏：overlay 模式 + 滑入动画 */
+      /* 侧边栏：overlay 模式 */
       .sidebar {
         position: fixed;
         top: 0;
@@ -143,6 +143,11 @@
         overscroll-behavior: contain;
       }
       .sidebar.show { transform: translateX(0); }
+
+      /* toggle 按钮必须在侧边栏之上 */
+      .sidebar-toggle {
+        z-index: 401 !important;
+      }
 
       /* 侧边栏遮罩 */
       .sidebar-backdrop {
@@ -237,6 +242,7 @@
         backdrop-filter: blur(8px);
         border-radius: 0 0 8px 0 !important;
         padding: 12px 14px !important;
+        z-index: 401 !important;
       }
     }
   </style>
@@ -305,14 +311,18 @@
   </script>
   <script>
     // 移动端侧边栏：展开/折叠节点时不自动收起
+    // 用 setTimeout 让 Docsify 先处理折叠逻辑，然后重新显示侧边栏
     document.addEventListener('click', function(e) {
       if (window.innerWidth > 768) return;
       var sidebar = document.querySelector('.sidebar');
       if (!sidebar || !sidebar.contains(e.target)) return;
       var link = e.target.closest('a');
-      if (link) return; // 点击链接允许 Docsify 正常导航
-      // 点击非链接元素（展开箭头、父节点文字）时阻止 Docsify 关闭侧边栏
-      e.stopImmediatePropagation();
+      if (link) return; // 点击链接允许 Docsify 正常导航+关闭
+      // 非链接点击（展开/折叠父节点），等 Docsify 处理完再恢复侧边栏
+      setTimeout(function() {
+        document.body.classList.remove('close');
+        if (sidebar) sidebar.classList.add('show');
+      }, 10);
     }, true);
   </script>
 </body>
