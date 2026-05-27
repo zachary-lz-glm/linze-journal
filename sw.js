@@ -1,4 +1,4 @@
-const CACHE_NAME = 'kb-v7';
+const CACHE_NAME = 'kb-v8';
 const ASSETS = [
   '/linze-journal/',
   '/linze-journal/index.html',
