@@ -1,11 +1,8 @@
-const CACHE_NAME = 'kb-v11';
+const CACHE_NAME = 'kb-v12';
 const ASSETS = [
   '/linze-journal/',
   '/linze-journal/index.html',
-  '/linze-journal/_sidebar.md',
-  '/linze-journal/_navbar.md',
-  '/linze-journal/README.md',
-  '/linze-journal/resume/index.html'
+  '/linze-journal/README.md'
 ];
 
 self.addEventListener('install', e => {
@@ -26,6 +23,9 @@ self.addEventListener('activate', e => {
 
 self.addEventListener('fetch', e => {
   if (e.request.method !== 'GET') return;
+  const url = new URL(e.request.url);
+  // Only cache same-origin requests for .md files and index.html
+  if (url.origin !== self.location.origin) return;
   e.respondWith(
     caches.match(e.request).then(cached => {
       const fetchPromise = fetch(e.request).then(response => {
