@@ -1,0 +1,5 @@
+- [知识库](/linze-journal/)
+- [在线简历](/linze-journal/resume/)
+- [iPad 速查板](/linze-journal/面试/iPad速查板.html)
+- [答案卡训练器](/linze-journal/面试/答案卡训练器.html)
+- [系统设计白板](/linze-journal/面试/系统设计白板.html)

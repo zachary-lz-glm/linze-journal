@@ -229,10 +229,26 @@ body {
   z-index: 100;
 }
 .print-btn:hover { opacity: 0.9; }
+
+/* Back link */
+.back-link {
+  position: fixed;
+  top: 16px; left: 16px;
+  padding: 8px 14px;
+  background: var(--text);
+  color: white;
+  text-decoration: none;
+  border-radius: 6px;
+  font-size: 13px;
+  z-index: 100;
+}
+.back-link:hover { opacity: 0.9; }
+@media print { .back-link { display: none !important; } }
 </style>
 </head>
 <body>
 
+<a class="back-link no-print" href="/linze-journal/">← 知识库</a>
 <button class="print-btn no-print" onclick="window.print()">导出 PDF</button>
 
 <div class="container">
