@@ -1,7 +1,7 @@
 {
-  "name": "面试知识库",
+  "name": "学习知识库",
   "short_name": "知识库",
-  "description": "邓泽霖 · 面试备战知识库",
+  "description": "邓泽霖 · 前端工程师学习知识库",
   "start_url": "/linze-journal/",
   "scope": "/linze-journal/",
   "display": "standalone",

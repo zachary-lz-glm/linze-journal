@@ -1,64 +1,72 @@
 - **首页**
-  - [知识库导航](README.md)
+  - [学习导航](README.md)
 
-- **面试备战**
-  - [规划与投递节奏](面试/规划.md)
-  - 备战方案
-    - [备战日历](面试/方案/备战日历.md)
-    - [全流程方案](面试/方案/全流程方案.md)
-    - [AI 辅助提示词](面试/方案/AI辅助提示词.md)
-  - 多Agent教练系统
-    - [使用说明](面试/agents/README.md)
-    - [训练教练](面试/agents/01-训练教练.md)
-    - [模拟面试官](面试/agents/02-模拟面试官.md)
-    - [复盘分析师](面试/agents/03-复盘分析师.md)
-    - [弱项追踪表](面试/agents/weakness-tracker.md)
-  - 训练工具（旧版单Agent）
-    - [答案卡](面试/训练/答案卡.md)
-    - [算法演练](面试/训练/算法演练.md)
-    - [系统设计白板](面试/训练/系统设计白板.md)
-  - 题库
-    - [题库详解](面试/题库/题库详解.md)
-    - [速查手册](面试/题库/速查手册.md)
-    - [急救包](面试/题库/急救包.md)
-    - [2026 新增考点](面试/题库/2026新增考点.md)
-  - 简历
-    - [简历 v1](面试/简历/v1.md)
-    - [简历 v2](面试/简历/v2.md)
-  - 定向备战
-    - [拼多多 · JD分析与备战](面试/定向/拼多多/JD分析与备战.md)
-    - [拼多多 · 面经备战全攻略](面试/定向/拼多多/面经备战全攻略.md)
-    - [拼多多 · 面经汇总](面试/定向/拼多多/面经汇总.md)
-    - [拼多多 · 面试记录](面试/定向/拼多多/面试记录.md)
-  - iPad 工具（在线版）
-    - [iPad 速查板](面试/iPad速查板.html)
-    - [题库详解](面试/题库详解.html)
-    - [答案卡训练器](面试/答案卡训练器.html)
-    - [系统设计白板](面试/系统设计白板.html)
+- **前端基础**
+  - [React 原理](learning/fundamentals/React原理.md)
+  - [浏览器与网络](learning/fundamentals/浏览器与网络.md)
+  - [TypeScript 深入](learning/fundamentals/TypeScript深入.md)
+  - [CSS 布局](learning/fundamentals/CSS布局.md)
+  - [手写题精选](learning/fundamentals/手写题精选.md)
 
-- **项目复盘**
-  - [Schema 渲染引擎](项目复盘/04-27-Schema渲染引擎.md)
-  - [BFF Schema 生成](项目复盘/04-28-BFF-Schema生成与联动链路.md)
-  - [benefit SDK](项目复盘/04-29-benefit-SDK权益组件库.md)
-  - [prd-tools AI 工作流](项目复盘/05-06-prd-tools-AI工程工作流.md)
-  - [prd-tools 技术实现](项目复盘/05-19-prd-tools-技术实现精读.md)
-  - [prd-tools 源码深潜](项目复盘/05-19-prd-tools-源码深潜-context-pack与quality-gate.md)
-  - [prd-tools 蒸馏准确率](项目复盘/05-19-prd-tools-蒸馏准确率定义与复盘.md)
-  - [prd-tools 技术分享讲稿](项目复盘/05-26-prd-tools-技术分享讲稿.md)
-  - [Reference 标准化调研](项目复盘/04-22-Reference标准化与PRD蒸馏调研.md)
-  - [Architecture 文档重构](项目复盘/04-23-Architecture文档v4重构.md)
-  - [双 Skill 落地](项目复盘/04-24-双Skill落地与安装脚本.md)
-  - [题库修正与简历启动](项目复盘/05-07-题库修正与简历启动.md)
-  - [项目面试材料脱敏版](项目复盘/05-15-项目面试材料-脱敏版.md)
+- **项目实战复盘**
+  - Schema 渲染引擎
+    - [架构总览](learning/retrospectives/04-27-Schema渲染引擎.md)
+    - [BFF Schema 生成](learning/retrospectives/04-28-BFF-Schema生成与联动链路.md)
+    - [benefit SDK](learning/retrospectives/04-29-benefit-SDK权益组件库.md)
+  - AI 工程实践
+    - [prd-tools 工作流](learning/retrospectives/05-06-prd-tools-AI工程工作流.md)
+    - [技术实现精读](learning/retrospectives/05-19-prd-tools-技术实现精读.md)
+    - [源码深潜](learning/retrospectives/05-19-prd-tools-源码深潜-context-pack与quality-gate.md)
+    - [蒸馏准确率](learning/retrospectives/05-19-prd-tools-蒸馏准确率定义与复盘.md)
+    - [技术分享讲稿](learning/retrospectives/05-26-prd-tools-技术分享讲稿.md)
+  - 工程化与文档
+    - [Reference 标准化](learning/retrospectives/04-22-Reference标准化与PRD蒸馏调研.md)
+    - [Architecture 重构](learning/retrospectives/04-23-Architecture文档v4重构.md)
+    - [双 Skill 落地](learning/retrospectives/04-24-双Skill落地与安装脚本.md)
+    - [题库修正与简历](learning/retrospectives/05-07-题库修正与简历启动.md)
+    - [项目面试材料](learning/retrospectives/05-15-项目面试材料-脱敏版.md)
 
 - **AI 情报**
-  - **2026-W22**
-    - [📰 全周报](AI情报/2026-W22/2026W22-企业级AI工程化全周报.md)
-    - [📰 MCP周报](AI情报/2026-W22/2026W22-MCP企业标准与Agent基础设施.md)
-    - [📄 05-26](AI情报/2026-W22/日报-05-26.md)
-    - [📄 05-25](AI情报/2026-W22/日报-05-25.md)
-  - **2026-W21**
-    - [📰 周报](AI情报/2026-W21/周报.md)
-- **定投分析**
-  - [定投分析总览](定投分析/README.md)
-  - [基金日报 prompt](定投分析/daily-fund-report-prompt.md)
+  - [情报总览](learning/ai-intelligence/README.md)
+  - 2026-W22
+    - [全周报](learning/ai-intelligence/2026-W22/周报-企业级AI工程化全周报.md)
+    - [05-26 日报](learning/ai-intelligence/2026-W22/日报-05-26.md)
+    - [05-25 日报](learning/ai-intelligence/2026-W22/日报-05-25.md)
+  - 2026-W21
+    - [周报](learning/ai-intelligence/2026-W21/周报.md)
+  - Prompts
+    - [日报 Prompt](learning/ai-intelligence/prompts/daily-prompt.md)
+    - [周报 Prompt](learning/ai-intelligence/prompts/weekly-prompt.md)
+
+- **面试备战**
+  - [规划与投递节奏](learning/interview/规划.md)
+  - 题库
+    - [题库详解（48题）](learning/interview/题库/题库详解.md)
+    - [速查手册](learning/interview/题库/速查手册.md)
+    - [急救包](learning/interview/题库/急救包.md)
+    - [2026 新增考点](learning/interview/题库/2026新增考点.md)
+  - 备战方案
+    - [备战日历](learning/interview/方案/备战日历.md)
+    - [全流程方案](learning/interview/方案/全流程方案.md)
+    - [AI 辅助提示词](learning/interview/方案/AI辅助提示词.md)
+  - 训练
+    - [答案卡](learning/interview/训练/答案卡.md)
+    - [算法演练](learning/interview/训练/算法演练.md)
+    - [系统设计白板](learning/interview/训练/系统设计白板.md)
+  - Agent 教练
+    - [使用说明](learning/interview/agents/README.md)
+    - [训练教练](learning/interview/agents/01-训练教练.md)
+    - [模拟面试官](learning/interview/agents/02-模拟面试官.md)
+    - [复盘分析师](learning/interview/agents/03-复盘分析师.md)
+    - [弱项追踪表](learning/interview/agents/weakness-tracker.md)
+  - 简历
+    - [简历 v1](learning/interview/简历/v1.md)
+    - [简历 v2](learning/interview/简历/v2.md)
+  - 定向备战
+    - [拼多多 · JD分析](learning/interview/定向/拼多多/JD分析与备战.md)
+    - [拼多多 · 面经攻略](learning/interview/定向/拼多多/面经备战全攻略.md)
+    - [拼多多 · 面经汇总](learning/interview/定向/拼多多/面经汇总.md)
+    - [拼多多 · 面试记录](learning/interview/定向/拼多多/面试记录.md)
+
+- **工具**
+  - [面试速查板](learning/interview/速查板.html)

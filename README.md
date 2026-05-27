@@ -1,65 +1,48 @@
-# 邓泽霖 · 面试知识库
+# 邓泽霖 · 学习知识库
 
 > Schema 架构全栈 + AI 工程差异化，不做纯前端。
 > 4 年经验，2 年 A 绩效，滴滴国际化事业部。
 
 ---
 
-## 快速导航
+## 学习导航
 
-| 你在做什么 | 点这里 |
-|-----------|--------|
-| **看整体规划** | [规划与投递节奏](面试/规划.md) — 三阶段投递策略 + 时间线 |
-| **面试前一天** | [急救包](面试/题库/急救包.md) — 八股 3 句话 + 算法模板 + 话术 |
-| **面试当天** | [答案卡](面试/训练/答案卡.md) — 15 张核心句答案卡 |
-| **某道题不确定** | [题库详解](面试/题库/题库详解.md) — 48 题完整答案 |
-| **忘了某个项目** | [项目复盘](项目复盘/04-27-Schema渲染引擎.md) — 4 个项目源码级复盘 |
-| **iPad 速查** | [iPad 速查板](面试/iPad速查板.html) / [答案卡训练器](面试/答案卡训练器.html) |
-| **看系统设计** | [系统设计白板](面试/系统设计白板.html) — 5 个追问防御表 |
-| **投简历** | [简历 v2](面试/简历/v2.md) / [在线简历](https://zachary-lz.vercel.app/) |
+| 我想学 | 去 |
+|-------|-----|
+| React 原理、Fiber、并发 | [前端基础 - React 原理](learning/fundamentals/React原理.md) |
+| 浏览器渲染、网络协议、HTTPS | [前端基础 - 浏览器与网络](learning/fundamentals/浏览器与网络.md) |
+| TypeScript 类型体操 | [前端基础 - TypeScript](learning/fundamentals/TypeScript深入.md) |
+| CSS 布局、BFC、Flexbox | [前端基础 - CSS 布局](learning/fundamentals/CSS布局.md) |
+| 手写题练习 | [前端基础 - 手写题精选](learning/fundamentals/手写题精选.md) |
 
 ---
 
-## 核心项目（面试必讲）
+## 项目实战复盘
 
-| 项目 | 一句话 | 面试价值 |
-|------|--------|---------|
-| **prd-tools** | PRD → 证据链 + 质量门控 + 反馈回流 | **AI 工程差异化**（杀手锏） |
-| **Schema 中台** | BFF 模板引擎生成 + 前端动态渲染 + 双重求值联动 | 前端架构 + BFF 编排 |
-| **benefit SDK** | 24 内置 + Register 扩展 + Schema 同构渲染 | 组件库工程化 |
-| **前端主项目** | Lerna+Nx monorepo + Schema 渲染引擎 | 前端架构 |
+| 项目 | 一句话 | 深入 |
+|------|--------|------|
+| Schema 渲染引擎 | BFF 生成 + 前端动态渲染 + 双重求值联动 | [架构总览](learning/retrospectives/04-27-Schema渲染引擎.md) |
+| BFF Schema 生成 | 模板引擎 + injectDActions + 16 个联动模板 | [技术精读](learning/retrospectives/04-28-BFF-Schema生成与联动链路.md) |
+| benefit SDK | Register 扩展 + Schema 同构，400+ 权益 | [组件库设计](learning/retrospectives/04-29-benefit-SDK权益组件库.md) |
+| prd-tools | PRD → 证据链 + 质量门控 + 回流 | [工作流设计](learning/retrospectives/05-06-prd-tools-AI工程工作流.md) |
 
----
-
-## 四个核心锚点
-
-所有回答都往这四个点落：
-
-1. **Schema 生成** → 你懂 BFF 编排
-2. **Schema 渲染** → 你懂复杂前端状态
-3. **benefit SDK** → 你懂组件库工程化
-4. **prd-tools** → 你懂 AI 工程化
+更多复盘：[Reference 标准化](learning/retrospectives/04-22-Reference标准化与PRD蒸馏调研.md) · [Architecture 重构](learning/retrospectives/04-23-Architecture文档v4重构.md) · [prd-tools 源码深潜](learning/retrospectives/05-19-prd-tools-源码深潜-context-pack与quality-gate.md) · [技术分享讲稿](learning/retrospectives/05-26-prd-tools-技术分享讲稿.md)
 
 ---
 
-## 目标公司
+## AI 情报
 
-| 公司 | 职级 | 总包 | 重点考察 |
-|------|------|------|---------|
-| 字节 | 2-2 | 70-95W | why/trade-off + AI 工程 + 算法 |
-| 快手 | K3a | 60-85W | Monorepo + 工程化 + 稳定性 |
-| 百度 | T5 | 50-75W | React 原理 + 浏览器 + 系统设计 |
-| 美团 | L7 | 55-80W | HTTPS + 首屏优化 + AI 辅助 |
+[查看全部 AI 情报](learning/ai-intelligence/README.md)
 
 ---
 
-## 投递节奏
+## 面试备战
 
-```
-5/26-6/1  投递周（广撒网 + 练嘴 + Mock）
-6/2-6/8   练手周（中小厂面试 2-3 场 + 持续投递）
-6/9-6/15  正式周（大厂内推启动，3-4 场/周）
-6/16+     收获周（面大厂核心岗，拿 offer 谈薪）
-```
-
-详细计划见 [规划与投递节奏](面试/规划.md)。
+| 场景 | 入口 |
+|------|------|
+| 面试当天速查 | [面试速查板](learning/interview/速查板.html) |
+| 系统性复习 48 题 | [题库详解](learning/interview/题库/题库详解.md) |
+| 面试前急救 | [急救包](learning/interview/题库/急救包.md) |
+| 15 张答案卡 | [答案卡](learning/interview/训练/答案卡.md) |
+| 投递规划 | [规划与投递节奏](learning/interview/规划.md) |
+| 简历 | [简历 v2](learning/interview/简历/v2.md) |
