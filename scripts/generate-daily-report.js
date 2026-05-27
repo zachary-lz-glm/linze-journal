@@ -516,7 +516,8 @@ async function main() {
   if (fs.existsSync(dailyPath)) {
     console.log(`⏭️  ${dateStr} 日报已存在，跳过`);
   } else if (dayOfWeek === 0 || dayOfWeek === 6) {
-    console.log('⏭️  周末不生成日报');
+    console.log('⏭️  周末不生成日报，跳过');
+    // 周末仍需更新侧边栏（可能有周报新产出）
   } else {
     const direction = pickDirection();
     console.log(`📅 生成 ${dateStr} 深度日报 | 方向：${direction.label} (目录: ${weekName})\n`);
@@ -532,8 +533,12 @@ async function main() {
   const weeklyFile = '周报.md';
   const weeklyPath = path.join(weekPath, weeklyFile);
 
-  if (!fs.existsSync(weeklyPath) && (dayOfWeek === 5 || dayOfWeek === 6 || dayOfWeek === 0)) {
-    console.log(`\n📊 今天是${['日','一','二','三','四','五','六'][dayOfWeek]}，生成周报（全景趋势扫描）...\n`);
+  // ── 生成周报（周一，且尚未生成） ──
+  const weeklyFile = '周报.md';
+  const weeklyPath = path.join(weekPath, weeklyFile);
+
+  if (!fs.existsSync(weeklyPath) && dayOfWeek === 1) {
+    console.log(`\n📊 今天是周一，生成周报（全景趋势扫描）...\n`);
 
     const { hn, gh, rss } = await collectAllData();
     const report = await generateWeeklyReport(hn, gh, rss, weekName);
