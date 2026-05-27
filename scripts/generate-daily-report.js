@@ -90,7 +90,7 @@ async function collectRSS(feeds) {
 
 // ─── 调用 DeepSeek 生成报告 ───
 
-async function generateReport(hn, gh, rss, dateStr) {
+async function generateReport(hn, gh, rss, dateStr, model = MODEL) {
   const system = `你是一位专注于 AI 工程化与前端技术的资深分析师。根据提供的实时数据和你的专业知识，生成一份高质量中文日报。
 
 读者画像：前端工程师，关注 AI 工程化方向，正在准备面试，需要知道行业最新动态和技术趋势。
@@ -165,7 +165,7 @@ ${dataBlock}
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      model: MODEL,
+      model,
       messages: [
         { role: 'system', content: system },
         { role: 'user', content: user },
@@ -182,8 +182,15 @@ ${dataBlock}
   }
 
   const data = await res.json();
-  const content = data.choices?.[0]?.message?.content;
-  if (!content) throw new Error('DeepSeek 返回内容为空');
+  const choice = data.choices?.[0];
+  const content = choice?.message?.content;
+
+  if (!content) {
+    const reason = choice?.finish_reason || 'unknown';
+    const refusal = choice?.message?.refusal;
+    console.error('⚠️ DeepSeek 原始响应:', JSON.stringify(data, null, 2).slice(0, 2000));
+    throw new Error(`DeepSeek 返回内容为空 (finish_reason=${reason}, refusal=${refusal || 'none'})`);
+  }
 
   // 去掉可能的 markdown 代码块包裹
   return content.replace(/^```(?:markdown)?\n?/i, '').replace(/\n?```\s*$/i, '');
@@ -241,9 +248,20 @@ async function main() {
   ]);
   console.log(`  ✅ ${rss.length} 条`);
 
-  // 2. 生成报告
-  console.log('\n🤖 调用 DeepSeek V4-Pro 生成日报...');
-  const report = await generateReport(hn, gh, rss, dateStr);
+  // 2. 生成报告（优先 V4-Pro，失败降级 V4-Flash）
+  let report;
+  const models = ['deepseek-v4-pro', 'deepseek-v4-flash'];
+  for (const model of models) {
+    console.log(`\n🤖 调用 ${model} 生成日报...`);
+    try {
+      report = await generateReport(hn, gh, rss, dateStr, model);
+      console.log(`  ✅ ${model} 生成成功`);
+      break;
+    } catch (e) {
+      console.error(`  ❌ ${model} 失败: ${e.message}`);
+      if (model === models[models.length - 1]) throw e;
+    }
+  }
 
   // 3. 保存文件
   fs.writeFileSync(filepath, report);
