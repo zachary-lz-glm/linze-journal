@@ -86,7 +86,29 @@ body {
   background: var(--bg-alt);
 }
 @media (max-width: 768px) {
-  .sidebar { border-right: none; border-bottom: 1px solid var(--border); }
+  .sidebar {
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+    display: none;
+  }
+  .sidebar.open { display: block; }
+}
+
+/* Sidebar toggle */
+.sidebar-toggle {
+  display: none;
+  width: 100%;
+  padding: 10px;
+  background: var(--bg-alt);
+  border: none;
+  border-bottom: 1px solid var(--border);
+  font-size: 14px;
+  color: var(--primary);
+  cursor: pointer;
+  text-align: center;
+}
+@media (max-width: 768px) {
+  .sidebar-toggle { display: block; }
 }
 
 /* Main */
@@ -230,8 +252,10 @@ body {
 
   <!-- Body -->
   <div class="body">
+    <!-- Sidebar toggle (mobile only) -->
+    <button class="sidebar-toggle no-print" onclick="toggleSidebar()">展开个人信息 ▾</button>
     <!-- Sidebar -->
-    <div class="sidebar">
+    <div class="sidebar" id="sidebar">
       <div class="section">
         <div class="section-title">个人优势</div>
         <ul class="highlights">
@@ -371,6 +395,15 @@ body {
     </div>
   </div>
 </div>
+
+<script>
+function toggleSidebar() {
+  const sidebar = document.getElementById('sidebar');
+  const btn = document.querySelector('.sidebar-toggle');
+  sidebar.classList.toggle('open');
+  btn.textContent = sidebar.classList.contains('open') ? '收起个人信息 ▴' : '展开个人信息 ▾';
+}
+</script>
 
 </body>
 </html>

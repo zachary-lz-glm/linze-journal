@@ -1,9 +1,10 @@
-const CACHE_NAME = 'kb-v6';
+const CACHE_NAME = 'kb-v7';
 const ASSETS = [
   '/linze-journal/',
   '/linze-journal/index.html',
   '/linze-journal/_sidebar.md',
-  '/linze-journal/README.md'
+  '/linze-journal/README.md',
+  '/linze-journal/resume-site/index.html'
 ];
 
 self.addEventListener('install', e => {
