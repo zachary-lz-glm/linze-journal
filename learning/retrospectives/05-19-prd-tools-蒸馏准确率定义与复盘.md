@@ -33,13 +33,13 @@
 
 **单仓**
 
-```text
+```
 综合 ≈ 0.25×A + 0.15×B + 0.25×C + 0.35×D
 ```
 
 **团队（三仓）**
 
-```text
+```
 综合 ≈ 0.20×A + 0.10×B + 0.15×C + 0.25×D + 0.30×E
 ```
 
@@ -58,7 +58,7 @@
 
 ### 3.1 机器分：`quality-gate.py`
 
-```bash
+```
 # 蒸馏中途：文件齐不齐、PRD 块覆盖
 python3 .prd-tools/scripts/quality-gate.py distill \
   --distill-dir _prd-tools/distill/<slug> \
@@ -93,7 +93,7 @@ python3 .prd-tools/scripts/quality-gate.py final \
 
 ### 3.3 实施准确率（开发结束后，最可信）
 
-```text
+```
 implementation_accuracy = 1 - (imp_discarded + imp_major_rewrite + 0.5 × imp_added_unplanned) / planned_imp_count
 ```
 
@@ -193,7 +193,7 @@ implementation_accuracy = 1 - (imp_discarded + imp_major_rewrite + 0.5 × imp_ad
 
 ## 六、团队习惯（最小闭环）
 
-```text
+```
 蒸馏结束
   → quality-gate distill + final（记下五项子分）
   → readiness 阻塞项必须有人名
@@ -207,7 +207,7 @@ implementation_accuracy = 1 - (imp_discarded + imp_major_rewrite + 0.5 × imp_ad
 
 ### OQ 命中率（蒸馏价值证明）
 
-```text
+```
 OQ 命中率 = 开发中确实成为问题的 OQ 数 / 蒸馏列出 OQ 总数
 ```
 

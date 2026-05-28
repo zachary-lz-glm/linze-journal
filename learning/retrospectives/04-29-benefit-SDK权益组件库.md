@@ -76,7 +76,7 @@ benefit-sdk/
 
 ### 讲点 1：Register 注册模式 — 内置 24 组件 + 运行时扩展
 
-```typescript
+```
 class Register {
   _components: { [key: string]: (props: any) => JSX.Element };
 
@@ -110,7 +110,7 @@ class Register {
 
 **这是最关键的发现**：benefit SDK 的 `BenefitForm` 用了和 营销平台 完全相同的 Schema 渲染模式：
 
-```typescript
+```
 // BenefitForm — 和 营销平台 的 StepForm 同构
 const RegisteredComponents = new Register();
 const registeredComponents = RegisteredComponents._components;
@@ -130,7 +130,7 @@ const registeredComponents = RegisteredComponents._components;
 
 **Schema 结构**（从 config/schema.tsx 和实际 API 返回）：
 
-```typescript
+```
 {
   name: "spu_type_info",        // 字段名
   visible: true,                // 显隐
@@ -168,7 +168,7 @@ const registeredComponents = RegisteredComponents._components;
 
 **组件模式**（`<App>`）— 内嵌在页面中使用：
 
-```typescript
+```
 // App.tsx — forwardRef 组件，内部管理 list+detail 状态
 const BenefitComponent = forwardRef((props, ref) => {
   // 创建按钮 → 打开 detail 弹窗（CREATE 模式）
@@ -186,7 +186,7 @@ const BenefitComponent = forwardRef((props, ref) => {
 
 **函数调用模式**（View/Edit/Copy/Create）— 命令式调用，通过 `Modal.info` 打开弹窗：
 
-```typescript
+```
 // BenefitViewByUser/index.tsx — 通过 Modal.info 弹窗
 export const viewBenefitByUser = (params) => {
   const modal = Modal.info({});
@@ -207,7 +207,7 @@ export const viewBenefitByUser = (params) => {
 
 **统一入口**（`BenefitAdmin`）— 推荐，按操作类型分发：
 
-```typescript
+```
 // openBenefit.tsx — 类型安全的统一入口
 type ParamsMap = {
   view: Parameters<typeof viewBenefitByUser>[number];
@@ -262,7 +262,7 @@ export default <T extends keyof ParamsMap>(type: T, params: ParamsMap[T]) => {
 
 ### 讲点 5：Rollup 双模打包 + 三输出
 
-```javascript
+```
 // rollup.config.js — 3 个输出配置
 export default [
   // CJS
@@ -277,7 +277,7 @@ export default [
 
 **package.json 分发配置**：
 
-```json
+```
 {
   "main": "dist/index.js",           // CJS 入口
   "module": "es/index.js",           // ESM 入口

@@ -121,7 +121,7 @@ reference/
 
 ### YAML 统一规范
 
-```yaml
+```
 # 文件头（必须）：Step N: 标题 + 用途一句话
 # 元数据（必须）：version / layer / project / last_verified / verify_cadence / owner
 # 章节分隔：--- 一级章节，-- 二级分组
@@ -178,7 +178,7 @@ Phase 3: Quality Gate（3 轮 Critic）
 
 结构扫描阶段的输入文件，预定义需要扫描的模块和五问：
 
-```yaml
+```
 phase: structure-scan
 target_project: <项目路径>
 
@@ -228,7 +228,7 @@ scan_tasks:
 
 ### Sub-agent Prompt 模板
 
-```markdown
+```
 你正在分析 {project} 的 {module} 模块。
 阅读文件并回答 5 个问题，严格 YAML 格式输出。
 不确定的一律标 TODO + confidence: low。
@@ -253,7 +253,7 @@ scan_tasks:
 
 ### TODO 标记与人工校准
 
-```yaml
+```
 # 好的 TODO：具体、可操作
 field: crowdTarget
 confidence: low

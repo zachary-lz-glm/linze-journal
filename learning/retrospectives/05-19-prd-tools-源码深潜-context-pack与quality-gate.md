@@ -38,7 +38,7 @@ reference/04-routing-playbooks.yaml
 
 **不是完整 YAML 解析器**，而是用正则按块切 `requirement-ir.yaml`：
 
-```python
+```
 # 每个 REQ 块：- id: REQ-001 开头，到下一个 - id: 或文件尾
 pattern = r'^\s*-\s+id:\s+"?([A-Z]+-\d+)"?\s*$(.*?)(?=^\s*-\s+id:|\Z)'
 ```
@@ -156,7 +156,7 @@ Must-Reference 段明确要求：**report §5/§6 和 plan 必须引用这些锚
 
 ### 1.7 端到端数据流（一张图）
 
-```text
+```
 IR: "完单油站券" + business_entities: ["CompleteOrderGas"]
          │
          ▼
@@ -198,7 +198,7 @@ query-plan.yaml QP-003 + context-pack.md Must-Reference 表
 
 ### 2.1 `distill` — 流程完整性（偏「有没有跑完」）
 
-```bash
+```
 python3 .prd-tools/scripts/quality-gate.py distill \
   --distill-dir _prd-tools/distill/<slug> \
   --repo-root . \
@@ -243,7 +243,7 @@ Fatal 集合：`block_coverage`、`media_coverage`、`requirement_trace` — 任
 
 ### 2.2 `final` — 交付物质量（偏「能不能照着干」）
 
-```bash
+```
 python3 .prd-tools/scripts/quality-gate.py final --distill-dir _prd-tools/distill/<slug>
 ```
 
@@ -276,7 +276,7 @@ python3 .prd-tools/scripts/quality-gate.py final --distill-dir _prd-tools/distil
 
 ### 2.3 `reference` — 知识库最低标准
 
-```bash
+```
 python3 .prd-tools/scripts/quality-gate.py reference --root .
 ```
 
@@ -420,7 +420,7 @@ python3 .prd-tools/scripts/quality-gate.py reference --root .
 
 ## 六、命令速查
 
-```bash
+```
 # 建 index（reference Mode A 之后）
 python3 .prd-tools/scripts/build-index.py --repo . --out _prd-tools/reference/index
 

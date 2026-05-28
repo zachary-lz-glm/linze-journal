@@ -259,7 +259,7 @@ reference → distill → reference-update-suggestions → Mode E → reference
 
 ## 十、全链路图（可放 PPT）
 
-```mermaid
+```
 flowchart TB
   subgraph install [安装层]
     IS[install.sh] --> SK[.claude/skills]

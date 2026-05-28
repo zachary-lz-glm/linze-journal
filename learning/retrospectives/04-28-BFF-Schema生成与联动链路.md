@@ -40,7 +40,7 @@ Builder.parseOnce(templateStuff, apiData)
 
 ### 模板结构
 
-```typescript
+```
 {
   hooks: { beforeEach, afterEach, afterAll },
   template: [
@@ -76,7 +76,7 @@ Builder.parseOnce(templateStuff, apiData)
 
 **复用机制**：联动模板从 render 模板提取单个 handler 复用：
 
-```typescript
+```
 // linkageSchema/campaignType.ts
 const temp = getRenderSchemaTemplate(StepType.BASIC, ctx)
 const template = temp.template.filter(item => item.dataIndex === 'campaign_type')
@@ -109,7 +109,7 @@ actionConfig 内部:
 | **fetchApi** | 前端调 BFF → 重生成 Schema → 替换字段 | 选项需从后端获取 | 城市变化 → 活动类型选项更新 |
 | **state** | 前端 eval 表达式 → 更新显隐/禁用 | 纯条件判断 | 活动类型=推送 → 显示推送模板 |
 
-```json
+```
 // fetchApi 型
 { "dependencies": ["basic.city"], "callback": {
   "fetchApi": "/bff/schema/campaignType", "params": { "city": "{{$deps[0]}}" } } }
@@ -157,7 +157,7 @@ actionConfig 内部:
 
 ### 阶段一：注册监听（FieldWrapper mount）
 
-```typescript
+```
 // FieldWrapper/index.tsx
 useEffect(() => {
   if (d_actions) registerEvent(d_actions)
@@ -175,7 +175,7 @@ actions.forEach(action => {
 
 ### 阶段二：触发联动（onFormChange）
 
-```typescript
+```
 // StepForm
 const onFormChange = (changedValues) => {
   Object.keys(changedValues).forEach(k => {
@@ -218,7 +218,7 @@ parseCallback({ action, dataSet, form, dispatch, listener })
 
 ### 阶段四：schemaExpression 表达式解析
 
-```typescript
+```
 // tools.ts
 export const schemaExpression = (str: string) => {
   return String(str.match(/(?<={{).*?(?=}})/))
