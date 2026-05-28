@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=3,user-scalable=yes">
+<title>面试速查</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{--bg:#000;--card:#111;--text:#ccc;--core:#FFD700;--core-bg:#1a1500;--border:#222;--fs:22px}
+body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","PingFang SC",sans-serif;background:var(--bg);color:var(--text);font-size:var(--fs);line-height:1.5;padding:60px 0 30px}
+
+/* TABS */
+.tabs{position:fixed;top:0;left:0;right:0;z-index:100;background:#111;display:flex;gap:4px;padding:6px 6px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;border-bottom:1px solid #222}
+.tabs::-webkit-scrollbar{display:none}
+.tab{padding:10px 14px;border-radius:8px;font-size:15px;font-weight:700;white-space:nowrap;background:#1a1a1a;color:#666;border:1.5px solid #333;cursor:pointer;transition:all .1s}
+.tab.on{color:#fff;border-color:transparent}
+.tab[data-c="all"].on{background:#444}
+.tab[data-c="open"].on{background:#EC4899}
+.tab[data-c="proj"].on{background:#3B82F6}
+.tab[data-c="bagu"].on{background:#10B981}
+.tab[data-c="code"].on{background:#F97316}
+.tab[data-c="ai"].on{background:#EF4444}
+.tab[data-c="emer"].on{background:#F59E0B}
+
+/* CARDS */
+.container{padding:6px 8px;max-width:900px;margin:0 auto}
+.card{background:var(--card);border-radius:10px;margin-bottom:6px;border:1px solid var(--border);overflow:hidden;cursor:pointer}
+.card.hide{display:none}
+.card-head{padding:10px 12px 4px;display:flex;align-items:flex-start;gap:8px}
+.tag{display:inline-block;padding:3px 8px;border-radius:5px;font-size:13px;font-weight:800;color:#fff;flex-shrink:0}
+.tag.proj{background:#3B82F6}.tag.bagu{background:#10B981}.tag.ai{background:#EF4444}
+.tag.code{background:#F97316}.tag.open{background:#EC4899}.tag.emer{background:#F59E0B}
+.card-title{font-size:calc(var(--fs) - 2px);font-weight:700;color:#eee;flex:1}
+.core{margin:6px 12px 8px;padding:10px 14px;border-radius:8px;font-size:calc(var(--fs) + 2px);font-weight:800;color:var(--core);background:var(--core-bg);line-height:1.4}
+
+/* BODY (hidden by default, accordion) */
+.card-body{display:none;padding:0 12px 12px}
+.card.open .card-body{display:block}
+.card-body p{margin-bottom:6px;font-size:calc(var(--fs) - 2px);color:#aaa;line-height:1.6}
+.card-body .hint{color:#888;font-size:calc(var(--fs) - 4px);font-style:italic;margin-top:4px}
+.card-body strong{color:#ddd}
+
+.no-result{text-align:center;padding:40px;color:#555;display:none}
+</style>
+</head>
+<body>
+
+<div class="tabs" id="tabs">
+  <button class="tab on" data-c="all" onclick="setCat('all')">全部</button>
+  <button class="tab" data-c="open" onclick="setCat('open')">开场</button>
+  <button class="tab" data-c="proj" onclick="setCat('proj')">项目</button>
+  <button class="tab" data-c="bagu" onclick="setCat('bagu')">基础</button>
+  <button class="tab" data-c="code" onclick="setCat('code')">手撕</button>
+  <button class="tab" data-c="ai" onclick="setCat('ai')">AI</button>
+  <button class="tab" data-c="emer" onclick="setCat('emer')">应急</button>
+</div>
+
+<div class="container" id="cards">
+
+<!-- ==================== 开场 ==================== -->
+<div class="card open" data-c="open" data-kw="开场白 自我介绍">
+  <div class="card-head"><span class="tag open">开场</span><div class="card-title">30 秒项目开场白</div></div>
+  <div class="core">Schema 驱动架构 → BFF 生成 → 前端渲染 → AI 工程化</div>
+  <div class="card-body">
+    <p>我在滴滴国际化做了四年营销中台前端，核心做的是一套 Schema 驱动的全栈架构。</p>
+    <p>简单说就是：BFF 层用模板引擎生成 Schema，前端通过渲染引擎动态消费。中间最核心的设计叫 injectDActions，是一次声明、双重求值——BFF 端先算一次保证初始状态正确，序列化给前端运行时再算一次做联动。联动分两种，需要后端数据的走 fetchApi 回调 BFF 重生成，纯前端的走本地 eval。这样新增活动类型，前端基本不用写新代码。</p>
+    <p>这套 Schema 架构后来也复用到了权益组件库 benefit SDK，支持 400 多种权益的组件化接入。</p>
+    <p>在这个基础上我又做了 prd-tools，用 AI 把 PRD 转成有证据、可执行、可回流的结构化开发计划。</p>
+    <p class="hint">语速 250 字/分钟，约 45 秒。追问时顺势展开。</p>
+  </div>
+</div>
+
+<!-- ==================== 项目 A 组 ==================== -->
+<div class="card" data-c="proj" data-kw="Monorepo 管理 Lerna Nx Yarn workspace">
+  <div class="card-head"><span class="tag proj">A1</span><div class="card-title">Monorepo 怎么管理 15+ 模块？</div></div>
+  <div class="core">Lerna 管版本 + Nx 管加速 + Yarn 管依赖</div>
+  <div class="card-body">
+    <p>app 目录放 15 个业务模块，独立版本、独立部署；packages 放共享组件。Lerna independent version 独立发版，Nx 做构建缓存只构建变更影响部分。</p>
+    <p>踩过坑：yarn 解析器从 rc.31 升到 rc.48 不兼容 node16，整个构建全挂。所以 yarn.lock 必须锁死。</p>
+  </div>
+</div>
+
+<div class="card" data-c="proj" data-kw="Schema 驱动 架构 BFF 生成 渲染 injectDActions">
+  <div class="card-head"><span class="tag proj">A2</span><div class="card-title">Schema 驱动架构怎么设计？</div></div>
+  <div class="core">BFF 生成 Schema，前端消费 Schema，新增活动零代码</div>
+  <div class="card-body">
+    <p>三层：后端 API 给原始数据，BFF 用模板引擎生成 Schema，前端按 Schema 渲染。</p>
+    <p>最核心是 injectDActions，一次声明、双重求值：BFF 先 safeEval 算初始状态，序列化给前端运行时再算。联动分 fetchApi 型和 state 型，16 个联动模板。</p>
+    <p>前端通过 formatName 拍平嵌套路径，Listener 发布订阅执行联动。组件双轨制：基础走 switch-case，业务走 RegisteredComponents，35 个动态渲染。</p>
+    <p>新增活动类型前端基本零代码。</p>
+  </div>
+</div>
+
+<div class="card" data-c="proj" data-kw="组件库 benefit SDK 权益 Register Rollup">
+  <div class="card-head"><span class="tag proj">A3</span><div class="card-title">400+ 权益组件库怎么设计？</div></div>
+  <div class="core">Register 扩展 + Schema 同构，两个消费者共享架构</div>
+  <div class="card-body">
+    <p>Register 模式——内置 24 个组件，业务运行时注册自己的权益组件。和活动表单共享同一套 Schema 渲染架构，两个消费者共享，维护成本低。</p>
+    <p>Rollup 输出 ESM + CJS + d.ts。peerDependencies 避免重复打包 React。Changesets 发版，alpha 联调，yalc 本地验证。</p>
+  </div>
+</div>
+
+<div class="card" data-c="proj" data-kw="AI 可靠性 证据链 质量门控 benchmark">
+  <div class="card-head"><span class="tag proj">A4</span><div class="card-title">AI 工程怎么保证可靠性？</div></div>
+  <div class="core">不押宝模型聪明不聪明，靠流程约束它</div>
+  <div class="card-body">
+    <p>四层。证据链：每个事实追到 PRD、源码或文档。代码锚定：build-index 静态分析 + context-pack 精准匹配。质量门控：quality-gate 五项加权评分。反馈回流：蒸馏新知识更新 reference，benchmark 做回归。</p>
+  </div>
+</div>
+
+<div class="card" data-c="proj" data-kw="挑战 最难 技术挑战 项目选择">
+  <div class="card-head"><span class="tag proj">A5</span><div class="card-title">最有技术挑战的项目？</div></div>
+  <div class="core">根据面试官兴趣选：AI 工程差异化 或 Schema 深度</div>
+  <div class="card-body">
+    <p><strong>选 prd-tools</strong>（面试官对 AI 感兴趣）：最有挑战的是变更分类，核心难点是业务术语和代码字段不一致。解法是 reference 路由匹配加代码锚定。</p>
+    <p><strong>选 Schema 联动</strong>（偏传统前端）：联动引擎跨两层，既要 SSR 初始状态正确又要前端流畅。解法是 injectDActions 双重求值。</p>
+    <p class="hint">优先选 AI 方向，是你最大的差异化。</p>
+  </div>
+</div>
+
+<div class="card" data-c="proj" data-kw="依赖管理 yarn.lock workspace symlink">
+  <div class="card-head"><span class="tag proj">A6</span><div class="card-title">Monorepo 包依赖管理？</div></div>
+  <div class="core">Yarn workspace + yarn.lock 锁版本，踩过版本事故</div>
+  <div class="card-body">
+    <p>Yarn workspace 做 symlink 引用。yarn.lock 锁死第三方版本——踩过解析器升级崩掉 node16 的事故。resolutions 强制统一公共类型依赖。</p>
+  </div>
+</div>
+
+<div class="card" data-c="proj" data-kw="联动引擎 injectDActions 双重求值 fetchApi state">
+  <div class="card-head"><span class="tag proj">A7</span><div class="card-title">联动引擎怎么设计？</div></div>
+  <div class="core">一次声明，两端求值</div>
+  <div class="card-body">
+    <p>BFF 端 injectDActions 声明式注入，双重求值：BFF 先 safeEval 算一次保证 SSR 初始状态，前端运行时再算一次。</p>
+    <p>两种联动：fetchApi 型（需后端数据）回调 BFF 重生成；state 型（纯前端）本地 eval。16 个联动模板，listener.on 支持链式联动。</p>
+  </div>
+</div>
+
+<div class="card" data-c="proj" data-kw="版本管理 Changesets 发版 alpha release yalc">
+  <div class="card-head"><span class="tag proj">A8</span><div class="card-title">组件库版本管理和发布？</div></div>
+  <div class="core">Changesets 管理 + alpha/release 双环境</div>
+  <div class="card-body">
+    <p>Changesets 管版本：changeset 记录 → version 更新 → publish 发布。alpha 联调，release 正式。本地用 yalc push 不用 npm link（symlink 有坑）。Rollup 出 ESM + CJS + d.ts。</p>
+  </div>
+</div>
+
+<div class="card" data-c="proj" data-kw="AI 代码 质量 验证 审计 锚定">
+  <div class="card-head"><span class="tag proj">A9</span><div class="card-title">AI 生成代码怎么验证质量？</div></div>
+  <div class="core">审计 + 锚定 + 门控 + 回归</div>
+  <div class="card-body">
+    <p>四件事：证据链审计（每个需求有 PRD 证据）；代码锚定（build-index + context-pack）；多层质量门控（11 步工作流有 Review Gate 硬停止）；benchmark 回归（oracle 用例评分防退步）。</p>
+  </div>
+</div>
+
+<div class="card" data-c="proj" data-kw="PRD 上线 链路 蒸馏 回流 完整流程">
+  <div class="card-head"><span class="tag proj">A10</span><div class="card-title">从 PRD 到上线的完整链路？</div></div>
+  <div class="core">PRD → reference → 蒸馏 → 锚定 → 门控 → 实施 → 回流</div>
+  <div class="card-body">
+    <p>reference 构建知识库（六文件 SSOT + Evidence Index）→ prd-distill 11 步蒸馏 → context-pack 精准锚定 → quality-gate 五项评分 → Review Gate 硬停止 → 按 plan 实施 → 回流更新 reference。</p>
+    <p>核心：把 PRD 从自然语言变成有证据的结构化开发计划，不是让 AI 直接写代码。</p>
+  </div>
+</div>
+
+<!-- ==================== 项目追问 ==================== -->
+<div class="card" data-c="proj" data-kw="Schema 边界 风险 不足 调试 类型安全">
+  <div class="card-head"><span class="tag proj">追问</span><div class="card-title">Schema 架构有什么边界和风险？</div></div>
+  <div class="core">表达力有上限，复杂联动和特殊 UI 仍需定制开发</div>
+  <div class="card-body">
+    <p>三个边界。表达力上限：联动嵌套超过三层模板难维护，拆成多个模板各管一层。调试困难：动态生成不能断点，加了 Schema diff 工具。类型安全弱化：字符串键值编译时无法检查，BFF 模板层做字段枚举校验。</p>
+  </div>
+</div>
+
+<div class="card" data-c="proj" data-kw="大表单 性能 200字段 虚拟滚动">
+  <div class="card-head"><span class="tag proj">追问</span><div class="card-title">大表单 200+ 字段性能？</div></div>
+  <div class="core">分步渲染 + 字段级更新 + 虚拟滚动</div>
+  <div class="card-body">
+    <p>三层：渲染层——按步骤分组，当前步全渲染，前后步只渲染摘要。更新层——Listener 按依赖图触发，只重渲染受影响组件。组件层——长列表用虚拟滚动。实测首屏从 1.2s 降到 300ms。</p>
+  </div>
+</div>
+
+<div class="card" data-c="proj" data-kw="BFF 挂了 降级 缓存 兜底 容错">
+  <div class="card-head"><span class="tag proj">追问</span><div class="card-title">BFF 挂了怎么办？</div></div>
+  <div class="core">缓存兜底 + 降级 UI + 告警联动</div>
+  <div class="card-body">
+    <p>缓存兜底：成功生成的 Schema 缓存到 CDN，BFF 超时用缓存渲染。降级 UI：连缓存都没有展示骨架页。告警：错误率超阈值自动告警。</p>
+  </div>
+</div>
+
+<div class="card" data-c="proj" data-kw="竞态 race condition 序列号 废弃">
+  <div class="card-head"><span class="tag proj">追问</span><div class="card-title">injectDActions 竞态问题？</div></div>
+  <div class="core">有，请求序列号 + 废弃标记解决</div>
+  <div class="card-body">
+    <p>快速切换字段触发两次 fetchApi，旧数据覆盖新数据。解法：递增序列号，响应回来检查是否最新请求，不是就丢弃。state 型同步不存在这个问题。</p>
+  </div>
+</div>
+
+<div class="card" data-c="proj" data-kw="线上事故 故障 回滚 yarn.lock 构建">
+  <div class="card-head"><span class="tag proj">追问</span><div class="card-title">线上出过事故吗？</div></div>
+  <div class="core">yarn 解析器升级导致构建全挂，15 分钟回滚</div>
+  <div class="card-body">
+    <p>resolver 从 rc.31 自动升到 rc.48 不兼容 Node 16，整个构建全挂。15 分钟回滚 yarn.lock 恢复。复盘三件事：yarn.lock 加入 git 保护；CI 加 lockfile diff 检测；依赖升级必须 staging 验证。</p>
+    <p class="hint">事故处理 = 快速止血 + 根因分析 + 流程改进。</p>
+  </div>
+</div>
+
+<div class="card" data-c="proj" data-kw="代码审查 Code Review 标准 规范">
+  <div class="card-head"><span class="tag proj">追问</span><div class="card-title">代码审查标准？</div></div>
+  <div class="core">类型安全 + 边界条件 + 性能影响 + 架构一致性</div>
+  <div class="card-body">
+    <p>四点：类型安全（TypeScript strict 有没有 any 逃逸）、边界条件（空值/越界/并发）、性能影响（是否引起大范围重渲染）、架构一致性（BFF 逻辑不泄漏到前端）。</p>
+  </div>
+</div>
+
+<!-- ==================== 项目扩展 ==================== -->
+<div class="card" data-c="proj" data-kw="Rollup 打包 tree-shaking ESM CJS 为什么不用Webpack">
+  <div class="card-head"><span class="tag proj">扩展</span><div class="card-title">为什么用 Rollup 不用 Webpack？</div></div>
+  <div class="core">Rollup 基于 ESM 静态分析，天然 tree-shaking，产物干净</div>
+  <div class="card-body">
+    <p>Rollup 天生为库打包。ESM 静态 import/export 分析，未引用导出直接删除。Webpack 的 tree-shaking 靠 Terser 分析副作用，不如 Rollup 精确，且有运行时代码。</p>
+    <p>一份配置出三份产物：ESM、CJS、d.ts。peerDependencies 声明 react 避免重复打包。</p>
+  </div>
+</div>
+
+<div class="card" data-c="proj" data-kw="Monorepo Turborepo pnpm 工具选型">
+  <div class="card-head"><span class="tag proj">扩展</span><div class="card-title">Monorepo 工具链怎么选？</div></div>
+  <div class="core">Lerna 管版本 + Nx 管缓存，当时 Turborepo 还不成熟</div>
+  <div class="card-body">
+    <p>Turborepo 构建编排强但版本管理要额外配，远程缓存在内网用不了。pnpm workspace 管依赖好但缺构建编排。Lerna+Nx 一步到位。现在可能会选 pnpm+Turborepo，但迁移成本高，当前方案稳定。</p>
+  </div>
+</div>
+
+<div class="card" data-c="proj" data-kw="yalc npm link symlink 联调">
+  <div class="card-head"><span class="tag proj">扩展</span><div class="card-title">为什么用 yalc 不用 npm link？</div></div>
+  <div class="core">npm link 的 symlink 导致 peerDependencies 解析错误</div>
+  <div class="card-body">
+    <p>npm link 的 symlink 让 Rollup 解析不到宿主项目的 react，类型检查全挂。yalc 真实文件拷贝，模拟真实场景。</p>
+  </div>
+</div>
+
+<div class="card" data-c="proj" data-kw="JSON Schema 自研 UI Schema 区别 为什么">
+  <div class="card-head"><span class="tag proj">扩展</span><div class="card-title">为什么不直接用 JSON Schema？</div></div>
+  <div class="core">JSON Schema 做验证，不做 UI 渲染和联动</div>
+  <div class="card-body">
+    <p>JSON Schema 只能说字段必须是数字，不能说用 Slider 还是 InputNumber 渲染，更不能描述联动。我们扩展了 d_component（组件类型）、d_actions（联动配置）、visible/disabled（UI 状态）。</p>
+  </div>
+</div>
+
+<!-- ==================== 基础题 ==================== -->
+<div class="card" data-c="bagu" data-kw="React 18 并发 Fiber Scheduler 优先级">
+  <div class="card-head"><span class="tag bagu">#1</span><div class="card-title">React 18 并发 + Fiber</div></div>
+  <div class="core">Fiber 把递归变链表，Scheduler 按优先级调度</div>
+  <div class="card-body">
+    <p>之前虚拟 DOM diff 是递归，停不下来。Fiber 把节点组织成 child/sibling/return 链表，每个节点是可拆分的工作单元。Scheduler 用 MessageChannel（不是 setTimeout，最少 4ms）做优先级调度，高优先级可打断低优先级。</p>
+    <p>React 18 加了 useTransition（低优先级）、useDeferredValue（延迟渲染）、Automatic Batching（任何上下文都合并 setState）。</p>
+  </div>
+</div>
+
+<div class="card" data-c="bagu" data-kw="useEffect useLayoutEffect 同步 异步 渲染">
+  <div class="card-head"><span class="tag bagu">#2</span><div class="card-title">useEffect vs useLayoutEffect</div></div>
+  <div class="core">useLayoutEffect 绘制前同步阻塞，useEffect 绘制后异步</div>
+  <div class="card-body">
+    <p>DOM 更新完 → useLayoutEffect → 浏览器绘制 → useEffect。</p>
+    <p>需要读 DOM 布局或防闪烁用 useLayoutEffect，其他都用 useEffect。</p>
+  </div>
+</div>
+
+<div class="card" data-c="bagu" data-kw="React 19 RSC Server Components Compiler">
+  <div class="card-head"><span class="tag bagu">#3</span><div class="card-title">React 19 新特性</div></div>
+  <div class="core">Server Components + React Compiler + Form Actions</div>
+  <div class="card-body">
+    <p>RSC 只在服务端运行不发 JS 到客户端（和 SSR 不同）。React Compiler 自动优化重渲染，减少手动 useMemo/useCallback。Form Actions 绑定 server action 简化数据变更。use() Hook 支持 Promise 和 Context 条件调用。</p>
+  </div>
+</div>
+
+<div class="card" data-c="bagu" data-kw="浏览器 渲染 DOM CSSOM Layout Paint Reflow Repaint">
+  <div class="card-head"><span class="tag bagu">#4</span><div class="card-title">浏览器渲染管线</div></div>
+  <div class="core">DOM+CSSOM → Render Tree → Layout → Paint → Composite</div>
+  <div class="card-body">
+    <p>改 width/height 触发 Reflow 最贵。改 color 只 Repaint。改 transform/opacity 只 Composite 性能最好。</p>
+  </div>
+</div>
+
+<div class="card" data-c="bagu" data-kw="HTTP 缓存 强缓存 协商缓存 Cache-Control ETag">
+  <div class="card-head"><span class="tag bagu">#5</span><div class="card-title">HTTP 缓存</div></div>
+  <div class="core">强缓存不请求，协商缓存可能 304 不下载</div>
+  <div class="card-body">
+    <p>强缓存：Cache-Control max-age 直接用本地缓存不发请求。协商缓存：发请求可能返回 304，用 ETag + If-None-Match 比对。</p>
+    <p>口诀：HTML 用 no-cache，带 hash 的 JS/CSS 设 max-age 一年，API 用 no-store。</p>
+  </div>
+</div>
+
+<div class="card" data-c="bagu" data-kw="TypeScript 高级类型 infer 条件类型 映射 Pick Omit">
+  <div class="card-head"><span class="tag bagu">#12</span><div class="card-title">TypeScript 高级类型</div></div>
+  <div class="core">infer 推断 + 条件三元 + 映射遍历</div>
+  <div class="card-body">
+    <p>infer 在条件类型里推断子类型。条件类型是类型层面三元：T extends X ? A : B。映射类型遍历联合类型生成新类型——Pick、Omit、Partial 本质都是映射类型。</p>
+  </div>
+</div>
+
+<div class="card" data-c="bagu" data-kw="事件循环 Event Loop 微任务 宏任务 Promise setTimeout">
+  <div class="card-head"><span class="tag bagu">#7</span><div class="card-title">事件循环</div></div>
+  <div class="core">微任务先于宏任务，同一轮微任务全清完才取下一个宏任务</div>
+  <div class="card-body">
+    <p>同步代码 → 清空微任务（Promise.then） → 取一个宏任务（setTimeout）。async/await 本质 Promise 语法糖。</p>
+    <p>陷阱：Promise 构造函数里同步执行，.then 才是微任务。输出：1 5 3 4 2。</p>
+  </div>
+</div>
+
+<div class="card" data-c="bagu" data-kw="闭包 作用域 词法 柯里化 内存泄漏">
+  <div class="card-head"><span class="tag bagu">八股</span><div class="card-title">闭包和作用域链</div></div>
+  <div class="core">函数记住定义时的词法环境，即使在外部执行</div>
+  <div class="card-body">
+    <p>经典场景：for 循环 var 的坑（用 let 或 IIFE）、函数工厂、柯里化、私有变量。闭包引用的变量不被回收，注意内存泄漏——事件监听器引用外部变量没清理，或定时器引用大对象。</p>
+  </div>
+</div>
+
+<div class="card" data-c="bagu" data-kw="原型链 prototype __proto__ 继承 寄生组合">
+  <div class="card-head"><span class="tag bagu">八股</span><div class="card-title">原型链与继承</div></div>
+  <div class="core">对象通过 __proto__ 链向上查找属性</div>
+  <div class="card-body">
+    <p>ES6 class 是语法糖，底层还是原型链。继承演进：原型链 → 构造函数 → 组合 → 寄生组合（最优，ES6 class 底层实现）。</p>
+  </div>
+</div>
+
+<div class="card" data-c="bagu" data-kw="HTTPS SSL TLS 握手 证书 加密">
+  <div class="card-head"><span class="tag bagu">八股</span><div class="card-title">HTTPS/SSL 握手</div></div>
+  <div class="core">非对称加密协商密钥，对称加密传输数据</div>
+  <div class="card-body">
+    <p>四步：Client Hello（随机数+加密套件）→ Server Hello（随机数+证书）→ 客户端验证证书链 → 生成预主密钥用公钥加密发过去 → 双方用三个随机数生成会话密钥，之后对称加密。</p>
+    <p>ECDHE 支持前向保密。TLS 1.3 简化到 1-RTT。</p>
+  </div>
+</div>
+
+<div class="card" data-c="bagu" data-kw="性能优化 首屏 LCP CDN 懒加载 虚拟列表 代码分割">
+  <div class="card-head"><span class="tag bagu">#11</span><div class="card-title">前端性能优化全链路</div></div>
+  <div class="core">网络 → 渲染 → 资源 → 代码，四个维度</div>
+  <div class="card-body">
+    <p>网络：CDN、HTTP/2、Preload。渲染：SSR/SSG、骨架屏、懒加载、虚拟列表。资源：代码分割、Tree Shaking、WebP。代码：React.memo、useMemo、Web Worker。</p>
+    <p>核心指标：LCP < 2.5s、FID < 100ms、CLS < 0.1。</p>
+  </div>
+</div>
+
+<div class="card" data-c="bagu" data-kw="XSS CSRF CSP 安全 注入 Cookie HttpOnly">
+  <div class="card-head"><span class="tag bagu">#8</span><div class="card-title">XSS / CSRF / CSP 安全</div></div>
+  <div class="core">XSS 注入脚本，CSRF 冒充请求，CSP 限制加载</div>
+  <div class="card-body">
+    <p>XSS 防护：输出转义 + CSP + HttpOnly Cookie。CSRF 防护：CSRF Token + SameSite Cookie + Referer 检查。Token 放 Cookie+HttpOnly 比 LocalStorage 更安全。</p>
+  </div>
+</div>
+
+<div class="card" data-c="bagu" data-kw="Webpack Vite 构建 ESM HMR Tree Shaking">
+  <div class="card-head"><span class="tag bagu">#10</span><div class="card-title">Webpack vs Vite</div></div>
+  <div class="core">Webpack 打包构建，Vite 开发时原生 ESM 按需加载</div>
+  <div class="card-body">
+    <p>Webpack 从入口递归打包所有模块。Vite 开发模式不打包，用浏览器原生 ESM 按需编译，启动极快。生产用 Rollup。HMR：Webpack 模块级，Vite 精确到修改的模块。</p>
+  </div>
+</div>
+
+<div class="card" data-c="bagu" data-kw="浏览器 事件 冒泡 捕获 委托 addEventListener">
+  <div class="card-head"><span class="tag bagu">八股</span><div class="card-title">浏览器事件机制</div></div>
+  <div class="core">捕获 → 目标 → 冒泡，委托利用冒泡</div>
+  <div class="card-body">
+    <p>事件委托：给父元素绑定，通过 e.target 判断子元素。好处：减少内存、动态元素自动有事件。e.target 是触发元素，e.currentTarget 是绑定元素。</p>
+  </div>
+</div>
+
+<div class="card" data-c="bagu" data-kw="虚拟DOM diff 算法 React Fiber 同级比较 key">
+  <div class="card-head"><span class="tag bagu">八股</span><div class="card-title">虚拟 DOM Diff 算法</div></div>
+  <div class="core">同级比较 + 三策略 + key 优化列表</div>
+  <div class="card-body">
+    <p>三策略：只比较同层级、不同类型直接替换、key 标识可复用节点。key 用 index 的问题：插入删除导致后面全部更新。Fiber 下 diff 分两阶段：render 可中断，commit 不可中断。</p>
+  </div>
+</div>
+
+<div class="card" data-c="bagu" data-kw="React 18 并发 坑 Suspense Batching">
+  <div class="card-head"><span class="tag bagu">追问</span><div class="card-title">React 18 并发模式踩过什么坑？</div></div>
+  <div class="core">Suspense 边界设计 + useTransition 饥饿 + Batching 适配</div>
+  <div class="card-body">
+    <p>Suspense 边界太大 loading 闪烁严重，太小太多 loading 区——按用户感知的"内容块"划分。useTransition 低优先级可能饥饿——加 3 秒超时兜底。Automatic Batching 统一了，但依赖旧行为的代码需适配。</p>
+  </div>
+</div>
+
+<div class="card" data-c="bagu" data-kw="HTTP/2 HTTP/3 QUIC 多路复用 队头阻塞">
+  <div class="card-head"><span class="tag bagu">八股</span><div class="card-title">HTTP/2 和 HTTP/3</div></div>
+  <div class="core">HTTP/2 多路复用，HTTP/3 用 QUIC 解决队头阻塞</div>
+  <div class="card-body">
+    <p>HTTP/2：多路复用、头部压缩 HPACK、服务端推送。但 TCP 层还有队头阻塞。HTTP/3 用 QUIC（基于 UDP），每个流独立，支持连接迁移和 0-RTT。</p>
+  </div>
+</div>
+
+<!-- ==================== 手撕代码 ==================== -->
+<div class="card" data-c="code" data-kw="拼多多 手撕 必考 Promise 模板编译 class 调度器 EventEmitter 深拷贝 防抖 call bind">
+  <div class="card-head"><span class="tag code">必考</span><div class="card-title">拼多多手撕必考 8 题</div></div>
+  <div class="core">10 分钟手撕骨架，不写完整但要能出核心逻辑</div>
+  <div class="card-body">
+    <p><strong>① Promise 串行 + 重试</strong>：for-await 串行；递减计数+延迟重试</p>
+    <p><strong>② 模板编译</strong>：tpl.replace(/\{\{(\w+)\}\}/g, (_,k) => data[k])</p>
+    <p><strong>③ ES6 class 转 ES5</strong>：call 借属性 + Object.create 借方法</p>
+    <p><strong>④ 并发调度器</strong>：计数器+等待队列，完成一个放一个</p>
+    <p><strong>⑤ EventEmitter</strong>：events 对象 + on/emit/off/once</p>
+    <p><strong>⑥ 深拷贝</strong>：WeakMap 处理循环引用 + Reflect.ownKeys</p>
+    <p><strong>⑦ 防抖/节流</strong>：debounce clearTimeout+setTimeout；throttle 时间戳比较</p>
+    <p><strong>⑧ call/apply/bind</strong>：Symbol 防冲突 + bind 支持 new</p>
+  </div>
+</div>
+
+<div class="card" data-c="code" data-kw="算法 面试 口诀 速览 全部模板">
+  <div class="card-head"><span class="tag code">速览</span><div class="card-title">面试前 1 分钟算法速览</div></div>
+  <div class="core">10 个套路，每个一句话</div>
+  <div class="card-body">
+    <p><strong>找配对</strong>→ Map | <strong>两端夹</strong>→ 双指针 | <strong>层次走</strong>→ BFS 队列 | <strong>子串</strong>→ 滑动窗口 | <strong>排列</strong>→ 回溯 DFS | <strong>树路径</strong>→ DFS 带参数 | <strong>合并有序</strong>→ 从后填 | <strong>字符串</strong>→ 按位处理 | <strong>最大子序</strong>→ 接前面或从自己开始 | <strong>快排</strong>→ 分治原地</p>
+  </div>
+</div>
+
+<!-- ==================== AI 工程 ==================== -->
+<div class="card" data-c="ai" data-kw="AI 理解项目 Reference SSOT Evidence Index 知识库">
+  <div class="card-head"><span class="tag ai">D21</span><div class="card-title">AI 怎么理解陌生项目？</div></div>
+  <div class="core">Reference v4.0 六文件 SSOT + Evidence Index 静态分析</div>
+  <div class="card-body">
+    <p>六个文件：codebase（静态清单）、coding-rules（编码规则）、contracts（跨层契约）、routing-playbooks（PRD 路由）、domain（业务领域）、portal（导航）。Evidence Index 做 TypeScript 正则扫描，提取代码实体、构建调用边和 BM25 索引。</p>
+  </div>
+</div>
+
+<div class="card" data-c="ai" data-kw="PRD 代码 变更分类 蒸馏 最难">
+  <div class="card-head"><span class="tag ai">D22</span><div class="card-title">PRD 到代码最难的一步？</div></div>
+  <div class="core">变更分类（ADD/MODIFY/DELETE/NO_CHANGE）</div>
+  <div class="card-body">
+    <p>判断每句话对应代码是新增/修改/删除。难在不知道项目现状就无法判断，PRD 描述模糊，跨模块影响难预估。解法：reference 路由匹配 + BM25 + context-pack 锚定 + Review Gate 硬停止。</p>
+  </div>
+</div>
+
+<div class="card" data-c="ai" data-kw="SSE 流式 EventSource ReadableStream token">
+  <div class="card-head"><span class="tag ai">E1</span><div class="card-title">SSE 流式输出前端架构</div></div>
+  <div class="core">连接 → 解析 → 渲染 → 可靠性，四层分离</div>
+  <div class="card-body">
+    <p>连接层：fetch+ReadableStream 或 EventSource，处理断线重连。解析层：chunk buffer 维护。渲染层：requestAnimationFrame 节流，增量 Markdown 解析，代码块没闭合不渲染。可靠性：Last-Event-ID 去重、AbortController 取消、指数退避。</p>
+  </div>
+</div>
+
+<div class="card" data-c="ai" data-kw="Agent ReAct MCP XState 状态机 工具调用">
+  <div class="card-head"><span class="tag ai">E2</span><div class="card-title">AI Agent 前端架构</div></div>
+  <div class="core">把 Agent 过程显式状态化</div>
+  <div class="card-body">
+    <p>五层模型：conversation → message → run → step → tool call。每步有状态（streaming/waiting_tool/executing/done/failed）。工具调用展示输入输出、参数、耗时。状态机推荐 XState。</p>
+    <p>项目桥接：prd-tools 双 Skill 本质就是 Agent 工作流。</p>
+  </div>
+</div>
+
+<div class="card" data-c="ai" data-kw="RAG 检索增强 向量 Embedding BM25">
+  <div class="card-head"><span class="tag ai">E3</span><div class="card-title">RAG 前端能做什么？</div></div>
+  <div class="core">前端负责向量检索的用户体验和反馈闭环</div>
+  <div class="card-body">
+    <p>三件事：本地向量化（TensorFlow.js/ONNX Runtime）、交互层反馈（点赞踩、来源展示）、检索结果可视化（命中文档+相似度分数）。</p>
+    <p>项目桥接：prd-tools 的 evidence 就是 RAG 工程化——用 BM25 做精确检索，每个结论锚定到源码位置。</p>
+  </div>
+</div>
+
+<div class="card" data-c="ai" data-kw="MCP Function Calling 协议 Skills A2A">
+  <div class="card-head"><span class="tag ai">E4</span><div class="card-title">MCP vs Function Calling</div></div>
+  <div class="core">MCP 是标准化工具协议，Function Calling 是模型能力，互补</div>
+  <div class="card-body">
+    <p>MCP：Anthropic 开放协议，Client-Server 架构，JSON-RPC，不绑定模型厂商，支持长连接和工具发现。Function Calling：OpenAI 定义，绑定模型，单次调用。A2A：Google 的 Agent 间通信协议，和 MCP 互补。</p>
+  </div>
+</div>
+
+<div class="card" data-c="ai" data-kw="ROI 提效 量化 指标 prd-tools">
+  <div class="card-head"><span class="tag ai">追问</span><div class="card-title">prd-tools 提效多少？</div></div>
+  <div class="core">不说虚假数字，说可衡量的中间指标</div>
+  <div class="card-body">
+    <p>蒸馏从人工 2-3 小时缩短到自动化 5 分钟。代码锚点覆盖率 80%+。质量门控能在计划阶段拦截低质量输出。真正提效应该是减少需求理解偏差的返工——需要更长时间数据积累。</p>
+  </div>
+</div>
+
+<div class="card" data-c="ai" data-kw="幻觉 hallucination 编造 实例 证据">
+  <div class="card-head"><span class="tag ai">追问</span><div class="card-title">LLM 幻觉举实例</div></div>
+  <div class="core">三种：编造字段名、引用不存在文件、混淆相似概念</div>
+  <div class="card-body">
+    <p>① PRD 说"增加奖励配置"，模型编了 reward_config 但实际叫 benefit_options → context-pack 锚定。② 编一个 src/components/RewardForm.tsx 实际不存在 → Evidence Index 验证文件存在。③ 把"活动模板"和"权益模板"搞混 → reference domain 文件做明确定义。</p>
+  </div>
+</div>
+
+<!-- ==================== 应急话术 ==================== -->
+<div class="card" data-c="emer" data-kw="不会 说不出 印象 话术 救命">
+  <div class="card-head"><span class="tag emer">L1</span><div class="card-title">有点印象但说不准确</div></div>
+  <div class="core">说确定部分 → 给合理推测 → 展示验证方向</div>
+  <div class="card-body">
+    <p>"这个知识点我之前遇到过，核心思路是——[能想起来的]，但具体细节我可能说得不够精确。不过从使用场景来看，我觉得它主要解决的是——[合理推测]的问题。"</p>
+  </div>
+</div>
+
+<div class="card" data-c="emer" data-kw="不会 完全没概念 算法 做不出">
+  <div class="card-head"><span class="tag emer">L2</span><div class="card-title">完全没概念（算法不会）</div></div>
+  <div class="core">先说暴力思路，再问优化方向</div>
+  <div class="card-body">
+    <p>"这道题我一时想不出最优解，但我先说一下初步思路——[暴力解法]。如果时间允许，请问期望的时间复杂度是多少？这样我可以往那个方向优化。"</p>
+  </div>
+</div>
+
+<div class="card" data-c="emer" data-kw="追问 死角 盲区 卡住">
+  <div class="card-head"><span class="tag emer">L3</span><div class="card-title">被追问到死角</div></div>
+  <div class="core">承认盲区 + 合理推测 + 学习方向</div>
+  <div class="card-body">
+    <p>"这个问题确实触及了我的知识盲区，我回去会重点补一下。不过基于目前的项目经验，我的理解是——[合理推测]，不知道这个方向对不对？"</p>
+  </div>
+</div>
+
+<div class="card" data-c="emer" data-kw="系统设计 没思路 类比">
+  <div class="card-head"><span class="tag emer">L4</span><div class="card-title">系统设计没思路</div></div>
+  <div class="core">类比已知架构 + 列关键决策点</div>
+  <div class="card-body">
+    <p>"这个场景我没直接设计过，但可以从 Schema 驱动架构类比——核心都是分层解耦加可扩展。我会先确定几个关键问题：[列 2-3 个关键决策点]。"</p>
+  </div>
+</div>
+
+<div class="card" data-c="emer" data-kw="万能 兜底 任何 引导">
+  <div class="card-head"><span class="tag emer">万能</span><div class="card-title">万能兜底句式</div></div>
+  <div class="core">永远不要说"我不会"就停了</div>
+  <div class="card-body">
+    <p><strong>"这个问题我实际遇到过…"</strong> → 锚定项目经验，把话题往熟悉领域引导。</p>
+    <p><strong>"如果让我重新设计…"</strong> → 展现反思能力。</p>
+  </div>
+</div>
+
+<div class="no-result" id="noRes">没找到匹配卡片</div>
+</div>
+
+<script>
+let curCat='all';
+// FILTER
+function setCat(c){
+  curCat=c;
+  document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('on',t.dataset.c===c));
+  apply();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function apply(){
+  const cards=document.querySelectorAll('.card');
+  let n=0;
+  cards.forEach(c=>{
+    const v=curCat==='all'||c.dataset.c===curCat;
+    c.classList.toggle('hide',!v);
+    if(v)n++;
+  });
+  document.getElementById('noRes').style.display=n===0?'block':'none';
+}
+// ACCORDION
+document.getElementById('cards').addEventListener('click',function(e){
+  const card=e.target.closest('.card');
+  if(!card||card.classList.contains('hide'))return;
+  // Don't collapse if clicking already open card
+  const wasOpen=card.classList.contains('open');
+  document.querySelectorAll('.card.open').forEach(c=>c.classList.remove('open'));
+  if(!wasOpen)card.classList.add('open');
+});
+// INIT: auto-expand first visible card
+document.querySelector('.card[data-c="open"]').classList.add('open');
+</script>
+</body>
+</html>
