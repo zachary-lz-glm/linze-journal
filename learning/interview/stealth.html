@@ -767,7 +767,7 @@ function bfs(grid, r, c) {
     const [x, y] = q.shift();
     for (const [dx, dy] of [[0,1],[0,-1],[1,0],[-1,0]]) {
       const nx = x+dx, ny = y+dy;
-      if (nx>=0 && nx<grid.length && ny>=0 && ny<grid[0].length && grid[nx][ny]==='1') {
+      if (nx>=0 && nx&lt;grid.length && ny>=0 && ny&lt;grid[0].length && grid[nx][ny]==='1') {
         grid[nx][ny] = '0'; q.push([nx, ny]);
       }
     }
