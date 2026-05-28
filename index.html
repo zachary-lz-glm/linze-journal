@@ -346,7 +346,7 @@ function escapeHtml(s){
 }
 function resolvePath(base, rel){
   if(!rel||rel.startsWith('http')||rel.startsWith('//'))return rel;
-  rel=rel.replace(/^\.?\/?/,'');
+  rel=rel.replace(/^\.\//,'');
   if(rel.endsWith('.html'))return rel;
   if(rel.endsWith('.md'))rel=rel.slice(0,-3);
   const baseDir=base.includes('/')?base.substring(0,base.lastIndexOf('/')):'';
@@ -393,7 +393,8 @@ function renderMarkdown(md){
     const hm=line.match(/^(#{1,6})\s+(.+)/);
     if(hm){
       const lv=hm[1].length;
-      html+='<h'+lv+'>'+renderInline(hm[2])+'</h'+lv+'>';
+      const hid=hm[2].replace(/[*`#\[\]()!]/g,'').trim().replace(/\s+/g,'-');
+      html+='<h'+lv+' id="'+escapeHtml(hid)+'">'+renderInline(hm[2])+'</h'+lv+'>';
       i++;continue;
     }
     // Horizontal rule
@@ -804,7 +805,15 @@ function renderHomepage(){
 function interceptLinks(){
   contentEl.querySelectorAll('a').forEach(a=>{
     const href=a.getAttribute('href');
-    if(!href||href.startsWith('http')||href.startsWith('#')||href.endsWith('.html'))return;
+    if(!href||href.startsWith('http')||href.endsWith('.html'))return;
+    if(href.startsWith('#')){
+      a.addEventListener('click',e=>{
+        e.preventDefault();
+        const target=document.getElementById(href.slice(1));
+        if(target)target.scrollIntoView({behavior:'smooth',block:'start'});
+      });
+      return;
+    }
     a.addEventListener('click',e=>{
       e.preventDefault();
       const resolved=resolvePath(currentPath,href.replace(/\.md$/,''));

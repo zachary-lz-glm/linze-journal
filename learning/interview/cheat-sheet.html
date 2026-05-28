@@ -1097,6 +1097,150 @@ function mergeTwoLists(l1, l2) {
   </table>
 </div>
 
+<!-- ==================== 追问深挖 · 项目 ==================== -->
+<div class="card" data-c="proj" data-kw="Schema 边界 风险 上限 复杂联动 调试 类型安全 不足">
+  <div class="card-head" onclick="togCard(this)"><span class="tag proj">追问</span><div class="card-title">Schema 架构有什么边界和风险？</div></div>
+  <div class="core">表达力有上限，复杂联动和特殊 UI 仍需定制开发</div>
+  <button class="script-btn" onclick="togScript(this)">🎤</button>
+  <div class="script-box">
+    <p>边界主要在三个地方。第一，表达力上限——当联动逻辑涉及多字段复杂计算、条件嵌套超过三层时，模板表达式变得很难维护。我们的做法是超过三层就拆成多个联动模板，每个只管一层。</p>
+    <p>第二，调试困难——Schema 是动态生成的，出了问题不能直接断点。我们加了一份 Schema diff 工具，生成前后的差异一目了然。</p>
+    <p>第三，类型安全弱化——Schema 字段都是字符串键值，编译时无法检查。折中方案是在 BFF 模板层做字段枚举校验，保证生成出来的字段名在预设范围内。</p>
+    <p>这三点都是如果重新设计会改进的方向，我也不会回避这些不足。</p>
+    <p class="hint">面试官问"有什么不足"时，主动说这三个点，比被追问更加分。</p>
+  </div>
+</div>
+
+<div class="card" data-c="proj" data-kw="大表单 性能 200字段 虚拟滚动 分步 渲染 懒加载">
+  <div class="card-head" onclick="togCard(this)"><span class="tag proj">追问</span><div class="card-title">大表单 200+ 字段性能怎么优化？</div></div>
+  <div class="core">分步渲染 + 字段级更新 + 虚拟滚动，三层递进</div>
+  <button class="script-btn" onclick="togScript(this)">🎤</button>
+  <div class="script-box">
+    <p>大表单性能优化分三层。第一层渲染层——200 多个字段不一次性渲染，按步骤分组，当前步骤全渲染，前后步骤只渲染摘要。</p>
+    <p>第二层更新层——不做整表 setState，而是字段级更新。我们的 Listener 发布订阅按依赖图触发，只有受影响的组件重渲染。</p>
+    <p>第三层组件层——长列表字段用虚拟滚动，只渲染可视区域的组件。</p>
+    <p>实测 200 字段表单，首屏渲染从 1.2 秒降到 300 毫秒。</p>
+  </div>
+</div>
+
+<div class="card" data-c="proj" data-kw="BFF 挂了 降级 缓存 兜底 告警 容错 fallback">
+  <div class="card-head" onclick="togCard(this)"><span class="tag proj">追问</span><div class="card-title">BFF 挂了怎么办？降级策略？</div></div>
+  <div class="core">缓存兜底 + 降级 UI + 告警联动，三步走</div>
+  <button class="script-btn" onclick="togScript(this)">🎤</button>
+  <div class="script-box">
+    <p>降级分三步。第一步缓存兜底——每次成功生成的 Schema 会缓存一份到 CDN，BFF 超时或错误时前端用缓存的 Schema 渲染，字段可能不是最新的但页面不会白屏。</p>
+    <p>第二步降级 UI——如果连缓存都没有，展示基础骨架页加提示信息，不让用户看到错误页。</p>
+    <p>第三步告警联动——BFF 错误率超过阈值自动触发告警，值班同学介入。</p>
+    <p>这套机制是在一次 BFF 服务抖动后加的，那次影响了 30 分钟，之后再也没有因为 BFF 问题导致用户看到白屏。</p>
+  </div>
+</div>
+
+<div class="card" data-c="proj" data-kw="竞态条件 race condition injectDActions fetchApi 序列号 废弃 debounce">
+  <div class="card-head" onclick="togCard(this)"><span class="tag proj">追问</span><div class="card-title">injectDActions 有没有竞态问题？</div></div>
+  <div class="core">有，用请求序列号 + 废弃标记解决</div>
+  <button class="script-btn" onclick="togScript(this)">🎤</button>
+  <div class="script-box">
+    <p>竞态问题确实有。典型场景：用户快速切换字段 A 的值，触发两次 fetchApi 联动，第一次请求慢于第二次，结果旧数据覆盖了新数据。</p>
+    <p>我的解法是给每次联动请求加一个递增序列号，响应回来时检查是不是当前最新的请求，不是就丢弃。state 型联动不存在这个问题因为它是同步的。</p>
+    <p>另外，快速连续输入时用 debounce 合并，不会每个字符都触发联动。</p>
+    <p class="hint">主动承认有竞态，然后说解法，比等面试官追问更显得经验扎实。</p>
+  </div>
+</div>
+
+<div class="card" data-c="proj" data-kw="线上事故 故障 回滚 yarn.lock 构建 复盘 告警 CI">
+  <div class="card-head" onclick="togCard(this)"><span class="tag proj">追问</span><div class="card-title">线上出过事故吗？怎么处理的？</div></div>
+  <div class="core">yarn 解析器升级导致构建全挂，15 分钟回滚恢复</div>
+  <button class="script-btn" onclick="togScript(this)">🎤</button>
+  <div class="script-box">
+    <p>印象最深的是 yarn 解析器升级事故。有个子包的依赖用了 @yarnpkg/resolver，从 rc.31 自动升到了 rc.48，直接不兼容 Node 16，整个 Monorepo 构建全挂，线上发版阻断。</p>
+    <p>处理过程：先回滚 yarn.lock 恢复服务，花了 15 分钟。然后定位到是 resolver 版本问题，锁死版本加 CI 校验防止再次漂移。</p>
+    <p>复盘后做了三件事：第一，yarn.lock 加入 git 保护不允许随便删；第二，CI 加了 lockfile diff 检测；第三，依赖升级流程规范化，必须先在 staging 验证。</p>
+    <p class="hint">事故处理 = 快速止血 + 根因分析 + 流程改进，这个三段式结构面试官很认可。</p>
+  </div>
+</div>
+
+<div class="card" data-c="proj" data-kw="代码审查 Code Review 标准 规范 类型安全 边界条件 架构一致性">
+  <div class="card-head" onclick="togCard(this)"><span class="tag proj">追问</span><div class="card-title">代码审查标准是什么？</div></div>
+  <div class="core">类型安全 + 边界条件 + 性能影响 + 架构一致性</div>
+  <button class="script-btn" onclick="togScript(this)">🎤</button>
+  <div class="script-box">
+    <p>我审查代码主要看四点。第一，类型安全——TypeScript strict 模式下有没有 any 逃逸，泛型约束够不够紧。</p>
+    <p>第二，边界条件——空值、undefined、数组越界、并发请求这些有没有处理。</p>
+    <p>第三，性能影响——这个改动会不会引起大范围重渲染，有没有不必要的计算。</p>
+    <p>第四，架构一致性——改动是不是在正确的层级，BFF 的逻辑不该泄漏到前端，前端的逻辑不该泄漏到 BFF。</p>
+    <p>快的 10 分钟过，涉及 Schema 联动或跨包改动的会拉评审会。</p>
+  </div>
+</div>
+
+<!-- ==================== 追问深挖 · AI ==================== -->
+<div class="card" data-c="ai" data-kw="ROI 提效 量化 指标 投入产出 效果 数据 度量">
+  <div class="card-head" onclick="togCard(this)"><span class="tag ai">追问</span><div class="card-title">prd-tools 提效多少？怎么量化？</div></div>
+  <div class="core">不说虚假数字，说可衡量的中间指标</div>
+  <button class="script-btn" onclick="togScript(this)">🎤</button>
+  <div class="script-box">
+    <p>我不会给一个虚高的百分比，因为我没有在团队推广后的完整对比数据。但我可以说的中间指标是：蒸馏步骤从人工 2-3 小时缩短到自动化 5 分钟；变更分类的代码锚点覆盖率从 0 做到了 80% 以上；质量门控的五项评分能在计划阶段就拦截低质量输出。</p>
+    <p>真正的提效应该是减少返工——需求理解偏差导致的返工。这个需要更长时间的数据积累才能给出可信数字。</p>
+    <p class="hint">面试中不要虚报数字，说可验证的中间指标比说"提效 50%"更有说服力。面试官真正想看的是你有没有量化思维。</p>
+  </div>
+</div>
+
+<div class="card" data-c="ai" data-kw="幻觉 hallucination 编造 字段名 文件路径 混淆 例子 实例 证据">
+  <div class="card-head" onclick="togCard(this)"><span class="tag ai">追问</span><div class="card-title">LLM 幻觉具体遇到过吗？举实例</div></div>
+  <div class="core">三种典型：编造字段名、引用不存在的文件、混淆相似概念</div>
+  <button class="script-btn" onclick="togScript(this)">🎤</button>
+  <div class="script-box">
+    <p>遇到过三种典型幻觉。第一种是编造字段名——PRD 说"增加奖励配置"，模型直接编了一个 reward_config 字段，但实际代码里叫 benefit_options。解法是 context-pack 锚定，模型必须先匹配到代码字段才能输出。</p>
+    <p>第二种是引用不存在的文件——模型会编一个看起来合理的路径，比如 src/components/RewardForm.tsx，实际不存在。解法是 Evidence Index，每个引用都要验证文件存在。</p>
+    <p>第三种是混淆相似概念——把"活动模板"和"权益模板"搞混。解法是 reference 知识库的 domain 文件做明确的领域定义。</p>
+  </div>
+</div>
+
+<div class="card" data-c="ai" data-kw="模型切换 LLM provider 成本 解耦 接口抽象 Prompt 调优 Claude GPT">
+  <div class="card-head" onclick="togCard(this)"><span class="tag ai">追问</span><div class="card-title">如果要换 LLM 模型要改多少？</div></div>
+  <div class="core">架构改动小，主要工作在 Prompt 模板调优</div>
+  <button class="script-btn" onclick="togScript(this)">🎤</button>
+  <div class="script-box">
+    <p>架构层面改动不大，因为我们做了 Provider 解耦。核心接口就是 chat 和 embed 两个方法，加一个 token 计数。换模型只需要实现新的 Provider，改配置文件。</p>
+    <p>但实际工作量主要在 Prompt 模板调优——不同模型的指令跟随能力不同，Prompt 需要微调。蒸馏的 11 步里，大概有 4-5 个 Prompt 需要根据新模型的特性调整。</p>
+    <p>context-pack 和 quality-gate 这些工程链路不受影响。Benchmark 系统的价值就在这里——换模型后跑一遍 oracle 用例就知道质量有没有退步。</p>
+  </div>
+</div>
+
+<div class="card" data-c="ai" data-kw="Reference 维护成本 构建 时间 投入 SSOT 知识库 ROI 更新">
+  <div class="card-head" onclick="togCard(this)"><span class="tag ai">追问</span><div class="card-title">Reference 构建要多久？维护成本？</div></div>
+  <div class="core">初始 1-2 天，增量维护每次 15-30 分钟</div>
+  <button class="script-btn" onclick="togScript(this)">🎤</button>
+  <div class="script-box">
+    <p>初始构建分两部分。build-index.py 自动化部分跑一次大概 5 分钟，产出代码实体清单和调用关系。人工部分是六文件 SSOT 的编写和校验，中小型项目大概一天，大型项目两到三天。</p>
+    <p>增量维护方面，每次需求变更后需要更新的是 routing-playbooks 和 contracts 两个文件，大概 15 到 30 分钟。健康检查自动跑，有冲突会告警。</p>
+    <p>总体来说 Reference 就像技术文档一样需要持续维护，但它比文档精确得多——每个字段都有源码证据支撑。我把它定位成"编译时可检查的文档"。</p>
+  </div>
+</div>
+
+<!-- ==================== 追问深挖 · 八股 ==================== -->
+<div class="card" data-c="bagu" data-kw="React 18 并发 坑 Suspense 边界 闪烁 饥饿 Batching 副作用 问题">
+  <div class="card-head" onclick="togCard(this)"><span class="tag bagu">追问</span><div class="card-title">React 18 并发模式踩过什么坑？</div></div>
+  <div class="core">Suspense 边界设计 + useTransition 饥饿 + Automatic Batching 适配</div>
+  <button class="script-btn" onclick="togScript(this)">🎤</button>
+  <div class="script-box">
+    <p>三个坑。第一个是 Suspense 边界设计——Suspense fallback 会替换整个子树，边界放得太大 loading 闪烁严重，放得太小会有很多个 loading 区域。经验是按用户感知的"内容块"来划分边界。</p>
+    <p>第二个是 useTransition 标记的更新在低优先级队列里可能饥饿——高优先级更新持续进来，低优先级一直被中断。我们的解法是给 transition 加超时兜底，超过 3 秒强制执行。</p>
+    <p>第三个是 Automatic Batching 在 React 18 之前的事件处理器外不生效——setTimeout 里多次 setState 会触发多次渲染。升级到 18 后统一了，但依赖旧行为的代码需要适配。</p>
+  </div>
+</div>
+
+<div class="card" data-c="bagu" data-kw="TypeScript 类型体操 条件类型 infer 泛型 联合类型 分发 实战 项目">
+  <div class="card-head" onclick="togCard(this)"><span class="tag bagu">追问</span><div class="card-title">TypeScript 类型体操在项目中怎么用？</div></div>
+  <div class="core">Schema 类型推导 + 泛型组件 Props + 联合类型分发，不是为了炫技</div>
+  <button class="script-btn" onclick="togScript(this)">🎤</button>
+  <div class="script-box">
+    <p>三个实战场景。第一个是 Schema 类型推导——我们定义了 SchemaNode 的递归类型，根据 component 字段的值用条件类型加 infer 自动推导该节点允许的 props 类型。</p>
+    <p>第二个是泛型组件 Props——benefit SDK 里组件注册表的类型定义，泛型参数 T extends BenefitType，注册时自动推导出入参和返回类型。</p>
+    <p>第三个是联合类型分发——活动类型的 Schema 联合类型，用 discriminated union 加类型守卫，switch-case 每个分支自动窄化类型。</p>
+    <p>不是为了炫技，是为了让 IDE 在编译时帮我们检查 Schema 结构的正确性，减少运行时的字段名拼错问题。</p>
+  </div>
+</div>
+
 <div class="no-result" id="noRes">没找到匹配卡片，换个关键词</div>
 </div>
 
@@ -1145,7 +1289,7 @@ function buildIdx(){
   });
   pn.innerHTML=html;
 }
-function jumpTo(i){const cards=document.querySelectorAll('.card');let vis=0;cards.forEach((c,idx)=>{if(!c.classList.contains('hide')){if(vis===i){c.scrollIntoView({behavior:'smooth',block:'center'});toggleIdx()}vis++}})}
+function jumpTo(i){const cards=document.querySelectorAll('.card');const c=cards[i];if(c){c.scrollIntoView({behavior:'smooth',block:'center'});toggleIdx()}}
 // INIT
 buildIdx();
 // Show all script boxes in "open" card by default
