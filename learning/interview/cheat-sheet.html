@@ -39,6 +39,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","PingFang SC",sa
 .tab[data-c="ai"].on{background:var(--red)}
 .tab[data-c="sys"].on{background:var(--purple)}
 .tab[data-c="comp"].on{background:var(--cyan)}
+.tab[data-c="code"].on{background:var(--orange)}
 /* ===== CARDS ===== */
 .container{padding:6px 10px;max-width:860px;margin:0 auto}
 .card{background:var(--card);border-radius:var(--radius);margin-bottom:8px;border:1.5px solid var(--border);box-shadow:var(--shadow);overflow:hidden;transition:background .2s,border-color .2s}
@@ -48,6 +49,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","PingFang SC",sa
 .tag.proj{background:var(--blue)}.tag.bagu{background:var(--green)}
 .tag.ai{background:var(--red)}.tag.sys{background:var(--purple)}
 .tag.comp{background:var(--cyan)}.tag.special{background:var(--pink)}
+.tag.code{background:var(--orange)}
 .card-title{font-size:var(--fs);font-weight:700;flex:1}
 .core{margin:0 14px 8px;padding:8px 12px;border-radius:8px;font-weight:600;border-left:4px solid var(--blue);background:#EFF6FF;color:var(--blue)}
 .dark .core{background:#1E3A5F}
@@ -75,7 +77,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","PingFang SC",sa
 /* 通用 */
 .points{margin:0 14px 8px;padding-left:20px}
 .points li{padding:2px 0;font-size:calc(var(--fs) - 1px)}
-.code-blk{background:#1E293B;color:#E2E8F0;padding:10px 12px;margin:0 14px 8px;border-radius:8px;font-family:"SF Mono",Menlo,monospace;font-size:12px;overflow-x:auto;white-space:pre;line-height:1.5}
+.code-blk{background:#1E293B;color:#E2E8F0;padding:10px 12px;margin:0 14px 8px;border-radius:8px;font-family:"SF Mono",Menlo,monospace;font-size:12px;overflow-x:auto;white-space:pre;word-break:keep-all;line-height:1.5;-webkit-overflow-scrolling:touch}
 .dark .code-blk{background:#0F172A;border:1px solid #334155}
 table{width:calc(100% - 28px);margin:4px 14px 8px;border-collapse:collapse;font-size:calc(var(--fs) - 2px)}
 th,td{padding:5px 8px;text-align:left;border-bottom:1px solid var(--border)}
@@ -122,6 +124,7 @@ th{font-weight:600;color:var(--text2);font-size:12px}
     <button class="tab" data-c="open" onclick="setCat('open')">🎤开场</button>
     <button class="tab" data-c="proj" onclick="setCat('proj')">📦项目</button>
     <button class="tab" data-c="bagu" onclick="setCat('bagu')">📗基础</button>
+    <button class="tab" data-c="code" onclick="setCat('code')">✍️手撕</button>
     <button class="tab" data-c="ai" onclick="setCat('ai')">🤖AI</button>
     <button class="tab" data-c="sys" onclick="setCat('sys')">🏗️系统</button>
     <button class="tab" data-c="comp" onclick="setCat('comp')">🏢公司</button>
@@ -380,8 +383,8 @@ console.log('5');
 // 输出：1 5 3 4 2</div>
 </div>
 
-<div class="card" data-c="bagu" data-kw="Promise 并发 控制 调度器 手写 上传 批量">
-  <div class="card-head" onclick="togCard(this)"><span class="tag bagu">八股F2</span><div class="card-title">Promise 并发控制（手撕高频）</div></div>
+<div class="card" data-c="code" data-kw="Promise 并发 控制 调度器 手写 上传 批量">
+  <div class="card-head" onclick="togCard(this)"><span class="tag code">手撕H6</span><div class="card-title">Promise 并发调度器</div></div>
   <div class="core">计数器 + 等待队列，完成一个放一个</div>
   <div class="code-blk">class Scheduler {
   constructor(max) { this.max = max; this.count = 0; this.queue = []; }
@@ -440,8 +443,8 @@ console.log('5');
   </div>
 </div>
 
-<div class="card" data-c="bagu" data-kw="手写 深拷贝 防抖 节流 instanceof EventEmitter">
-  <div class="card-head" onclick="togCard(this)"><span class="tag bagu">八股F7</span><div class="card-title">手写题四件套</div></div>
+<div class="card" data-c="code" data-kw="手写 深拷贝 防抖 节流 instanceof EventEmitter">
+  <div class="card-head" onclick="togCard(this)"><span class="tag code">手撕H1-3</span><div class="card-title">深拷贝 + 防抖节流 + instanceof</div></div>
   <div class="core">深拷贝（循环引用）+ 防抖 + instanceof + EventEmitter</div>
   <div class="code-blk">// 深拷贝（处理循环引用）
 function deepClone(obj, map = new WeakMap()) {
@@ -573,8 +576,8 @@ function throttle(fn, interval) {
   </div>
 </div>
 
-<div class="card" data-c="bagu" data-kw="手写 EventEmitter instanceof 发布订阅 on emit off once">
-  <div class="card-head" onclick="togCard(this)"><span class="tag bagu">八股</span><div class="card-title">手写 EventEmitter + instanceof</div></div>
+<div class="card" data-c="code" data-kw="手写 EventEmitter instanceof 发布订阅 on emit off once">
+  <div class="card-head" onclick="togCard(this)"><span class="tag code">手撕H9</span><div class="card-title">手写 EventEmitter</div></div>
   <div class="core">发布订阅模式 + 原型链检查</div>
   <div class="code-blk">// EventEmitter
 class EventEmitter {
@@ -590,6 +593,83 @@ function myInstanceof(obj, Constructor) {
   let proto = Object.getPrototypeOf(obj);
   while (proto) { if (proto === Constructor.prototype) return true; proto = Object.getPrototypeOf(proto); }
   return false;
+}</div>
+</div>
+
+<div class="card" data-c="code" data-kw="call apply bind 手写 this 柯里化 new">
+  <div class="card-head" onclick="togCard(this)"><span class="tag code">手撕H4</span><div class="card-title">手写 call / apply / bind</div></div>
+  <div class="core">Symbol 防冲突 + bind 支持 new 调用</div>
+  <div class="code-blk">Function.prototype.myCall = function(ctx, ...args) {
+  ctx = ctx || window; const fn = Symbol();
+  ctx[fn] = this; const r = ctx[fn](...args); delete ctx[fn]; return r;
+};
+Function.prototype.myBind = function(ctx, ...bindArgs) {
+  const fn = this;
+  const bound = function(...callArgs) {
+    return fn.apply(this instanceof fn ? this : ctx, [...bindArgs, ...callArgs]);
+  };
+  bound.prototype = Object.create(fn.prototype);
+  return bound;
+};</div>
+</div>
+
+<div class="card" data-c="code" data-kw="ES6 class ES5 寄生组合继承 构造函数 prototype">
+  <div class="card-head" onclick="togCard(this)"><span class="tag code">手撕H5</span><div class="card-title">ES6 class 转 ES5</div></div>
+  <div class="core">call 借属性 + Object.create 借方法</div>
+  <div class="code-blk">function DogES5(name) {
+  AnimalES5.call(this, name); // super
+  this.type = 'dog';
+}
+DogES5.prototype = Object.create(AnimalES5.prototype);
+DogES5.prototype.constructor = DogES5;</div>
+</div>
+
+<div class="card" data-c="code" data-kw="Promise 串行 重试 retry 并行 async">
+  <div class="card-head" onclick="togCard(this)"><span class="tag code">手撕H7</span><div class="card-title">Promise 串行 + 重试</div></div>
+  <div class="core">串行 for-await；重试递减计数 + 延迟</div>
+  <div class="code-blk">async function serial(tasks) {
+  const res = [];
+  for (const t of tasks) res.push(await t());
+  return res;
+}
+function withRetry(fn, retries = 3, delay = 1000) {
+  return new Promise(async (resolve, reject) => {
+    for (let i = 0; i < retries; i++) {
+      try { return resolve(await fn()); }
+      catch (e) { if (i === retries - 1) reject(e); else await new Promise(r => setTimeout(r, delay)); }
+    }
+  });
+}</div>
+</div>
+
+<div class="card" data-c="code" data-kw="Promise.all 手写 计数器 并行">
+  <div class="card-head" onclick="togCard(this)"><span class="tag code">手撕H8</span><div class="card-title">手写 Promise.all</div></div>
+  <div class="core">计数器全到齐才 resolve，一个 reject 全 reject</div>
+  <div class="code-blk">Promise.myAll = function(promises) {
+  return new Promise((resolve, reject) => {
+    const results = []; let count = 0;
+    promises.forEach((p, i) => {
+      Promise.resolve(p).then(
+        val => { results[i] = val; if (++count === promises.length) resolve(results); },
+        reject
+      );
+    });
+    if (!promises.length) resolve([]);
+  });
+};</div>
+</div>
+
+<div class="card" data-c="code" data-kw="模板编译 模板引擎 {{}} 替换 拼多多">
+  <div class="card-head" onclick="togCard(this)"><span class="tag code">手撕H10</span><div class="card-title">模板编译函数（拼多多高频）</div></div>
+  <div class="core">正则匹配 {{ key }} 并替换</div>
+  <div class="code-blk">function compile(tpl, data) {
+  return tpl.replace(/\{\{\s*(\w+)\s*\}\}/g, (_, key) =>
+    data[key] !== undefined ? data[key] : '');
+}
+// 进阶：支持嵌套 {{ user.name }}
+function compileAdv(tpl, data) {
+  return tpl.replace(/\{\{\s*([\w.]+)\s*\}\}/g, (_, path) =>
+    path.split('.').reduce((o, k) => o?.[k], data) ?? '');
 }</div>
 </div>
 
@@ -616,8 +696,8 @@ function myInstanceof(obj, Constructor) {
 </div>
 
 <!-- ==================== 算法 ==================== -->
-<div class="card" data-c="bagu" data-kw="哈希 Map 两数之和 配对 重复 统计">
-  <div class="card-head" onclick="togCard(this)"><span class="tag bagu">算法T1</span><div class="card-title">哈希表 — 找配对/重复/统计</div></div>
+<div class="card" data-c="code" data-kw="哈希 Map 两数之和 配对 重复 统计">
+  <div class="card-head" onclick="togCard(this)"><span class="tag code">算法T1</span><div class="card-title">哈希表 — 找配对/重复/统计</div></div>
   <div class="core base-c">遇到"找配对/找重复/统计次数"→ 开 Map</div>
   <div class="code-blk">function twoSum(nums, target) {
   const map = new Map();
@@ -628,8 +708,8 @@ function myInstanceof(obj, Constructor) {
 }</div>
 </div>
 
-<div class="card" data-c="bagu" data-kw="双指针 对撞 快慢 三数之和 反转链表">
-  <div class="card-head" onclick="togCard(this)"><span class="tag bagu">算法T2</span><div class="card-title">双指针 — 排序后两端夹</div></div>
+<div class="card" data-c="code" data-kw="双指针 对撞 快慢 三数之和 反转链表">
+  <div class="card-head" onclick="togCard(this)"><span class="tag code">算法T2</span><div class="card-title">双指针 — 排序后两端夹</div></div>
   <div class="core base-c">排序后左右两端往中间夹（对撞）或快慢走（链表）</div>
   <div class="code-blk">nums.sort((a, b) => a - b);
 for (let i = 0; i < nums.length - 2; i++) {
@@ -641,8 +721,8 @@ for (let i = 0; i < nums.length - 2; i++) {
 }</div>
 </div>
 
-<div class="card" data-c="bagu" data-kw="BFS 队列 层序 岛屿 最短路径">
-  <div class="card-head" onclick="togCard(this)"><span class="tag bagu">算法T3</span><div class="card-title">BFS 队列 — 层序/岛屿</div></div>
+<div class="card" data-c="code" data-kw="BFS 队列 层序 岛屿 最短路径">
+  <div class="card-head" onclick="togCard(this)"><span class="tag code">算法T3</span><div class="card-title">BFS 队列 — 层序/岛屿</div></div>
   <div class="core base-c">队列 + while 循环 + 逐层处理</div>
   <div class="code-blk">function levelOrder(root) {
   if (!root) return [];
@@ -659,8 +739,8 @@ for (let i = 0; i < nums.length - 2; i++) {
 }</div>
 </div>
 
-<div class="card" data-c="bagu" data-kw="滑动窗口 子串 无重复 最长子串">
-  <div class="card-head" onclick="togCard(this)"><span class="tag bagu">算法T4</span><div class="card-title">滑动窗口 — 子串/子数组</div></div>
+<div class="card" data-c="code" data-kw="滑动窗口 子串 无重复 最长子串">
+  <div class="card-head" onclick="togCard(this)"><span class="tag code">算法T4</span><div class="card-title">滑动窗口 — 子串/子数组</div></div>
   <div class="core base-c">右指针一直走，遇到重复就缩左</div>
   <div class="code-blk">function lengthOfLongestSubstring(s) {
   const set = new Set(); let l = 0, max = 0;
@@ -672,8 +752,8 @@ for (let i = 0; i < nums.length - 2; i++) {
 }</div>
 </div>
 
-<div class="card" data-c="bagu" data-kw="DFS 回溯 排列 组合 子集">
-  <div class="card-head" onclick="togCard(this)"><span class="tag bagu">算法T5</span><div class="card-title">DFS 回溯 — 排列/组合</div></div>
+<div class="card" data-c="code" data-kw="DFS 回溯 排列 组合 子集">
+  <div class="card-head" onclick="togCard(this)"><span class="tag code">算法T5</span><div class="card-title">DFS 回溯 — 排列/组合</div></div>
   <div class="core base-c">选了标记 → 往下走 → 回来撤销</div>
   <div class="code-blk">function permute(nums) {
   const res = [], used = Array(nums.length).fill(false);
@@ -689,8 +769,8 @@ for (let i = 0; i < nums.length - 2; i++) {
 }</div>
 </div>
 
-<div class="card" data-c="bagu" data-kw="快排 快速排序 分治 partition 原地">
-  <div class="card-head" onclick="togCard(this)"><span class="tag bagu">算法T6</span><div class="card-title">快速排序（美团第 1 名）</div></div>
+<div class="card" data-c="code" data-kw="快排 快速排序 分治 partition 原地">
+  <div class="card-head" onclick="togCard(this)"><span class="tag code">算法T6</span><div class="card-title">快速排序（美团第 1 名）</div></div>
   <div class="core base-c">选基准，小的左大的右，递归</div>
   <div class="code-blk">function qs(arr, lo = 0, hi = arr.length - 1) {
   if (lo >= hi) return;
@@ -703,8 +783,8 @@ for (let i = 0; i < nums.length - 2; i++) {
 }</div>
 </div>
 
-<div class="card" data-c="bagu" data-kw="链表 反转 合并 环 中点 二叉树 前序 中序 后序 DFS 递归">
-  <div class="card-head" onclick="togCard(this)"><span class="tag bagu">算法T7</span><div class="card-title">链表 + 二叉树核心模板</div></div>
+<div class="card" data-c="code" data-kw="链表 反转 合并 环 中点 二叉树 前序 中序 后序 DFS 递归">
+  <div class="card-head" onclick="togCard(this)"><span class="tag code">算法T7</span><div class="card-title">链表 + 二叉树核心模板</div></div>
   <div class="core base-c">链表靠画图，树靠递归</div>
   <div class="code-blk">// 反转链表
 function reverseList(head) {
@@ -742,8 +822,8 @@ function mergeTwoLists(l1, l2) {
 }</div>
 </div>
 
-<div class="card" data-c="bagu" data-kw="算法 面试 口诀 速览 全部模板">
-  <div class="card-head" onclick="togCard(this)"><span class="tag bagu">速览</span><div class="card-title">面试前 1 分钟算法速览</div></div>
+<div class="card" data-c="code" data-kw="算法 面试 口诀 速览 全部模板">
+  <div class="card-head" onclick="togCard(this)"><span class="tag code">速览</span><div class="card-title">面试前 1 分钟算法速览</div></div>
   <div class="core base-c">10 个套路，每个一句话</div>
   <ul class="points">
     <li><strong>找配对</strong> → Map</li>
@@ -1163,6 +1243,53 @@ function mergeTwoLists(l1, l2) {
   </div>
 </div>
 
+<!-- ==================== 技能点扩展追问 ==================== -->
+<div class="card" data-c="proj" data-kw="Rollup 打包 tree-shaking ESM CJS bundle 库打包 为什么不用Webpack">
+  <div class="card-head" onclick="togCard(this)"><span class="tag proj">扩展</span><div class="card-title">为什么用 Rollup 不用 Webpack？</div></div>
+  <div class="core">Rollup 基于 ESM 静态分析，天然 tree-shaking，产物干净无运行时</div>
+  <button class="script-btn" onclick="togScript(this)">🎤</button>
+  <div class="script-box">
+    <p>Rollup 天生为库打包设计。它基于 ESM 的静态 import/export 分析，未引用的导出直接删除，不需要额外配置。Webpack 的 tree-shaking 靠 Terser 分析副作用，效果不如 Rollup 精确。而且 Webpack 产物有运行时代码，库打包不需要这些。</p>
+    <p>我们 SDK 一份 Rollup 配置出三份产物：ESM 给现代打包工具、CJS 给老项目、d.ts 给 TypeScript。rollup-plugin-dts 处理类型声明，rollup-plugin-postcss 处理样式。peerDependencies 声明 react 避免重复打包。</p>
+  </div>
+  <button class="follow-btn" onclick="togFollow(this)">追问</button>
+  <div class="follow-body">
+    <ul>
+      <li>tree-shaking 原理：ESM 静态结构 → 编译时确定导出关系 → 删除未引用代码</li>
+      <li>为什么 CJS 不能 tree-shake：require 是运行时调用，编译时不知道用了哪些导出</li>
+      <li>peerDependencies vs dependencies：peer 声明"我需要但你提供"，不打包进产物</li>
+    </ul>
+  </div>
+</div>
+
+<div class="card" data-c="proj" data-kw="Monorepo Turborepo pnpm 工具对比 选型 Lerna Nx 缓存">
+  <div class="card-head" onclick="togCard(this)"><span class="tag proj">扩展</span><div class="card-title">Monorepo 工具链怎么选？</div></div>
+  <div class="core">Lerna 管版本 + Nx 管缓存，当时 Turborepo 还不成熟</div>
+  <button class="script-btn" onclick="togScript(this)">🎤</button>
+  <div class="script-box">
+    <p>当时三个选项：Turborepo 做构建编排很强但版本管理要额外配，而且远程缓存在内网用不了。pnpm workspace 管依赖好但缺构建编排。Lerna 加 Nx 虽然重但两个核心需求一步到位——independent 版本匹配业务独立发版，Nx 缓存只构建变更影响的包。</p>
+    <p>如果现在重新选，可能会考虑 pnpm workspace 加 Turborepo，因为 Turborepo 已经很成熟了。但迁移成本不低，当前方案稳定运行就没动。</p>
+  </div>
+</div>
+
+<div class="card" data-c="proj" data-kw="yalc npm link symlink 联调 本地 符号链接 peerDependencies">
+  <div class="card-head" onclick="togCard(this)"><span class="tag proj">扩展</span><div class="card-title">为什么用 yalc 不用 npm link？</div></div>
+  <div class="core">npm link 的 symlink 导致 peerDependencies 解析错误</div>
+  <button class="script-btn" onclick="togScript(this)">🎤</button>
+  <div class="script-box">
+    <p>npm link 创建符号链接，有些工具对 symlink 处理不一致。我们踩过的坑是 Rollup 构建时 peerDependencies 解析不到宿主项目的 react，类型检查全挂。yalc 是真实文件拷贝，模拟 npm install 后的真实场景。联调流程就是 build 完 yalc push，宿主项目自动更新。</p>
+  </div>
+</div>
+
+<div class="card" data-c="proj" data-kw="JSON Schema 自研 UI Schema 区别 标准 为什么 验证">
+  <div class="card-head" onclick="togCard(this)"><span class="tag proj">扩展</span><div class="card-title">为什么不直接用 JSON Schema？</div></div>
+  <div class="core">JSON Schema 做验证，不做 UI 渲染和联动</div>
+  <button class="script-btn" onclick="togScript(this)">🎤</button>
+  <div class="script-box">
+    <p>JSON Schema 是做数据验证的，不是描述 UI 的。它可以说字段必须是数字，但没法说用 Slider 还是 InputNumber 渲染，更没法描述联动。我们在它基础上扩展了 d_component 描述组件类型、d_actions 描述联动配置、visible 和 disabled 控制 UI 状态，形成面向表单场景的 Schema 规范。</p>
+  </div>
+</div>
+
 <!-- ==================== 追问深挖 · AI ==================== -->
 <div class="card" data-c="ai" data-kw="ROI 提效 量化 指标 投入产出 效果 数据 度量">
   <div class="card-head" onclick="togCard(this)"><span class="tag ai">追问</span><div class="card-title">prd-tools 提效多少？怎么量化？</div></div>
@@ -1240,6 +1367,7 @@ function mergeTwoLists(l1, l2) {
   <button class="bb" onclick="setCat('open')"><span class="ic">🎤</span>开场</button>
   <button class="bb" onclick="setCat('proj')"><span class="ic">📦</span>项目</button>
   <button class="bb" onclick="setCat('bagu')"><span class="ic">📗</span>基础</button>
+  <button class="bb" onclick="setCat('code')"><span class="ic">✍️</span>手撕</button>
   <button class="bb" onclick="setCat('ai')"><span class="ic">🤖</span>AI</button>
   <button class="bb" onclick="setCat('comp')"><span class="ic">🏢</span>拼多多</button>
 </div>
@@ -1269,7 +1397,7 @@ function toggleDark(){document.body.classList.toggle('dark');document.getElement
 // INDEX PANEL
 function toggleIdx(){const o=document.getElementById('idxOv'),p=document.getElementById('idxPn');const show=!p.classList.contains('show');o.classList.toggle('show',show);p.classList.toggle('show',show)}
 function buildIdx(){
-  const cats={open:'🎤 开场白',proj:'📦 项目深挖',bagu:'📗 基础知识',ai:'🤖 AI 工程',sys:'🏗️ 系统设计',comp:'🏢 拼多多专项'};
+  const cats={open:'🎤 开场白',proj:'📦 项目深挖',bagu:'📗 基础知识',code:'✍️ 手撕代码',ai:'🤖 AI 工程',sys:'🏗️ 系统设计',comp:'🏢 拼多多专项'};
   const pn=document.getElementById('idxPn');let html='<h3>快速索引 <button onclick="toggleIdx()" style="border:none;background:none;font-size:18px;cursor:pointer">✕</button></h3>';
   let lastCat='';
   document.querySelectorAll('.card').forEach((c,i)=>{

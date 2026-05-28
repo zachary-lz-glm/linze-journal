@@ -44,7 +44,8 @@
   - [面试日程](learning/interview/schedule.html)
   - [规划与投递节奏](learning/interview/规划.md)
   - 题库
-    - [基础题（18题）](learning/interview/题库/基础题.md)
+    - [基础题（16题）](learning/interview/题库/基础题.md)
+    - [手写代码（15题）](learning/interview/题库/手写代码.md)
     - [项目题（20题）](learning/interview/题库/项目题.md)
     - [AI题（10题）](learning/interview/题库/AI题.md)
     - [急救包](learning/interview/题库/急救包.md)
