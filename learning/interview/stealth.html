@@ -374,83 +374,96 @@ body{overscroll-behavior-y:contain}
 
 <div class="card" data-c="bagu" data-kw="闭包 作用域 词法 柯里化 内存泄漏">
   <div class="card-head"><span class="tag bagu">八股</span><div class="card-title">闭包和作用域链</div></div>
-  <div class="core">函数记住定义时的词法环境，即使在外部执行</div>
+  <div class="core">函数记住定义时的词法环境，即使在外部执行也能访问那个环境里的变量</div>
   <div class="card-body">
-    <p>经典场景：for 循环 var 的坑（用 let 或 IIFE）、函数工厂、柯里化、私有变量。闭包引用的变量不被回收，注意内存泄漏——事件监听器引用外部变量没清理，或定时器引用大对象。</p>
+    <p>闭包的本质就是：一个函数可以访问它定义时所在作用域的变量，即使这个函数在外部被执行。比如函数工厂 function makeCounter() 里定义了一个 count 变量，返回的函数每次调用都能访问到同一个 count——这就是闭包。</p>
+    <p>常见场景：for 循环里用 var 会导致所有回调共享同一个 i（用 let 解决）、柯里化其实就是闭包的应用——先传部分参数，返回的函数记住这些参数再接收剩余参数。</p>
+    <p>注意事项：闭包引用的变量不会被垃圾回收，所以事件监听器或定时器如果引用了外部大对象，不用的时候要手动清理，否则内存泄漏。</p>
   </div>
 </div>
 
 <div class="card" data-c="bagu" data-kw="原型链 prototype __proto__ 继承 寄生组合">
   <div class="card-head"><span class="tag bagu">八股</span><div class="card-title">原型链与继承</div></div>
-  <div class="core">对象通过 __proto__ 链向上查找属性</div>
+  <div class="core">对象通过 __proto__ 逐级向上查找属性，直到 null 为止</div>
   <div class="card-body">
-    <p>ES6 class 是语法糖，底层还是原型链。继承演进：原型链 → 构造函数 → 组合 → 寄生组合（最优，ES6 class 底层实现）。</p>
+    <p>当我访问 obj.name 时，JS 引擎先在 obj 自身上找，找不到就顺着 obj.__proto__ 去它的原型上找，还找不到就继续往上，一直到 Object.prototype.__proto__ 也就是 null，这条链就是原型链。</p>
+    <p>ES6 的 class 本质还是原型链，class Dog extends Animal 编译后就是 Dog.prototype.__proto__ = Animal.prototype。继承方案演进了很多代：原型链继承（引用类型共享问题）→ 构造函数继承（拿不到原型方法）→ 组合继承（调了两次父构造函数）→ 寄生组合继承（最优方案，ES6 class 底层就是这个）。</p>
   </div>
 </div>
 
 <div class="card" data-c="bagu" data-kw="HTTPS SSL TLS 握手 证书 加密">
   <div class="card-head"><span class="tag bagu">八股</span><div class="card-title">HTTPS/SSL 握手</div></div>
-  <div class="core">非对称加密协商密钥，对称加密传输数据</div>
+  <div class="core">先用非对称加密安全协商出对称密钥，之后用对称密钥加密传输</div>
   <div class="card-body">
-    <p>四步：Client Hello（随机数+加密套件）→ Server Hello（随机数+证书）→ 客户端验证证书链 → 生成预主密钥用公钥加密发过去 → 双方用三个随机数生成会话密钥，之后对称加密。</p>
-    <p>ECDHE 支持前向保密。TLS 1.3 简化到 1-RTT。</p>
+    <p>握手过程：客户端发 Client Hello 带上随机数和支持的加密套件 → 服务端回 Server Hello 带上随机数和自己的证书 → 客户端验证证书链是否可信 → 客户端生成一个预主密钥，用服务端公钥加密发过去 → 双方用三个随机数算出会话密钥，之后的通信用这个对称密钥加密。</p>
+    <p>为什么这么设计：非对称加密安全但慢，对称加密快但不能安全交换密钥。所以用非对称交换密钥，用对称传数据。ECDHE 支持前向保密——即使私钥泄露，历史通信也解不开。TLS 1.3 把握手简化到 1-RTT。</p>
   </div>
 </div>
 
 <div class="card" data-c="bagu" data-kw="性能优化 首屏 LCP CDN 懒加载 虚拟列表 代码分割">
   <div class="card-head"><span class="tag bagu">#11</span><div class="card-title">前端性能优化全链路</div></div>
-  <div class="core">网络 → 渲染 → 资源 → 代码，四个维度</div>
+  <div class="core">从网络、渲染、资源、代码四个维度逐一优化</div>
   <div class="card-body">
-    <p>网络：CDN、HTTP/2、Preload。渲染：SSR/SSG、骨架屏、懒加载、虚拟列表。资源：代码分割、Tree Shaking、WebP。代码：React.memo、useMemo、Web Worker。</p>
-    <p>核心指标：LCP < 2.5s、FID < 100ms、CLS < 0.1。</p>
+    <p>网络层：CDN 缩短物理距离、HTTP/2 多路复用减少连接、Preload 预加载关键资源。渲染层：首屏用 SSR 或骨架屏、图片懒加载、长列表用虚拟滚动只渲染可视区域。资源层：代码分割 dynamic import 按需加载、Tree Shaking 删掉没用的代码、图片用 WebP。代码层：React.memo 和 useMemo 防止不必要的重渲染、耗时计算放 Web Worker 不阻塞主线程。</p>
+    <p>核心指标口诀：LCP 小于 2.5 秒、FID 小于 100 毫秒、CLS 小于 0.1。</p>
   </div>
 </div>
 
 <div class="card" data-c="bagu" data-kw="XSS CSRF CSP 安全 注入 Cookie HttpOnly">
   <div class="card-head"><span class="tag bagu">#8</span><div class="card-title">XSS / CSRF / CSP 安全</div></div>
-  <div class="core">XSS 注入脚本，CSRF 冒充请求，CSP 限制加载</div>
+  <div class="core">XSS 是往页面注入恶意 JS，CSRF 是冒充已登录用户发请求，CSP 是限制页面能加载什么资源</div>
   <div class="card-body">
-    <p>XSS 防护：输出转义 + CSP + HttpOnly Cookie。CSRF 防护：CSRF Token + SameSite Cookie + Referer 检查。Token 放 Cookie+HttpOnly 比 LocalStorage 更安全。</p>
+    <p>XSS 防御三板斧：输出的时候做 HTML 转义、CSP 头限制只能加载指定域名的脚本、敏感 Cookie 设 HttpOnly 让 JS 读不到。CSRF 防御：后端校验 CSRF Token，Cookie 设 SameSite=Strict，再检查 Referer 来源。Token 存 Cookie 加 HttpOnly 比 LocalStorage 安全——LocalStorage 里的 Token 能被 XSS 直接偷走。</p>
   </div>
 </div>
 
 <div class="card" data-c="bagu" data-kw="Webpack Vite 构建 ESM HMR Tree Shaking">
   <div class="card-head"><span class="tag bagu">#10</span><div class="card-title">Webpack vs Vite</div></div>
-  <div class="core">Webpack 打包构建，Vite 开发时原生 ESM 按需加载</div>
+  <div class="core">Webpack 开发时也要全量打包，Vite 开发时不打包用浏览器原生 ESM 按需加载</div>
   <div class="card-body">
-    <p>Webpack 从入口递归打包所有模块。Vite 开发模式不打包，用浏览器原生 ESM 按需编译，启动极快。生产用 Rollup。HMR：Webpack 模块级，Vite 精确到修改的模块。</p>
+    <p>Webpack 不管开发还是生产都从入口递归打包所有模块，项目大了启动就很慢。Vite 开发模式完全不做打包，浏览器请求哪个模块才编译哪个，利用原生 ESM，所以启动几乎秒开。生产构建 Vite 用 Rollup 不用 Webpack。HMR 也不一样：Webpack 是模块级替换，Vite 精确到修改的那个模块。Tree Shaking 两者都依赖 ESM 的静态分析。</p>
   </div>
 </div>
 
 <div class="card" data-c="bagu" data-kw="浏览器 事件 冒泡 捕获 委托 addEventListener">
   <div class="card-head"><span class="tag bagu">八股</span><div class="card-title">浏览器事件机制</div></div>
-  <div class="core">捕获 → 目标 → 冒泡，委托利用冒泡</div>
+  <div class="core">事件传播分三个阶段：捕获从外到内、到达目标、冒泡从内到外</div>
   <div class="card-body">
-    <p>事件委托：给父元素绑定，通过 e.target 判断子元素。好处：减少内存、动态元素自动有事件。e.target 是触发元素，e.currentTarget 是绑定元素。</p>
+    <p>事件委托就是利用冒泡——不给每个子元素绑事件，而是给父元素绑一个，触发时通过 e.target 判断是哪个子元素。好处是减少内存占用，而且动态添加的子元素自动就有事件。注意 e.target 是实际触发的元素，e.currentTarget 是绑定监听器的那个元素。</p>
   </div>
 </div>
 
 <div class="card" data-c="bagu" data-kw="虚拟DOM diff 算法 React Fiber 同级比较 key">
   <div class="card-head"><span class="tag bagu">八股</span><div class="card-title">虚拟 DOM Diff 算法</div></div>
-  <div class="core">同级比较 + 三策略 + key 优化列表</div>
+  <div class="core">三个策略：只比同层、不同类型直接替换、用 key 标识可复用节点</div>
   <div class="card-body">
-    <p>三策略：只比较同层级、不同类型直接替换、key 标识可复用节点。key 用 index 的问题：插入删除导致后面全部更新。Fiber 下 diff 分两阶段：render 可中断，commit 不可中断。</p>
+    <p>React diff 的核心思路是：只比较同一层级的节点，跨层级不比；如果类型变了（比如 div 变成 span），直接整个替换，不往下比；列表用 key 标识哪些节点可以复用。key 用 index 的坑：插入或删除一个元素，后面所有的 key 都对不上了，导致不必要的更新。Fiber 架构下 diff 分两阶段：render 阶段可以中断让出主线程，commit 阶段不可中断直接操作 DOM。</p>
   </div>
 </div>
 
 <div class="card" data-c="bagu" data-kw="React 18 并发 坑 Suspense Batching">
   <div class="card-head"><span class="tag bagu">追问</span><div class="card-title">React 18 并发模式踩过什么坑？</div></div>
-  <div class="core">Suspense 边界设计 + useTransition 饥饿 + Batching 适配</div>
+  <div class="core">Suspense 边界要按"内容块"划分，useTransition 要加超时兜底</div>
   <div class="card-body">
-    <p>Suspense 边界太大 loading 闪烁严重，太小太多 loading 区——按用户感知的"内容块"划分。useTransition 低优先级可能饥饿——加 3 秒超时兜底。Automatic Batching 统一了，但依赖旧行为的代码需适配。</p>
+    <p>三个坑。第一个是 Suspense 边界——边界太大一个 loading 覆盖整个页面体验差，太小满屏都是 loading，实践下来应该按用户感知的"内容块"来划分边界。第二个是 useTransition 标记的低优先级更新可能一直被高优先级抢占导致饥饿，我们加了 3 秒超时兜底，超时强制执行。第三个是 Automatic Batching 统一了所有上下文的 setState 合并行为，但有些依赖旧行为（比如 setTimeout 里每次 setState 都触发一次渲染）的代码需要适配。</p>
   </div>
 </div>
 
 <div class="card" data-c="bagu" data-kw="HTTP/2 HTTP/3 QUIC 多路复用 队头阻塞">
   <div class="card-head"><span class="tag bagu">八股</span><div class="card-title">HTTP/2 和 HTTP/3</div></div>
-  <div class="core">HTTP/2 多路复用，HTTP/3 用 QUIC 解决队头阻塞</div>
+  <div class="core">HTTP/2 在一个 TCP 连接上并行多个请求，HTTP/3 用 QUIC 解决 TCP 队头阻塞</div>
   <div class="card-body">
-    <p>HTTP/2：多路复用、头部压缩 HPACK、服务端推送。但 TCP 层还有队头阻塞。HTTP/3 用 QUIC（基于 UDP），每个流独立，支持连接迁移和 0-RTT。</p>
+    <p>HTTP/2 三个核心改进：多路复用（一个 TCP 连接并行发多个请求，不用排队）、头部压缩（HPACK 算法压缩重复 header）、服务端推送。但 HTTP/2 还有队头阻塞——在 TCP 层面，一个包丢了会阻塞这个连接上所有流。HTTP/3 把 TCP 换成 QUIC（基于 UDP），每个流独立，一个流丢包不影响其他流，还支持连接迁移（WiFi 切 4G 不断连）和 0-RTT 建连。</p>
+  </div>
+</div>
+
+<!-- ==================== 基础补充 ==================== -->
+<div class="card" data-c="bagu" data-kw="CSS BFC Flex Grid 布局 块级格式化">
+  <div class="card-head"><span class="tag bagu">#9</span><div class="card-title">CSS 布局：BFC + Flexbox + Grid</div></div>
+  <div class="core">BFC 是独立渲染区域管浮动和 margin，Flex 管一维，Grid 管二维</div>
+  <div class="card-body">
+    <p>BFC 触发条件：overflow 不是 visible、float 不是 none、position 是 absolute 或 fixed、display 是 flex 或 grid。常见用途：overflow:hidden 清除浮动、防止 margin 塌陷（两个相邻块级元素的上下 margin 会合并，给其中一个加 BFC 就不合并了）。</p>
+    <p>Flexbox 是一维布局：主轴用 justify-content 控制对齐，交叉轴用 align-items。flex:1 等价于 flex-grow:1 + flex-shrink:1 + flex-basis:0%，就是自动填满剩余空间。Grid 是二维布局：grid-template-columns 定义列，fr 单位做比例分配。选型口诀：一行或一列用 Flex，行列交叉用 Grid。</p>
   </div>
 </div>
 
@@ -853,6 +866,56 @@ DogES5.prototype.constructor = DogES5;</div>
   </div>
 </div>
 
+<div class="card" data-c="code" data-kw="Move Zeroes 移动零 双指针 原地 阿里">
+  <div class="card-head"><span class="tag code">真题</span><div class="card-title">Move Zeroes（阿里二面真题）</div></div>
+  <div class="core">k 指针指向下一个非零该放的位置，遍历到非零就和 k 交换</div>
+  <div class="code-blk">function moveZeroes(nums) {
+  let k = 0;
+  for (let i = 0; i < nums.length; i++) {
+    if (nums[i] !== 0) {
+      [nums[k], nums[i]] = [nums[i], nums[k]];
+      k++;
+    }
+  }
+}
+// O(n) 时间 O(1) 空间，5 分钟写完</div>
+</div>
+
+<div class="card" data-c="code" data-kw="双指针 删除重复项 颜色分类 荷兰国旗 原地">
+  <div class="card-head"><span class="tag code">专项</span><div class="card-title">双指针专项 3 题（15 分钟一组）</div></div>
+  <div class="core">k 慢指针标记写入位置，三种变形一个套路</div>
+  <div class="code-blk">// ① 删除有序数组重复项（LeetCode 26）
+function removeDuplicates(nums) {
+  let k = 1;
+  for (let i = 1; i < nums.length; i++) {
+    if (nums[i] !== nums[k - 1]) { nums[k] = nums[i]; k++; }
+  }
+  return k; // k 是去重后长度
+}
+
+// ② 删除重复项 II（允许出现两次）
+function removeDuplicatesII(nums) {
+  let k = 2;
+  for (let i = 2; i < nums.length; i++) {
+    if (nums[i] !== nums[k - 2]) { nums[k] = nums[i]; k++; }
+  }
+  return k; // 通解：允许 n 次就和 k-n 比较
+}
+
+// ③ 颜色分类 / 荷兰国旗（LeetCode 75）
+function sortColors(nums) {
+  let lo = 0, mid = 0, hi = nums.length - 1;
+  while (mid <= hi) {
+    if (nums[mid] === 0) {
+      [nums[lo], nums[mid]] = [nums[mid], nums[lo]]; lo++; mid++;
+    } else if (nums[mid] === 1) { mid++;
+    } else {
+      [nums[mid], nums[hi]] = [nums[hi], nums[mid]]; hi--;
+    } // swap hi 后 mid 不前进！换来的可能还是 2
+  }
+}</div>
+</div>
+
 <!-- ==================== AI 工程 ==================== -->
 <div class="card" data-c="ai" data-kw="AI 理解项目 Reference SSOT Evidence Index 知识库">
   <div class="card-head"><span class="tag ai">D21</span><div class="card-title">AI 怎么理解陌生项目？</div></div>
@@ -1011,6 +1074,133 @@ DogES5.prototype.constructor = DogES5;</div>
     <p><strong>L5 评估观测</strong>：输出质量检查（质量门控、日志 trace）。</p>
     <p><strong>L6 约束恢复</strong>：安全边界、失败恢复、人工兜底。</p>
     <p class="hint">项目桥接：prd-tools 整个架构就是 Harness——reference=L1, MCP+Skill=L2, 11步工作流=L3, Evidence Index=L4, quality-gate=L5, 置信度+questions.md=L6。</p>
+  </div>
+</div>
+
+<div class="card" data-c="ai" data-kw="能力面 适配器 目录 项目 可复用 surface">
+  <div class="card-head"><span class="tag ai">D18</span><div class="card-title">能力面适配器怎么设计？</div></div>
+  <div class="core">目录结构千差万别，但研发协作的能力面是稳定的——按能力面描述，不按目录</div>
+  <div class="card-body">
+    <p>不同项目目录完全不一样，但不管怎么组织代码，总得有路由、组件、表单、状态管理、API 调用这些关注点。我们定义了前端 9 个、BFF 10 个、后端 10 个能力面，每个能力面描述一种关注维度。</p>
+    <p>关键设计：路径只是搜索候选，最终结论必须读源码确认。路径命中但没读源码只能是 candidate，读到实现才能进入 reference。这样 reference 对不同项目都能用，不需要改模板。</p>
+  </div>
+</div>
+
+<div class="card" data-c="ai" data-kw="知识 过期 衰减 回流 矛盾 更新 reference">
+  <div class="card-head"><span class="tag ai">D19</span><div class="card-title">知识过期怎么办？</div></div>
+  <div class="core">三层：被动衰减监控 + 主动反馈回流 + 质量门控守门</div>
+  <div class="card-body">
+    <p>第一层被动监控：reference 文件记录 last_verified，14 天没验证就标过期，健康检查对比源码发现矛盾。第二层主动回流：prd-distill 蒸馏时如果发现代码和 reference 矛盾，会生成回流建议文件，人工确认后更新 reference，越用越准。第三层守门：质量门控检查 enum、field、contract 是否和源码冲突，冲突就是致命项直接不通过。</p>
+  </div>
+</div>
+
+<div class="card" data-c="ai" data-kw="图谱 知识库 关系 GitNexus Graphify 精选 原始">
+  <div class="card-head"><span class="tag ai">D20</span><div class="card-title">图谱和知识库的关系？</div></div>
+  <div class="core">图谱是原始发现层，reference 是精选后的企业知识库，Raw Graph 不等于 Reference</div>
+  <div class="card-body">
+    <p>GitNexus 告诉你代码怎么连接，Graphify 告诉你为什么这样设计——但图谱结论不能直接用，需要精选、审计、确认后才能进 reference。所以每个条目有两套独立证据：可审计证据（源码/文档确认）和图谱溯源（从哪发现的）。图谱不可用时完全回退到源码扫描，核心流程不受影响。Provider 可替换，不绑定具体工具。</p>
+  </div>
+</div>
+
+<!-- ==================== 项目数据速查 ==================== -->
+<div class="card" data-c="emer" data-kw="数据 口径 指标 简历 400 60% 追问 计算">
+  <div class="card-head"><span class="tag emer">速查</span><div class="card-title">项目关键数据 + 口径（被问怎么算的）</div></div>
+  <div class="core">每个数字都要能脱口而出，面试官随时追问怎么算的</div>
+  <div class="card-body">
+    <p><strong>PRD 转化效率 +60%</strong>：基线是人工读 PRD+开会确认出计划平均 5h/需求，蒸馏后自动出结构化计划 2h/需求，取 3 个月均值对比。</p>
+    <p><strong>返工减少 50%+</strong>：需求评审到提测前，因需求理解偏差导致的返工工单，前 3 个月 12 单→后 3 个月 5 单。</p>
+    <p><strong>上线周期 2 周→3 天</strong>：缩短在开发阶段——PRD 蒸馏自动出计划→BFF 配模板+联动半天→前端零代码→测试 1-2 天。</p>
+    <p><strong>联动复用率 80%+</strong>：23 种活动类型中 19 种可复用已有 linkageSchema，仅 4 种需新增。</p>
+    <p><strong>新权益接入 2 天→2 小时</strong>：2 小时是后端在 MIS 配 Schema 的时间，前端零代码。</p>
+    <p><strong>零 breaking change 18 月+</strong>：SemVer + peerDependencies 隔离 react + deprecated 不删除 + Changesets 追踪。</p>
+    <p><strong>权益 400+/组件 35+/联动 16 个</strong>：400 是 SKU 数不是组件数，35 是 24 内置+11 运行时扩展，16 是 12 重渲染+4 Placeholder 重置。</p>
+  </div>
+</div>
+
+<!-- ==================== 微前端专项 ==================== -->
+<div class="card" data-c="proj" data-kw="微前端 iframe qiankun Module Federation 方案 对比 选型">
+  <div class="card-head"><span class="tag proj">B4</span><div class="card-title">微前端三种方案对比</div></div>
+  <div class="core">iframe 隔离完美但性能差，qiankun 用 JS 沙箱适合大型拆分，Module Federation 性能最好但需 Webpack 5</div>
+  <div class="card-body">
+    <p>iframe：浏览器级完美隔离，但独立进程性能差，SEO 也不好，适合完全独立的第三方系统。</p>
+    <p>qiankun：基于 single-spa，用 Proxy 做 JS 沙箱隔离 + Shadow DOM 或 CSS 前缀做样式隔离 + HTML Entry 直接配 URL 就能用。适合大型应用拆分。</p>
+    <p>Module Federation：Webpack 5 运行时模块共享，性能最好因为共享依赖，但接入成本高且无隔离。适合细粒度模块共享。</p>
+    <p>我们项目的选择：没用标准微前端，因为 15 个模块在同一个仓库不需要独立部署，编译时共享更高效。实际是宿主平台通过 iframe 嵌入我们的页面，URL 参数传公参。</p>
+  </div>
+</div>
+
+<div class="card" data-c="proj" data-kw="qiankun 原理 沙箱 Proxy Shadow DOM HTML Entry single-spa">
+  <div class="card-head"><span class="tag proj">追问</span><div class="card-title">qiankun 原理深挖（阿里二面真题）</div></div>
+  <div class="core">核心做三件事：JS 沙箱（Proxy 代理 window）+ 样式隔离（Shadow DOM 或 CSS 前缀）+ HTML Entry（fetch 解析执行）</div>
+  <div class="card-body">
+    <p>JS 沙箱：创建一个 fakeWindow，用 Proxy 代理，子应用操作的全局变量都在 fakeWindow 里，卸载后自动恢复，子应用之间互不污染。不支持 Proxy 的浏览器降级为快照沙箱——激活时存 window 快照，卸载时 diff 恢复。</p>
+    <p>样式隔离两种：strictStyleIsolation 用 Shadow DOM（弹窗挂在 body 外会丢样式）；experimentalStyleIsolation 给 CSS 选择器动态加前缀，类似 scoped CSS。</p>
+    <p>HTML Entry：不像 single-spa 需要子应用暴露 bootstrap/mount/unmount，qiankun 直接配 HTML 地址，它会 fetch 下来解析出所有 script 和 link 执行，子应用不用改代码。通信用 initGlobalState 做全局状态共享，底层是 CustomEvent 发布订阅。</p>
+  </div>
+</div>
+
+<div class="card" data-c="proj" data-kw="渐进式 升级 灰度 版本 Apollo 配置中心 Schema version">
+  <div class="card-head"><span class="tag proj">追问</span><div class="card-title">渐进式升级系统设计（阿里二面真题）</div></div>
+  <div class="core">三层：Schema 加 version + 运行时按版本动态 import + 配置中心灰度控制</div>
+  <div class="card-body">
+    <p>面试官命题："两个 button 一个 0.0.1 一个 0.0.2，怎么支持？"三层设计：</p>
+    <p>第一层 Schema 层加 d_version 字段，BFF 生成 Schema 时通过配置中心（Apollo）控制哪些字段用新版组件。</p>
+    <p>第二层运行时组件加载器做版本感知——注册表从"一个名字对应一个组件"变成"一个名字对应多个版本"，渲染时根据 d_version 动态 import 对应版本的组件。</p>
+    <p>第三层配置中心做灰度——先给 1% 用户下发新版 Schema，观察错误率和性能，没问题再逐步放量到 100%，最后去掉灰度配置让新版成为默认。</p>
+  </div>
+</div>
+
+<div class="card" data-c="proj" data-kw="接入层 三种形态 组件 函数 微前端 qiankun Modal 命令式">
+  <div class="card-head"><span class="tag proj">追问</span><div class="card-title">接入层三种形态（阿里二面真题）</div></div>
+  <div class="core">按消费方需要的控制力度区分：组件模式要完整 CRUD、函数调用只要单点能力、微前端直接用标准能力</div>
+  <div class="card-body">
+    <p>第一种组件模式（App 内嵌）：消费方需要完整 CRUD 能力，import 组件+传参，整个权益生命周期都交给你。</p>
+    <p>第二种函数调用模式（Modal.info 命令式）：只需要单点能力比如查一个权益详情，暴露 Modal 方法不需要引入整个组件，BenefitAdmin 统一分发解耦内部实现。</p>
+    <p>第三种微前端模式（qiankun 挂载）：不限版本每次跟最新，权益系统整体作为子应用嵌入营销中后台，适合不需要定制直接用标准能力的场景。</p>
+  </div>
+</div>
+
+<div class="card" data-c="proj" data-kw="Changesets 发版 alpha semantic-release 版本号 预发布">
+  <div class="card-head"><span class="tag proj">追问</span><div class="card-title">Changesets 发版流程</div></div>
+  <div class="core">人工选变更级别（比 semantic-release 更适合多包 Monorepo），alpha 走预发布通道</div>
+  <div class="card-body">
+    <p>和 semantic-release 的区别：semantic-release 基于 commit message 全自动，适合单包；Changesets 人工选 patch/minor/major，适合多包 Monorepo——一次改动可能影响多个包，Changesets 能自动追踪依赖关系同时 bump。</p>
+    <p>alpha 流程：changeset pre enter alpha 进入预发布 → changeset 记录变更 → changeset version 生成 1.0.0-alpha.0 → publish --tag alpha → 消费方 npm install pkg@alpha 联调 → 联调完 changeset pre exit 退回正式通道。</p>
+  </div>
+</div>
+
+<!-- ==================== 软技能 ==================== -->
+<div class="card" data-c="emer" data-kw="AI 取代 前端 未来 转型 观点">
+  <div class="card-head"><span class="tag emer">软技能</span><div class="card-title">AI 会取代前端吗？</div></div>
+  <div class="core">会取代重复性编码，不会取代系统设计能力</div>
+  <div class="card-body">
+    <p>会被取代的：重复性 DOM 操作、基础组件开发、简单 CRUD 页面、模板代码——这些 AI 已经做得很好了。</p>
+    <p>不会被取代的：Schema 架构设计需要理解业务做抽象、联动引擎设计需要理解前后端约束、AI 工程工作流需要设计质量治理体系——这些都是系统级思维，AI 目前做不了。</p>
+    <p>前端工程师的转型方向：从写代码到设计 AI 工作流，从 DOM 工程师到 AI 产品架构师。我的 prd-tools 就是这个方向的实践。</p>
+  </div>
+</div>
+
+<div class="card" data-c="emer" data-kw="团队 协作 主导 评审 落地 沟通">
+  <div class="card-head"><span class="tag emer">软技能</span><div class="card-title">你和团队怎么协作的？</div></div>
+  <div class="core">我主导架构决策和从 0 到 1，团队参与评审和落地</div>
+  <div class="card-body">
+    <p>在 Schema 架构和 benefit SDK 上，我负责从 0 到 1 的架构设计，包括模板引擎、联动引擎和注册表模式。设计完成后会拉评审，收集前端和后端的反馈。prd-tools 是我独立完成的，但团队模式 T 是为了支持多仓库协作设计的。协作中最大的挑战是让后端理解 BFF 层的职责边界——BFF 负责 Schema 结构和联动声明，不负责业务逻辑。</p>
+  </div>
+</div>
+
+<div class="card" data-c="emer" data-kw="学习 持续 新技术 方法 项目驱动">
+  <div class="card-head"><span class="tag emer">软技能</span><div class="card-title">你怎么持续学习新技术？</div></div>
+  <div class="core">带着项目问题学，不是泛泛看文章</div>
+  <div class="card-body">
+    <p>我的学习方式是项目驱动——遇到问题先深入，再横向扩展。比如 prd-tools 不是先学 AI 再做的，而是在做需求分析时发现"业务词和代码字段不一致"这个问题，然后研究知识库、RAG、Agent 工作流来解决。学习完后会写复盘文档沉淀，比如我的学习知识库就是持续学习的过程记录。</p>
+  </div>
+</div>
+
+<div class="card" data-c="emer" data-kw="职业 规划 发展 方向 目标">
+  <div class="card-head"><span class="tag emer">软技能</span><div class="card-title">你的职业规划是什么？</div></div>
+  <div class="core">前端架构 + AI 工程双线发展</div>
+  <div class="card-body">
+    <p>短期 1-2 年：深入 AI 工程工作流，把 prd-tools 的方法论在更大的团队验证。中期 3-5 年：成为前端+AI 交叉领域的架构师，不只写代码，更设计 AI 和工程的融合方案。长期：推动前端工程师从"实现者"变成"AI 工作流设计者"，这个转型已经在发生了。</p>
   </div>
 </div>
 
