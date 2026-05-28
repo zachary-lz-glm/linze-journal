@@ -40,6 +40,7 @@
     - [周报 Prompt](learning/ai-intelligence/prompts/weekly-prompt.md)
 
 - **面试备战**
+  - [面试日程](learning/interview/schedule.html)
   - [规划与投递节奏](learning/interview/规划.md)
   - 题库
     - [基础题（18题）](learning/interview/题库/基础题.md)
