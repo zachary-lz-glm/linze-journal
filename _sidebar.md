@@ -31,6 +31,7 @@
   - 2026-W22
     - [全周报](learning/ai-intelligence/2026-W22/周报-企业级AI工程化全周报.md)
     - [05-28 日报 · AI前端应用](learning/ai-intelligence/2026-W22/日报-05-28-AI前端应用生态深度分析.md)
+    - [05-28 日报 · AI评估与治理](learning/ai-intelligence/2026-W22/日报-05-28-AI评估与治理体系深度分析.md)
     - [05-26 日报 · Agent编排](learning/ai-intelligence/2026-W22/日报-05-26-Agent编排架构与生产落地.md)
     - [05-25 日报 · MCP协议](learning/ai-intelligence/2026-W22/日报-05-25-MCP协议与代码知识图谱.md)
   - 2026-W21
