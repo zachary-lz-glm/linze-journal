@@ -36,26 +36,23 @@ body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","PingFang SC",sa
 .tab[data-c="open"].on{background:var(--pink)}
 .tab[data-c="proj"].on{background:var(--blue)}
 .tab[data-c="bagu"].on{background:var(--green)}
-.tab[data-c="algo"].on{background:var(--amber);color:#1E293B}
 .tab[data-c="ai"].on{background:var(--red)}
 .tab[data-c="sys"].on{background:var(--purple)}
-.tab[data-c="emer"].on{background:var(--gray)}
 .tab[data-c="comp"].on{background:var(--cyan)}
-.tab[data-c="soft"].on{background:var(--orange)}
 /* ===== CARDS ===== */
 .container{padding:6px 10px;max-width:860px;margin:0 auto}
 .card{background:var(--card);border-radius:var(--radius);margin-bottom:8px;border:1.5px solid var(--border);box-shadow:var(--shadow);overflow:hidden;transition:background .2s,border-color .2s}
 .card.hide{display:none}
 .card-head{padding:12px 14px 8px;display:flex;align-items:flex-start;gap:8px;cursor:pointer}
 .tag{display:inline-block;padding:2px 7px;border-radius:4px;font-size:11px;font-weight:700;color:#fff;letter-spacing:.3px;flex-shrink:0}
-.tag.proj{background:var(--blue)}.tag.bagu{background:var(--green)}.tag.algo{background:var(--amber);color:#1E293B}
-.tag.ai{background:var(--red)}.tag.sys{background:var(--purple)}.tag.emer{background:var(--gray)}
-.tag.comp{background:var(--cyan)}.tag.soft{background:var(--orange)}.tag.special{background:var(--pink)}
+.tag.proj{background:var(--blue)}.tag.bagu{background:var(--green)}
+.tag.ai{background:var(--red)}.tag.sys{background:var(--purple)}
+.tag.comp{background:var(--cyan)}.tag.special{background:var(--pink)}
 .card-title{font-size:var(--fs);font-weight:700;flex:1}
 .core{margin:0 14px 8px;padding:8px 12px;border-radius:8px;font-weight:600;border-left:4px solid var(--blue);background:#EFF6FF;color:var(--blue)}
 .dark .core{background:#1E3A5F}
-.core.algo-c{border-left-color:var(--amber);background:#FFFBEB;color:#92400E}
-.dark .core.algo-c{background:#422006;color:#FDE68A}
+.core.base-c{border-left-color:var(--amber);background:#FFFBEB;color:#92400E}
+.dark .core.base-c{background:#422006;color:#FDE68A}
 /* 念稿区域 */
 .script-btn{display:flex;align-items:center;gap:4px;margin:0 14px 6px;padding:6px 0;color:var(--red);font-size:14px;font-weight:700;background:none;border:none;cursor:pointer;font-family:inherit}
 .script-btn::before{content:"🎤";font-size:15px}
@@ -124,12 +121,9 @@ th{font-weight:600;color:var(--text2);font-size:12px}
     <button class="tab on" data-c="all" onclick="setCat('all')">全部</button>
     <button class="tab" data-c="open" onclick="setCat('open')">🎤开场</button>
     <button class="tab" data-c="proj" onclick="setCat('proj')">📦项目</button>
-    <button class="tab" data-c="bagu" onclick="setCat('bagu')">📗八股</button>
-    <button class="tab" data-c="algo" onclick="setCat('algo')">🧮算法</button>
+    <button class="tab" data-c="bagu" onclick="setCat('bagu')">📗基础</button>
     <button class="tab" data-c="ai" onclick="setCat('ai')">🤖AI</button>
     <button class="tab" data-c="sys" onclick="setCat('sys')">🏗️系统</button>
-    <button class="tab" data-c="soft" onclick="setCat('soft')">🧠软技能</button>
-    <button class="tab" data-c="emer" onclick="setCat('emer')">🆘应急</button>
     <button class="tab" data-c="comp" onclick="setCat('comp')">🏢公司</button>
   </div>
 </div>
@@ -622,9 +616,9 @@ function myInstanceof(obj, Constructor) {
 </div>
 
 <!-- ==================== 算法 ==================== -->
-<div class="card" data-c="algo" data-kw="哈希 Map 两数之和 配对 重复 统计">
-  <div class="card-head" onclick="togCard(this)"><span class="tag algo">算法T1</span><div class="card-title">哈希表 — 找配对/重复/统计</div></div>
-  <div class="core algo-c">遇到"找配对/找重复/统计次数"→ 开 Map</div>
+<div class="card" data-c="bagu" data-kw="哈希 Map 两数之和 配对 重复 统计">
+  <div class="card-head" onclick="togCard(this)"><span class="tag bagu">算法T1</span><div class="card-title">哈希表 — 找配对/重复/统计</div></div>
+  <div class="core base-c">遇到"找配对/找重复/统计次数"→ 开 Map</div>
   <div class="code-blk">function twoSum(nums, target) {
   const map = new Map();
   for (let i = 0; i < nums.length; i++) {
@@ -634,9 +628,9 @@ function myInstanceof(obj, Constructor) {
 }</div>
 </div>
 
-<div class="card" data-c="algo" data-kw="双指针 对撞 快慢 三数之和 反转链表">
-  <div class="card-head" onclick="togCard(this)"><span class="tag algo">算法T2</span><div class="card-title">双指针 — 排序后两端夹</div></div>
-  <div class="core algo-c">排序后左右两端往中间夹（对撞）或快慢走（链表）</div>
+<div class="card" data-c="bagu" data-kw="双指针 对撞 快慢 三数之和 反转链表">
+  <div class="card-head" onclick="togCard(this)"><span class="tag bagu">算法T2</span><div class="card-title">双指针 — 排序后两端夹</div></div>
+  <div class="core base-c">排序后左右两端往中间夹（对撞）或快慢走（链表）</div>
   <div class="code-blk">nums.sort((a, b) => a - b);
 for (let i = 0; i < nums.length - 2; i++) {
   let l = i + 1, r = nums.length - 1;
@@ -647,9 +641,9 @@ for (let i = 0; i < nums.length - 2; i++) {
 }</div>
 </div>
 
-<div class="card" data-c="algo" data-kw="BFS 队列 层序 岛屿 最短路径">
-  <div class="card-head" onclick="togCard(this)"><span class="tag algo">算法T3</span><div class="card-title">BFS 队列 — 层序/岛屿</div></div>
-  <div class="core algo-c">队列 + while 循环 + 逐层处理</div>
+<div class="card" data-c="bagu" data-kw="BFS 队列 层序 岛屿 最短路径">
+  <div class="card-head" onclick="togCard(this)"><span class="tag bagu">算法T3</span><div class="card-title">BFS 队列 — 层序/岛屿</div></div>
+  <div class="core base-c">队列 + while 循环 + 逐层处理</div>
   <div class="code-blk">function levelOrder(root) {
   if (!root) return [];
   const q = [root], res = [];
@@ -665,9 +659,9 @@ for (let i = 0; i < nums.length - 2; i++) {
 }</div>
 </div>
 
-<div class="card" data-c="algo" data-kw="滑动窗口 子串 无重复 最长子串">
-  <div class="card-head" onclick="togCard(this)"><span class="tag algo">算法T4</span><div class="card-title">滑动窗口 — 子串/子数组</div></div>
-  <div class="core algo-c">右指针一直走，遇到重复就缩左</div>
+<div class="card" data-c="bagu" data-kw="滑动窗口 子串 无重复 最长子串">
+  <div class="card-head" onclick="togCard(this)"><span class="tag bagu">算法T4</span><div class="card-title">滑动窗口 — 子串/子数组</div></div>
+  <div class="core base-c">右指针一直走，遇到重复就缩左</div>
   <div class="code-blk">function lengthOfLongestSubstring(s) {
   const set = new Set(); let l = 0, max = 0;
   for (let r = 0; r < s.length; r++) {
@@ -678,9 +672,9 @@ for (let i = 0; i < nums.length - 2; i++) {
 }</div>
 </div>
 
-<div class="card" data-c="algo" data-kw="DFS 回溯 排列 组合 子集">
-  <div class="card-head" onclick="togCard(this)"><span class="tag algo">算法T5</span><div class="card-title">DFS 回溯 — 排列/组合</div></div>
-  <div class="core algo-c">选了标记 → 往下走 → 回来撤销</div>
+<div class="card" data-c="bagu" data-kw="DFS 回溯 排列 组合 子集">
+  <div class="card-head" onclick="togCard(this)"><span class="tag bagu">算法T5</span><div class="card-title">DFS 回溯 — 排列/组合</div></div>
+  <div class="core base-c">选了标记 → 往下走 → 回来撤销</div>
   <div class="code-blk">function permute(nums) {
   const res = [], used = Array(nums.length).fill(false);
   function bt(path) {
@@ -695,9 +689,9 @@ for (let i = 0; i < nums.length - 2; i++) {
 }</div>
 </div>
 
-<div class="card" data-c="algo" data-kw="快排 快速排序 分治 partition 原地">
-  <div class="card-head" onclick="togCard(this)"><span class="tag algo">算法T6</span><div class="card-title">快速排序（美团第 1 名）</div></div>
-  <div class="core algo-c">选基准，小的左大的右，递归</div>
+<div class="card" data-c="bagu" data-kw="快排 快速排序 分治 partition 原地">
+  <div class="card-head" onclick="togCard(this)"><span class="tag bagu">算法T6</span><div class="card-title">快速排序（美团第 1 名）</div></div>
+  <div class="core base-c">选基准，小的左大的右，递归</div>
   <div class="code-blk">function qs(arr, lo = 0, hi = arr.length - 1) {
   if (lo >= hi) return;
   let i = lo, j = hi, p = arr[lo];
@@ -709,9 +703,9 @@ for (let i = 0; i < nums.length - 2; i++) {
 }</div>
 </div>
 
-<div class="card" data-c="algo" data-kw="链表 反转 合并 环 中点 二叉树 前序 中序 后序 DFS 递归">
-  <div class="card-head" onclick="togCard(this)"><span class="tag algo">算法T7</span><div class="card-title">链表 + 二叉树核心模板</div></div>
-  <div class="core algo-c">链表靠画图，树靠递归</div>
+<div class="card" data-c="bagu" data-kw="链表 反转 合并 环 中点 二叉树 前序 中序 后序 DFS 递归">
+  <div class="card-head" onclick="togCard(this)"><span class="tag bagu">算法T7</span><div class="card-title">链表 + 二叉树核心模板</div></div>
+  <div class="core base-c">链表靠画图，树靠递归</div>
   <div class="code-blk">// 反转链表
 function reverseList(head) {
   let prev = null, cur = head;
@@ -748,9 +742,9 @@ function mergeTwoLists(l1, l2) {
 }</div>
 </div>
 
-<div class="card" data-c="algo" data-kw="算法 面试 口诀 速览 全部模板">
-  <div class="card-head" onclick="togCard(this)"><span class="tag algo">速览</span><div class="card-title">面试前 1 分钟算法速览</div></div>
-  <div class="core algo-c">10 个套路，每个一句话</div>
+<div class="card" data-c="bagu" data-kw="算法 面试 口诀 速览 全部模板">
+  <div class="card-head" onclick="togCard(this)"><span class="tag bagu">速览</span><div class="card-title">面试前 1 分钟算法速览</div></div>
+  <div class="core base-c">10 个套路，每个一句话</div>
   <ul class="points">
     <li><strong>找配对</strong> → Map</li>
     <li><strong>两端夹</strong> → 双指针（排序后）</li>
@@ -957,8 +951,8 @@ function mergeTwoLists(l1, l2) {
 </div>
 
 <!-- ==================== 软技能 G 组 ==================== -->
-<div class="card" data-c="soft" data-kw="AI 取代 前端 未来 转型 Vibe Coding 观点">
-  <div class="card-head" onclick="togCard(this)"><span class="tag soft">软技能G1</span><div class="card-title">前端会被 AI 取代吗？</div></div>
+<div class="card" data-c="bagu" data-kw="AI 取代 前端 未来 转型 Vibe Coding 观点">
+  <div class="card-head" onclick="togCard(this)"><span class="tag bagu">软技能G1</span><div class="card-title">前端会被 AI 取代吗？</div></div>
   <div class="core">会取代重复性编码，不会取代系统设计能力</div>
   <button class="script-btn" onclick="togScript(this)">🎤</button>
   <div class="script-box">
@@ -968,8 +962,8 @@ function mergeTwoLists(l1, l2) {
   </div>
 </div>
 
-<div class="card" data-c="soft" data-kw="团队 协作 合作 沟通 评审 后端">
-  <div class="card-head" onclick="togCard(this)"><span class="tag soft">软技能G3</span><div class="card-title">你和团队怎么协作的？</div></div>
+<div class="card" data-c="bagu" data-kw="团队 协作 合作 沟通 评审 后端">
+  <div class="card-head" onclick="togCard(this)"><span class="tag bagu">软技能G3</span><div class="card-title">你和团队怎么协作的？</div></div>
   <div class="core">我主导架构决策，团队参与评审和落地</div>
   <button class="script-btn" onclick="togScript(this)">🎤</button>
   <div class="script-box">
@@ -977,8 +971,8 @@ function mergeTwoLists(l1, l2) {
   </div>
 </div>
 
-<div class="card" data-c="soft" data-kw="学习 持续 新技术 方法 项目驱动">
-  <div class="card-head" onclick="togCard(this)"><span class="tag soft">软技能G4</span><div class="card-title">怎么持续学习新技术？</div></div>
+<div class="card" data-c="bagu" data-kw="学习 持续 新技术 方法 项目驱动">
+  <div class="card-head" onclick="togCard(this)"><span class="tag bagu">软技能G4</span><div class="card-title">怎么持续学习新技术？</div></div>
   <div class="core">带着项目问题学，不是泛泛看文章</div>
   <button class="script-btn" onclick="togScript(this)">🎤</button>
   <div class="script-box">
@@ -986,8 +980,8 @@ function mergeTwoLists(l1, l2) {
   </div>
 </div>
 
-<div class="card" data-c="soft" data-kw="职业规划 发展 方向 目标">
-  <div class="card-head" onclick="togCard(this)"><span class="tag soft">软技能G5</span><div class="card-title">职业规划是什么？</div></div>
+<div class="card" data-c="bagu" data-kw="职业规划 发展 方向 目标">
+  <div class="card-head" onclick="togCard(this)"><span class="tag bagu">软技能G5</span><div class="card-title">职业规划是什么？</div></div>
   <div class="core">前端架构 + AI 工程双线发展</div>
   <button class="script-btn" onclick="togScript(this)">🎤</button>
   <div class="script-box">
@@ -996,8 +990,8 @@ function mergeTwoLists(l1, l2) {
 </div>
 
 <!-- ==================== 应急话术 ==================== -->
-<div class="card" data-c="emer" data-kw="不会 说不出 印象 话术 救命 应急">
-  <div class="card-head" onclick="togCard(this)"><span class="tag emer">应急L1</span><div class="card-title">有点印象但说不准确</div></div>
+<div class="card" data-c="bagu" data-kw="不会 说不出 印象 话术 救命 应急">
+  <div class="card-head" onclick="togCard(this)"><span class="tag bagu">应急L1</span><div class="card-title">有点印象但说不准确</div></div>
   <div class="core">说确定部分 → 给合理推测 → 展示验证方向</div>
   <button class="script-btn" onclick="togScript(this)">🎤</button>
   <div class="script-box">
@@ -1005,8 +999,8 @@ function mergeTwoLists(l1, l2) {
   </div>
 </div>
 
-<div class="card" data-c="emer" data-kw="不会 完全没概念 算法 做不出 暴力">
-  <div class="card-head" onclick="togCard(this)"><span class="tag emer">应急L2</span><div class="card-title">完全没概念（算法不会）</div></div>
+<div class="card" data-c="bagu" data-kw="不会 完全没概念 算法 做不出 暴力">
+  <div class="card-head" onclick="togCard(this)"><span class="tag bagu">应急L2</span><div class="card-title">完全没概念（算法不会）</div></div>
   <div class="core">先说暴力思路，再问优化方向</div>
   <button class="script-btn" onclick="togScript(this)">🎤</button>
   <div class="script-box">
@@ -1014,8 +1008,8 @@ function mergeTwoLists(l1, l2) {
   </div>
 </div>
 
-<div class="card" data-c="emer" data-kw="追问 死角 盲区 卡住">
-  <div class="card-head" onclick="togCard(this)"><span class="tag emer">应急L3</span><div class="card-title">被追问到死角</div></div>
+<div class="card" data-c="bagu" data-kw="追问 死角 盲区 卡住">
+  <div class="card-head" onclick="togCard(this)"><span class="tag bagu">应急L3</span><div class="card-title">被追问到死角</div></div>
   <div class="core">承认盲区 + 合理推测 + 学习方向</div>
   <button class="script-btn" onclick="togScript(this)">🎤</button>
   <div class="script-box">
@@ -1023,8 +1017,8 @@ function mergeTwoLists(l1, l2) {
   </div>
 </div>
 
-<div class="card" data-c="emer" data-kw="系统设计 没思路 类比 决策点">
-  <div class="card-head" onclick="togCard(this)"><span class="tag emer">应急L4</span><div class="card-title">系统设计没思路</div></div>
+<div class="card" data-c="bagu" data-kw="系统设计 没思路 类比 决策点">
+  <div class="card-head" onclick="togCard(this)"><span class="tag bagu">应急L4</span><div class="card-title">系统设计没思路</div></div>
   <div class="core">类比已知架构 + 列关键决策点</div>
   <button class="script-btn" onclick="togScript(this)">🎤</button>
   <div class="script-box">
@@ -1032,8 +1026,8 @@ function mergeTwoLists(l1, l2) {
   </div>
 </div>
 
-<div class="card" data-c="emer" data-kw="万能 兜底 任何 引导 经验">
-  <div class="card-head" onclick="togCard(this)"><span class="tag emer">万能</span><div class="card-title">万能兜底句式</div></div>
+<div class="card" data-c="bagu" data-kw="万能 兜底 任何 引导 经验">
+  <div class="card-head" onclick="togCard(this)"><span class="tag bagu">万能</span><div class="card-title">万能兜底句式</div></div>
   <button class="script-btn" onclick="togScript(this)">🎤</button>
   <div class="script-box">
     <p><strong>"这个问题我实际遇到过…"</strong> → 锚定你的项目经验，把话题往你熟悉的领域引导。</p>
@@ -1042,58 +1036,55 @@ function mergeTwoLists(l1, l2) {
   </div>
 </div>
 
-<!-- ==================== 公司专项 ==================== -->
-<div class="card" data-c="comp" data-kw="字节跳动 字节 bytedance 追问 算法 豆包 AI">
-  <div class="card-head" onclick="togCard(this)"><span class="tag comp">字节</span><div class="card-title">字节跳动 — 连环追问 + 算法必考</div></div>
-  <div class="core">3-4 轮技术，算法中等偏难，AI 几乎必问</div>
+<!-- ==================== 公司专项 · 拼多多 ==================== -->
+<div class="card" data-c="comp" data-kw="拼多多 pdd 拼多多面试风格 手撕 追问 八股 节奏">
+  <div class="card-head" onclick="togCard(this)"><span class="tag comp">拼多多</span><div class="card-title">拼多多面试风格</div></div>
+  <div class="core">手撕 4+ 道、八股追问到底、节奏极快、不接受泛泛而谈</div>
   <ul class="points">
-    <li>prd-tools 每个设计决策的 WHY</li>
-    <li>Schema 架构 trade-off（eval vs AST？性能瓶颈？）</li>
-    <li>算法至少 5 道 Medium</li>
-    <li>2026 必考：SSE 流式 + AI Agent + "你怎么用 AI？"</li>
-  </ul>
-  <button class="follow-btn" onclick="togFollow(this)">经典追问链</button>
-  <div class="follow-body">
-    <ul>
-      <li>"injectDActions 双重求值"</li>
-      <li>→ "为什么不在前端单独做？" → SSR 初始状态会闪</li>
-      <li>→ "state 型为什么不用服务端？" → 纯判断不需要网络</li>
-      <li>→ "eval 安全？" → 新版 Zustand + new Function</li>
-    </ul>
-  </div>
-</div>
-
-<div class="card" data-c="comp" data-kw="快手 kuaishou 工程 稳定性 微前端 性能">
-  <div class="card-head" onclick="togCard(this)"><span class="tag comp">快手</span><div class="card-title">快手 — 重工程化 + 稳定性</div></div>
-  <div class="core">3 轮技术 + HR，算法中等，重工程落地</div>
-  <ul class="points">
-    <li>Monorepo 治理（Lerna vs Turborepo vs Nx）</li>
-    <li>微前端实战（iframe + workspace 选型理由）</li>
-    <li>工程化：CI/CD、构建优化、代码质量</li>
-    <li>性能优化：SPA 白屏、bundle size</li>
+    <li><strong>手撕代码</strong>：一场 4+ 道 JS 语言特性手写，偏爱 Promise/class 继承/编译函数</li>
+    <li><strong>八股追问</strong>：每个回答至少追问 2-3 层，稍微卡壳就追问下一层</li>
+    <li><strong>项目主导</strong>：二面三面围绕项目展开，连续追问"为什么"</li>
+    <li><strong>场景设计</strong>：二面占比大，需要真实设计思维，不能靠背</li>
+    <li><strong>抗压</strong>：面试环境可能很简陋（纯文本编辑器），不同轮次问相似问题考察一致性</li>
   </ul>
 </div>
 
-<div class="card" data-c="comp" data-kw="百度 baidu 基础 原理 白板 系统设计 源码">
-  <div class="card-head" onclick="togCard(this)"><span class="tag comp">百度</span><div class="card-title">百度 — 重基础原理 + 系统设计</div></div>
-  <div class="core">4-5 轮（含交叉面），原理深挖到源码级</div>
+<div class="card" data-c="comp" data-kw="拼多多 pdd 手撕 必考 Promise 模板编译 class ES5 调度器 EventEmitter 深拷贝 防抖 节流 call bind">
+  <div class="card-head" onclick="togCard(this)"><span class="tag comp">拼多多</span><div class="card-title">拼多多手撕必考 8 题</div></div>
+  <div class="core">10 分钟内手写，不写完整代码但要能手撕骨架</div>
   <ul class="points">
-    <li>React 源码级：Fiber 调度、Hooks 实现、Concurrent</li>
-    <li>浏览器原理：渲染管线、V8、内存管理</li>
-    <li>BFF 架构：能白板画完整架构图</li>
-    <li>组件库：从 0 到 1 讲清楚每个决策</li>
+    <li>① Promise 串行执行 + 重试机制</li>
+    <li>② 模板编译函数（`{{}}` 替换）</li>
+    <li>③ ES6 class 转 ES5（寄生组合继承）</li>
+    <li>④ 异步调度器（带并发限制）</li>
+    <li>⑤ 发布订阅模式（EventEmitter）</li>
+    <li>⑥ 深拷贝（含循环引用）</li>
+    <li>⑦ 防抖 / 节流</li>
+    <li>⑧ 手写 call / apply / bind</li>
   </ul>
 </div>
 
-<div class="card" data-c="comp" data-kw="刁钻 不足 重新设计 对比 Formily 追问">
-  <div class="card-head" onclick="togCard(this)"><span class="tag comp">追问</span><div class="card-title">高频刁钻问题速查</div></div>
+<div class="card" data-c="comp" data-kw="拼多多 pdd 场景设计 低代码 Input 懒加载 大文件上传">
+  <div class="card-head" onclick="togCard(this)"><span class="tag comp">拼多多</span><div class="card-title">拼多多场景设计高频题</div></div>
+  <div class="core">用 Schema 架构做答案，展示设计思维</div>
+  <ul class="points">
+    <li><strong>H5 低代码建站平台</strong>：数据层(Schema) + 引擎层(渲染) + 联动层(发布订阅) + 扩展层(Register)</li>
+    <li><strong>Input 组件设计</strong>：受控/非受控 + onChange 校验 + disabled/readonly + prefix/suffix</li>
+    <li><strong>图片懒加载</strong>：IntersectionObserver + 滚动监听 + 节流优化</li>
+    <li><strong>大文件上传</strong>：分片 + 断点续传 + WebWorker 算 hash + 并发控制</li>
+  </ul>
+</div>
+
+<div class="card" data-c="comp" data-kw="拼多多 pdd 备战 优先级 P0 手写 项目 算法 CSS 八股">
+  <div class="card-head" onclick="togCard(this)"><span class="tag comp">拼多多</span><div class="card-title">拼多多备战 P0 优先级</div></div>
+  <div class="core">JS 手写 8 道 > 项目主线讲法 > 算法 3-5 道 > CSS 八股</div>
   <table>
-    <tr><th style="width:28%">刁难问题</th><th>一句话防御</th></tr>
-    <tr><td>项目有什么不足？</td><td>eval 已用 Zustand+newFunction 替代；reference 构建依赖人工确认</td></tr>
-    <tr><td>重新设计改什么？</td><td>1.联动用 JSON Schema 替代 eval 2.Reference 加自动化 3.BFF 加 Schema diff 可视化</td></tr>
-    <tr><td>和 XX 开源比？</td><td>23 种活动类型高频配置，不是通用表单，双重求值是 BFF-前端协同特化</td></tr>
-    <tr><td>为什么不用 Formily？</td><td>有 BFF 层联动需求，纯前端解决不了 SSR 初始状态</td></tr>
-    <tr><td>AI 代码敢上线吗？</td><td>prd-tools 不生成代码，产出结构化开发计划</td></tr>
+    <tr><th style="width:20%">优先级</th><th style="width:60%">内容</th><th>时间</th></tr>
+    <tr><td>P0</td><td>JS 手写 8 道（Promise 系列/EventEmitter/深拷贝/防抖节流/call-bind）</td><td>今天</td></tr>
+    <tr><td>P0</td><td>项目主线讲法 + 6 层追问防御</td><td>明天</td></tr>
+    <tr><td>P1</td><td>算法 3-5 道（有效括号/最大公共前缀/无重复子串）</td><td>明天</td></tr>
+    <tr><td>P1</td><td>低代码建站平台场景设计 + TypeScript 组件设计</td><td>面试前</td></tr>
+    <tr><td>P2</td><td>CSS/浏览器/网络八股 + AI 相关 + Vue 基础</td><td>面试前</td></tr>
   </table>
 </div>
 
@@ -1247,11 +1238,10 @@ function mergeTwoLists(l1, l2) {
 <!-- BOTTOM BAR -->
 <div class="bottombar">
   <button class="bb" onclick="setCat('open')"><span class="ic">🎤</span>开场</button>
-  <button class="bb" onclick="setCat('emer')"><span class="ic">🆘</span>应急</button>
   <button class="bb" onclick="setCat('proj')"><span class="ic">📦</span>项目</button>
+  <button class="bb" onclick="setCat('bagu')"><span class="ic">📗</span>基础</button>
   <button class="bb" onclick="setCat('ai')"><span class="ic">🤖</span>AI</button>
-  <button class="bb" onclick="setCat('algo')"><span class="ic">🧮</span>算法</button>
-  <button class="bb" onclick="setCat('soft')"><span class="ic">🧠</span>软技能</button>
+  <button class="bb" onclick="setCat('comp')"><span class="ic">🏢</span>拼多多</button>
 </div>
 
 <script>
@@ -1279,7 +1269,7 @@ function toggleDark(){document.body.classList.toggle('dark');document.getElement
 // INDEX PANEL
 function toggleIdx(){const o=document.getElementById('idxOv'),p=document.getElementById('idxPn');const show=!p.classList.contains('show');o.classList.toggle('show',show);p.classList.toggle('show',show)}
 function buildIdx(){
-  const cats={open:'🎤 开场白',proj:'📦 项目深挖',bagu:'📗 前端八股',algo:'🧮 算法模板',ai:'🤖 AI 工程',sys:'🏗️ 系统设计',soft:'🧠 软技能',emer:'🆘 应急话术',comp:'🏢 公司专项'};
+  const cats={open:'🎤 开场白',proj:'📦 项目深挖',bagu:'📗 基础知识',ai:'🤖 AI 工程',sys:'🏗️ 系统设计',comp:'🏢 拼多多专项'};
   const pn=document.getElementById('idxPn');let html='<h3>快速索引 <button onclick="toggleIdx()" style="border:none;background:none;font-size:18px;cursor:pointer">✕</button></h3>';
   let lastCat='';
   document.querySelectorAll('.card').forEach((c,i)=>{
