@@ -1,16 +1,7 @@
-const CACHE_NAME = 'kb-v14';
-const ASSETS = [
-  '/linze-journal/',
-  '/linze-journal/index.html',
-  '/linze-journal/README.md'
-];
+const CACHE_NAME = 'kb-v15';
+const TIMEOUT = 3000;
 
-self.addEventListener('install', e => {
-  e.waitUntil(
-    caches.open(CACHE_NAME).then(cache => cache.addAll(ASSETS))
-  );
-  self.skipWaiting();
-});
+self.addEventListener('install', () => self.skipWaiting());
 
 self.addEventListener('activate', e => {
   e.waitUntil(
@@ -24,18 +15,25 @@ self.addEventListener('activate', e => {
 self.addEventListener('fetch', e => {
   if (e.request.method !== 'GET') return;
   const url = new URL(e.request.url);
-  // Only cache same-origin requests for .md files and index.html
   if (url.origin !== self.location.origin) return;
+
   e.respondWith(
-    caches.match(e.request).then(cached => {
-      const fetchPromise = fetch(e.request).then(response => {
+    new Promise(resolve => {
+      const timer = setTimeout(() => {
+        caches.match(e.request).then(cached => cached && resolve(cached));
+      }, TIMEOUT);
+
+      fetch(e.request).then(response => {
+        clearTimeout(timer);
         if (response.ok) {
           const clone = response.clone();
           caches.open(CACHE_NAME).then(cache => cache.put(e.request, clone));
         }
-        return response;
-      }).catch(() => cached);
-      return cached || fetchPromise;
+        resolve(response);
+      }).catch(() => {
+        clearTimeout(timer);
+        caches.match(e.request).then(cached => resolve(cached || new Response('Offline', { status: 503 })));
+      });
     })
   );
 });
