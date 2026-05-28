@@ -1,13 +1,6 @@
 - **首页**
   - [学习导航](README.md)
 
-- **前端基础**
-  - [React 原理](learning/fundamentals/React原理.md)
-  - [浏览器与网络](learning/fundamentals/浏览器与网络.md)
-  - [TypeScript 深入](learning/fundamentals/TypeScript深入.md)
-  - [CSS 布局](learning/fundamentals/CSS布局.md)
-  - [手写题精选](learning/fundamentals/手写题精选.md)
-
 - **项目实战复盘**
   - Schema 渲染引擎
     - [架构总览](learning/retrospectives/04-27-Schema渲染引擎.md)
@@ -44,21 +37,15 @@
   - [面试日程](learning/interview/schedule.html)
   - [规划与投递节奏](learning/interview/规划.md)
   - 题库
-    - [基础题（16题）](learning/interview/题库/基础题.md)
+    - [基础题（17题）](learning/interview/题库/基础题.md)
     - [手写代码（15题）](learning/interview/题库/手写代码.md)
     - [项目题（20题）](learning/interview/题库/项目题.md)
-    - [AI题（10题）](learning/interview/题库/AI题.md)
+    - [AI题（12题）](learning/interview/题库/AI题.md)
     - [急救包](learning/interview/题库/急救包.md)
   - 公司定向
     - [拼多多](learning/interview/定向/拼多多.md)
   - 面试复盘
     - [面试记录模板](learning/interview/复盘/面试记录.md)
-  - Agent 教练
-    - [使用说明](learning/interview/agents/README.md)
-    - [训练教练](learning/interview/agents/01-训练教练.md)
-    - [模拟面试官](learning/interview/agents/02-模拟面试官.md)
-    - [复盘分析师](learning/interview/agents/03-复盘分析师.md)
-    - [弱项追踪表](learning/interview/agents/weakness-tracker.md)
   - [简历](learning/interview/简历.md)
 
 - **工具**

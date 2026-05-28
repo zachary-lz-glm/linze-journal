@@ -245,13 +245,6 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);font-size:va
 /* ===== NAVIGATION DATA ===== */
 const NAV = [
   {label:'首页',path:'README'},
-  {label:'前端基础',children:[
-    {label:'React 原理',path:'learning/fundamentals/React原理'},
-    {label:'浏览器与网络',path:'learning/fundamentals/浏览器与网络'},
-    {label:'TypeScript 深入',path:'learning/fundamentals/TypeScript深入'},
-    {label:'CSS 布局',path:'learning/fundamentals/CSS布局'},
-    {label:'手写题精选',path:'learning/fundamentals/手写题精选'},
-  ]},
   {label:'项目实战复盘',children:[
     {label:'Schema 渲染引擎',children:[
       {label:'架构总览',path:'learning/retrospectives/04-27-Schema渲染引擎'},
@@ -294,10 +287,10 @@ const NAV = [
     {label:'面试日程',path:'learning/interview/schedule.html',external:true},
     {label:'规划与投递节奏',path:'learning/interview/规划'},
     {label:'题库',children:[
-      {label:'基础题（16题）',path:'learning/interview/题库/基础题'},
+      {label:'基础题（17题）',path:'learning/interview/题库/基础题'},
       {label:'手写代码（15题）',path:'learning/interview/题库/手写代码'},
       {label:'项目题（20题）',path:'learning/interview/题库/项目题'},
-      {label:'AI题（10题）',path:'learning/interview/题库/AI题'},
+      {label:'AI题（12题）',path:'learning/interview/题库/AI题'},
       {label:'急救包',path:'learning/interview/题库/急救包'},
     ]},
     {label:'公司定向',children:[
@@ -305,13 +298,6 @@ const NAV = [
     ]},
     {label:'面试复盘',children:[
       {label:'面试记录模板',path:'learning/interview/复盘/面试记录'},
-    ]},
-    {label:'Agent 教练',children:[
-      {label:'使用说明',path:'learning/interview/agents/README'},
-      {label:'训练教练',path:'learning/interview/agents/01-训练教练'},
-      {label:'模拟面试官',path:'learning/interview/agents/02-模拟面试官'},
-      {label:'复盘分析师',path:'learning/interview/agents/03-复盘分析师'},
-      {label:'弱项追踪表',path:'learning/interview/agents/weakness-tracker'},
     ]},
     {label:'简历',path:'learning/interview/简历'},
   ]},
@@ -752,8 +738,6 @@ function changeFont(delta){
 /* ===== HOMEPAGE ===== */
 function renderHomepage(){
   const sections=[
-    {icon:'🧩',title:'前端基础',desc:'React 原理、浏览器、TypeScript、CSS、手写题',
-     links:NAV.find(n=>n.label==='前端基础').children.map(c=>({label:c.label,path:c.path}))},
     {icon:'🏗️',title:'项目实战复盘',desc:'Schema 渲染引擎、BFF、SDK、prd-tools',
      links:[
        {label:'Schema 渲染引擎',path:'learning/retrospectives/04-27-Schema渲染引擎'},
@@ -780,7 +764,7 @@ function renderHomepage(){
     html+='</div></div>';
   }
   // Interview card (full width)
-  html+='<div class="home-card home-full"><div class="home-card-icon">🎯</div><h3>面试备战</h3><div class="card-desc">速查板 · 题库 · 训练 · Agent 教练 · 简历 · 定向备战</div><div class="home-links" style="display:flex;flex-wrap:wrap;gap:8px 20px">';
+  html+='<div class="home-card home-full"><div class="home-card-icon">🎯</div><h3>面试备战</h3><div class="card-desc">速查板 · 题库 · 训练 · 简历 · 定向备战</div><div class="home-links" style="display:flex;flex-wrap:wrap;gap:8px 20px">';
   if(interview&&interview.children){
     for(const sub of interview.children){
       if(sub.path)html+='<a href="#/'+sub.path+'">'+sub.label+'</a>';

@@ -296,9 +296,9 @@ th{font-weight:600;color:var(--text2);font-size:12px}
   </div>
 </div>
 
-<!-- ==================== 八股 C+F 组 ==================== -->
+<!-- ==================== 基础题 ==================== -->
 <div class="card" data-c="bagu" data-kw="React 18 并发 Fiber Scheduler 中断 调度 优先级 链表">
-  <div class="card-head" onclick="togCard(this)"><span class="tag bagu">八股C16</span><div class="card-title">React 18 并发 + Fiber</div></div>
+  <div class="card-head" onclick="togCard(this)"><span class="tag bagu">#1</span><div class="card-title">React 18 并发 + Fiber</div></div>
   <div class="core">Fiber 把递归变成链表，Scheduler 按优先级调度</div>
   <button class="script-btn" onclick="togScript(this)">🎤</button>
   <div class="script-box">
@@ -309,7 +309,7 @@ th{font-weight:600;color:var(--text2);font-size:12px}
 </div>
 
 <div class="card" data-c="bagu" data-kw="useEffect useLayoutEffect 同步 异步 渲染 绘制 阻塞">
-  <div class="card-head" onclick="togCard(this)"><span class="tag bagu">八股C17</span><div class="card-title">useEffect vs useLayoutEffect</div></div>
+  <div class="card-head" onclick="togCard(this)"><span class="tag bagu">#2</span><div class="card-title">useEffect vs useLayoutEffect</div></div>
   <div class="core">useLayoutEffect 绘制前同步阻塞，useEffect 绘制后异步</div>
   <button class="script-btn" onclick="togScript(this)">🎤</button>
   <div class="script-box">
@@ -319,7 +319,7 @@ th{font-weight:600;color:var(--text2);font-size:12px}
 </div>
 
 <div class="card" data-c="bagu" data-kw="浏览器 渲染 DOM CSSOM Layout Paint Composite Reflow Repaint 管线">
-  <div class="card-head" onclick="togCard(this)"><span class="tag bagu">八股C18</span><div class="card-title">浏览器渲染管线</div></div>
+  <div class="card-head" onclick="togCard(this)"><span class="tag bagu">#4</span><div class="card-title">浏览器渲染管线</div></div>
   <div class="core">DOM+CSSOM → Render Tree → Layout → Paint → Composite</div>
   <button class="script-btn" onclick="togScript(this)">🎤</button>
   <div class="script-box">
@@ -329,7 +329,7 @@ th{font-weight:600;color:var(--text2);font-size:12px}
 </div>
 
 <div class="card" data-c="bagu" data-kw="HTTP 缓存 强缓存 协商缓存 Cache-Control ETag max-age no-cache 304">
-  <div class="card-head" onclick="togCard(this)"><span class="tag bagu">八股C19</span><div class="card-title">HTTP 缓存</div></div>
+  <div class="card-head" onclick="togCard(this)"><span class="tag bagu">#5</span><div class="card-title">HTTP 缓存</div></div>
   <div class="core">强缓存不请求，协商缓存可能 304 不下载</div>
   <button class="script-btn" onclick="togScript(this)">🎤</button>
   <div class="script-box">
@@ -339,7 +339,7 @@ th{font-weight:600;color:var(--text2);font-size:12px}
 </div>
 
 <div class="card" data-c="bagu" data-kw="TypeScript 高级类型 infer 条件类型 映射 Pick Omit Partial">
-  <div class="card-head" onclick="togCard(this)"><span class="tag bagu">八股C20</span><div class="card-title">TypeScript 高级类型</div></div>
+  <div class="card-head" onclick="togCard(this)"><span class="tag bagu">#12</span><div class="card-title">TypeScript 高级类型</div></div>
   <div class="core">infer 推断 + 条件三元 + 映射遍历</div>
   <button class="script-btn" onclick="togScript(this)">🎤</button>
   <div class="script-box">
@@ -366,7 +366,7 @@ th{font-weight:600;color:var(--text2);font-size:12px}
 </div>
 
 <div class="card" data-c="bagu" data-kw="事件循环 Event Loop 微任务 宏任务 Promise setTimeout async">
-  <div class="card-head" onclick="togCard(this)"><span class="tag bagu">八股F1</span><div class="card-title">事件循环代码输出分析</div></div>
+  <div class="card-head" onclick="togCard(this)"><span class="tag bagu">#7</span><div class="card-title">事件循环代码输出分析</div></div>
   <div class="core">微任务先于宏任务，同一轮微任务全清完才执行下一个宏任务</div>
   <button class="script-btn" onclick="togScript(this)">🎤</button>
   <div class="script-box">
@@ -384,7 +384,7 @@ console.log('5');
 </div>
 
 <div class="card" data-c="code" data-kw="Promise 并发 控制 调度器 手写 上传 批量">
-  <div class="card-head" onclick="togCard(this)"><span class="tag code">手撕H6</span><div class="card-title">Promise 并发调度器</div></div>
+  <div class="card-head" onclick="togCard(this)"><span class="tag code">#6</span><div class="card-title">Promise 并发调度器</div></div>
   <div class="core">计数器 + 等待队列，完成一个放一个</div>
   <div class="code-blk">class Scheduler {
   constructor(max) { this.max = max; this.count = 0; this.queue = []; }
@@ -407,7 +407,7 @@ console.log('5');
 </div>
 
 <div class="card" data-c="bagu" data-kw="React 19 Server Components RSC Compiler Form Actions use">
-  <div class="card-head" onclick="togCard(this)"><span class="tag bagu">八股F3</span><div class="card-title">React 19 新特性</div></div>
+  <div class="card-head" onclick="togCard(this)"><span class="tag bagu">#3</span><div class="card-title">React 19 新特性</div></div>
   <div class="core">Server Components + React Compiler + Form Actions</div>
   <button class="script-btn" onclick="togScript(this)">🎤</button>
   <div class="script-box">
@@ -416,7 +416,7 @@ console.log('5');
 </div>
 
 <div class="card" data-c="bagu" data-kw="XSS CSRF CSP 安全 注入 脚本 Cookie HttpOnly SameSite">
-  <div class="card-head" onclick="togCard(this)"><span class="tag bagu">八股F4</span><div class="card-title">XSS / CSRF / CSP 安全</div></div>
+  <div class="card-head" onclick="togCard(this)"><span class="tag bagu">#8</span><div class="card-title">XSS / CSRF / CSP 安全</div></div>
   <div class="core">XSS 注入脚本，CSRF 冒充请求，CSP 限制加载</div>
   <button class="script-btn" onclick="togScript(this)">🎤</button>
   <div class="script-box">
@@ -425,7 +425,7 @@ console.log('5');
 </div>
 
 <div class="card" data-c="bagu" data-kw="Webpack Vite 构建 打包 ESM HMR Tree Shaking">
-  <div class="card-head" onclick="togCard(this)"><span class="tag bagu">八股F5</span><div class="card-title">Webpack vs Vite</div></div>
+  <div class="card-head" onclick="togCard(this)"><span class="tag bagu">#10</span><div class="card-title">Webpack vs Vite</div></div>
   <div class="core">Webpack 打包构建，Vite 开发时原生 ESM 按需加载</div>
   <button class="script-btn" onclick="togScript(this)">🎤</button>
   <div class="script-box">
@@ -434,7 +434,7 @@ console.log('5');
 </div>
 
 <div class="card" data-c="bagu" data-kw="性能优化 首屏 LCP FID CLS CDN 懒加载 虚拟列表 代码分割">
-  <div class="card-head" onclick="togCard(this)"><span class="tag bagu">八股F6</span><div class="card-title">前端性能优化全链路</div></div>
+  <div class="card-head" onclick="togCard(this)"><span class="tag bagu">#11</span><div class="card-title">前端性能优化全链路</div></div>
   <div class="core">网络 → 渲染 → 资源 → 代码，四个维度</div>
   <button class="script-btn" onclick="togScript(this)">🎤</button>
   <div class="script-box">
@@ -444,7 +444,7 @@ console.log('5');
 </div>
 
 <div class="card" data-c="code" data-kw="手写 深拷贝 防抖 节流 instanceof EventEmitter">
-  <div class="card-head" onclick="togCard(this)"><span class="tag code">手撕H1-3</span><div class="card-title">深拷贝 + 防抖节流 + instanceof</div></div>
+  <div class="card-head" onclick="togCard(this)"><span class="tag code">#1-3</span><div class="card-title">深拷贝 + 防抖节流 + instanceof</div></div>
   <div class="core">深拷贝（循环引用）+ 防抖 + instanceof + EventEmitter</div>
   <div class="code-blk">// 深拷贝（处理循环引用）
 function deepClone(obj, map = new WeakMap()) {
@@ -473,7 +473,7 @@ function throttle(fn, interval) {
 </div>
 
 <div class="card" data-c="bagu" data-kw="HTTP/2 HTTP/3 QUIC 多路复用 队头阻塞">
-  <div class="card-head" onclick="togCard(this)"><span class="tag bagu">八股F8</span><div class="card-title">HTTP/2 和 HTTP/3</div></div>
+  <div class="card-head" onclick="togCard(this)"><span class="tag bagu">#6</span><div class="card-title">HTTP/2 和 HTTP/3</div></div>
   <div class="core">HTTP/2 多路复用+头部压缩，HTTP/3 用 QUIC 解决队头阻塞</div>
   <button class="script-btn" onclick="togScript(this)">🎤</button>
   <div class="script-box">
@@ -577,7 +577,7 @@ function throttle(fn, interval) {
 </div>
 
 <div class="card" data-c="code" data-kw="手写 EventEmitter instanceof 发布订阅 on emit off once">
-  <div class="card-head" onclick="togCard(this)"><span class="tag code">手撕H9</span><div class="card-title">手写 EventEmitter</div></div>
+  <div class="card-head" onclick="togCard(this)"><span class="tag code">#9</span><div class="card-title">手写 EventEmitter</div></div>
   <div class="core">发布订阅模式 + 原型链检查</div>
   <div class="code-blk">// EventEmitter
 class EventEmitter {
@@ -597,7 +597,7 @@ function myInstanceof(obj, Constructor) {
 </div>
 
 <div class="card" data-c="code" data-kw="call apply bind 手写 this 柯里化 new">
-  <div class="card-head" onclick="togCard(this)"><span class="tag code">手撕H4</span><div class="card-title">手写 call / apply / bind</div></div>
+  <div class="card-head" onclick="togCard(this)"><span class="tag code">#4</span><div class="card-title">手写 call / apply / bind</div></div>
   <div class="core">Symbol 防冲突 + bind 支持 new 调用</div>
   <div class="code-blk">Function.prototype.myCall = function(ctx, ...args) {
   ctx = ctx || window; const fn = Symbol();
@@ -614,7 +614,7 @@ Function.prototype.myBind = function(ctx, ...bindArgs) {
 </div>
 
 <div class="card" data-c="code" data-kw="ES6 class ES5 寄生组合继承 构造函数 prototype">
-  <div class="card-head" onclick="togCard(this)"><span class="tag code">手撕H5</span><div class="card-title">ES6 class 转 ES5</div></div>
+  <div class="card-head" onclick="togCard(this)"><span class="tag code">#5</span><div class="card-title">ES6 class 转 ES5</div></div>
   <div class="core">call 借属性 + Object.create 借方法</div>
   <div class="code-blk">function DogES5(name) {
   AnimalES5.call(this, name); // super
@@ -625,7 +625,7 @@ DogES5.prototype.constructor = DogES5;</div>
 </div>
 
 <div class="card" data-c="code" data-kw="Promise 串行 重试 retry 并行 async">
-  <div class="card-head" onclick="togCard(this)"><span class="tag code">手撕H7</span><div class="card-title">Promise 串行 + 重试</div></div>
+  <div class="card-head" onclick="togCard(this)"><span class="tag code">#7</span><div class="card-title">Promise 串行 + 重试</div></div>
   <div class="core">串行 for-await；重试递减计数 + 延迟</div>
   <div class="code-blk">async function serial(tasks) {
   const res = [];
@@ -643,7 +643,7 @@ function withRetry(fn, retries = 3, delay = 1000) {
 </div>
 
 <div class="card" data-c="code" data-kw="Promise.all 手写 计数器 并行">
-  <div class="card-head" onclick="togCard(this)"><span class="tag code">手撕H8</span><div class="card-title">手写 Promise.all</div></div>
+  <div class="card-head" onclick="togCard(this)"><span class="tag code">#8</span><div class="card-title">手写 Promise.all</div></div>
   <div class="core">计数器全到齐才 resolve，一个 reject 全 reject</div>
   <div class="code-blk">Promise.myAll = function(promises) {
   return new Promise((resolve, reject) => {
@@ -660,7 +660,7 @@ function withRetry(fn, retries = 3, delay = 1000) {
 </div>
 
 <div class="card" data-c="code" data-kw="模板编译 模板引擎 {{}} 替换 拼多多">
-  <div class="card-head" onclick="togCard(this)"><span class="tag code">手撕H10</span><div class="card-title">模板编译函数（拼多多高频）</div></div>
+  <div class="card-head" onclick="togCard(this)"><span class="tag code">#10</span><div class="card-title">模板编译函数（拼多多高频）</div></div>
   <div class="core">正则匹配 {{ key }} 并替换</div>
   <div class="code-blk">function compile(tpl, data) {
   return tpl.replace(/\{\{\s*(\w+)\s*\}\}/g, (_, key) =>
