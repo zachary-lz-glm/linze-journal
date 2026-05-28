@@ -616,35 +616,127 @@ function compileAdv(tpl, data) {
 }</div>
 </div>
 
-<div class="card" data-c="code" data-kw="哈希 Map 两数之和 配对 重复 统计">
-  <div class="card-head"><span class="tag code">算法T1</span><div class="card-title">哈希表 — 找配对/重复/统计</div></div>
-  <div class="core">遇到"找配对/找重复/统计次数"→ 开 Map</div>
-  <div class="code-blk">function twoSum(nums, target) {
+<div class="card" data-c="code" data-kw="哈希 Map 两数之和 配对 重复 统计 异位词">
+  <div class="card-head"><span class="tag code">T1</span><div class="card-title">哈希表 — 看到"找两个数/重复/统计次数"就用</div></div>
+  <div class="core">真题：两数之和(字节二面 LC1) + 字母异位词分组(美团一面 LC49)</div>
+  <div class="code-blk">// 两数之和 — 字节二面真题 / LC1
+// 题目：nums 和 target，找和为 target 的两个数，返回下标
+// 要求 O(n)，不能两层 for
+function twoSum(nums, target) {
   const map = new Map();
   for (let i = 0; i < nums.length; i++) {
     if (map.has(target - nums[i])) return [map.get(target - nums[i]), i];
     map.set(nums[i], i);
   }
+}
+// 口诀：查到返回，查不到存
+
+// 字母异位词分组 — 美团一面 / LC49
+// 题目：把字母相同排列不同的字符串分组
+// 示例：["eat","tea","tan"] → [["eat","tea"],["tan"]]
+function groupAnagrams(strs) {
+  const map = new Map();
+  for (const s of strs) {
+    const key = s.split('').sort().join('');
+    if (!map.has(key)) map.set(key, []);
+    map.get(key).push(s);
+  }
+  return [...map.values()];
 }</div>
 </div>
 
-<div class="card" data-c="code" data-kw="双指针 对撞 快慢 三数之和 反转链表">
-  <div class="card-head"><span class="tag code">算法T2</span><div class="card-title">双指针 — 排序后两端夹</div></div>
-  <div class="core">排序后左右两端往中间夹或快慢走</div>
-  <div class="code-blk">nums.sort((a, b) => a - b);
-for (let i = 0; i < nums.length - 2; i++) {
-  let l = i + 1, r = nums.length - 1;
-  while (l < r) {
-    const s = nums[i] + nums[l] + nums[r];
-    if (s === 0) { /* 收集 */ } else if (s < 0) l++; else r--;
+<div class="card" data-c="code" data-kw="双指针 对撞 快慢 三数之和 去重 原地 Move Zeroes">
+  <div class="card-head"><span class="tag code">T2</span><div class="card-title">双指针 — 看到"有序数组/两端夹/去重/原地修改"就用</div></div>
+  <div class="core">真题：三数之和(字节一面 LC15) + Move Zeroes(阿里二面 LC283)</div>
+  <div class="code-blk">// 三数之和 — 字节一面真题 / LC15
+// 题目：找所有和为0的三元组，不重复
+// 示例：[-1,0,1,2,-1,-4] → [[-1,-1,2],[-1,0,1]]
+function threeSum(nums) {
+  nums.sort((a, b) => a - b);
+  const res = [];
+  for (let i = 0; i < nums.length - 2; i++) {
+    if (i > 0 && nums[i] === nums[i-1]) continue; // 去重
+    let l = i + 1, r = nums.length - 1;
+    while (l < r) {
+      const s = nums[i] + nums[l] + nums[r];
+      if (s === 0) { res.push([nums[i],nums[l],nums[r]]); l++; r--; }
+      else if (s < 0) l++; else r--;
+    }
+  }
+  return res;
+}
+
+// Move Zeroes — 阿里二面真题 / LC283
+// 题目：把0全移到末尾，保持非零顺序，原地O(n)O(1)
+function moveZeroes(nums) {
+  let k = 0;
+  for (let i = 0; i < nums.length; i++) {
+    if (nums[i] !== 0) { [nums[k],nums[i]]=[nums[i],nums[k]]; k++; }
   }
 }</div>
 </div>
 
-<div class="card" data-c="code" data-kw="BFS 队列 层序 岛屿 最短路径">
-  <div class="card-head"><span class="tag code">算法T3</span><div class="card-title">BFS 队列 — 层序/岛屿</div></div>
-  <div class="core">队列 + while 循环 + 逐层处理</div>
-  <div class="code-blk">function levelOrder(root) {
+<div class="card" data-c="code" data-kw="滑动窗口 子串 无重复 最长子串 连续 区间">
+  <div class="card-head"><span class="tag code">T3</span><div class="card-title">滑动窗口 — 看到"最长/最短子串/连续区间"就用</div></div>
+  <div class="core">真题：无重复最长子串(美团一面 LC3) → 右扩左缩</div>
+  <div class="code-blk">// 无重复字符的最长子串 — 美团一面真题 / LC3
+// 题目：找不含有重复字符的最长子串长度
+// 示例："abcabcbb" → 3（"abc"）
+function lengthOfLongestSubstring(s) {
+  const set = new Set(); let l = 0, max = 0;
+  for (let r = 0; r < s.length; r++) {
+    while (set.has(s[r])) set.delete(s[l++]);
+    set.add(s[r]); max = Math.max(max, r - l + 1);
+  }
+  return max;
+}
+// 口诀：右扩左缩，遇到重复缩左</div>
+</div>
+
+<div class="card" data-c="code" data-kw="DFS 回溯 排列 组合 子集 全排列 组合总和">
+  <div class="card-head"><span class="tag code">T4</span><div class="card-title">DFS 回溯 — 看到"所有排列/组合/方案"就用</div></div>
+  <div class="core">真题：全排列(拼多多一面 LC46) + 组合总和(字节二面 LC39)</div>
+  <div class="code-blk">// 全排列 — 拼多多一面真题 / LC46
+// 题目：返回所有全排列
+// 示例：[1,2,3] → 6种排列
+function permute(nums) {
+  const res = [], used = Array(nums.length).fill(false);
+  function bt(path) {
+    if (path.length === nums.length) { res.push([...path]); return; }
+    for (let i = 0; i < nums.length; i++) {
+      if (used[i]) continue;
+      used[i] = true; path.push(nums[i]);
+      bt(path); path.pop(); used[i] = false;
+    }
+  }
+  bt([]); return res;
+}
+// 口诀：选了标记→往下走→回来撤销
+
+// 组合总和 — 字节二面 / LC39
+// 题目：和为target的所有组合，数字可重复用
+function combinationSum(candidates, target) {
+  const res = [];
+  function bt(start, path, sum) {
+    if (sum === target) { res.push([...path]); return; }
+    if (sum > target) return;
+    for (let i = start; i < candidates.length; i++) {
+      path.push(candidates[i]);
+      bt(i, path, sum + candidates[i]); // 传i不是i+1，可重复
+      path.pop();
+    }
+  }
+  bt(0, [], 0); return res;
+}</div>
+</div>
+
+<div class="card" data-c="code" data-kw="BFS 队列 层序 岛屿 最短路径 最少步数">
+  <div class="card-head"><span class="tag code">T5</span><div class="card-title">BFS 队列 — 看到"层序/最短路径/最少步数/岛屿"就用</div></div>
+  <div class="core">真题：层序遍历(美团一面 LC102) + 岛屿数量(字节一面 LC200)</div>
+  <div class="code-blk">// 层序遍历 — 美团一面真题 / LC102
+// 题目：逐层从左到右返回节点值
+// 示例：[3,9,20,null,null,15,7] → [[3],[9,20],[15,7]]
+function levelOrder(root) {
   if (!root) return [];
   const q = [root], res = [];
   while (q.length) {
@@ -656,70 +748,44 @@ for (let i = 0; i < nums.length - 2; i++) {
     res.push(lv);
   }
   return res;
-}</div>
-</div>
+}
 
-<div class="card" data-c="code" data-kw="滑动窗口 子串 无重复 最长子串">
-  <div class="card-head"><span class="tag code">算法T4</span><div class="card-title">滑动窗口 — 子串/子数组</div></div>
-  <div class="core">右指针一直走，遇到重复就缩左</div>
-  <div class="code-blk">function lengthOfLongestSubstring(s) {
-  const set = new Set(); let l = 0, max = 0;
-  for (let r = 0; r < s.length; r++) {
-    while (set.has(s[r])) set.delete(s[l++]);
-    set.add(s[r]); max = Math.max(max, r - l + 1);
-  }
-  return max;
-}</div>
-</div>
-
-<div class="card" data-c="code" data-kw="DFS 回溯 排列 组合 子集">
-  <div class="card-head"><span class="tag code">算法T5</span><div class="card-title">DFS 回溯 — 排列/组合</div></div>
-  <div class="core">选了标记 → 往下走 → 回来撤销</div>
-  <div class="code-blk">function permute(nums) {
-  const res = [], used = Array(nums.length).fill(false);
-  function bt(path) {
-    if (path.length === nums.length) { res.push([...path]); return; }
-    for (let i = 0; i < nums.length; i++) {
-      if (used[i]) continue;
-      used[i] = true; path.push(nums[i]);
-      bt(path); path.pop(); used[i] = false;
+// 岛屿数量 — 字节一面真题 / LC200
+// 题目：二维网格计算岛屿数量（被水包围的连通陆地）
+function numIslands(grid) {
+  let count = 0;
+  for (let i = 0; i < grid.length; i++) {
+    for (let j = 0; j < grid[0].length; j++) {
+      if (grid[i][j] === '1') { count++; bfs(grid, i, j); }
     }
   }
-  bt([]); return res;
-}</div>
-</div>
-
-<div class="card" data-c="code" data-kw="快排 快速排序 分治 partition 原地">
-  <div class="card-head"><span class="tag code">算法T6</span><div class="card-title">快速排序（美团第 1 名）</div></div>
-  <div class="core">选基准，小的左大的右，递归</div>
-  <div class="code-blk">function qs(arr, lo = 0, hi = arr.length - 1) {
-  if (lo >= hi) return;
-  let i = lo, j = hi, p = arr[lo];
-  while (i < j) {
-    while (i < j && arr[j] >= p) j--; arr[i] = arr[j];
-    while (i < j && arr[i] <= p) i++; arr[j] = arr[i];
+  return count;
+}
+function bfs(grid, r, c) {
+  const q = [[r, c]]; grid[r][c] = '0';
+  while (q.length) {
+    const [x, y] = q.shift();
+    for (const [dx, dy] of [[0,1],[0,-1],[1,0],[-1,0]]) {
+      const nx = x+dx, ny = y+dy;
+      if (nx>=0 && nx<grid.length && ny>=0 && ny<grid[0].length && grid[nx][ny]==='1') {
+        grid[nx][ny] = '0'; q.push([nx, ny]);
+      }
+    }
   }
-  arr[i] = p; qs(arr, lo, i - 1); qs(arr, i + 1, hi);
 }</div>
 </div>
 
-<div class="card" data-c="code" data-kw="链表 反转 合并 环 中点 二叉树 前序 中序 后序">
-  <div class="card-head"><span class="tag code">算法T7</span><div class="card-title">链表 + 二叉树核心模板</div></div>
-  <div class="core">链表靠画图，树靠递归</div>
-  <div class="code-blk">// 反转链表
+<div class="card" data-c="code" data-kw="链表 反转 合并 环 中点 dummy">
+  <div class="card-head"><span class="tag code">T6</span><div class="card-title">链表 — 看到"链表头节点/反转/环/合并"就用</div></div>
+  <div class="core">真题：反转链表(LC206) + 环检测(LC141) + 合并有序(LC21)，万能起手 dummy</div>
+  <div class="code-blk">// 反转链表 — 字节/快手高频 / LC206
 function reverseList(head) {
   let prev = null, cur = head;
   while (cur) { const next = cur.next; cur.next = prev; prev = cur; cur = next; }
   return prev;
 }
 
-// 二叉树前序遍历
-function preorder(root) {
-  if (!root) return [];
-  return [root.val, ...preorder(root.left), ...preorder(root.right)];
-}
-
-// 环检测（快慢指针）
+// 环检测（快慢指针）— LC141
 function hasCycle(head) {
   let slow = head, fast = head;
   while (fast && fast.next) {
@@ -729,7 +795,7 @@ function hasCycle(head) {
   return false;
 }
 
-// 合并两个有序链表
+// 合并两个有序链表 — LC21
 function mergeTwoLists(l1, l2) {
   const dummy = { next: null }; let cur = dummy;
   while (l1 && l2) {
@@ -740,6 +806,74 @@ function mergeTwoLists(l1, l2) {
   cur.next = l1 || l2;
   return dummy.next;
 }</div>
+</div>
+
+<div class="card" data-c="code" data-kw="快排 快速排序 分治 partition 原地 第K大 TopK">
+  <div class="card-head"><span class="tag code">T7</span><div class="card-title">快排分治 — 看到"排序/第K大/TopK"就用</div></div>
+  <div class="core">真题：快排(拼多多必考) + 第K大元素(字节二面 LC215)</div>
+  <div class="code-blk">// 快速排序 — 拼多多必考，面试官说"写个排序"就快排
+function qs(arr, lo = 0, hi = arr.length - 1) {
+  if (lo >= hi) return;
+  let i = lo, j = hi, p = arr[lo];
+  while (i < j) {
+    while (i < j && arr[j] >= p) j--; arr[i] = arr[j];
+    while (i < j && arr[i] <= p) i++; arr[j] = arr[i];
+  }
+  arr[i] = p; qs(arr, lo, i - 1); qs(arr, i + 1, hi);
+}
+
+// 第K大元素 — 字节二面真题 / LC215
+// 题目：返回数组第k大的元素，要求O(n)平均
+function findKthLargest(nums, k) {
+  function partition(lo, hi) {
+    const pivot = nums[hi]; let i = lo;
+    for (let j = lo; j < hi; j++) {
+      if (nums[j] > pivot) { [nums[i],nums[j]]=[nums[j],nums[i]]; i++; }
+    }
+    [nums[i],nums[hi]]=[nums[hi],nums[i]]; return i;
+  }
+  let lo = 0, hi = nums.length - 1;
+  while (lo <= hi) {
+    const p = partition(lo, hi);
+    if (p === k - 1) return nums[p];
+    else if (p < k - 1) lo = p + 1; else hi = p - 1;
+  }
+}</div>
+</div>
+
+<div class="card" data-c="code" data-kw="字符串 相加 大数 逐位 进位 模拟">
+  <div class="card-head"><span class="tag code">T8</span><div class="card-title">字符串模拟 — 看到"大数运算/字符串相加"就用</div></div>
+  <div class="core">真题：字符串相加(字节二面 LC415) — CodeTop必做</div>
+  <div class="code-blk">// 字符串相加 — 字节二面真题 / LC415
+// 题目：两个超长数字字符串相加，不能用BigInt
+// 示例："456"+"77" → "533"，"999"+"1" → "1000"
+function addStrings(a, b) {
+  let i = a.length - 1, j = b.length - 1, carry = 0, res = '';
+  while (i >= 0 || j >= 0 || carry) {
+    const sum = (i>=0 ? +a[i--] : 0) + (j>=0 ? +b[j--] : 0) + carry;
+    res = (sum % 10) + res;
+    carry = Math.floor(sum / 10);
+  }
+  return res;
+}
+// 口诀：从末尾逐位加，记得进位</div>
+</div>
+
+<div class="card" data-c="code" data-kw="DP 贪心 最大子序和 连续子数组 最优">
+  <div class="card-head"><span class="tag code">T9</span><div class="card-title">DP贪心 — 看到"最大/最小子数组/连续最优"就用</div></div>
+  <div class="core">真题：最大子序和(拼多多一面 LC53) — 当前和为负就扔掉</div>
+  <div class="code-blk">// 最大子序和 — 拼多多一面真题 / LC53
+// 题目：找和最大的连续子数组
+// 示例：[-2,1,-3,4,-1,2,1,-5,4] → 6（子数组[4,-1,2,1]）
+function maxSubArray(nums) {
+  let cur = nums[0], max = nums[0];
+  for (let i = 1; i < nums.length; i++) {
+    cur = Math.max(nums[i], cur + nums[i]); // 接前面 or 重新开始
+    max = Math.max(max, cur);
+  }
+  return max;
+}
+// 口诀：当前和为负就扔掉，重新开始累加</div>
 </div>
 
 <div class="card" data-c="code" data-kw="拼多多 手撕 必考 清单 列表">
@@ -858,11 +992,19 @@ DogES5.prototype = Object.create(AnimalES5.prototype);
 DogES5.prototype.constructor = DogES5;</div>
 </div>
 
-<div class="card" data-c="code" data-kw="算法 面试 口诀 速览 全部模板">
-  <div class="card-head"><span class="tag code">速览</span><div class="card-title">面试前 1 分钟算法速览</div></div>
-  <div class="core">10 个套路，每个一句话</div>
+<div class="card" data-c="code" data-kw="算法 面试 口诀 速览 全部模板 题型">
+  <div class="card-head"><span class="tag code">速览</span><div class="card-title">题目关键词 → 用什么套路（面试前 1 分钟）</div></div>
+  <div class="core">拿到题先看关键词，直接定位题型</div>
   <div class="card-body">
-    <p><strong>找配对</strong>→ Map | <strong>两端夹</strong>→ 双指针 | <strong>层次走</strong>→ BFS 队列 | <strong>子串</strong>→ 滑动窗口 | <strong>排列</strong>→ 回溯 DFS | <strong>树路径</strong>→ DFS 带参数 | <strong>合并有序</strong>→ 从后填 | <strong>字符串</strong>→ 按位处理 | <strong>最大子序</strong>→ 接前面或从自己开始 | <strong>快排</strong>→ 分治原地</p>
+    <p><strong>找两个数/重复/统计</strong>→ 哈希Map（两数之和LC1）</p>
+    <p><strong>有序数组/两端夹/去重/原地</strong>→ 双指针（三数之和LC15、MoveZeroesLC283）</p>
+    <p><strong>最长子串/连续区间/不重复</strong>→ 滑动窗口（最长子串LC3）</p>
+    <p><strong>所有排列/组合/方案</strong>→ DFS回溯（全排列LC46、组合总和LC39）</p>
+    <p><strong>层序/最短路径/岛屿</strong>→ BFS队列（层序LC102、岛屿LC200）</p>
+    <p><strong>链表头/反转/环/合并</strong>→ dummy头+cur遍历（反转LC206、环LC141、合并LC21）</p>
+    <p><strong>排序/第K大/TopK</strong>→ 快排分治（第K大LC215）</p>
+    <p><strong>大数运算/字符串相加</strong>→ 字符串模拟（字符串相加LC415）</p>
+    <p><strong>最大/最小子数组/连续最优</strong>→ DP贪心（最大子序和LC53）</p>
   </div>
 </div>
 
@@ -1198,9 +1340,94 @@ function sortColors(nums) {
 
 <div class="card" data-c="emer" data-kw="职业 规划 发展 方向 目标">
   <div class="card-head"><span class="tag emer">软技能</span><div class="card-title">你的职业规划是什么？</div></div>
-  <div class="core">前端架构 + AI 工程双线发展</div>
+  <div class="core">前端架构 → AI 工程融合 → 技术领导者</div>
   <div class="card-body">
-    <p>短期 1-2 年：深入 AI 工程工作流，把 prd-tools 的方法论在更大的团队验证。中期 3-5 年：成为前端+AI 交叉领域的架构师，不只写代码，更设计 AI 和工程的融合方案。长期：推动前端工程师从"实现者"变成"AI 工作流设计者"，这个转型已经在发生了。</p>
+    <p><strong>短期 1-2 年</strong>：继续深化前端架构能力，同时在 AI 工程方向建立壁垒。prd-tools 已经验证了 PRD 蒸馏的方法论，下一步是在更大团队、更复杂场景下验证通用性——比如从营销中台扩展到整个国际化的需求工程。</p>
+    <p><strong>中期 3-5 年</strong>：成为前端 + AI 交叉领域的架构师。不只是写代码，而是设计 AI 和工程融合的方案——类似我现在做的 Context Engineering 和 Harness Engineering，这块国内前端圈还在早期，我有先发优势。</p>
+    <p><strong>长期</strong>：推动团队从"AI 辅助写代码"到"AI 驱动的工程工作流"转型。前端工程师从实现者变成工作流设计者，这个转型已经在发生，我想做推动者。</p>
+    <p class="hint">关键：不是空谈"我要当架构师"，而是用已有项目证明你在往这个方向走。</p>
+  </div>
+</div>
+
+<div class="card" data-c="emer" data-kw="为什么离开 换工作 看机会 离职 原因 动机">
+  <div class="card-head"><span class="tag emer">软技能</span><div class="card-title">为什么看新机会？</div></div>
+  <div class="core">成长天花板 + 想在更大场景验证架构能力</div>
+  <div class="card-body">
+    <p>两个原因。<strong>第一是成长空间</strong>：在滴滴国际化四年，从 0 到 1 做了 Schema 架构和 AI 工作流，该验证的都验证了。但国际化业务相对稳定，新技术栈的探索空间有限——我想在更前沿的 AI 工程场景里继续深入。</p>
+    <p><strong>第二是架构影响力的边界</strong>：我设计的架构在营销中台已经覆盖了 20+ 活动类型、8 个项目，但始终是一个 BU 内部的方案。我想到更大的平台验证这些方法论——Schema 驱动、知识库治理、AI 工作流——是不是真的通用。</p>
+    <p class="hint">千万不要说负面原因（薪资低、领导差、加班多）。要说"拉力"不说"推力"。</p>
+  </div>
+</div>
+
+<div class="card" data-c="emer" data-kw="优点 缺点 优势 不足 自我评价">
+  <div class="card-head"><span class="tag emer">软技能</span><div class="card-title">你的优点和缺点？</div></div>
+  <div class="core">优点：从业务中抽象架构 + 全流程质量把控。缺点：架构方案表达力有上限</div>
+  <div class="card-body">
+    <p><strong>优点</strong>：最核心的能力是<strong>从业务中抽取共性做架构抽象</strong>。不是拿到需求就开始写代码，而是先看 20 种活动类型的共性，设计一套 Schema 架构覆盖住——新增活动前端零代码就是这个能力的直接体现。第二是<strong>全流程质量把控</strong>，prd-tools 不是让 AI 写代码，而是设计了一套证据链 + 质量门控保证 AI 产出的可靠性。</p>
+    <p><strong>缺点</strong>：在架构设计上有时<strong>过度追求通用性</strong>。比如 Schema 联动引擎初期设计了很灵活的嵌套联动，但实际 80% 的场景是简单的显隐和值联动，复杂的用例反而增加了理解成本。后来做了简化——16 个标准联动模板覆盖绝大部分场景，超出范围的才允许自定义。这个经历让我学会了<strong>架构要服务于实际场景，不是为了架构而架构</strong>。</p>
+    <p class="hint">缺点不能说"我太追求完美"这种假缺点。要说一个真实的、有反思的、有改进行为的缺点。</p>
+  </div>
+</div>
+
+<div class="card" data-c="emer" data-kw="成就感 成就 最自豪 项目 亮点">
+  <div class="card-head"><span class="tag emer">软技能</span><div class="card-title">做过最有成就感的事？</div></div>
+  <div class="core">从一个人做到全团队受益——Schema 架构让前端从写代码变成配置</div>
+  <div class="card-body">
+    <p>最有成就感的是<strong>Schema 驱动架构落地后，新增活动类型前端零代码</strong>这个结果。</p>
+    <p>之前每新增一种活动，前端要写一套新页面 + 联动逻辑，平均两周。我刚进团队的时候，一个月同时在排三四个活动需求，忙到手脚并用。然后花了两个月做了 Schema 架构——BFF 模板引擎生成 + 前端动态渲染 + 联动引擎。</p>
+    <p>落地后第一个新增活动类型，前端同学只需要在测试阶段验证一下就行，开发时间从两周变成三天。后来这个架构覆盖了 20+ 种活动，前端团队基本不用为新增活动写新代码了。<strong>从自己忙到让团队不忙，这个转变最有成就感。</strong></p>
+  </div>
+</div>
+
+<div class="card" data-c="emer" data-kw="冲突 协作 分歧 意见不一致 沟通 后端 PM">
+  <div class="card-head"><span class="tag emer">软技能</span><div class="card-title">遇到过最大的协作冲突？</div></div>
+  <div class="core">后端不理解 BFF 职责边界，通过数据量化达成共识</div>
+  <div class="card-body">
+    <p><strong>背景</strong>：引入 BFF 层时，后端团队有抵触——觉得 BFF 抢了他们的工作，或者觉得多一层增加复杂度。最激烈的分歧是 BFF 到底该不该放业务逻辑。</p>
+    <p><strong>我的做法</strong>：不争对错，拿数据说话。我做了个对比：一个典型活动需求，没有 BFF 前端直接调 3 个后端接口，数据拼装和联动全在前端，出了 Bug 前后端互相推。有 BFF 后，前端只调一个接口拿 Schema 渲染，Bug 率降了，联调时间也省了。</p>
+    <p><strong>结果</strong>：拿数据给技术负责人看，负责人拍板 BFF 只做聚合 + 适配 + 兜底，不碰业务逻辑。这个边界定了之后，后端反而主动配合了——因为 BFF 帮他们挡掉了前端的碎片化请求。</p>
+    <p class="hint">协作冲突的回答公式：客观描述分歧 → 你的具体行动 → 用数据量化结果 → 你学到了什么。</p>
+  </div>
+</div>
+
+<div class="card" data-c="emer" data-kw="技术 沉淀 产出 分享 总结 博客 文档">
+  <div class="card-head"><span class="tag emer">软技能</span><div class="card-title">你怎么做技术沉淀？</div></div>
+  <div class="core">项目复盘 + 知识库 + 开源工具，三线并行</div>
+  <div class="card-body">
+    <p><strong>第一线：项目复盘文档</strong>。每个重要架构决策都会写复盘——为什么这么设计、踩了什么坑、最终怎么解决的。比如重构三阶段，产出了 10+ 篇治理文档，这些文档后来成了新人 onboarding 材料。</p>
+    <p><strong>第二线：个人知识库</strong>。用 Docsify 搭了一个学习知识库（linze-journal），把前端基础、架构模式、AI 工程分模块整理。不是泛泛抄文章，是结合项目经验写的——比如闭包那篇，直接拿联动引擎的柯里化举例。</p>
+    <p><strong>第三线：开源工具</strong>。prd-tools 本身就是一个可复用的 AI 工程工作流——6 文件 SSOT + 证据链 + 质量门控的方法论不绑定具体业务，其他团队也能用。</p>
+  </div>
+</div>
+
+<div class="card" data-c="emer" data-kw="薪资 期望 到岗 时间 offer 薪水">
+  <div class="card-head"><span class="tag emer">软技能</span><div class="card-title">期望薪资和到岗时间？</div></div>
+  <div class="core">薪资给范围，到岗说一个月，留谈判空间</div>
+  <div class="card-body">
+    <p><strong>薪资</strong>：给一个合理的范围而不是固定数字，比如"我目前的综合 package 是 XX，期望有一定涨幅，具体可以聊"。让对方先出价。如果对方追问具体数字，说一个范围的中间值偏高。</p>
+    <p><strong>到岗</strong>：正常是一个月交接期。"目前手里还有几个重要项目在收尾，预计一个月可以到岗。如果紧急可以协商提前"。</p>
+    <p class="hint">薪资谈判核心：1. 知道自己的市场价（4年+大厂+A绩效+架构经验，应该有溢价）2. 不要先出底牌 3. 综合考虑 base+bonus+期权+通勤+技术栈。</p>
+  </div>
+</div>
+
+<!-- ==================== 反问面试官 ==================== -->
+<div class="card" data-c="emer" data-kw="反问 问面试官 提问 最后 问题">
+  <div class="card-head"><span class="tag emer">反问</span><div class="card-title">有什么想问我的？（每次面试必问）</div></div>
+  <div class="core">准备 2-3 个问题，按面试官角色选</div>
+  <div class="card-body">
+    <p><strong>技术面（一线/资深）</strong>：</p>
+    <p>· 团队目前的技术栈和架构是什么？有没有在做的技术升级？</p>
+    <p>· 我这个岗位进来之后，前半年最重要的 1-2 件事是什么？</p>
+    <p>· 团队怎么做 Code Review 和技术决策？是集中式还是民主式？</p>
+    <p><strong>架构师/技术负责人面</strong>：</p>
+    <p>· 团队在 AI 工程方向有什么规划？比如 AI 辅助开发、Agent 工作流？</p>
+    <p>· 目前前端架构最大的技术债或痛点是什么？</p>
+    <p>· 怎么看前端工程师在 AI 时代的角色变化？</p>
+    <p><strong>HR 面</strong>：</p>
+    <p>· 团队规模和组成？前端多少人？</p>
+    <p>· 绩效考核标准是什么样的？</p>
+    <p>· 团队的入职 onboarding 流程？</p>
+    <p class="hint">选 2-3 个问，别全问。优先问和工作内容直接相关的——展现你对岗位的认真思考，不是来凑数的。</p>
   </div>
 </div>
 
