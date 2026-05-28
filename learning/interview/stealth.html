@@ -233,6 +233,51 @@ body{overscroll-behavior-y:contain}
 </div>
 
 <!-- ==================== 项目扩展 ==================== -->
+<div class="card" data-c="proj" data-kw="重构 方法论 渐进式 三阶段 治理 升级 规范">
+  <div class="card-head"><span class="tag proj">Q21</span><div class="card-title">中后台系统怎么做重构？</div></div>
+  <div class="core">三阶段渐进式：问题治理 → 架构升级 → 规范落地</div>
+  <div class="card-body">
+    <p><strong>阶段一（1-2 月）问题治理</strong>：建线上问题分类看板，一个月内解决 10+ 起归纳为 5 种类型，通过梳理业务接口熟悉项目，产出 10+ 篇治理文档。</p>
+    <p><strong>阶段二（3-4 月）架构升级</strong>：协议层 JSON Schema 动态化 + 基础层 Monorepo 抽公共组件 + 能力层 BFF 解耦 + 应用层 qiankun 微前端。</p>
+    <p><strong>阶段三（1-2 月）规范落地</strong>：开发规范 + CI/CD 流水线 + 需求流程规范。</p>
+    <p class="hint">关键策略：不停业务搞重构，每阶段有量化成果（错误减 60%、效率提 50%），PM 看到数据后主动配合。</p>
+  </div>
+</div>
+
+<div class="card" data-c="proj" data-kw="工程 规范 CI/CD 流水线 BFF分层 Code Review 需求变更">
+  <div class="card-head"><span class="tag proj">Q22</span><div class="card-title">工程化规范体系怎么建设？</div></div>
+  <div class="core">三层：开发规范 + 流水线规范 + 需求流程规范</div>
+  <div class="card-body">
+    <p><strong>开发规范</strong>：BFF 强制分层（Controller→Service→Model），跨层调用 CR 打回。ESLint + Prettier + Husky + commitlint。</p>
+    <p><strong>流水线</strong>：编译红线（未授权第三方库报错）+ CR 强制（if/else 超 3 层重构）+ 灰度发布（先 10% 观察）。</p>
+    <p><strong>需求流程</strong>：测试准入后的变更必须同步领导和协作方，不能偷偷改。</p>
+  </div>
+</div>
+
+<div class="card" data-c="proj" data-kw="BFF 运维 故障 排查 K8s 内存泄漏 TraceID 监控">
+  <div class="card-head"><span class="tag proj">Q23</span><div class="card-title">BFF 层运维和故障排查？</div></div>
+  <div class="core">双层感知 + 错误分级 + TraceID 全链路</div>
+  <div class="card-body">
+    <p><strong>感知</strong>：主动监控捕获 JS 运行时错误 + K8s 每 30s 健康检查自动重启。</p>
+    <p><strong>错误分级</strong>：全局错误（DB 连接失败）→ 5xx + P0 告警；局部错误 → 降级返回部分数据；第三方波动 → 重试 + Redis 缓存兜底。</p>
+    <p><strong>内存泄漏</strong>：Chrome DevTools 堆快照对比。常见原因：连接没关、全局 Map 只增不删、监听器没移除。</p>
+    <p><strong>全链路</strong>：前端 Sentry → TraceID → LogInsight 搜索 → 串联 BFF→下游。</p>
+  </div>
+</div>
+
+<div class="card" data-c="proj" data-kw="设计模式 策略 工厂 观察者 柯里化 模板方法 if-else">
+  <div class="card-head"><span class="tag proj">Q24</span><div class="card-title">设计模式在前端的实际应用？</div></div>
+  <div class="core">5 种模式，不是刻意套用，是解决问题自然演化</div>
+  <div class="card-body">
+    <p><strong>策略模式</strong>：25 种活动类型原 25 个 if/else → 映射表，新增加一行。</p>
+    <p><strong>工厂模式</strong>：BFF handler(ctx) 生成不同 Schema 节点。</p>
+    <p><strong>观察者模式</strong>：d_actions + listener——字段 emit 变更，FieldWrapper on 注册依赖。</p>
+    <p><strong>柯里化</strong>：createValidator(rules)(values) 预设校验规则；trackEvent(name)(params) 预设埋点事件。</p>
+    <p><strong>模板方法</strong>：BFF 模板引擎 hooks（beforeEach/afterEach/afterAll）定义骨架，handler 定制行为。</p>
+  </div>
+</div>
+
+<!-- ==================== 项目扩展（原） ==================== -->
 <div class="card" data-c="proj" data-kw="Rollup 打包 tree-shaking ESM CJS 为什么不用Webpack">
   <div class="card-head"><span class="tag proj">扩展</span><div class="card-title">为什么用 Rollup 不用 Webpack？</div></div>
   <div class="core">Rollup 基于 ESM 静态分析，天然 tree-shaking，产物干净</div>
