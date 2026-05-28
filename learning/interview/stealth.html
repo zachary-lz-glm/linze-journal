@@ -33,12 +33,18 @@ body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","PingFang SC",sa
 .card-title{font-size:calc(var(--fs) - 2px);font-weight:700;color:#eee;flex:1}
 .core{margin:6px 12px 8px;padding:10px 14px;border-radius:8px;font-size:calc(var(--fs) + 2px);font-weight:800;color:var(--core);background:var(--core-bg);line-height:1.4}
 
-/* BODY (hidden by default, accordion) */
-.card-body{display:none;padding:0 12px 12px}
-.card.open .card-body{display:block}
+/* BODY — 全展开 */
+.card{cursor:default}
+.card-body{padding:0 12px 12px}
 .card-body p{margin-bottom:6px;font-size:calc(var(--fs) - 2px);color:#aaa;line-height:1.6}
 .card-body .hint{color:#888;font-size:calc(var(--fs) - 4px);font-style:italic;margin-top:4px}
 .card-body strong{color:#ddd}
+.code-blk{background:#0a0a0a;color:#e0e0e0;padding:10px 12px;margin:4px 12px 8px;border-radius:8px;font-family:"SF Mono",Menlo,monospace;font-size:14px;overflow-x:auto;white-space:pre;word-break:keep-all;line-height:1.5;-webkit-overflow-scrolling:touch;border:1px solid #222}
+.points{margin:0 14px 8px;padding-left:20px}
+.points li{padding:2px 0;font-size:calc(var(--fs) - 2px)}
+table{width:calc(100% - 28px);margin:4px 14px 8px;border-collapse:collapse;font-size:calc(var(--fs) - 2px)}
+th,td{padding:5px 8px;text-align:left;border-bottom:1px solid #222}
+th{font-weight:600;color:#888;font-size:12px}
 
 .no-result{text-align:center;padding:40px;color:#555;display:none}
 </style>
@@ -58,7 +64,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","PingFang SC",sa
 <div class="container" id="cards">
 
 <!-- ==================== 开场 ==================== -->
-<div class="card open" data-c="open" data-kw="开场白 自我介绍">
+<div class="card" data-c="open" data-kw="开场白 自我介绍">
   <div class="card-head"><span class="tag open">开场</span><div class="card-title">30 秒项目开场白</div></div>
   <div class="core">Schema 驱动架构 → BFF 生成 → 前端渲染 → AI 工程化</div>
   <div class="card-body">
@@ -388,19 +394,293 @@ body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","PingFang SC",sa
 </div>
 
 <!-- ==================== 手撕代码 ==================== -->
-<div class="card" data-c="code" data-kw="拼多多 手撕 必考 Promise 模板编译 class 调度器 EventEmitter 深拷贝 防抖 call bind">
-  <div class="card-head"><span class="tag code">必考</span><div class="card-title">拼多多手撕必考 8 题</div></div>
+<div class="card" data-c="code" data-kw="Promise 并发 控制 调度器 手写 上传 批量">
+  <div class="card-head"><span class="tag code">#6</span><div class="card-title">Promise 并发调度器</div></div>
+  <div class="core">计数器 + 等待队列，完成一个放一个</div>
+  <div class="code-blk">class Scheduler {
+  constructor(max) { this.max = max; this.count = 0; this.queue = []; }
+  add(fn) {
+    return new Promise(resolve => {
+      if (this.count < this.max) {
+        this.count++;
+        fn().then(() => { this.count--; resolve(); this.next(); });
+      } else { this.queue.push({ fn, resolve }); }
+    });
+  }
+  next() {
+    if (this.queue.length && this.count < this.max) {
+      const { fn, resolve } = this.queue.shift();
+      this.count++;
+      fn().then(() => { this.count--; resolve(); this.next(); });
+    }
+  }
+}</div>
+</div>
+
+<div class="card" data-c="code" data-kw="手写 深拷贝 防抖 节流 instanceof EventEmitter">
+  <div class="card-head"><span class="tag code">#1-3</span><div class="card-title">深拷贝 + 防抖节流 + instanceof</div></div>
+  <div class="core">深拷贝（循环引用）+ 防抖 + 节流</div>
+  <div class="code-blk">// 深拷贝（处理循环引用）
+function deepClone(obj, map = new WeakMap()) {
+  if (obj === null || typeof obj !== 'object') return obj;
+  if (map.has(obj)) return map.get(obj);
+  const clone = Array.isArray(obj) ? [] : {};
+  map.set(obj, clone);
+  for (const key of Reflect.ownKeys(obj)) clone[key] = deepClone(obj[key], map);
+  return clone;
+}
+
+// 防抖
+function debounce(fn, delay) {
+  let timer;
+  return function(...args) { clearTimeout(timer); timer = setTimeout(() => fn.apply(this, args), delay); };
+}
+
+// 节流
+function throttle(fn, interval) {
+  let lastTime = 0;
+  return function(...args) {
+    const now = Date.now();
+    if (now - lastTime >= interval) { lastTime = now; fn.apply(this, args); }
+  };
+}</div>
+</div>
+
+<div class="card" data-c="code" data-kw="手写 EventEmitter instanceof 发布订阅 on emit off once">
+  <div class="card-head"><span class="tag code">#9</span><div class="card-title">手写 EventEmitter</div></div>
+  <div class="core">发布订阅模式 + 原型链检查</div>
+  <div class="code-blk">class EventEmitter {
+  constructor() { this.events = {}; }
+  on(event, fn) { (this.events[event] ||= []).push(fn); }
+  emit(event, ...args) { (this.events[event] || []).forEach(fn => fn(...args)); }
+  off(event, fn) { this.events[event] = (this.events[event] || []).filter(f => f !== fn); }
+  once(event, fn) { const wrap = (...args) => { fn(...args); this.off(event, wrap); }; this.on(event, wrap); }
+}
+
+// instanceof 实现
+function myInstanceof(obj, Constructor) {
+  let proto = Object.getPrototypeOf(obj);
+  while (proto) { if (proto === Constructor.prototype) return true; proto = Object.getPrototypeOf(proto); }
+  return false;
+}</div>
+</div>
+
+<div class="card" data-c="code" data-kw="call apply bind 手写 this 柯里化 new">
+  <div class="card-head"><span class="tag code">#4</span><div class="card-title">手写 call / apply / bind</div></div>
+  <div class="core">Symbol 防冲突 + bind 支持 new 调用</div>
+  <div class="code-blk">Function.prototype.myCall = function(ctx, ...args) {
+  ctx = ctx || window; const fn = Symbol();
+  ctx[fn] = this; const r = ctx[fn](...args); delete ctx[fn]; return r;
+};
+Function.prototype.myBind = function(ctx, ...bindArgs) {
+  const fn = this;
+  const bound = function(...callArgs) {
+    return fn.apply(this instanceof fn ? this : ctx, [...bindArgs, ...callArgs]);
+  };
+  bound.prototype = Object.create(fn.prototype);
+  return bound;
+};</div>
+</div>
+
+<div class="card" data-c="code" data-kw="ES6 class ES5 寄生组合继承 构造函数 prototype">
+  <div class="card-head"><span class="tag code">#5</span><div class="card-title">ES6 class 转 ES5</div></div>
+  <div class="core">call 借属性 + Object.create 借方法</div>
+  <div class="code-blk">function DogES5(name) {
+  AnimalES5.call(this, name); // super
+  this.type = 'dog';
+}
+DogES5.prototype = Object.create(AnimalES5.prototype);
+DogES5.prototype.constructor = DogES5;</div>
+</div>
+
+<div class="card" data-c="code" data-kw="Promise 串行 重试 retry 并行 async">
+  <div class="card-head"><span class="tag code">#7</span><div class="card-title">Promise 串行 + 重试</div></div>
+  <div class="core">串行 for-await；重试递减计数 + 延迟</div>
+  <div class="code-blk">async function serial(tasks) {
+  const res = [];
+  for (const t of tasks) res.push(await t());
+  return res;
+}
+function withRetry(fn, retries = 3, delay = 1000) {
+  return new Promise(async (resolve, reject) => {
+    for (let i = 0; i < retries; i++) {
+      try { return resolve(await fn()); }
+      catch (e) { if (i === retries - 1) reject(e); else await new Promise(r => setTimeout(r, delay)); }
+    }
+  });
+}</div>
+</div>
+
+<div class="card" data-c="code" data-kw="Promise.all 手写 计数器 并行">
+  <div class="card-head"><span class="tag code">#8</span><div class="card-title">手写 Promise.all</div></div>
+  <div class="core">计数器全到齐才 resolve，一个 reject 全 reject</div>
+  <div class="code-blk">Promise.myAll = function(promises) {
+  return new Promise((resolve, reject) => {
+    const results = []; let count = 0;
+    promises.forEach((p, i) => {
+      Promise.resolve(p).then(
+        val => { results[i] = val; if (++count === promises.length) resolve(results); },
+        reject
+      );
+    });
+    if (!promises.length) resolve([]);
+  });
+};</div>
+</div>
+
+<div class="card" data-c="code" data-kw="模板编译 模板引擎 {{}} 替换 拼多多">
+  <div class="card-head"><span class="tag code">#10</span><div class="card-title">模板编译函数（拼多多高频）</div></div>
+  <div class="core">正则匹配 {{ key }} 并替换</div>
+  <div class="code-blk">function compile(tpl, data) {
+  return tpl.replace(/\{\{\s*(\w+)\s*\}\}/g, (_, key) =>
+    data[key] !== undefined ? data[key] : '');
+}
+// 进阶：支持嵌套 {{ user.name }}
+function compileAdv(tpl, data) {
+  return tpl.replace(/\{\{\s*([\w.]+)\s*\}\}/g, (_, path) =>
+    path.split('.').reduce((o, k) => o?.[k], data) ?? '');
+}</div>
+</div>
+
+<div class="card" data-c="code" data-kw="哈希 Map 两数之和 配对 重复 统计">
+  <div class="card-head"><span class="tag code">算法T1</span><div class="card-title">哈希表 — 找配对/重复/统计</div></div>
+  <div class="core">遇到"找配对/找重复/统计次数"→ 开 Map</div>
+  <div class="code-blk">function twoSum(nums, target) {
+  const map = new Map();
+  for (let i = 0; i < nums.length; i++) {
+    if (map.has(target - nums[i])) return [map.get(target - nums[i]), i];
+    map.set(nums[i], i);
+  }
+}</div>
+</div>
+
+<div class="card" data-c="code" data-kw="双指针 对撞 快慢 三数之和 反转链表">
+  <div class="card-head"><span class="tag code">算法T2</span><div class="card-title">双指针 — 排序后两端夹</div></div>
+  <div class="core">排序后左右两端往中间夹或快慢走</div>
+  <div class="code-blk">nums.sort((a, b) => a - b);
+for (let i = 0; i < nums.length - 2; i++) {
+  let l = i + 1, r = nums.length - 1;
+  while (l < r) {
+    const s = nums[i] + nums[l] + nums[r];
+    if (s === 0) { /* 收集 */ } else if (s < 0) l++; else r--;
+  }
+}</div>
+</div>
+
+<div class="card" data-c="code" data-kw="BFS 队列 层序 岛屿 最短路径">
+  <div class="card-head"><span class="tag code">算法T3</span><div class="card-title">BFS 队列 — 层序/岛屿</div></div>
+  <div class="core">队列 + while 循环 + 逐层处理</div>
+  <div class="code-blk">function levelOrder(root) {
+  if (!root) return [];
+  const q = [root], res = [];
+  while (q.length) {
+    const lv = [], sz = q.length;
+    for (let i = 0; i < sz; i++) {
+      const n = q.shift(); lv.push(n.val);
+      if (n.left) q.push(n.left); if (n.right) q.push(n.right);
+    }
+    res.push(lv);
+  }
+  return res;
+}</div>
+</div>
+
+<div class="card" data-c="code" data-kw="滑动窗口 子串 无重复 最长子串">
+  <div class="card-head"><span class="tag code">算法T4</span><div class="card-title">滑动窗口 — 子串/子数组</div></div>
+  <div class="core">右指针一直走，遇到重复就缩左</div>
+  <div class="code-blk">function lengthOfLongestSubstring(s) {
+  const set = new Set(); let l = 0, max = 0;
+  for (let r = 0; r < s.length; r++) {
+    while (set.has(s[r])) set.delete(s[l++]);
+    set.add(s[r]); max = Math.max(max, r - l + 1);
+  }
+  return max;
+}</div>
+</div>
+
+<div class="card" data-c="code" data-kw="DFS 回溯 排列 组合 子集">
+  <div class="card-head"><span class="tag code">算法T5</span><div class="card-title">DFS 回溯 — 排列/组合</div></div>
+  <div class="core">选了标记 → 往下走 → 回来撤销</div>
+  <div class="code-blk">function permute(nums) {
+  const res = [], used = Array(nums.length).fill(false);
+  function bt(path) {
+    if (path.length === nums.length) { res.push([...path]); return; }
+    for (let i = 0; i < nums.length; i++) {
+      if (used[i]) continue;
+      used[i] = true; path.push(nums[i]);
+      bt(path); path.pop(); used[i] = false;
+    }
+  }
+  bt([]); return res;
+}</div>
+</div>
+
+<div class="card" data-c="code" data-kw="快排 快速排序 分治 partition 原地">
+  <div class="card-head"><span class="tag code">算法T6</span><div class="card-title">快速排序（美团第 1 名）</div></div>
+  <div class="core">选基准，小的左大的右，递归</div>
+  <div class="code-blk">function qs(arr, lo = 0, hi = arr.length - 1) {
+  if (lo >= hi) return;
+  let i = lo, j = hi, p = arr[lo];
+  while (i < j) {
+    while (i < j && arr[j] >= p) j--; arr[i] = arr[j];
+    while (i < j && arr[i] <= p) i++; arr[j] = arr[i];
+  }
+  arr[i] = p; qs(arr, lo, i - 1); qs(arr, i + 1, hi);
+}</div>
+</div>
+
+<div class="card" data-c="code" data-kw="链表 反转 合并 环 中点 二叉树 前序 中序 后序">
+  <div class="card-head"><span class="tag code">算法T7</span><div class="card-title">链表 + 二叉树核心模板</div></div>
+  <div class="core">链表靠画图，树靠递归</div>
+  <div class="code-blk">// 反转链表
+function reverseList(head) {
+  let prev = null, cur = head;
+  while (cur) { const next = cur.next; cur.next = prev; prev = cur; cur = next; }
+  return prev;
+}
+
+// 二叉树前序遍历
+function preorder(root) {
+  if (!root) return [];
+  return [root.val, ...preorder(root.left), ...preorder(root.right)];
+}
+
+// 环检测（快慢指针）
+function hasCycle(head) {
+  let slow = head, fast = head;
+  while (fast && fast.next) {
+    slow = slow.next; fast = fast.next.next;
+    if (slow === fast) return true;
+  }
+  return false;
+}
+
+// 合并两个有序链表
+function mergeTwoLists(l1, l2) {
+  const dummy = { next: null }; let cur = dummy;
+  while (l1 && l2) {
+    if (l1.val <= l2.val) { cur.next = l1; l1 = l1.next; }
+    else { cur.next = l2; l2 = l2.next; }
+    cur = cur.next;
+  }
+  cur.next = l1 || l2;
+  return dummy.next;
+}</div>
+</div>
+
+<div class="card" data-c="code" data-kw="拼多多 手撕 必考 清单 列表">
+  <div class="card-head"><span class="tag code">必考</span><div class="card-title">拼多多手撕必考 8 题清单</div></div>
   <div class="core">10 分钟手撕骨架，不写完整但要能出核心逻辑</div>
-  <div class="card-body">
-    <p><strong>① Promise 串行 + 重试</strong>：for-await 串行；递减计数+延迟重试</p>
-    <p><strong>② 模板编译</strong>：tpl.replace(/\{\{(\w+)\}\}/g, (_,k) => data[k])</p>
-    <p><strong>③ ES6 class 转 ES5</strong>：call 借属性 + Object.create 借方法</p>
-    <p><strong>④ 并发调度器</strong>：计数器+等待队列，完成一个放一个</p>
-    <p><strong>⑤ EventEmitter</strong>：events 对象 + on/emit/off/once</p>
-    <p><strong>⑥ 深拷贝</strong>：WeakMap 处理循环引用 + Reflect.ownKeys</p>
-    <p><strong>⑦ 防抖/节流</strong>：debounce clearTimeout+setTimeout；throttle 时间戳比较</p>
-    <p><strong>⑧ call/apply/bind</strong>：Symbol 防冲突 + bind 支持 new</p>
-  </div>
+  <ul class="points">
+    <li>① Promise 串行执行 + 重试机制</li>
+    <li>② 模板编译函数（`{{}}` 替换）</li>
+    <li>③ ES6 class 转 ES5（寄生组合继承）</li>
+    <li>④ 异步调度器（带并发限制）</li>
+    <li>⑤ 发布订阅模式（EventEmitter）</li>
+    <li>⑥ 深拷贝（含循环引用）</li>
+    <li>⑦ 防抖 / 节流</li>
+    <li>⑧ 手写 call / apply / bind</li>
+  </ul>
 </div>
 
 <div class="card" data-c="code" data-kw="算法 面试 口诀 速览 全部模板">
@@ -525,7 +805,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","PingFang SC",sa
 
 <script>
 let curCat='all';
-// FILTER
 function setCat(c){
   curCat=c;
   document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('on',t.dataset.c===c));
@@ -542,17 +821,6 @@ function apply(){
   });
   document.getElementById('noRes').style.display=n===0?'block':'none';
 }
-// ACCORDION
-document.getElementById('cards').addEventListener('click',function(e){
-  const card=e.target.closest('.card');
-  if(!card||card.classList.contains('hide'))return;
-  // Don't collapse if clicking already open card
-  const wasOpen=card.classList.contains('open');
-  document.querySelectorAll('.card.open').forEach(c=>c.classList.remove('open'));
-  if(!wasOpen)card.classList.add('open');
-});
-// INIT: auto-expand first visible card
-document.querySelector('.card[data-c="open"]').classList.add('open');
 </script>
 </body>
 </html>
