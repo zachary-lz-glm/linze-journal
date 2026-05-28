@@ -42,32 +42,21 @@
 - **面试备战**
   - [规划与投递节奏](learning/interview/规划.md)
   - 题库
-    - [题库详解（48题）](learning/interview/题库/题库详解.md)
-    - [速查手册](learning/interview/题库/速查手册.md)
+    - [基础题（18题）](learning/interview/题库/基础题.md)
+    - [项目题（20题）](learning/interview/题库/项目题.md)
+    - [AI题（10题）](learning/interview/题库/AI题.md)
     - [急救包](learning/interview/题库/急救包.md)
-    - [2026 新增考点](learning/interview/题库/2026新增考点.md)
-  - 备战方案
-    - [备战日历](learning/interview/方案/备战日历.md)
-    - [全流程方案](learning/interview/方案/全流程方案.md)
-    - [AI 辅助提示词](learning/interview/方案/AI辅助提示词.md)
-  - 训练
-    - [答案卡](learning/interview/训练/答案卡.md)
-    - [算法演练](learning/interview/训练/算法演练.md)
-    - [系统设计白板](learning/interview/训练/系统设计白板.md)
+  - 公司定向
+    - [拼多多](learning/interview/定向/拼多多.md)
+  - 面试复盘
+    - [面试记录模板](learning/interview/复盘/面试记录.md)
   - Agent 教练
     - [使用说明](learning/interview/agents/README.md)
     - [训练教练](learning/interview/agents/01-训练教练.md)
     - [模拟面试官](learning/interview/agents/02-模拟面试官.md)
     - [复盘分析师](learning/interview/agents/03-复盘分析师.md)
     - [弱项追踪表](learning/interview/agents/weakness-tracker.md)
-  - 简历
-    - [简历 v1](learning/interview/简历/v1.md)
-    - [简历 v2](learning/interview/简历/v2.md)
-  - 定向备战
-    - [拼多多 · JD分析](learning/interview/定向/拼多多/JD分析与备战.md)
-    - [拼多多 · 面经攻略](learning/interview/定向/拼多多/面经备战全攻略.md)
-    - [拼多多 · 面经汇总](learning/interview/定向/拼多多/面经汇总.md)
-    - [拼多多 · 面试记录](learning/interview/定向/拼多多/面试记录.md)
+  - [简历](learning/interview/简历.md)
 
 - **工具**
   - [面试速查板](learning/interview/cheat-sheet.html)
