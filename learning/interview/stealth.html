@@ -199,6 +199,24 @@ body{overscroll-behavior-y:contain}
   </div>
 </div>
 
+<div class="card" data-c="proj" data-kw="精确订阅 粒度 发布订阅 重渲染 渲染机制 依赖收集">
+  <div class="card-head"><span class="tag proj">追问</span><div class="card-title">一个字段改动会全表单重渲染吗？</div></div>
+  <div class="core">不会，按 dot path 精确订阅，只更新受影响组件</div>
+  <div class="card-body">
+    <p>和 Redux selector 原理类似——每个组件只订阅自己那个 dot path 的值（如 <code>page1.form2.field3</code>），不是监听整棵 Schema 树。某字段变了，引擎通过依赖映射表找到受影响的联动目标，只通知这些组件更新，其余组件不触发渲染。</p>
+    <p><strong>面试要点</strong>：先回答"不会 + 精确订阅"，再补充 API 型联动才是真正的性能瓶颈（接口耗时 2-3s），计划用 Service Worker 缓存优化。</p>
+  </div>
+</div>
+
+<div class="card" data-c="proj" data-kw="循环依赖 死循环 联动 循环 拓扑 max depth">
+  <div class="card-head"><span class="tag proj">追问</span><div class="card-title">联动会不会循环依赖导致死循环？</div></div>
+  <div class="core">设计上约束联动只做清值不做赋值，架构层面断开循环链路</div>
+  <div class="card-body">
+    <p>两层防御。第一层：联动规则只能做清值操作——A 改了导致 B 的选项更新，B 之前的值清掉。不会出现"A 赋值给 B，B 又赋值给 A"的循环。需要默认值时用独立字段存储，不走联动路径。</p>
+    <p>第二层：引擎层做 max depth 限制，联动链超过 3 层就中断并报警。如果追问"更系统的方案"，可以说拓扑排序检测依赖图中的环，有环就编译报错不让上线。</p>
+  </div>
+</div>
+
 <div class="card" data-c="proj" data-kw="BFF 挂了 降级 缓存 兜底 容错">
   <div class="card-head"><span class="tag proj">追问</span><div class="card-title">BFF 挂了怎么办？</div></div>
   <div class="core">缓存兜底 + 降级 UI + 告警联动</div>
@@ -229,6 +247,15 @@ body{overscroll-behavior-y:contain}
   <div class="core">类型安全 + 边界条件 + 性能影响 + 架构一致性</div>
   <div class="card-body">
     <p>四点：类型安全（TypeScript strict 有没有 any 逃逸）、边界条件（空值/越界/并发）、性能影响（是否引起大范围重渲染）、架构一致性（BFF 逻辑不泄漏到前端）。</p>
+  </div>
+</div>
+
+<div class="card" data-c="proj" data-kw="版本兼容 版本迁移 Schema 版本 向前兼容 升级 迁移">
+  <div class="card-head"><span class="tag proj">追问</span><div class="card-title">Schema 版本变了怎么兼容？</div></div>
+  <div class="core">Schema 带 version 字段，BFF 层版本路由 + 迁移函数双版本并行</div>
+  <div class="card-body">
+    <p>Schema 根节点有 version 字段。BFF 层根据 version 路由到对应模板引擎版本处理，老活动和新活动可以并行运行。引擎升级时写迁移函数把老版本 Schema 转成新版本，线上双版本并行跑一段时间确认没问题后逐步下线老版本。</p>
+    <p><strong>通用方法论</strong>：任何配置化系统的版本化三要素——版本号标注（知道是哪个版本）、兼容路由（新老版本都能跑）、迁移函数（老版本能转新版本）。</p>
   </div>
 </div>
 
@@ -446,6 +473,15 @@ body{overscroll-behavior-y:contain}
   <div class="core">Suspense 边界要按"内容块"划分，useTransition 要加超时兜底</div>
   <div class="card-body">
     <p>三个坑。第一个是 Suspense 边界——边界太大一个 loading 覆盖整个页面体验差，太小满屏都是 loading，实践下来应该按用户感知的"内容块"来划分边界。第二个是 useTransition 标记的低优先级更新可能一直被高优先级抢占导致饥饿，我们加了 3 秒超时兜底，超时强制执行。第三个是 Automatic Batching 统一了所有上下文的 setState 合并行为，但有些依赖旧行为（比如 setTimeout 里每次 setState 都触发一次渲染）的代码需要适配。</p>
+  </div>
+</div>
+
+<div class="card" data-c="bagu" data-kw="eval 安全 替代 AST 解析 Function new Function CSP">
+  <div class="card-head"><span class="tag bagu">追问</span><div class="card-title">为什么不能用 eval？替代方案？</div></div>
+  <div class="core">eval 有安全风险且不可调试，用 AST 解析器或 new Function 替代</div>
+  <div class="card-body">
+    <p>eval 三个问题：① 安全——可执行任意代码，容易被注入攻击；② 性能——JS 引擎无法对 eval 内代码做 JIT 优化；③ 调试——eval 内代码无法断点，出错堆栈不清晰。</p>
+    <p><strong>替代方案</strong>：简单场景用 <code>new Function</code>（仍然有安全风险但可被 CSP 管控）；复杂场景自研小型表达式 AST 解析器，把三元表达式和模板字符串解析成 AST 再求值，类型安全且可调试。我们联动引擎计划从 safeEval 迁移到自研 AST 解析器。</p>
   </div>
 </div>
 
@@ -1221,6 +1257,16 @@ class LRUCache {
   <div class="core">三种：编造字段名、引用不存在文件、混淆相似概念</div>
   <div class="card-body">
     <p>① PRD 说"增加奖励配置"，模型编了 reward_config 但实际叫 benefit_options → context-pack 锚定。② 编一个 src/components/RewardForm.tsx 实际不存在 → Evidence Index 验证文件存在。③ 把"活动模板"和"权益模板"搞混 → reference domain 文件做明确定义。</p>
+  </div>
+</div>
+
+<div class="card" data-c="ai" data-kw="SSOT 边界规则 知识污染 关注点分离 冗余 文件边界 推导方法">
+  <div class="card-head"><span class="tag ai">追问</span><div class="card-title">SSOT 五条边界规则怎么推导出来的？</div></div>
+  <div class="core">"AI 犯错 → 归因缺失知识 → 补规则"闭环迭代，跑了 20+ 轮</div>
+  <div class="card-body">
+    <p>方法：跑一遍完整流程，看 AI 在哪类问题上犯错，追溯是什么信息缺失导致的。比如 AI 分配任务时经常搞混前后端职责，分析后发现是代码结构信息和 API 契约信息混在同一个文件里，于是加规则：代码结构和 API 契约必须分开存储。</p>
+    <p><strong>核心原则</strong>：关注点分离——每个文件只负责一个领域（契约文件只管 API 定义、不碰业务规则），枚举等元信息只存在一处。避免 AI 生成冗余文件（最初会生成 10 份，同一枚举出现在多个文件），减少 token 浪费和人的维护成本。</p>
+    <p class="hint">面试回答时必须给具体 case，不能只说"一步步迭代"。</p>
   </div>
 </div>
 
