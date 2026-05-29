@@ -632,7 +632,63 @@ body{overscroll-behavior-y:contain}
   </div>
 </div>
 
+<div class="card" data-c="bagu" data-kw="跨域 CORS JSONP 代理 proxy 同源策略 postMessage nginx">
+  <div class="card-head"><span class="tag bagu">#28</span><div class="card-title">跨域解决方案</div></div>
+  <div class="core">开发用 proxy，生产用 nginx 反代 + CORS 头，JSONP 已过时</div>
+  <div class="card-body">
+    <p><strong>为什么跨域</strong>：同源策略（协议+域名+端口一致），限制 AJAX 请求，不限制 script/img/link。</p>
+    <p><strong>① CORS（主流）</strong>：服务端设 Access-Control-Allow-Origin。简单请求直接过；复杂请求（PUT/DELETE/自定义头）先发 OPTIONS 预检。带 Cookie 时 Origin 不能用 *，必须指定域名 + Access-Control-Allow-Credentials: true。</p>
+    <p><strong>② 代理</strong>：开发环境 webpack-dev-server / vite 的 proxy 配置（浏览器→本地服务→目标接口，没有跨域）。生产环境 nginx 反向代理，location /api { proxy_pass }。</p>
+    <p><strong>③ JSONP</strong>：利用 script 标签不受同源限制，只支持 GET，已淘汰。</p>
+    <p><strong>④ postMessage</strong>：跨窗口通信（iframe、window.open），不是解决 AJAX 跨域的。</p>
+    <p class="hint">面试回答顺序：先说同源策略是什么 → 再说 CORS 原理（简单/复杂请求区别）→ 最后说项目实际怎么做的（proxy + nginx）。</p>
+  </div>
+</div>
+
+<div class="card" data-c="bagu" data-kw="存储 Cookie localStorage sessionStorage IndexedDB 缓存 token 持久化">
+  <div class="card-head"><span class="tag bagu">#29</span><div class="card-title">前端存储方案选型</div></div>
+  <div class="core">Cookie 小且跟请求走，localStorage 持久大，sessionStorage 会话级，IndexedDB 存结构化大数据</div>
+  <div class="card-body">
+    <p><strong>Cookie</strong>：4KB，每次 HTTP 请求自动携带。可设 HttpOnly（防 XSS 读）、SameSite（防 CSRF）、Secure（仅 HTTPS）。适合存会话 ID / Token。</p>
+    <p><strong>localStorage</strong>：5MB+，持久存储不过期。同源共享。存 Token 要注意 XSS 风险（JS 可读取）。</p>
+    <p><strong>sessionStorage</strong>：5MB+，标签页关闭即清空。不同标签页不共享。适合临时表单数据、页签级状态。</p>
+    <p><strong>IndexedDB</strong>：无上限（用户磁盘空间），支持索引/事务/游标。适合离线应用、大文件、结构化数据。API 较复杂，通常用 localForage 等库封装。</p>
+    <p><strong>选型</strong>：认证凭证→Cookie（HttpOnly）；用户偏好/主题→localStorage；表单草稿→sessionStorage；离线数据/文件缓存→IndexedDB。</p>
+    <p class="hint">高频追问：localStorage 和 sessionStorage 区别？→ 持久性 + 作用域两条线回答。</p>
+  </div>
+</div>
+
+<div class="card" data-c="bagu" data-kw="JWT Token 认证 登录 鉴权 access_token refresh_token Bearer 无状态">
+  <div class="card-head"><span class="tag bagu">#30</span><div class="card-title">JWT / Token 认证流程</div></div>
+  <div class="core">登录拿双 Token，请求带 Bearer，过期用 refresh 换新，退出黑名单</div>
+  <div class="card-body">
+    <p><strong>JWT 结构</strong>：Header（算法）.Payload（用户信息+过期时间）.Signature（防篡改签名）。三段 Base64 用 . 连接。</p>
+    <p><strong>认证流程</strong>：① 用户登录 → 后端验证 → 返回 access_token（短 15min）+ refresh_token（长 7d）。② 前端存 Token（建议 Cookie HttpOnly > localStorage）。③ 每次请求 Authorization: Bearer xxx。④ access_token 过期 → 用 refresh_token 换新的。⑤ 退出登录 → 后端将 Token 加入黑名单。</p>
+    <p><strong>双 Token 意义</strong>：access_token 短期减少被盗风险；refresh_token 长期避免频繁登录。refresh_token 只在换取新 token 时使用，泄露风险更低。</p>
+    <p><strong>安全要点</strong>：HTTPS 传输；Token 不放 URL 参数（会被日志记录）；HttpOnly 防 XSS 读取；SameSite 防 CSRF；退出必须后端失效（JWT 本身无状态，不能"注销"）。</p>
+    <p class="hint">和 Session 对比：JWT 无状态（服务端不存），水平扩展容易；Session 有状态（服务端存），适合传统 Web。移动端/API 场景 JWT 更合适。</p>
+  </div>
+</div>
+
 <!-- ==================== 手撕代码 ==================== -->
+<div class="card" data-c="code" data-kw="速查 索引 题型 关键词 定位 套路 哪个 怎么搜">
+  <div class="card-head"><span class="tag code">速查</span><div class="card-title">题目关键词 → 搜什么（第一张看这个）</div></div>
+  <div class="core">拿到题先看关键词 → 搜索框输关键词 → 从头抄到尾</div>
+  <div class="card-body">
+    <p><strong>找两个数/重复/统计次数</strong>→ 搜 "两数" 或 "异位"</p>
+    <p><strong>有序数组/去重/原地修改</strong>→ 搜 "三数" 或 "移动零"</p>
+    <p><strong>最长子串/连续区间/不重复</strong>→ 搜 "最长子串"</p>
+    <p><strong>所有排列/组合/方案</strong>→ 搜 "全排列" 或 "组合"</p>
+    <p><strong>层序/最短路径/岛屿</strong>→ 搜 "层序" 或 "岛屿"</p>
+    <p><strong>链表/反转/环/合并</strong>→ 搜 "反转" 或 "环检测" 或 "合并"</p>
+    <p><strong>排序/第K大/TopK</strong>→ 搜 "快排" 或 "第K大"</p>
+    <p><strong>大数运算/字符串相加</strong>→ 搜 "字符串相加"</p>
+    <p><strong>最大/最小子数组</strong>→ 搜 "最大子序"</p>
+    <p><strong>LRU/缓存</strong>→ 搜 "LRU"</p>
+    <p class="hint">面试流程：①先说思路（买时间翻手机）②搜索框输关键词 ③看到代码从头抄到尾</p>
+  </div>
+</div>
+
 <div class="card" data-c="code" data-kw="Promise 并发 控制 调度器 手写 上传 批量">
   <div class="card-head"><span class="tag code">#6</span><div class="card-title">Promise 并发调度器</div></div>
   <div class="core">计数器 + 等待队列，完成一个放一个</div>
@@ -781,25 +837,24 @@ function compileAdv(tpl, data) {
 }</div>
 </div>
 
-<div class="card" data-c="code" data-kw="哈希 Map 两数之和 配对 重复 统计 异位词">
-  <div class="card-head"><span class="tag code">T1</span><div class="card-title">哈希表 — 看到"找两个数/重复/统计次数"就用</div></div>
-  <div class="core">真题：两数之和(字节二面 LC1) + 字母异位词分组(美团一面 LC49)</div>
-  <div class="code-blk">// 两数之和 — 字节二面真题 / LC1
-// 题目：nums 和 target，找和为 target 的两个数，返回下标
-// 要求 O(n)，不能两层 for
-function twoSum(nums, target) {
+<div class="card" data-c="code" data-kw="两数之和 哈希 Map target 找两个数 和 LC1">
+  <div class="card-head"><span class="tag code">T1</span><div class="card-title">两数之和（字节二面 LC1）</div></div>
+  <div class="core">找两个数和为target → Map存已遍历，查补数</div>
+  <div class="card-body"><p class="hint">先说：用一个Map存已遍历的数，每次查补数存不存在，O(n)</p></div>
+  <div class="code-blk">function twoSum(nums, target) {
   const map = new Map();
   for (let i = 0; i < nums.length; i++) {
     if (map.has(target - nums[i])) return [map.get(target - nums[i]), i];
     map.set(nums[i], i);
   }
-}
-// 口诀：查到返回，查不到存
+}</div>
+</div>
 
-// 字母异位词分组 — 美团一面 / LC49
-// 题目：把字母相同排列不同的字符串分组
-// 示例：["eat","tea","tan"] → [["eat","tea"],["tan"]]
-function groupAnagrams(strs) {
+<div class="card" data-c="code" data-kw="字母异位词 分组 排序key 哈希 美团 LC49">
+  <div class="card-head"><span class="tag code">T1</span><div class="card-title">字母异位词分组（美团一面 LC49）</div></div>
+  <div class="core">字母相同排列不同 → 排序后作key分组</div>
+  <div class="card-body"><p class="hint">先说：排序后作为key，相同的归一组</p></div>
+  <div class="code-blk">function groupAnagrams(strs) {
   const map = new Map();
   for (const s of strs) {
     const key = s.split('').sort().join('');
@@ -810,17 +865,15 @@ function groupAnagrams(strs) {
 }</div>
 </div>
 
-<div class="card" data-c="code" data-kw="双指针 对撞 快慢 三数之和 去重 原地 Move Zeroes">
-  <div class="card-head"><span class="tag code">T2</span><div class="card-title">双指针 — 看到"有序数组/两端夹/去重/原地修改"就用</div></div>
-  <div class="core">真题：三数之和(字节一面 LC15) + Move Zeroes(阿里二面 LC283)</div>
-  <div class="code-blk">// 三数之和 — 字节一面真题 / LC15
-// 题目：找所有和为0的三元组，不重复
-// 示例：[-1,0,1,2,-1,-4] → [[-1,-1,2],[-1,0,1]]
-function threeSum(nums) {
+<div class="card" data-c="code" data-kw="三数之和 双指针 排序 左右夹逼 去重 字节 LC15">
+  <div class="card-head"><span class="tag code">T2</span><div class="card-title">三数之和（字节一面 LC15）</div></div>
+  <div class="core">和为0的三元组 → 排序+固定一个+双指针夹逼</div>
+  <div class="card-body"><p class="hint">先说：先排序，固定第一个数，左右双指针夹逼，注意去重，O(n²)</p></div>
+  <div class="code-blk">function threeSum(nums) {
   nums.sort((a, b) => a - b);
   const res = [];
   for (let i = 0; i < nums.length - 2; i++) {
-    if (i > 0 && nums[i] === nums[i-1]) continue; // 去重
+    if (i > 0 && nums[i] === nums[i-1]) continue;
     let l = i + 1, r = nums.length - 1;
     while (l < r) {
       const s = nums[i] + nums[l] + nums[r];
@@ -829,11 +882,14 @@ function threeSum(nums) {
     }
   }
   return res;
-}
+}</div>
+</div>
 
-// Move Zeroes — 阿里二面真题 / LC283
-// 题目：把0全移到末尾，保持非零顺序，原地O(n)O(1)
-function moveZeroes(nums) {
+<div class="card" data-c="code" data-kw="移动零 Move Zeroes 快慢指针 原地 交换 阿里 LC283">
+  <div class="card-head"><span class="tag code">T2</span><div class="card-title">移动零（阿里二面 LC283）</div></div>
+  <div class="core">把0移到末尾 → 快慢指针，非零交换到前面</div>
+  <div class="card-body"><p class="hint">先说：一个指针标记下一个非零该放的位置，遍历到非零就交换，O(n)O(1)</p></div>
+  <div class="code-blk">function moveZeroes(nums) {
   let k = 0;
   for (let i = 0; i < nums.length; i++) {
     if (nums[i] !== 0) { [nums[k],nums[i]]=[nums[i],nums[k]]; k++; }
@@ -843,28 +899,23 @@ function moveZeroes(nums) {
 
 <div class="card" data-c="code" data-kw="滑动窗口 子串 无重复 最长子串 连续 区间">
   <div class="card-head"><span class="tag code">T3</span><div class="card-title">滑动窗口 — 看到"最长/最短子串/连续区间"就用</div></div>
-  <div class="core">真题：无重复最长子串(美团一面 LC3) → 右扩左缩</div>
-  <div class="code-blk">// 无重复字符的最长子串 — 美团一面真题 / LC3
-// 题目：找不含有重复字符的最长子串长度
-// 示例："abcabcbb" → 3（"abc"）
-function lengthOfLongestSubstring(s) {
+  <div class="core">无重复最长子串 → Set维护窗口，右扩左缩</div>
+  <div class="card-body"><p class="hint">先说：用Set维护窗口，右指针扩张，遇到重复就缩左指针，O(n)</p></div>
+  <div class="code-blk">function lengthOfLongestSubstring(s) {
   const set = new Set(); let l = 0, max = 0;
   for (let r = 0; r < s.length; r++) {
     while (set.has(s[r])) set.delete(s[l++]);
     set.add(s[r]); max = Math.max(max, r - l + 1);
   }
   return max;
-}
-// 口诀：右扩左缩，遇到重复缩左</div>
+}</div>
 </div>
 
-<div class="card" data-c="code" data-kw="DFS 回溯 排列 组合 子集 全排列 组合总和">
-  <div class="card-head"><span class="tag code">T4</span><div class="card-title">DFS 回溯 — 看到"所有排列/组合/方案"就用</div></div>
-  <div class="core">真题：全排列(拼多多一面 LC46) + 组合总和(字节二面 LC39)</div>
-  <div class="code-blk">// 全排列 — 拼多多一面真题 / LC46
-// 题目：返回所有全排列
-// 示例：[1,2,3] → 6种排列
-function permute(nums) {
+<div class="card" data-c="code" data-kw="全排列 permute 回溯 DFS 排列 拼多多 LC46">
+  <div class="card-head"><span class="tag code">T4</span><div class="card-title">全排列（拼多多一面 LC46）</div></div>
+  <div class="core">所有排列 → 回溯，选了标记→往下走→回来撤销</div>
+  <div class="card-body"><p class="hint">先说：经典回溯，用used数组标记已选，到终点收集结果，回来时撤销</p></div>
+  <div class="code-blk">function permute(nums) {
   const res = [], used = Array(nums.length).fill(false);
   function bt(path) {
     if (path.length === nums.length) { res.push([...path]); return; }
@@ -875,19 +926,21 @@ function permute(nums) {
     }
   }
   bt([]); return res;
-}
-// 口诀：选了标记→往下走→回来撤销
+}</div>
+</div>
 
-// 组合总和 — 字节二面 / LC39
-// 题目：和为target的所有组合，数字可重复用
-function combinationSum(candidates, target) {
+<div class="card" data-c="code" data-kw="组合总和 combination 回溯 DFS 可重复 字节 LC39">
+  <div class="card-head"><span class="tag code">T4</span><div class="card-title">组合总和（字节二面 LC39）</div></div>
+  <div class="core">和为target的所有组合 → 回溯，传start防重复</div>
+  <div class="card-body"><p class="hint">先说：回溯，传当前起始位置避免重复选，可重复用所以传i不是i+1</p></div>
+  <div class="code-blk">function combinationSum(candidates, target) {
   const res = [];
   function bt(start, path, sum) {
     if (sum === target) { res.push([...path]); return; }
     if (sum > target) return;
     for (let i = start; i < candidates.length; i++) {
       path.push(candidates[i]);
-      bt(i, path, sum + candidates[i]); // 传i不是i+1，可重复
+      bt(i, path, sum + candidates[i]);
       path.pop();
     }
   }
@@ -895,13 +948,11 @@ function combinationSum(candidates, target) {
 }</div>
 </div>
 
-<div class="card" data-c="code" data-kw="BFS 队列 层序 岛屿 最短路径 最少步数">
-  <div class="card-head"><span class="tag code">T5</span><div class="card-title">BFS 队列 — 看到"层序/最短路径/最少步数/岛屿"就用</div></div>
-  <div class="core">真题：层序遍历(美团一面 LC102) + 岛屿数量(字节一面 LC200)</div>
-  <div class="code-blk">// 层序遍历 — 美团一面真题 / LC102
-// 题目：逐层从左到右返回节点值
-// 示例：[3,9,20,null,null,15,7] → [[3],[9,20],[15,7]]
-function levelOrder(root) {
+<div class="card" data-c="code" data-kw="层序遍历 BFS 队列 二叉树 层级 美团 LC102">
+  <div class="card-head"><span class="tag code">T5</span><div class="card-title">层序遍历（美团一面 LC102）</div></div>
+  <div class="core">逐层遍历 → BFS队列，每层记录size</div>
+  <div class="card-body"><p class="hint">先说：BFS用队列，每层先记录队列长度再逐个出队收集</p></div>
+  <div class="code-blk">function levelOrder(root) {
   if (!root) return [];
   const q = [root], res = [];
   while (q.length) {
@@ -913,17 +964,18 @@ function levelOrder(root) {
     res.push(lv);
   }
   return res;
-}
+}</div>
+</div>
 
-// 岛屿数量 — 字节一面真题 / LC200
-// 题目：二维网格计算岛屿数量（被水包围的连通陆地）
-function numIslands(grid) {
+<div class="card" data-c="code" data-kw="岛屿数量 BFS 感染 网格 连通 字节 LC200">
+  <div class="card-head"><span class="tag code">T5</span><div class="card-title">岛屿数量（字节一面 LC200）</div></div>
+  <div class="core">岛屿计数 → 遇到1就BFS把连通的1全染成0</div>
+  <div class="card-body"><p class="hint">先说：双重循环遍历，遇到1就计数并用BFS把连通的1全变成0</p></div>
+  <div class="code-blk">function numIslands(grid) {
   let count = 0;
-  for (let i = 0; i < grid.length; i++) {
-    for (let j = 0; j < grid[0].length; j++) {
+  for (let i = 0; i < grid.length; i++)
+    for (let j = 0; j < grid[0].length; j++)
       if (grid[i][j] === '1') { count++; bfs(grid, i, j); }
-    }
-  }
   return count;
 }
 function bfs(grid, r, c) {
@@ -940,28 +992,36 @@ function bfs(grid, r, c) {
 }</div>
 </div>
 
-<div class="card" data-c="code" data-kw="链表 反转 合并 环 中点 dummy">
-  <div class="card-head"><span class="tag code">T6</span><div class="card-title">链表 — 看到"链表头节点/反转/环/合并"就用</div></div>
-  <div class="core">真题：反转链表(LC206) + 环检测(LC141) + 合并有序(LC21)，万能起手 dummy</div>
-  <div class="code-blk">// 反转链表 — 字节/快手高频 / LC206
-function reverseList(head) {
+<div class="card" data-c="code" data-kw="反转链表 reverse 三指针 prev cur 字节 快手 LC206">
+  <div class="card-head"><span class="tag code">T6</span><div class="card-title">反转链表（字节/快手高频 LC206）</div></div>
+  <div class="core">反转 → 三指针 prev/cur/next 逐个翻转</div>
+  <div class="card-body"><p class="hint">先说：三个指针，每次把当前节点指向前一个，然后三个都后移，O(n)O(1)</p></div>
+  <div class="code-blk">function reverseList(head) {
   let prev = null, cur = head;
   while (cur) { const next = cur.next; cur.next = prev; prev = cur; cur = next; }
   return prev;
-}
+}</div>
+</div>
 
-// 环检测（快慢指针）— LC141
-function hasCycle(head) {
+<div class="card" data-c="code" data-kw="环检测 快慢指针 链表 环 cycle LC141">
+  <div class="card-head"><span class="tag code">T6</span><div class="card-title">链表环检测（LC141）</div></div>
+  <div class="core">是否有环 → 快慢指针，快走两步慢走一步</div>
+  <div class="card-body"><p class="hint">先说：快慢指针，快走两步慢走一步，相遇就有环，O(n)</p></div>
+  <div class="code-blk">function hasCycle(head) {
   let slow = head, fast = head;
   while (fast && fast.next) {
     slow = slow.next; fast = fast.next.next;
     if (slow === fast) return true;
   }
   return false;
-}
+}</div>
+</div>
 
-// 合并两个有序链表 — LC21
-function mergeTwoLists(l1, l2) {
+<div class="card" data-c="code" data-kw="合并有序链表 merge dummy 双指针 LC21">
+  <div class="card-head"><span class="tag code">T6</span><div class="card-title">合并两个有序链表（LC21）</div></div>
+  <div class="core">合并 → dummy头 + 双指针比大小</div>
+  <div class="card-body"><p class="hint">先说：创建dummy头节点，两个指针比大小，小的接上，最后把剩余的接上</p></div>
+  <div class="code-blk">function mergeTwoLists(l1, l2) {
   const dummy = { next: null }; let cur = dummy;
   while (l1 && l2) {
     if (l1.val <= l2.val) { cur.next = l1; l1 = l1.next; }
@@ -973,11 +1033,11 @@ function mergeTwoLists(l1, l2) {
 }</div>
 </div>
 
-<div class="card" data-c="code" data-kw="快排 快速排序 分治 partition 原地 第K大 TopK">
-  <div class="card-head"><span class="tag code">T7</span><div class="card-title">快排分治 — 看到"排序/第K大/TopK"就用</div></div>
-  <div class="core">真题：快排(拼多多必考) + 第K大元素(字节二面 LC215)</div>
-  <div class="code-blk">// 快速排序 — 拼多多必考，面试官说"写个排序"就快排
-function qs(arr, lo = 0, hi = arr.length - 1) {
+<div class="card" data-c="code" data-kw="快排 快速排序 qs 挖坑填数 分治 拼多多 排序">
+  <div class="card-head"><span class="tag code">T7</span><div class="card-title">快速排序（拼多多必考）</div></div>
+  <div class="core">排序 → 挖坑填数分治，面试官说"写个排序"就快排</div>
+  <div class="card-body"><p class="hint">先说：选基准值，挖坑填数把小的放左边大的放右边，递归</p></div>
+  <div class="code-blk">function qs(arr, lo = 0, hi = arr.length - 1) {
   if (lo >= hi) return;
   let i = lo, j = hi, p = arr[lo];
   while (i < j) {
@@ -985,11 +1045,14 @@ function qs(arr, lo = 0, hi = arr.length - 1) {
     while (i < j && arr[i] <= p) i++; arr[j] = arr[i];
   }
   arr[i] = p; qs(arr, lo, i - 1); qs(arr, i + 1, hi);
-}
+}</div>
+</div>
 
-// 第K大元素 — 字节二面真题 / LC215
-// 题目：返回数组第k大的元素，要求O(n)平均
-function findKthLargest(nums, k) {
+<div class="card" data-c="code" data-kw="第K大 findKthLargest TopK partition 快排 字节 LC215">
+  <div class="card-head"><span class="tag code">T7</span><div class="card-title">第K大元素（字节二面 LC215）</div></div>
+  <div class="core">第K大 → 快排partition定位，O(n)平均</div>
+  <div class="card-body"><p class="hint">先说：利用partition，如果基准恰好是第K个位置就返回，否则只递归一侧</p></div>
+  <div class="code-blk">function findKthLargest(nums, k) {
   function partition(lo, hi) {
     const pivot = nums[hi]; let i = lo;
     for (let j = lo; j < hi; j++) {
@@ -1008,11 +1071,9 @@ function findKthLargest(nums, k) {
 
 <div class="card" data-c="code" data-kw="字符串 相加 大数 逐位 进位 模拟">
   <div class="card-head"><span class="tag code">T8</span><div class="card-title">字符串模拟 — 看到"大数运算/字符串相加"就用</div></div>
-  <div class="core">真题：字符串相加(字节二面 LC415) — CodeTop必做</div>
-  <div class="code-blk">// 字符串相加 — 字节二面真题 / LC415
-// 题目：两个超长数字字符串相加，不能用BigInt
-// 示例："456"+"77" → "533"，"999"+"1" → "1000"
-function addStrings(a, b) {
+  <div class="core">大数相加 → 从末尾逐位加+进位</div>
+  <div class="card-body"><p class="hint">先说：两个指针从末尾开始逐位相加，加上进位，结果拼到前面</p></div>
+  <div class="code-blk">function addStrings(a, b) {
   let i = a.length - 1, j = b.length - 1, carry = 0, res = '';
   while (i >= 0 || j >= 0 || carry) {
     const sum = (i>=0 ? +a[i--] : 0) + (j>=0 ? +b[j--] : 0) + carry;
@@ -1020,174 +1081,22 @@ function addStrings(a, b) {
     carry = Math.floor(sum / 10);
   }
   return res;
-}
-// 口诀：从末尾逐位加，记得进位</div>
+}</div>
 </div>
 
 <div class="card" data-c="code" data-kw="DP 贪心 最大子序和 连续子数组 最优">
   <div class="card-head"><span class="tag code">T9</span><div class="card-title">DP贪心 — 看到"最大/最小子数组/连续最优"就用</div></div>
-  <div class="core">真题：最大子序和(拼多多一面 LC53) — 当前和为负就扔掉</div>
-  <div class="code-blk">// 最大子序和 — 拼多多一面真题 / LC53
-// 题目：找和最大的连续子数组
-// 示例：[-2,1,-3,4,-1,2,1,-5,4] → 6（子数组[4,-1,2,1]）
-function maxSubArray(nums) {
+  <div class="core">最大子数组和 → 当前和为负就扔掉重新开始</div>
+  <div class="card-body"><p class="hint">先说：遍历维护当前和，为负就扔掉重新开始，O(n)</p></div>
+  <div class="code-blk">function maxSubArray(nums) {
   let cur = nums[0], max = nums[0];
   for (let i = 1; i < nums.length; i++) {
-    cur = Math.max(nums[i], cur + nums[i]); // 接前面 or 重新开始
+    cur = Math.max(nums[i], cur + nums[i]);
     max = Math.max(max, cur);
   }
   return max;
-}
-// 口诀：当前和为负就扔掉，重新开始累加</div>
+}</div>
 </div>
-
-<div class="card" data-c="code" data-kw="拼多多 手撕 必考 清单 列表">
-  <div class="card-head"><span class="tag code">必考</span><div class="card-title">拼多多手撕必考 8 题（含写法）</div></div>
-  <div class="core">10 分钟手撕骨架，每题核心代码如下</div>
-  <div class="code-blk">① 深拷贝（循环引用）
-function deepClone(obj, map = new WeakMap()) {
-  if (obj === null || typeof obj !== 'object') return obj;
-  if (map.has(obj)) return map.get(obj);
-  const clone = Array.isArray(obj) ? [] : {};
-  map.set(obj, clone);
-  for (const key of Reflect.ownKeys(obj))
-    clone[key] = deepClone(obj[key], map);
-  return clone;
-}
-
-② 防抖 / 节流
-function debounce(fn, delay) {
-  let timer;
-  return (...args) => {
-    clearTimeout(timer);
-    timer = setTimeout(() => fn(...args), delay);
-  };
-}
-function throttle(fn, interval) {
-  let last = 0;
-  return (...args) => {
-    const now = Date.now();
-    if (now - last >= interval) { last = now; fn(...args); }
-  };
-}
-
-③ call / apply / bind
-Function.prototype.myCall = function(ctx, ...args) {
-  ctx = ctx || window; const fn = Symbol();
-  ctx[fn] = this; const r = ctx[fn](...args);
-  delete ctx[fn]; return r;
-};
-Function.prototype.myBind = function(ctx, ...bindArgs) {
-  const fn = this;
-  const bound = function(...callArgs) {
-    return fn.apply(this instanceof fn ? this : ctx,
-      [...bindArgs, ...callArgs]);
-  };
-  bound.prototype = Object.create(fn.prototype);
-  return bound;
-};
-
-④ Promise 并发调度器
-class Scheduler {
-  constructor(max) { this.max = max; this.count = 0; this.queue = []; }
-  add(fn) {
-    return new Promise(resolve => {
-      if (this.count < this.max) {
-        this.count++;
-        fn().then(() => { this.count--; resolve(); this.next(); });
-      } else this.queue.push({ fn, resolve });
-    });
-  }
-  next() {
-    if (this.queue.length && this.count < this.max) {
-      const { fn, resolve } = this.queue.shift();
-      this.count++;
-      fn().then(() => { this.count--; resolve(); this.next(); });
-    }
-  }
-}
-
-⑤ EventEmitter
-class EventEmitter {
-  constructor() { this.events = {}; }
-  on(e, fn) { (this.events[e] ||= []).push(fn); }
-  emit(e, ...args) { (this.events[e]||[]).forEach(fn => fn(...args)); }
-  off(e, fn) { this.events[e] = (this.events[e]||[]).filter(f => f !== fn); }
-  once(e, fn) {
-    const wrap = (...a) => { fn(...a); this.off(e, wrap); };
-    this.on(e, wrap);
-  }
-}
-
-⑥ Promise 串行 + 重试
-async function serial(tasks) {
-  const res = [];
-  for (const t of tasks) res.push(await t());
-  return res;
-}
-function withRetry(fn, retries = 3, delay = 1000) {
-  return new Promise(async (resolve, reject) => {
-    for (let i = 0; i < retries; i++) {
-      try { return resolve(await fn()); }
-      catch (e) {
-        if (i === retries - 1) reject(e);
-        else await new Promise(r => setTimeout(r, delay));
-      }
-    }
-  });
-}
-
-⑦ 模板编译（{{}} 替换）
-function compile(tpl, data) {
-  return tpl.replace(/\{\{\s*(\w+)\s*\}\}/g,
-    (_, key) => data[key] !== undefined ? data[key] : '');
-}
-// 支持嵌套 {{ user.name }}
-function compileAdv(tpl, data) {
-  return tpl.replace(/\{\{\s*([\w.]+)\s*\}\}/g,
-    (_, path) => path.split('.').reduce((o, k) => o?.[k], data) ?? '');
-}
-
-⑧ ES6 class 转 ES5
-function DogES5(name) {
-  AnimalES5.call(this, name); // super
-  this.type = 'dog';
-}
-DogES5.prototype = Object.create(AnimalES5.prototype);
-DogES5.prototype.constructor = DogES5;</div>
-</div>
-
-<div class="card" data-c="code" data-kw="算法 面试 口诀 速览 全部模板 题型">
-  <div class="card-head"><span class="tag code">速览</span><div class="card-title">题目关键词 → 用什么套路（面试前 1 分钟）</div></div>
-  <div class="core">拿到题先看关键词，直接定位题型</div>
-  <div class="card-body">
-    <p><strong>找两个数/重复/统计</strong>→ 哈希Map（两数之和LC1）</p>
-    <p><strong>有序数组/两端夹/去重/原地</strong>→ 双指针（三数之和LC15、MoveZeroesLC283）</p>
-    <p><strong>最长子串/连续区间/不重复</strong>→ 滑动窗口（最长子串LC3）</p>
-    <p><strong>所有排列/组合/方案</strong>→ DFS回溯（全排列LC46、组合总和LC39）</p>
-    <p><strong>层序/最短路径/岛屿</strong>→ BFS队列（层序LC102、岛屿LC200）</p>
-    <p><strong>链表头/反转/环/合并</strong>→ dummy头+cur遍历（反转LC206、环LC141、合并LC21）</p>
-    <p><strong>排序/第K大/TopK</strong>→ 快排分治（第K大LC215）</p>
-    <p><strong>大数运算/字符串相加</strong>→ 字符串模拟（字符串相加LC415）</p>
-    <p><strong>最大/最小子数组/连续最优</strong>→ DP贪心（最大子序和LC53）</p>
-  </div>
-</div>
-
-<div class="card" data-c="code" data-kw="Move Zeroes 移动零 双指针 原地 阿里">
-  <div class="card-head"><span class="tag code">真题</span><div class="card-title">Move Zeroes（阿里二面真题）</div></div>
-  <div class="core">k 指针指向下一个非零该放的位置，遍历到非零就和 k 交换</div>
-  <div class="code-blk">function moveZeroes(nums) {
-  let k = 0;
-  for (let i = 0; i < nums.length; i++) {
-    if (nums[i] !== 0) {
-      [nums[k], nums[i]] = [nums[i], nums[k]];
-      k++;
-    }
-  }
-}
-// O(n) 时间 O(1) 空间，5 分钟写完</div>
-</div>
-
 <div class="card" data-c="code" data-kw="双指针 删除重复项 颜色分类 荷兰国旗 原地">
   <div class="card-head"><span class="tag code">专项</span><div class="card-title">双指针专项 3 题（15 分钟一组）</div></div>
   <div class="core">k 慢指针标记写入位置，三种变形一个套路</div>
