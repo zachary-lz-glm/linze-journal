@@ -69,14 +69,15 @@ body{overscroll-behavior-y:contain}
 <!-- ==================== 开场 ==================== -->
 <div class="card" data-c="open" data-kw="自我介绍 介绍 背景 经验">
   <div class="card-head"><span class="tag open">自我介绍</span><div class="card-title">1 分钟自我介绍</div></div>
-  <div class="core">四年大厂前端，滴滴国际化营销中台，三个方向：Schema 全栈架构 / 权益组件库 / AI 工程工作流</div>
+  <div class="core">滴滴国际化营销中台前端架构，4年3条核心产品线</div>
   <div class="card-body">
-    <p>面试官你好，我是邓泽霖，四年大厂前端经验，目前在滴滴国际化事业部负责营销中台的前端架构。之前的工作主要集中在三个方向：</p>
-    <p><strong>第一是 Schema 驱动全栈架构。</strong>设计了一套 BFF 动态生成 + 前端动态渲染的架构，核心是双重求值联动引擎——BFF 端先算一次保证初始状态正确，前端运行时再算一次。覆盖 20+ 活动类型，新增活动前端零代码，上线从两周缩短到三天。</p>
-    <p><strong>第二是 400+ 权益组件库。</strong>Register 注册模式 + Schema 同构渲染，和活动表单共享渲染架构。覆盖 8 个业务项目，新权益接入从两天到两小时，零 breaking change 跑了 18 个月。</p>
-    <p><strong>第三是 AI 工程工作流。</strong>独立设计 PRD 蒸馏工作流，不是让 AI 直接写代码，是把 PRD 转成有证据、可追溯的结构化开发计划。6 文件 SSOT + 8 种证据 + 多层质量门控，PRD 转化效率提升 60%+。</p>
-    <p>核心优势是擅长从业务中抽取共性做架构抽象，以及对全流程质量的把控。</p>
-    <p class="hint">语速 ~250 字/分钟，约 50 秒。说完后停顿，等面试官追问。</p>
+    <p><strong>三句话结构：身份 → 三条线（各带数据）→ 为什么来</strong></p>
+    <p>面试官好，我是邓泽林，滴滴国际化高级前端，4年经验。</p>
+    <p><strong>第一，Schema驱动营销中台。</strong>覆盖20+活动类型，新增活动前端开发成本归零，上线从两周缩到两天。</p>
+    <p><strong>第二，400+权益组件库。</strong>Schema同构渲染 + Register扩展模式，覆盖8个业务，线上两年零事故。</p>
+    <p><strong>第三，AI工程工作流。</strong>我独立设计，PRD→结构化开发计划，6文件SSOT + 证据链 + 三级门控，效率提升60%。</p>
+    <p>核心优势是从业务抽取共性做架构抽象，以及对全流程质量把控。来贵司是因为<strong>[填公司方向]</strong>跟我第三条线高度匹配。</p>
+    <p class="hint">语速 ~250 字/分钟，约 45 秒。分三点结构说，最后一句连接目标公司。说完停顿等追问。</p>
   </div>
 </div>
 
@@ -130,13 +131,16 @@ body{overscroll-behavior-y:contain}
   </div>
 </div>
 
-<div class="card" data-c="proj" data-kw="挑战 最难 技术挑战 项目选择">
+<div class="card" data-c="proj" data-kw="挑战 最难 技术挑战 项目选择 架构选型 MCP Agent">
   <div class="card-head"><span class="tag proj">A5</span><div class="card-title">最有技术挑战的项目？</div></div>
-  <div class="core">根据面试官兴趣选：AI 工程差异化 或 Schema 深度</div>
+  <div class="core">AI工作流MCP→Agent架构选型演变，从架构瓶颈到突破</div>
   <div class="card-body">
-    <p><strong>选 prd-tools</strong>（面试官对 AI 感兴趣）：最有挑战的是变更分类，核心难点是业务术语和代码字段不一致。解法是 reference 路由匹配加代码锚定。</p>
-    <p><strong>选 Schema 联动</strong>（偏传统前端）：联动引擎跨两层，既要 SSR 初始状态正确又要前端流畅。解法是 injectDActions 双重求值。</p>
-    <p class="hint">优先选 AI 方向，是你最大的差异化。</p>
+    <p><strong>选 prd-tools</strong>（面试官对 AI 感兴趣）：最大难点是架构选型错误导致瓶颈。</p>
+    <p>背景：市面上有Cursor、Windsurf这些从0到1的工具，但针对已有项目（几万行代码、大量历史逻辑），怎么让AI理解需求是空白领域。</p>
+    <p>弯路：一开始用MCP做，两周发现不管怎么优化prompt准确率就是上不去。定位到根因——MCP是单次调用模式，需求分析需要多轮上下文和复杂论证，这是架构级瓶颈不是调优能解决的。</p>
+    <p>突破：转向Agent+Skill工作流模式，结合自研Reference六文件SSOT + 多轮搜索 + 证据链验证，PRD转化效率提升60%。</p>
+    <p><strong>选 Schema 引擎</strong>（偏传统前端）：月均10+bug → 自研Schema渲染引擎 → 归零。</p>
+    <p class="hint">优先选AI方向，先说背景痛点30秒→弯路30秒→突破方案1分钟，控制在2分钟内。</p>
   </div>
 </div>
 
