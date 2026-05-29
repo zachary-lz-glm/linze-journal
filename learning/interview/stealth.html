@@ -1219,6 +1219,137 @@ function sortColors(nums) {
   </div>
 </div>
 
+<div class="card" data-c="ai" data-kw="LLM Transformer 注意力 自回归 预训练 RLHF GPT">
+  <div class="card-head"><span class="tag ai">E13</span><div class="card-title">LLM 基础原理</div></div>
+  <div class="core">Transformer → 自注意力 → 预测下一个 Token</div>
+  <div class="card-body">
+    <p><strong>Transformer</strong>：并行处理整个序列，不像 RNN 逐个处理。核心是自注意力——每个 token 看到所有其他 token，算相关性权重。</p>
+    <p><strong>训练两阶段</strong>：① 预训练——海量文本预测下一个 token（自回归）；② RLHF——人类反馈强化学习，让输出对齐人类偏好。</p>
+    <p><strong>推理</strong>：给定上下文，逐 token 生成概率分布，采样选一个，拼入上下文，重复直到 &lt;eos&gt;。SSE 流式就是逐 token 推送到前端。</p>
+  </div>
+</div>
+
+<div class="card" data-c="ai" data-kw="Token Tokenizer BPE 计费 上下文窗口 计数">
+  <div class="card-head"><span class="tag ai">E14</span><div class="card-title">Token 与 Tokenizer</div></div>
+  <div class="core">Token 是 LLM 最小处理单位，不等于字符也不等于词</div>
+  <div class="card-body">
+    <p><strong>BPE</strong>（Byte Pair Encoding）：把常见字节对合并成 token。英文约 1 词 = 1 token，中文约 1 字 = 1-2 token。</p>
+    <p><strong>换算</strong>：100 token ≈ 75 英文单词 ≈ 50-60 中文字。GPT-4 系列用 tiktoken，Claude 用自己的 tokenizer。</p>
+    <p><strong>实际影响</strong>：API 按 token 计费，上下文窗口按 token 算（Claude 200K、GPT-4o 128K），前端做 token 预算控制需要估算。</p>
+  </div>
+</div>
+
+<div class="card" data-c="ai" data-kw="Prompt Engineering CoT Few-shot Zero-shot 思维链 提示工程">
+  <div class="card-head"><span class="tag ai">E15</span><div class="card-title">Prompt Engineering 常用手法</div></div>
+  <div class="core">控制模型输出质量的核心技能</div>
+  <div class="card-body">
+    <p><strong>Zero-shot</strong>：直接给任务描述，不给示例。简单任务首选。</p>
+    <p><strong>Few-shot</strong>：给几个输入→输出示例，再让模型做。适合格式要求严格的场景。</p>
+    <p><strong>Chain-of-Thought (CoT)</strong>："一步步思考"，让模型展示推理过程。数学、逻辑题效果显著。</p>
+    <p><strong>Tree-of-Thought</strong>：探索多个推理路径，选最优。适合开放式问题。</p>
+    <p>实战优先级：简单 Zero-shot → 格式用 Few-shot → 复杂推理加 CoT。</p>
+  </div>
+</div>
+
+<div class="card" data-c="ai" data-kw="Agent 模式 ReAct Plan-Execute Reflection 循环 推理行动">
+  <div class="card-head"><span class="tag ai">E16</span><div class="card-title">AI Agent 三大模式</div></div>
+  <div class="core">Agent = 感知 → 思考 → 行动 循环</div>
+  <div class="card-body">
+    <p><strong>ReAct</strong>：Reasoning + Acting 交替，每步先想再干。最常用，GPT/Claude 默认模式。</p>
+    <p><strong>Plan-and-Execute</strong>：先做完整计划再逐步执行，适合多步骤复杂任务。可中途重规划。</p>
+    <p><strong>Reflection</strong>：执行后自我评估，发现错误就修正再执行。提升输出质量但成本翻倍。</p>
+    <p class="hint">项目桥接：prd-tools 11 步工作流 = Plan-and-Execute，Evidence Index = Reflection。</p>
+  </div>
+</div>
+
+<div class="card" data-c="ai" data-kw="RAG 检索增强 向量 Embedding Chunking 分块 向量数据库 Agentic">
+  <div class="card-head"><span class="tag ai">E17</span><div class="card-title">RAG 深度解析</div></div>
+  <div class="core">先查再答——解决知识过时和幻觉</div>
+  <div class="card-body">
+    <p><strong>流程</strong>：用户问题 → 向量检索相关文档 → 拼入 Prompt → LLM 生成回答。</p>
+    <p><strong>Chunking 策略</strong>：固定大小（简单但粗糙）/ 按语义分段（效果好）/ 按文档结构（段落/章节）。块大小一般 256-1024 token。</p>
+    <p><strong>传统 RAG vs Agentic RAG</strong>：传统是检索→生成两步；Agentic 加入多轮检索、工具调用、自我评估，能判断"检索结果够不够"。</p>
+    <p class="hint">项目桥接：prd-tools evidence = RAG 工程化变体，BM25 替代向量检索，代码锚定替代 chunking。</p>
+  </div>
+</div>
+
+<div class="card" data-c="ai" data-kw="Embedding 向量 语义检索 BM25 ANN 近似最近邻 混合检索">
+  <div class="card-head"><span class="tag ai">E18</span><div class="card-title">Embedding 与向量检索</div></div>
+  <div class="core">把文本变高维数字向量，语义相近的向量距离近</div>
+  <div class="card-body">
+    <p><strong>Embedding 模型</strong>：OpenAI text-embedding-3、BGE（中文强）、Cohere。输出通常是 768-3072 维向量。</p>
+    <p><strong>向量数据库</strong>：Milvus（开源大规模）、Pinecone（托管服务）、Chroma（轻量本地）。用 ANN 近似最近邻做高速检索。</p>
+    <p><strong>vs 传统搜索</strong>：BM25 精确关键词匹配，向量检索语义匹配。实战中混合检索（BM25 + 向量）效果最好。</p>
+  </div>
+</div>
+
+<div class="card" data-c="ai" data-kw="MCP 协议 架构 Host Client Server Tools Resources JSON-RPC">
+  <div class="card-head"><span class="tag ai">E19</span><div class="card-title">MCP 深度解析</div></div>
+  <div class="core">Anthropic 主导的开放协议，让 AI 应用标准化接入工具</div>
+  <div class="card-body">
+    <p><strong>架构</strong>：Host（Claude Desktop/Cursor）→ Client（协议客户端）→ Server（工具提供方）。一对多：一个 Host 可连多个 MCP Server。</p>
+    <p><strong>通信</strong>：JSON-RPC 2.0，支持 stdio（本地）和 SSE（远程）两种传输。</p>
+    <p><strong>三大能力</strong>：Tools（可调用函数）、Resources（可读数据源）、Prompts（预设模板）。</p>
+    <p><strong>为什么重要</strong>：一次开发到处用——写一个 MCP Server，Claude/Cursor/Windsurf/Cline 都能用。解决了 AI 工具生态碎片化问题。</p>
+  </div>
+</div>
+
+<div class="card" data-c="ai" data-kw="LangGraph LangChain CrewAI LlamaIndex 框架 选型 工作流 图">
+  <div class="card-head"><span class="tag ai">E20</span><div class="card-title">AI 框架生态与选型</div></div>
+  <div class="core">LangGraph 编排 Agent，LlamaIndex 专精 RAG，各有所长</div>
+  <div class="card-body">
+    <p><strong>LangGraph</strong>：基于图的状态机，节点是函数，边是条件跳转，支持循环（Agent Loop）。复杂 Agent 编排首选。</p>
+    <p><strong>LangChain</strong>：LangGraph 上层，链式调用 LLM + 工具，适合线性流程。生态最大但抽象层多。</p>
+    <p><strong>LlamaIndex</strong>：RAG 专精——数据摄取 → 索引 → 查询，开箱即用。数据问答场景首选。</p>
+    <p><strong>CrewAI</strong>：多 Agent 协作，每个 Agent 有角色和工具，适合模拟团队分工。</p>
+    <p>选型：简单链式 LangChain，复杂 Agent LangGraph，数据问答 LlamaIndex，多角色协作 CrewAI。</p>
+  </div>
+</div>
+
+<div class="card" data-c="ai" data-kw="A2A Agent-to-Agent Google 协议 协作 Agent通信">
+  <div class="card-head"><span class="tag ai">E21</span><div class="card-title">A2A 协议</div></div>
+  <div class="core">Google 主导的 Agent 间通信协议，解决 Agent 协作</div>
+  <div class="card-body">
+    <p><strong>定位</strong>：MCP 解决 Agent ↔ 工具，A2A 解决 Agent ↔ Agent。互补关系。</p>
+    <p><strong>架构</strong>：每个 Agent 暴露 AgentCard（能力描述卡片），通过 JSON-RPC 互相发现和通信。</p>
+    <p><strong>场景</strong>：前端 Agent 调用后端 Agent，后端 Agent 调用数据 Agent。多个专业 Agent 组合成复杂工作流。</p>
+    <p><strong>与 MCP 关系</strong>：MCP 是纵向（Agent → 工具），A2A 是横向（Agent → Agent）。一个 Agent 可以同时是 MCP Client 和 A2A 参与者。</p>
+  </div>
+</div>
+
+<div class="card" data-c="ai" data-kw="Fine-tuning 微调 RAG Prompt 对比 选型 成本">
+  <div class="card-head"><span class="tag ai">E22</span><div class="card-title">Fine-tuning vs RAG vs Prompt Eng</div></div>
+  <div class="core">从便宜到贵，从灵活到定制</div>
+  <div class="card-body">
+    <p><strong>Prompt Eng</strong>：零额外成本，改提示词就行。适合大部分场景，响应最快。</p>
+    <p><strong>RAG</strong>：低成本，外挂知识库。适合需要最新信息、企业内部文档的场景。不改模型本身。</p>
+    <p><strong>Fine-tuning</strong>：高成本，修改模型权重。适合特定风格、领域深度定制（医疗/法律）。需要大量标注数据。</p>
+    <p><strong>决策树</strong>：先试 Prompt → 不够加 RAG → 还不够才 Fine-tuning。大多数场景 Prompt + RAG 就够了。</p>
+  </div>
+</div>
+
+<div class="card" data-c="ai" data-kw="AGI 通用人工智能 ANI 弱AI 强AI Scaling Law">
+  <div class="card-head"><span class="tag ai">E23</span><div class="card-title">AGI 概念与现状</div></div>
+  <div class="core">通用人工智能——一个模型做所有认知任务</div>
+  <div class="card-body">
+    <p><strong>ANI vs AGI</strong>：当前所有 LLM 都是 ANI（弱 AI），只在特定领域强。AGI 是在大多数经济有价值的任务上超越人类。</p>
+    <p><strong>当前共识</strong>：还没到，但进步很快。推理模型（o3、Claude）在数学/代码上已接近或超过人类专家。</p>
+    <p><strong>核心争议</strong>：Scaling Law（更多数据+算力）能不能持续？还是需要新架构？业界分歧大。</p>
+    <p><strong>面试态度</strong>：不过度炒作也不贬低，承认不确定性。关注 AGI 对前端工程师职业规划的影响。</p>
+  </div>
+</div>
+
+<div class="card" data-c="ai" data-kw="评估 基准 Benchmark MMLU HumanEval SWE-bench Eval 刷榜">
+  <div class="card-head"><span class="tag ai">E24</span><div class="card-title">AI 评估基准</div></div>
+  <div class="core">怎么衡量模型好不好</div>
+  <div class="card-body">
+    <p><strong>通用</strong>：MMLU（多学科知识）、HumanEval（代码生成）、MATH（数学推理）、GPQA（博士级问题）。</p>
+    <p><strong>前端相关</strong>：WebArena（网页操作）、SWE-bench（代码修复）、Aider leaderboard（实际编程）。</p>
+    <p><strong>问题</strong>：刷榜泛滥，基准数据可能泄露到训练集。跑分高 ≠ 真实场景好用。</p>
+    <p><strong>实际做法</strong>：在自己业务场景建 eval set，测真实任务表现，不迷信跑分。</p>
+  </div>
+</div>
+
 <div class="card" data-c="ai" data-kw="能力面 适配器 目录 项目 可复用 surface">
   <div class="card-head"><span class="tag ai">D18</span><div class="card-title">能力面适配器怎么设计？</div></div>
   <div class="core">目录结构千差万别，但研发协作的能力面是稳定的——按能力面描述，不按目录</div>
