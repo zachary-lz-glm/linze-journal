@@ -710,6 +710,28 @@ body{overscroll-behavior-y:contain}
   </div>
 </div>
 
+<div class="card" data-c="bagu" data-kw="SSR 同构渲染 Next.js 服务端渲染 hydration CSR SSG ISR SEO 首屏 App Router RSC">
+  <div class="card-head"><span class="tag bagu">#31</span><div class="card-title">SSR 同构渲染 & Next.js</div></div>
+  <div class="core">CSR 快开发，SSR 快首屏 + SEO，Next.js App Router 用 RSC 只发结果不发 JS</div>
+  <div class="card-body">
+    <p><strong>四种策略</strong>：CSR 客户端渲染，SPA 首屏白但交互快；SSR 服务端渲染 HTML，首屏快 + SEO 友好；SSG 静态生成，构建时产出 HTML；ISR 增量静态再生，定时重新生成。</p>
+    <p><strong>Next.js App Router</strong>：RSC 在服务端执行只序列化结果给前端，'use client' 标记客户端组件。<strong>Hydration</strong> 把服务端 HTML 和客户端 JS 状态对齐——mismatch 是常见坑，原因是服务端客户端渲染结果不一致。</p>
+    <p>项目桥接："我的 Schema 渲染引擎也是 SSR 思路——<strong>BFF 端生成初始 Schema，前端 hydrate 后接管交互</strong>。"</p>
+  </div>
+</div>
+
+<div class="card" data-c="bagu" data-kw="React Native Expo 跨端 移动端 Fabric TurboModules JSI 新架构 原生 Flutter Hybrid">
+  <div class="card-head"><span class="tag bagu">#32</span><div class="card-title">React Native / Expo 跨端开发</div></div>
+  <div class="core">新架构 JSI 同步调用 + Fabric 同步渲染 + TurboModules 按需加载</div>
+  <div class="card-body">
+    <p>RN 用 React 写 UI，JS 引擎执行逻辑，通过 Bridge 和原生通信。老架构瓶颈在 Bridge 异步串行。</p>
+    <p><strong>新架构三板斧</strong>：<strong>JSI</strong>（JS 直接持有 C++ 引用，同步调用原生）、<strong>Fabric</strong>（新渲染器，同步渲染 + 优先级调度）、<strong>TurboModules</strong>（按需加载原生模块，启动更快）。</p>
+    <p><strong>Expo</strong> 简化 RN 开发——统一 SDK、OTA 更新、构建服务，不用配原生工程。<strong>expo-router</strong> 做文件路由。</p>
+    <p><strong>选型</strong>：RN 用 JS 生态 + 原生渲染，Flutter 自绘 + Dart，前端团队上手快是 RN 最大优势。vs Hybrid H5：RN 性能更好。</p>
+    <p>项目桥接："Schema 驱动架构天然适合 RN——<strong>只需换一套 RN 组件映射表</strong>就能支持移动端。"</p>
+  </div>
+</div>
+
 <!-- ==================== 手撕代码 ==================== -->
 <div class="card" data-c="code" data-kw="速查 索引 题型 关键词 定位 套路 哪个 怎么搜">
   <div class="card-head"><span class="tag code">速查</span><div class="card-title">题目关键词 → 搜什么（第一张看这个）</div></div>
@@ -1588,6 +1610,28 @@ class LRUCache {
   <div class="card-body">
     <p>和 semantic-release 的区别：semantic-release 基于 commit message 全自动，适合单包；Changesets 人工选 patch/minor/major，适合多包 Monorepo——一次改动可能影响多个包，Changesets 能自动追踪依赖关系同时 bump。</p>
     <p>alpha 流程：changeset pre enter alpha 进入预发布 → changeset 记录变更 → changeset version 生成 1.0.0-alpha.0 → publish --tag alpha → 消费方 npm install pkg@alpha 联调 → 联调完 changeset pre exit 退回正式通道。</p>
+  </div>
+</div>
+
+<div class="card" data-c="sys" data-kw="Hono tRPC Drizzle BFF 全栈 RPC 类型安全 ORM 边缘 Edge Cloudflare 轻量">
+  <div class="card-head"><span class="tag sys">系统</span><div class="card-title">Hono + tRPC + Drizzle 全栈 BFF</div></div>
+  <div class="core">tRPC 端到端类型安全，Hono 边缘 14KB，Drizzle 类型 ORM 零生成</div>
+  <div class="card-body">
+    <p><strong>tRPC</strong>：前后端共享 TS 类型，定义 router + procedure，前端自动推导类型安全 client。<strong>类型就是契约</strong>，不需要接口文档。</p>
+    <p><strong>Hono</strong>：轻量 Web 框架，支持 Cloudflare Workers / Deno / Node，<strong>14KB 极致轻量</strong>，中间件类似 Koa。tRPC 可以跑在 Hono 上。</p>
+    <p><strong>Drizzle ORM</strong>：类型安全，写法接近 SQL。和 Prisma 比：<strong>零生成步骤、bundle 更小</strong>、查询性能更好。</p>
+    <p>项目桥接："我的 BFF 是自研模板引擎 + Express。迁移到 Hono + tRPC，<strong>Schema 类型自动同步到前端</strong>。"</p>
+  </div>
+</div>
+
+<div class="card" data-c="sys" data-kw="低代码 lowcode 可视化 拖拽 物料 Schema 编辑器 渲染引擎 属性面板 画布">
+  <div class="card-head"><span class="tag sys">系统</span><div class="card-title">低代码平台怎么设计？</div></div>
+  <div class="core">三层：可视化编辑器 → Schema → 渲染引擎，和 Schema 架构一脉相承</div>
+  <div class="card-body">
+    <p><strong>核心三层</strong>：可视化编辑器拖拽编排 + 属性配置，输出 Schema JSON；Schema 描述页面结构；渲染引擎消费 Schema 生成页面。</p>
+    <p><strong>关键模块</strong>：物料系统（组件注册、版本管理）、画布（拖拽定位、组件树）、属性面板（动态表单、props 映射）、事件系统（联动规则）。</p>
+    <p><strong>难点</strong>：自定义组件的可扩展性、Schema 版本向后兼容、大页面性能、多人协作冲突。</p>
+    <p>项目桥接："我的 Schema 架构就是低代码的<strong>渲染引擎层</strong>——加上属性面板和拖拽就是完整低代码。"</p>
   </div>
 </div>
 
