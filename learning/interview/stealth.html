@@ -10,16 +10,10 @@
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 :root{--bg:#000;--card:#111;--text:#ccc;--core:#FFD700;--core-bg:#1a1500;--border:#222;--fs:16px;--pad:6px;--radius:8px;--tab-h:44px}
-body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","PingFang SC",sans-serif;background:var(--bg);color:var(--text);font-size:var(--fs);line-height:1.45;padding:calc(var(--tab-h) + 50px) 0 env(safe-area-inset-bottom, 0);-webkit-text-size-adjust:100%}
-
-/* SEARCH */
-.search{position:fixed;top:calc(var(--tab-h) + 4px);left:0;right:0;z-index:99;padding:0 8px 4px;background:var(--bg)}
-.search input{width:100%;padding:8px 12px;padding-right:28px;border:1.5px solid var(--border);border-radius:8px;font-size:15px;background:var(--card);color:var(--text);outline:none}
-.search input::placeholder{color:#555}
-.clear-x{position:absolute;right:14px;top:50%;transform:translateY(-50%);background:none;border:none;font-size:16px;color:#555;cursor:pointer;display:none;padding:4px}
+body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","PingFang SC",sans-serif;background:var(--bg);color:var(--text);font-size:var(--fs);line-height:1.45;padding:calc(var(--tab-h) + 6px) 0 env(safe-area-inset-bottom, 0);-webkit-text-size-adjust:100%}
 
 /* TABS */
-.tabs{position:fixed;top:0;left:0;right:0;z-index:100;background:#111;display:flex;gap:3px;padding:4px 6px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;border-bottom:1px solid #222;height:var(--tab-h);align-items:center}
+.tabs{position:fixed;top:0;left:0;right:0;z-index:100;background:#111;display:flex;gap:3px;padding:4px 40px 4px 6px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;border-bottom:1px solid #222;height:var(--tab-h);align-items:center}
 .tabs::-webkit-scrollbar{display:none}
 .tab{padding:6px 12px;border-radius:6px;font-size:13px;font-weight:700;white-space:nowrap;background:#1a1a1a;color:#666;border:1.5px solid #333;cursor:pointer;transition:all .1s;-webkit-user-select:none;user-select:none}
 .tab.on{color:#fff;border-color:transparent}
@@ -60,16 +54,20 @@ th{font-weight:600;color:#888;font-size:11px}
 html{scroll-behavior:smooth;-webkit-overflow-scrolling:touch}
 body{overscroll-behavior-y:contain}
 
-/* SIDE RAIL */
-.rail{position:fixed;right:1px;top:50%;transform:translateY(-50%);z-index:200;display:flex;flex-direction:column;gap:3px;padding:3px 2px;background:transparent;border:none;opacity:.3;transition:opacity .2s}
-.rail:active,.rail:hover{opacity:1}
-.rail-dot{width:22px;height:22px;border-radius:6px;border:none;font-size:10px;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;transition:transform .1s}
-.rail-dot:active{transform:scale(1.15)}
-.rail-dot.on{box-shadow:0 0 0 2px var(--bg),0 0 0 3px currentColor;transform:scale(1.1)}
-.rail-dot[data-c="open"]{background:#EC4899}.rail-dot[data-c="proj"]{background:#3B82F6}
-.rail-dot[data-c="bagu"]{background:#10B981}.rail-dot[data-c="code"]{background:#F97316}
-.rail-dot[data-c="ai"]{background:#EF4444}.rail-dot[data-c="emer"]{background:#F59E0B}
-.section-anchor{height:1px;scroll-margin-top:100px}
+/* INDEX BTN — tab栏右上角 */
+.idx-btn{position:fixed;top:7px;right:6px;z-index:101;width:30px;height:30px;border-radius:6px;border:none;background:#1a1a1a;color:#888;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.idx-btn:active{background:#333}
+
+/* DRAWER — 右侧抽屉 */
+.drawer-mask{position:fixed;top:0;left:0;right:0;bottom:0;z-index:300;background:rgba(0,0,0,.55);display:none}
+.drawer-mask.open{display:block}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:72%;max-width:300px;z-index:301;background:#111;border-left:1px solid #222;transform:translateX(100%);transition:transform .22s ease;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.drawer.open{transform:translateX(0)}
+.drawer-head{padding:10px 14px;font-size:13px;font-weight:700;color:#666;border-bottom:1px solid #222;position:sticky;top:0;background:#111}
+.drawer-item{padding:9px 14px;font-size:13px;color:#bbb;border-bottom:1px solid #1a1a1a;cursor:pointer;-webkit-user-select:none;user-select:none;display:flex;align-items:center;gap:6px}
+.drawer-item:active{background:#1a1a1a}
+.drawer-item .tag{font-size:10px;padding:1px 5px;flex-shrink:0}
+.drawer-item span:last-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 </style>
 </head>
 <body>
@@ -84,25 +82,17 @@ body{overscroll-behavior-y:contain}
   <button class="tab" data-c="emer" onclick="setCat('emer')">应急</button>
 </div>
 
-<!-- SEARCH -->
-<div class="search">
-  <input type="text" id="si" placeholder="搜索关键词…" autocomplete="off">
-  <button class="clear-x" id="cx" onclick="doClear()">✕</button>
-</div>
-
-<!-- SIDE RAIL -->
-<div class="rail" id="rail">
-  <button class="rail-dot" data-c="open" onclick="railJump('open')" title="开场">🎤</button>
-  <button class="rail-dot" data-c="proj" onclick="railJump('proj')" title="项目">📦</button>
-  <button class="rail-dot" data-c="bagu" onclick="railJump('bagu')" title="基础">📗</button>
-  <button class="rail-dot" data-c="code" onclick="railJump('code')" title="手撕">✍️</button>
-  <button class="rail-dot" data-c="ai" onclick="railJump('ai')" title="AI">🤖</button>
-  <button class="rail-dot" data-c="emer" onclick="railJump('emer')" title="应急">⚡</button>
+<!-- INDEX BTN -->
+<button class="idx-btn" onclick="toggleDrawer()">☰</button>
+<!-- DRAWER -->
+<div class="drawer-mask" id="dMask" onclick="closeDrawer()"></div>
+<div class="drawer" id="drawer">
+  <div class="drawer-head" id="dHead">卡片索引</div>
+  <div id="dList"></div>
 </div>
 
 <div class="container" id="cards">
 
-<div class="section-anchor" id="sec-open"></div>
 <!-- ==================== 开场 ==================== -->
 <div class="card" data-c="open" data-kw="自我介绍 介绍 背景 经验">
   <div class="card-head"><span class="tag open">自我介绍</span><div class="card-title">1 分钟自我介绍</div></div>
@@ -130,7 +120,6 @@ body{overscroll-behavior-y:contain}
   </div>
 </div>
 
-<div class="section-anchor" id="sec-proj"></div>
 <!-- ==================== 项目 A 组 ==================== -->
 <div class="card" data-c="proj" data-kw="Monorepo 管理 Lerna Nx Yarn workspace">
   <div class="card-head"><span class="tag proj">A1</span><div class="card-title">Monorepo 怎么管理 15+ 模块？</div></div>
@@ -380,7 +369,6 @@ body{overscroll-behavior-y:contain}
   </div>
 </div>
 
-<div class="section-anchor" id="sec-bagu"></div>
 <!-- ==================== 基础题 ==================== -->
 <div class="card" data-c="bagu" data-kw="React 18 并发 Fiber Scheduler 优先级">
   <div class="card-head"><span class="tag bagu">#1</span><div class="card-title">React 18 并发 + Fiber</div></div>
@@ -771,7 +759,6 @@ body{overscroll-behavior-y:contain}
   </div>
 </div>
 
-<div class="section-anchor" id="sec-code"></div>
 <!-- ==================== 手撕代码 ==================== -->
 <div class="card" data-c="code" data-kw="速查 索引 题型 关键词 定位 套路 哪个 怎么搜">
   <div class="card-head"><span class="tag code">速查</span><div class="card-title">题目关键词 → 搜什么（第一张看这个）</div></div>
@@ -1376,7 +1363,6 @@ class LRUCache {
 }</div>
 </div>
 
-<div class="section-anchor" id="sec-ai"></div>
 <!-- ==================== AI 工程 ==================== -->
 <div class="card" data-c="ai" data-kw="AI 理解项目 Reference SSOT Evidence Index 知识库">
   <div class="card-head"><span class="tag ai">D21</span><div class="card-title">AI 怎么理解陌生项目？</div></div>
@@ -1793,7 +1779,6 @@ class LRUCache {
   </div>
 </div>
 
-<div class="section-anchor" id="sec-emer"></div>
 <!-- ==================== 软技能 ==================== -->
 <div class="card" data-c="emer" data-kw="AI 取代 前端 未来 转型 观点">
   <div class="card-head"><span class="tag emer">软技能</span><div class="card-title">AI 会取代前端吗？</div></div>
@@ -1996,51 +1981,47 @@ class LRUCache {
 
 <script>
 let curCat='all';
+const drawer=document.getElementById('drawer'),dMask=document.getElementById('dMask'),dList=document.getElementById('dList'),dHead=document.getElementById('dHead');
+const catNames={all:'全部',open:'开场',proj:'项目',bagu:'基础',code:'手撕',ai:'AI',emer:'应急'};
+
 function setCat(c){
   curCat=c;
   document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('on',t.dataset.c===c));
   apply();
+  closeDrawer();
   window.scrollTo({top:0,behavior:'smooth'});
 }
 function apply(){
-  const s=document.getElementById('si').value.trim().toLowerCase(),cards=document.querySelectorAll('.card');
+  const cards=document.querySelectorAll('.card');
   let n=0;
   cards.forEach(c=>{
-    const mc=curCat==='all'||c.dataset.c===curCat;
-    const ms=!s||c.dataset.kw.toLowerCase().includes(s)||c.textContent.toLowerCase().includes(s);
-    const v=mc&&ms;
+    const v=curCat==='all'||c.dataset.c===curCat;
     c.classList.toggle('hide',!v);
     if(v)n++;
   });
   document.getElementById('noRes').style.display=n===0?'block':'none';
 }
-// SEARCH
-const si=document.getElementById('si'),cx=document.getElementById('cx');
-si.addEventListener('input',function(){const v=this.value.trim();cx.style.display=v?'block':'none';apply()});
-function doClear(){si.value='';cx.style.display='none';apply();si.focus()}
-// SIDE RAIL
-const sectionMap=[{c:'open',id:'sec-open'},{c:'proj',id:'sec-proj'},{c:'bagu',id:'sec-bagu'},{c:'code',id:'sec-code'},{c:'ai',id:'sec-ai'},{c:'emer',id:'sec-emer'}];
-let railJumping=false;
-function railJump(cat){
-  curCat=cat;
-  document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('on',t.dataset.c===cat));
-  apply();
-  railJumping=true;
-  const el=document.getElementById('sec-'+cat);
-  if(el)el.scrollIntoView({behavior:'smooth',block:'start'});
-  document.querySelectorAll('.rail-dot').forEach(d=>d.classList.toggle('on',d.dataset.c===cat));
-  setTimeout(()=>{railJumping=false},800);
+function toggleDrawer(){
+  const open=drawer.classList.toggle('open');
+  dMask.classList.toggle('open',open);
+  if(open)buildIndex();
 }
-let railTimer=null;
-function updateRail(){
-  if(railJumping)return;
-  const scrollY=window.scrollY+130;
-  let activeCat='';
-  for(const s of sectionMap){const el=document.getElementById(s.id);if(el&&el.offsetTop<=scrollY)activeCat=s.c}
-  document.querySelectorAll('.rail-dot').forEach(d=>d.classList.toggle('on',d.dataset.c===activeCat));
+function closeDrawer(){drawer.classList.remove('open');dMask.classList.remove('open')}
+function buildIndex(){
+  dHead.textContent=(catNames[curCat]||'')+' · 卡片索引';
+  dList.innerHTML='';
+  document.querySelectorAll('.card').forEach(c=>{
+    if(curCat!=='all'&&c.dataset.c!==curCat)return;
+    const tag=c.querySelector('.tag');
+    const title=c.querySelector('.card-title');
+    if(!tag||!title)return;
+    const item=document.createElement('div');
+    item.className='drawer-item';
+    item.innerHTML='<span class="tag '+c.dataset.c+'">'+tag.textContent+'</span><span>'+title.textContent+'</span>';
+    item.onclick=()=>{closeDrawer();setTimeout(()=>c.scrollIntoView({behavior:'smooth',block:'start'}),200)};
+    dList.appendChild(item);
+  });
 }
-window.addEventListener('scroll',()=>{clearTimeout(railTimer);railTimer=setTimeout(updateRail,80)});
-updateRail();
 </script>
 </body>
 </html>
