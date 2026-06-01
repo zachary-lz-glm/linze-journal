@@ -67,6 +67,7 @@ body{overscroll-behavior-y:contain}
 .drawer-item{padding:9px 14px;font-size:13px;color:#bbb;border-bottom:1px solid #1a1a1a;cursor:pointer;-webkit-user-select:none;user-select:none;display:flex;align-items:center;gap:6px}
 .drawer-item:active{background:#1a1a1a}
 .drawer-item .tag{font-size:10px;padding:1px 5px;flex-shrink:0}
+.drawer-group{padding:8px 14px 4px;font-size:11px;font-weight:700;color:#555;border-bottom:1px solid #222;background:#0a0a0a;position:sticky;top:36px}
 .drawer-item span:last-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 </style>
 </head>
@@ -2007,14 +2008,75 @@ function toggleDrawer(){
   if(open)buildIndex();
 }
 function closeDrawer(){drawer.classList.remove('open');dMask.classList.remove('open')}
+
+function getGroup(c){
+  const cat=c.dataset.c,
+    tag=(c.querySelector('.tag')||{}).textContent||'',
+    t=(c.querySelector('.card-title')||{}).textContent||'';
+  if(cat==='open')return '';
+  if(cat==='emer'){
+    if(tag==='速查')return '项目数据';
+    if(tag==='软技能')return '软技能';
+    if(tag==='反问')return '反问';
+    return '话术急救';
+  }
+  if(cat==='proj'){
+    if(/微前端|qiankun|渐进|接入层|Changesets/.test(t))return '微前端';
+    if(tag==='扩展')return '扩展';
+    if(/A3|A8/.test(tag)||/事故|审查/.test(t))return '组件库';
+    if(/A4|A9|A10/.test(tag)||/AI|PRD|LLM|SSOT|prd/.test(t))return 'AI 工作流';
+    if(/Q2[24]/.test(tag)||/工程|设计模式/.test(t))return '工程体系';
+    return '营销中台';
+  }
+  if(cat==='bagu'){
+    if(/TypeScript|类型体操/.test(t))return 'TypeScript';
+    if(/SSR|Next|React Native|Expo/.test(t))return '框架扩展';
+    if(/Webpack|Vite|Vue/.test(t))return '工程化';
+    if(/CSS|居中|盒模型|溢出|布局/.test(t))return 'CSS';
+    if(/HTTP|HTTPS|跨域|Token|存储/.test(t))return '网络';
+    if(/浏览|渲染|事件|懒加载|首屏|监控|Service Worker|性能优化|XSS|CSRF|安全/.test(t))return '浏览器/性能';
+    if(/React|useEffect|Fiber|并发|虚拟\s*DOM/.test(t))return 'React';
+    return 'JS 核心';
+  }
+  if(cat==='code'){
+    if(tag==='速查')return '速查';
+    if(/Promise|EventEmitter|call|apply|bind|深拷贝|防抖|节流|instanceOf|class|模板/.test(t))return '手写 API';
+    if(/链表/.test(t))return '链表';
+    if(/树|层序|LCA|祖先|岛屿/.test(t))return '树/BFS/DFS';
+    if(/排列|组合/.test(t))return '回溯';
+    if(/快排|排序|TopK|第K/.test(t))return '排序/TopK';
+    if(/DP|贪心|子序|子序列|股票|字符串/.test(t))return 'DP/贪心';
+    if(/括号/.test(t))return '栈';
+    if(/旋转/.test(t))return '二分';
+    if(/LRU/.test(t))return '综合';
+    return '数组/双指针';
+  }
+  if(cat==='ai'){
+    if(/D(18|19|20)/.test(tag))return '知识库';
+    if(/^D/.test(tag))return 'AI 架构';
+    if(/^追问/.test(tag))return '追问';
+    if(/^(E1|E2|E3|E4)$/.test(tag))return 'AI 前端';
+    if(/^(E5|E6|E7|E8|E9|E10)$/.test(tag))return 'AI 实践';
+    return 'AI 理论';
+  }
+  return '';
+}
+
 function buildIndex(){
   dHead.textContent=(catNames[curCat]||'')+' · 卡片索引';
   dList.innerHTML='';
+  let lastG='';
   document.querySelectorAll('.card').forEach(c=>{
     if(curCat!=='all'&&c.dataset.c!==curCat)return;
     const tag=c.querySelector('.tag');
     const title=c.querySelector('.card-title');
     if(!tag||!title)return;
+    const g=curCat==='all'?catNames[c.dataset.c]||'':getGroup(c);
+    if(g&&g!==lastG){
+      const h=document.createElement('div');
+      h.className='drawer-group';h.textContent=g;
+      dList.appendChild(h);lastG=g;
+    }
     const item=document.createElement('div');
     item.className='drawer-item';
     item.innerHTML='<span class="tag '+c.dataset.c+'">'+tag.textContent+'</span><span>'+title.textContent+'</span>';
