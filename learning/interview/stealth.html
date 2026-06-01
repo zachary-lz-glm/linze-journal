@@ -10,7 +10,7 @@
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 :root{--bg:#000;--card:#111;--text:#ccc;--core:#FFD700;--core-bg:#1a1500;--border:#222;--fs:16px;--pad:6px;--radius:8px;--tab-h:44px}
-body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","PingFang SC",sans-serif;background:var(--bg);color:var(--text);font-size:var(--fs);line-height:1.45;padding:calc(var(--tab-h) + 50px) 0 env(safe-area-inset-bottom, 0);padding-right:38px;-webkit-text-size-adjust:100%}
+body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","PingFang SC",sans-serif;background:var(--bg);color:var(--text);font-size:var(--fs);line-height:1.45;padding:calc(var(--tab-h) + 50px) 0 env(safe-area-inset-bottom, 0);-webkit-text-size-adjust:100%}
 
 /* SEARCH */
 .search{position:fixed;top:calc(var(--tab-h) + 4px);left:0;right:0;z-index:99;padding:0 8px 4px;background:var(--bg)}
@@ -61,9 +61,9 @@ html{scroll-behavior:smooth;-webkit-overflow-scrolling:touch}
 body{overscroll-behavior-y:contain}
 
 /* SIDE RAIL */
-.rail{position:fixed;right:2px;top:50%;transform:translateY(-50%);z-index:200;display:flex;flex-direction:column;gap:5px;padding:5px 3px;background:var(--card);border-radius:12px;border:1px solid var(--border);opacity:.4;transition:opacity .2s}
+.rail{position:fixed;right:1px;top:50%;transform:translateY(-50%);z-index:200;display:flex;flex-direction:column;gap:3px;padding:3px 2px;background:transparent;border:none;opacity:.3;transition:opacity .2s}
 .rail:active,.rail:hover{opacity:1}
-.rail-dot{width:26px;height:26px;border-radius:7px;border:none;font-size:11px;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;transition:transform .1s}
+.rail-dot{width:22px;height:22px;border-radius:6px;border:none;font-size:10px;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;transition:transform .1s}
 .rail-dot:active{transform:scale(1.15)}
 .rail-dot.on{box-shadow:0 0 0 2px var(--bg),0 0 0 3px currentColor;transform:scale(1.1)}
 .rail-dot[data-c="open"]{background:#EC4899}.rail-dot[data-c="proj"]{background:#3B82F6}
@@ -1259,6 +1259,123 @@ class LRUCache {
 }</div>
 </div>
 
+<div class="card" data-c="code" data-kw="K个一组翻转链表 reverseKGroup 分组 翻转 递归 字节 LC25 hard">
+  <div class="card-head"><span class="tag code">T10</span><div class="card-title">K 个一组翻转链表 (LC25 hard)</div></div>
+  <div class="core">字节前端最高频 hard 题。递归分组翻转，每组内部三指针反转</div>
+  <div class="card-body">
+    <p><strong>思路：</strong>先数够 k 个节点 → 反转这一组 → 递归处理剩余 → 拼接</p>
+  </div>
+  <div class="code-blk">function reverseKGroup(head, k) {
+  // 1. 检查剩余够不够 k 个
+  let cnt = 0, cur = head;
+  while (cur && cnt < k) { cur = cur.next; cnt++; }
+  if (cnt < k) return head; // 不够 k 个，不翻转
+
+  // 2. 反转前 k 个
+  let prev = null, node = head;
+  for (let i = 0; i < k; i++) {
+    let next = node.next;
+    node.next = prev;
+    prev = node;
+    node = next;
+  }
+  // 3. head(翻转后变成尾) 连上后面的递归结果
+  head.next = reverseKGroup(node, k);
+  return prev; // prev 是新的头
+}</div>
+</div>
+
+<div class="card" data-c="code" data-kw="买卖股票 最佳时机 贪心 最大利润 DP 字节 腾讯 LC121">
+  <div class="card-head"><span class="tag code">T11</span><div class="card-title">买卖股票的最佳时机 (LC121)</div></div>
+  <div class="core">维护最小买入价，每天算利润取最大。一次遍历 O(n)</div>
+  <div class="card-body">
+    <p><strong>思路：</strong>遍历时记录历史最低价，用当前价减最低价就是"今天卖出的利润"</p>
+  </div>
+  <div class="code-blk">function maxProfit(prices) {
+  let minPrice = Infinity, maxProfit = 0;
+  for (const p of prices) {
+    minPrice = Math.min(minPrice, p);
+    maxProfit = Math.max(maxProfit, p - minPrice);
+  }
+  return maxProfit;
+}</div>
+</div>
+
+<div class="card" data-c="code" data-kw="有效括号 栈 匹配 对称 stack 字节 腾讯 LC20">
+  <div class="card-head"><span class="tag code">T12</span><div class="card-title">有效的括号 (LC20)</div></div>
+  <div class="core">栈模板题。遇左括号压右括号，遇右括号弹栈比对</div>
+  <div class="card-body">
+    <p><strong>思路：</strong>遍历字符串，左括号入栈对应的右括号，右括号则弹栈比较</p>
+  </div>
+  <div class="code-blk">function isValid(s) {
+  const map = { '(': ')', '[': ']', '{': '}' };
+  const stack = [];
+  for (const c of s) {
+    if (map[c]) stack.push(map[c]);   // 左括号压右括号
+    else if (stack.pop() !== c) return false;
+  }
+  return stack.length === 0;
+}</div>
+</div>
+
+<div class="card" data-c="code" data-kw="搜索旋转排序数组 二分查找 rotated binary search 字节 LC33">
+  <div class="card-head"><span class="tag code">T13</span><div class="card-title">搜索旋转排序数组 (LC33)</div></div>
+  <div class="core">二分变种：先判断哪半边有序，再决定去哪边找</div>
+  <div class="card-body">
+    <p><strong>思路：</strong>mid 落在有序半边 → 判断 target 在不在有序侧 → 不在就去无序侧</p>
+  </div>
+  <div class="code-blk">function search(nums, target) {
+  let lo = 0, hi = nums.length - 1;
+  while (lo <= hi) {
+    const mid = (lo + hi) >> 1;
+    if (nums[mid] === target) return mid;
+    // 左半边有序
+    if (nums[lo] <= nums[mid]) {
+      if (nums[lo] <= target && target < nums[mid]) hi = mid - 1;
+      else lo = mid + 1;
+    } else { // 右半边有序
+      if (nums[mid] < target && target <= nums[hi]) lo = mid + 1;
+      else hi = mid - 1;
+    }
+  }
+  return -1;
+}</div>
+</div>
+
+<div class="card" data-c="code" data-kw="最近公共祖先 LCA 二叉树 递归 左右子树 腾讯 字节 LC236">
+  <div class="card-head"><span class="tag code">T14</span><div class="card-title">二叉树的最近公共祖先 (LC236)</div></div>
+  <div class="core">递归：左找 p/q、右找 p/q，当前节点汇总判断</div>
+  <div class="card-body">
+    <p><strong>思路：</strong>后序遍历。左右都找到 → 当前就是 LCA；只左找到 → 往上透传左；只右找到 → 往上透传右</p>
+  </div>
+  <div class="code-blk">function lowestCommonAncestor(root, p, q) {
+  if (!root || root === p || root === q) return root;
+  const left = lowestCommonAncestor(root.left, p, q);
+  const right = lowestCommonAncestor(root.right, p, q);
+  if (left && right) return root;   // 左右都有，当前就是LCA
+  return left || right;              // 透传非空的那一侧
+}</div>
+</div>
+
+<div class="card" data-c="code" data-kw="最长公共子序列 LCS DP 二维 动态规划 腾讯 字节 LC1143">
+  <div class="card-head"><span class="tag code">T15</span><div class="card-title">最长公共子序列 (LC1143)</div></div>
+  <div class="core">经典二维 DP：dp[i][j] = 字符相同取左上+1，否则取 max(上,左)</div>
+  <div class="card-body">
+    <p><strong>思路：</strong>dp 表格，行是 s1、列是 s2。字符匹配 → dp[i-1][j-1]+1；不匹配 → max(dp[i-1][j], dp[i][j-1])</p>
+  </div>
+  <div class="code-blk">function longestCommonSubsequence(s1, s2) {
+  const m = s1.length, n = s2.length;
+  const dp = Array.from({length: m + 1}, () => Array(n + 1).fill(0));
+  for (let i = 1; i <= m; i++) {
+    for (let j = 1; j <= n; j++) {
+      if (s1[i-1] === s2[j-1]) dp[i][j] = dp[i-1][j-1] + 1;
+      else dp[i][j] = Math.max(dp[i-1][j], dp[i][j-1]);
+    }
+  }
+  return dp[m][n];
+}</div>
+</div>
+
 <div class="section-anchor" id="sec-ai"></div>
 <!-- ==================== AI 工程 ==================== -->
 <div class="card" data-c="ai" data-kw="AI 理解项目 Reference SSOT Evidence Index 知识库">
@@ -1903,13 +2020,20 @@ si.addEventListener('input',function(){const v=this.value.trim();cx.style.displa
 function doClear(){si.value='';cx.style.display='none';apply();si.focus()}
 // SIDE RAIL
 const sectionMap=[{c:'open',id:'sec-open'},{c:'proj',id:'sec-proj'},{c:'bagu',id:'sec-bagu'},{c:'code',id:'sec-code'},{c:'ai',id:'sec-ai'},{c:'emer',id:'sec-emer'}];
+let railJumping=false;
 function railJump(cat){
+  curCat=cat;
+  document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('on',t.dataset.c===cat));
+  apply();
+  railJumping=true;
   const el=document.getElementById('sec-'+cat);
   if(el)el.scrollIntoView({behavior:'smooth',block:'start'});
   document.querySelectorAll('.rail-dot').forEach(d=>d.classList.toggle('on',d.dataset.c===cat));
+  setTimeout(()=>{railJumping=false},800);
 }
 let railTimer=null;
 function updateRail(){
+  if(railJumping)return;
   const scrollY=window.scrollY+130;
   let activeCat='';
   for(const s of sectionMap){const el=document.getElementById(s.id);if(el&&el.offsetTop<=scrollY)activeCat=s.c}
