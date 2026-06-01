@@ -175,10 +175,10 @@ th{font-weight:600;color:var(--text2);font-size:12px}
   <div class="core">Schema 驱动架构 → BFF 生成 → 前端渲染 → AI 工程化</div>
   <button class="script-btn" onclick="togScript(this)">🎤</button>
   <div class="script-box">
-    <p>我在滴滴国际化做了四年营销中台前端，核心做的是一套 Schema 驱动的全栈架构。</p>
-    <p>简单说就是：BFF 层用模板引擎生成 Schema，前端通过渲染引擎动态消费。中间最核心的设计叫 injectDActions，是一次声明、双重求值——BFF 端先算一次保证初始状态正确，序列化给前端运行时再算一次做联动。联动分两种，需要后端数据的走 fetchApi 回调 BFF 重生成，纯前端的走本地 eval。这样新增活动类型，前端基本不用写新代码。</p>
-    <p>这套 Schema 架构后来也复用到了权益组件库 benefit SDK，支持 400 多种权益的组件化接入，内置 24 个组件加运行时注册扩展。</p>
-    <p>在这个基础上我又做了 prd-tools，用 AI 把 PRD 转成有证据、可执行、可回流的结构化开发计划。不是让 AI 写代码，而是工程化地管理从需求到代码的全链路。</p>
+    <p>我在滴滴国际化做了四年营销中台前端，核心做的是一套 <strong>Schema 驱动的全栈架构</strong>。</p>
+    <p>简单说就是：<strong>BFF 层用模板引擎生成 Schema，前端通过渲染引擎动态消费</strong>。中间最核心的设计叫 <strong>injectDActions，一次声明、双重求值</strong>——BFF 端先算一次保证初始状态正确，序列化给前端运行时再算一次做联动。联动分两种，需要后端数据的走 fetchApi 回调 BFF 重生成，纯前端的走本地 eval。这样新增活动类型，前端基本不用写新代码。</p>
+    <p>这套 Schema 架构后来也复用到了权益组件库 benefit SDK，支持 <strong>400 多种权益</strong>的组件化接入，内置 24 个组件加运行时注册扩展。</p>
+    <p>在这个基础上我又做了 <strong>prd-tools</strong>，用 AI 把 PRD 转成有证据、可执行、可回流的结构化开发计划。不是让 AI 写代码，而是<strong>工程化地管理从需求到代码的全链路</strong>。</p>
     <p class="hint">语速 250 字/分钟，这段约 45 秒。面试官追问时顺势展开。</p>
   </div>
   <button class="follow-btn" onclick="togFollow(this)">追问方向</button>
@@ -217,10 +217,10 @@ th{font-weight:600;color:var(--text2);font-size:12px}
   <div class="core">BFF 生成 Schema，前端消费 Schema，新增活动类型前端零代码</div>
   <button class="script-btn" onclick="togScript(this)">🎤</button>
   <div class="script-box">
-    <p>这套架构分三层：后端 API 给原始数据，BFF 层负责生成 Schema，前端负责按 Schema 渲染。</p>
-    <p>BFF 不是手写 JSON，是用模板引擎驱动的。每个步骤有独立模板——basic、group、rules、message、preview——Builder 编译出 content_schema。最核心的设计是 injectDActions，一次声明、双重求值：BFF 端先 safeEval 算一次设初始状态，然后序列化 d_actions 给前端，前端运行时字段变化再算一次。联动分两种，fetchApi 型回调 BFF 重生成，state 型前端本地 eval。一共 16 个联动模板。</p>
-    <p>前端拿到 Schema 后通过 formatName 把嵌套路径拍平成 dot path，然后用 Listener 发布订阅执行联动。组件渲染是双轨制，基础走 switch-case，业务走 RegisteredComponents 注册表，35 个组件动态渲染。</p>
-    <p>最大的好处是新增活动类型，前端基本不用写新代码，主要改 BFF 模板和联动就行。</p>
+    <p>这套架构<strong>分三层</strong>：后端 API 给原始数据，BFF 层负责生成 Schema，前端负责按 Schema 渲染。</p>
+    <p>BFF 不是手写 JSON，是用<strong>模板引擎驱动</strong>的。最核心的设计是 <strong>injectDActions，一次声明、双重求值</strong>：BFF 端先 safeEval 算一次设初始状态，序列化 d_actions 给前端，前端运行时字段变化再算一次。联动分两种，<strong>fetchApi 型</strong>回调 BFF 重生成，<strong>state 型</strong>前端本地 eval。一共 16 个联动模板。</p>
+    <p>前端拿到 Schema 后通过 <strong>formatName 把嵌套路径拍平成 dot path</strong>，然后 Listener 发布订阅执行联动。组件渲染是<strong>双轨制</strong>，基础走 switch-case，业务走 RegisteredComponents 注册表，35 个组件动态渲染。</p>
+    <p>最大的好处是<strong>新增活动类型，前端基本不用写新代码</strong>。</p>
     <p class="hint">如果面试官追问性能：局部字段重渲染，按依赖触发，不全表单刷新。</p>
   </div>
   <button class="follow-btn" onclick="togFollow(this)">追问</button>
@@ -725,6 +725,30 @@ function compileAdv(tpl, data) {
   </div>
 </div>
 
+<div class="card" data-c="bagu" data-kw="SSR 同构渲染 Next.js 服务端渲染 hydration CSR SSG ISR SEO 首屏 App Router">
+  <div class="card-head" onclick="togCard(this)"><span class="tag bagu">八股</span><div class="card-title">SSR 同构渲染 & Next.js</div></div>
+  <div class="core">CSR 快开发，SSR 快首屏 + SEO，按场景选</div>
+  <button class="script-btn" onclick="togScript(this)">🎤</button>
+  <div class="script-box">
+    <p>四种策略：<strong>CSR</strong> 客户端渲染，SPA 首屏白但交互快；<strong>SSR</strong> 服务端渲染 HTML，首屏快 + SEO 友好；<strong>SSG</strong> 静态生成，构建时产出 HTML，适合文档博客；<strong>ISR</strong> 增量静态再生，定时重新生成静态页。</p>
+    <p>Next.js App Router 核心：<strong>RSC 在服务端执行只序列化结果给前端</strong>，'use client' 标记客户端组件。<strong>Hydration</strong> 是把服务端 HTML 和客户端 JS 状态对齐——mismatch 是常见坑，原因是服务端客户端渲染结果不一致。</p>
+    <p>项目桥接："我的 Schema 渲染引擎也是 SSR 思路——<strong>BFF 端生成初始 Schema，前端 hydrate 后接管交互</strong>。"</p>
+  </div>
+</div>
+
+<div class="card" data-c="bagu" data-kw="React Native Expo 跨端 移动端 Fabric TurboModules JSI 新架构 原生 Flutter Hybrid">
+  <div class="card-head" onclick="togCard(this)"><span class="tag bagu">八股</span><div class="card-title">React Native / Expo 跨端开发</div></div>
+  <div class="core">新架构 Fabric + TurboModules + JSI，性能接近原生</div>
+  <button class="script-btn" onclick="togScript(this)">🎤</button>
+  <div class="script-box">
+    <p>RN 核心思路：用 React 写 UI，JS 引擎执行逻辑，通过 <strong>Bridge 和原生通信</strong>。老架构瓶颈在 Bridge 异步串行。</p>
+    <p>新架构三板斧：<strong>JSI</strong>（JS 直接持有 C++ 引用，同步调用原生）、<strong>Fabric</strong>（新渲染器，同步渲染 + 优先级调度）、<strong>TurboModules</strong>（按需加载原生模块，启动更快）。</p>
+    <p>Expo 简化 RN 开发——统一 SDK、OTA 更新、构建服务，不用配原生工程。<strong>expo-router</strong> 做文件路由。</p>
+    <p>RN vs Flutter：RN 用 JS 生态 + 原生渲染，Flutter 自绘 + Dart。<strong>前端团队上手快是 RN 最大优势</strong>。</p>
+    <p>项目桥接："Schema 驱动架构天然适合 RN——<strong>只需换一套 RN 组件映射表</strong>就能支持移动端。"</p>
+  </div>
+</div>
+
 <!-- ==================== 算法 ==================== -->
 <div class="section-anchor" id="sec-code"></div>
 <div class="card" data-c="code" data-kw="哈希 Map 两数之和 配对 重复 统计">
@@ -952,7 +976,7 @@ function mergeTwoLists(l1, l2) {
   <div class="core">连接 → 解析 → 渲染 → 可靠性，四层分离</div>
   <button class="script-btn" onclick="togScript(this)">🎤</button>
   <div class="script-box">
-    <p>分四层做。连接层用 fetch 加 ReadableStream 或者 EventSource，处理断线重连、超时和取消。解析层按 chunk 维护 buffer，处理 data 前缀、事件 id 和心跳。渲染层不能每个 token 都全量 re-render，要用 requestAnimationFrame 节流、增量 Markdown 解析，代码块没闭合的时候不能渲染 Markdown。可靠性上要处理 Last-Event-ID 消息去重、AbortController 取消、指数退避重试。</p>
+    <p>分四层做。<strong>连接层</strong>用 fetch 加 ReadableStream 或者 EventSource，处理断线重连和取消。<strong>解析层</strong>按 chunk 维护 buffer，处理 data 前缀和心跳。<strong>渲染层</strong>不能每个 token 都全量 re-render，要用 <strong>requestAnimationFrame 节流 + 增量 Markdown 解析</strong>。<strong>可靠性</strong>上要处理 Last-Event-ID 去重、AbortController 取消、指数退避重试。</p>
     <p>项目桥接："我的 Schema 联动也是事件流进前端的分层处理，核心思路一样：分层解耦、状态化管理。"</p>
   </div>
 </div>
@@ -962,8 +986,8 @@ function mergeTwoLists(l1, l2) {
   <div class="core">把 Agent 过程显式状态化，不能只展示最终答案</div>
   <button class="script-btn" onclick="togScript(this)">🎤</button>
   <div class="script-box">
-    <p>核心模型分五层：conversation、message、run、step、tool call。每步都有状态——streaming、waiting_tool、executing、done、failed。工具调用要展示输入输出、参数、耗时和错误，敏感操作需要用户二次确认。状态机推荐 XState，支持暂停恢复回滚。</p>
-    <p>项目桥接："prd-tools 双 Skill 本质就是 Agent 工作流——build-reference 是知识采集 Agent，prd-distill 是分析 Agent，通过 reference 共享上下文协作。"</p>
+    <p>核心模型<strong>分五层</strong>：conversation、message、run、step、tool call。每步都有状态——streaming、waiting_tool、executing、done、failed。<strong>工具调用要展示输入输出、参数、耗时和错误</strong>，敏感操作需要用户二次确认。状态机推荐 <strong>XState</strong>，支持暂停恢复回滚。</p>
+    <p>项目桥接："prd-tools 双 Skill 本质就是 Agent 工作流——<strong>build-reference 是知识采集 Agent，prd-distill 是分析 Agent</strong>。"</p>
   </div>
 </div>
 
@@ -972,8 +996,8 @@ function mergeTwoLists(l1, l2) {
   <div class="core">前端负责向量检索的用户体验和反馈闭环</div>
   <button class="script-btn" onclick="togScript(this)">🎤</button>
   <div class="script-box">
-    <p>RAG 核心链路：用户提问 → 向量化 → 检索文档 → 拼 context → LLM 生成。前端能做三件事：一是本地向量化，用 TensorFlow.js 或 ONNX Runtime；二是交互层反馈收集，用户对回答的点赞踩、来源展示、纠正入口；三是检索结果可视化，展示命中文档片段和相似度分数。</p>
-    <p>项目桥接："prd-tools 的 evidence 机制就是 RAG 的工程化落地——不用向量检索，用 BM25 倒排索引做精确检索，每个结论锚定到源码位置。"</p>
+    <p>RAG 核心链路：<strong>用户提问 → 向量化 → 检索文档 → 拼 context → LLM 生成</strong>。前端能做三件事：一是<strong>本地向量化</strong>，用 TensorFlow.js 或 ONNX Runtime；二是<strong>反馈收集</strong>，点赞踩、来源展示、纠正入口；三是<strong>检索结果可视化</strong>，展示命中文档和相似度分数。</p>
+    <p>项目桥接："prd-tools 的 evidence 机制就是 RAG 工程化落地——<strong>用 BM25 倒排索引做精确检索</strong>，每个结论锚定到源码位置。"</p>
   </div>
 </div>
 
@@ -982,7 +1006,9 @@ function mergeTwoLists(l1, l2) {
   <div class="core">MCP 是标准化工具协议，Function Calling 是模型能力，互补</div>
   <button class="script-btn" onclick="togScript(this)">🎤</button>
   <div class="script-box">
-    <p>MCP 是 Anthropic 提出的开放协议，目标是让 AI 应用标准化连接外部工具和数据源。Client-Server 架构，通过 JSON-RPC 通信。Function Calling 是 OpenAI 定义的一种模型能力，让模型输出结构化工具调用请求。区别：Function Calling 绑定模型厂商，MCP 不绑定；Function Calling 是单次调用，MCP 支持长连接和工具发现。还有 A2A 是 Google 提出的 Agent 间通信协议，和 MCP 互补。</p>
+    <p><strong>MCP</strong> 是 Anthropic 提出的开放协议，目标是让 AI 应用标准化连接外部工具和数据源。<strong>Client-Server 架构，JSON-RPC 通信</strong>。</p>
+    <p><strong>Function Calling</strong> 是 OpenAI 定义的模型能力，让模型输出结构化工具调用请求。</p>
+    <p>区别：Function Calling <strong>绑定模型厂商</strong>，MCP 不绑定；Function Calling 是单次调用，MCP 支持<strong>长连接和工具发现</strong>。还有 <strong>A2A</strong> 是 Google 提出的 Agent 间通信协议，和 MCP 互补。</p>
   </div>
 </div>
 
@@ -1039,6 +1065,53 @@ function mergeTwoLists(l1, l2) {
   <button class="script-btn" onclick="togScript(this)">🎤</button>
   <div class="script-box">
     <p>四层。消息模型：每条消息有 role、content、status（loading/streaming/done/error）、tool_calls。流式渲染：SSE 逐 token 输出，增量 Markdown 解析，代码块高亮。工具调用展示：哪个工具在执行、参数、结果、耗时。状态管理：对话列表、当前对话、消息列表、streaming 状态、错误重试。还要考虑消息编辑重发、对话分支、token 统计、虚拟列表加 Web Worker 解析。</p>
+  </div>
+</div>
+
+<div class="card" data-c="ai" data-kw="RAG 深度 Chunk 切片 向量检索 混合检索 Rerank Embedding 语义分割 BM25 Cross-Encoder">
+  <div class="card-head" onclick="togCard(this)"><span class="tag ai">2026E11</span><div class="card-title">RAG 深度：Chunk / 检索 / Rerank</div></div>
+  <div class="core">Chunk 策略决定检索质量，混合检索 + Rerank 是最佳实践</div>
+  <button class="script-btn" onclick="togScript(this)">🎤</button>
+  <div class="script-box">
+    <p>Chunk 策略：<strong>固定大小</strong>最简单但截断语义；<strong>按段落/标题</strong>保留语义但大小不一；<strong>语义切分</strong>用 Embedding 相似度找断点质量最好。经验值 512-1024 tokens，重叠 10-20%。</p>
+    <p>检索三阶段：单向量用余弦相似度，简单但漏精确匹配；<strong>混合检索 = 向量 + BM25 加权融合</strong>，兼顾语义和精确；<strong>Rerank 用 Cross-Encoder 二次排序</strong>，精度大幅提升。</p>
+    <p>Embedding 选型：OpenAI text-embedding-3 性能好但付费；开源 <strong>BGE / GTE</strong> 可本地部署。</p>
+    <p>项目桥接："prd-tools 用 BM25 做精确检索。升级成<strong>向量 + BM25 混合检索</strong>能兼顾语义和精确。"</p>
+  </div>
+</div>
+
+<div class="card" data-c="ai" data-kw="Agent ReAct Multi-Agent A2A 记忆管理 规划 分工 Thought Action Observation 循环 记忆分层">
+  <div class="card-head" onclick="togCard(this)"><span class="tag ai">2026E12</span><div class="card-title">Agent 深度：ReAct / 记忆 / Multi-Agent</div></div>
+  <div class="core">ReAct 是单 Agent 循环，Multi-Agent 是分工协作，记忆是核心瓶颈</div>
+  <button class="script-btn" onclick="togScript(this)">🎤</button>
+  <div class="script-box">
+    <p><strong>ReAct 循环</strong>：Thought（推理）→ Action（调用工具）→ Observation（观察结果）→ 循环直到出答案。核心是让模型<strong>"边想边做"</strong>。</p>
+    <p>记忆三层：<strong>短期记忆</strong>是上下文窗口内对话历史；<strong>长期记忆</strong>用向量库持久化，检索相关记忆注入上下文；<strong>工作记忆</strong>是当前任务中间状态。记忆管理最难——太大浪费 token，太小丢关键信息。</p>
+    <p>Multi-Agent：<strong>Orchestrator 分发任务</strong>给专业 Agent，Agent 间通过 <strong>A2A 协议</strong>通信。难点在任务分解和上下文同步。</p>
+    <p>项目桥接："prd-tools 的 build-reference 和 prd-distill 就是<strong>双 Agent 协作</strong>——知识采集 + 分析，通过 reference 共享上下文。"</p>
+  </div>
+</div>
+
+<div class="card" data-c="ai" data-kw="Prompt Engineering 提示词 Few-shot CoT Chain-of-Thought 结构化 角色 指令 示例 输出格式 Self-refine">
+  <div class="card-head" onclick="togCard(this)"><span class="tag ai">2026E13</span><div class="card-title">Prompt Engineering 实战</div></div>
+  <div class="core">角色 + 指令 + 示例 + 输出格式，四要素组合拳</div>
+  <button class="script-btn" onclick="togScript(this)">🎤</button>
+  <div class="script-box">
+    <p>结构化四要素：<strong>1) 角色设定</strong>（你是 XX 专家）；<strong>2) 清晰指令</strong>（做什么不做什么）；<strong>3) 示例</strong>（Few-shot 比纯描述有效 10 倍）；<strong>4) 输出格式</strong>（JSON Schema / Markdown 模板）。</p>
+    <p>高级技巧：<strong>Chain-of-Thought</strong>——加"Let's think step by step"就提升准确率；<strong>Few-shot</strong>——2-3 个示例比长描述更有效；<strong>Self-refine</strong>——让模型自我审查迭代。</p>
+    <p>实战：prd-tools 的 Prompt 就是结构化的——加 Few-shot 后<strong>质量从 60% 提升到 85%+</strong>。</p>
+  </div>
+</div>
+
+<div class="card" data-c="ai" data-kw="Function Calling 工具调用 Tool Use JSON Schema 参数 工具描述 错误处理 重试 最佳实践">
+  <div class="card-head" onclick="togCard(this)"><span class="tag ai">2026E14</span><div class="card-title">Function Calling 实战</div></div>
+  <div class="core">工具描述决定模型能不能调对，错误处理决定系统稳不稳定</div>
+  <button class="script-btn" onclick="togScript(this)">🎤</button>
+  <div class="script-box">
+    <p>流程：用户消息 → 模型判断需要工具 → <strong>输出结构化 JSON</strong>（name + arguments）→ 业务层执行 → 结果追加回上下文 → 模型继续生成。<strong>关键在工具描述</strong>——模型根据描述决定调不调。</p>
+    <p>工具描述设计：<strong>JSON Schema 定义参数</strong>；description 写清什么时候用、参数含义；给 2-3 个典型场景；<strong>枚举值比自由文本好控制</strong>。</p>
+    <p>错误处理：模型可能调不存在的工具、参数类型错。要做<strong>参数校验、try-catch、错误信息返回让模型重试、设重试上限</strong>防死循环。</p>
+    <p>项目桥接："prd-tools 的 Skill 系统就是 Function Calling 的工程化版本。"</p>
   </div>
 </div>
 
@@ -1173,6 +1246,30 @@ function mergeTwoLists(l1, l2) {
     <p><strong>"这个问题我实际遇到过…"</strong> → 锚定你的项目经验，把话题往你熟悉的领域引导。</p>
     <p><strong>"如果让我重新设计…"</strong> → 展现反思能力，即使答得不好也能加分。</p>
     <p class="hint">铁律：永远不要说"我不会"就停了，永远要给出下一步动作。</p>
+  </div>
+</div>
+
+<div class="card" data-c="sys" data-kw="Hono tRPC Drizzle BFF 全栈 RPC 类型安全 ORM 边缘 Edge Cloudflare 轻量">
+  <div class="card-head" onclick="togCard(this)"><span class="tag sys">系统B16</span><div class="card-title">Hono + tRPC + Drizzle 全栈 BFF</div></div>
+  <div class="core">tRPC 端到端类型安全，Hono 边缘运行时，Drizzle 类型 ORM</div>
+  <button class="script-btn" onclick="togScript(this)">🎤</button>
+  <div class="script-box">
+    <p><strong>tRPC</strong> 核心价值：前后端共享 TS 类型，定义 router 和 procedure，前端自动推导类型安全 client。<strong>类型就是契约</strong>，不需要接口文档。</p>
+    <p><strong>Hono</strong> 轻量 Web 框架，支持 Cloudflare Workers / Deno / Node 多运行时，<strong>14KB 极致轻量</strong>，中间件模式类似 Koa。tRPC 可以跑在 Hono 上。</p>
+    <p><strong>Drizzle ORM</strong> 类型安全，写法接近 SQL。和 Prisma 比：<strong>零生成步骤、bundle 更小</strong>、查询性能更好。</p>
+    <p>项目桥接："我的 BFF 是自研模板引擎 + Express。迁移到 Hono + tRPC 的话，<strong>Schema 类型自动同步到前端</strong>。"</p>
+  </div>
+</div>
+
+<div class="card" data-c="sys" data-kw="低代码 lowcode 可视化 拖拽 物料 Schema 编辑器 渲染引擎 属性面板 画布">
+  <div class="card-head" onclick="togCard(this)"><span class="tag sys">系统B17</span><div class="card-title">低代码平台怎么设计？</div></div>
+  <div class="core">三层：可视化编辑器 → Schema → 渲染引擎，和 Schema 架构一脉相承</div>
+  <button class="script-btn" onclick="togScript(this)">🎤</button>
+  <div class="script-box">
+    <p>核心三层：<strong>可视化编辑器</strong>拖拽编排 + 属性配置，输出标准 Schema JSON；<strong>Schema</strong> 是中间态协议描述页面结构；<strong>渲染引擎</strong>消费 Schema 生成真实页面。</p>
+    <p>关键模块：<strong>物料系统</strong>（组件注册、版本管理）、<strong>画布</strong>（拖拽定位、组件树）、<strong>属性面板</strong>（动态表单、props 映射）、<strong>事件系统</strong>（组件间通信、联动规则）。</p>
+    <p>难点：自定义组件注册的<strong>可扩展性</strong>、Schema 版本迁移的<strong>向后兼容</strong>、大页面性能、多人协作冲突。</p>
+    <p>项目桥接："我的 Schema 架构就是低代码的<strong>渲染引擎层</strong>——加上属性面板和拖拽就是完整低代码。"</p>
   </div>
 </div>
 
@@ -1431,7 +1528,7 @@ function mergeTwoLists(l1, l2) {
   <button class="bb" onclick="setCat('bagu')"><span class="ic">📗</span>基础</button>
   <button class="bb" onclick="setCat('code')"><span class="ic">✍️</span>手撕</button>
   <button class="bb" onclick="setCat('ai')"><span class="ic">🤖</span>AI</button>
-  <button class="bb" onclick="collapseAll()"><span class="ic">🔽</span>收起</button>
+  <button class="bb" onclick="setCat('sys')"><span class="ic">🏗️</span>系统</button>
 </div>
 
 <script>
