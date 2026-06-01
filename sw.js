@@ -1,4 +1,4 @@
-const CACHE_NAME = 'kb-v34';
+const CACHE_NAME = 'kb-v35';
 const TIMEOUT = 3000;
 
 self.addEventListener('install', () => self.skipWaiting());
@@ -17,6 +17,17 @@ self.addEventListener('fetch', e => {
   const url = new URL(e.request.url);
   if (url.origin !== self.location.origin) return;
 
+  // HTML 永远走网络，不缓存，push 后手机刷新即更新
+  if (url.pathname.endsWith('/') || url.pathname.endsWith('.html')) {
+    e.respondWith(
+      fetch(e.request)
+        .then(r => { const c = r.clone(); caches.open(CACHE_NAME).then(cache => cache.put(e.request, c)); return r; })
+        .catch(() => caches.match(e.request).then(c => c || new Response('Offline', { status: 503 })))
+    );
+    return;
+  }
+
+  // 非 HTML 资源走 network-first + 超时回退缓存
   e.respondWith(
     new Promise(resolve => {
       const timer = setTimeout(() => {
