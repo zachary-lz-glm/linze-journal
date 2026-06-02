@@ -760,6 +760,42 @@ body{overscroll-behavior-y:contain}
   </div>
 </div>
 
+<div class="card" data-c="bagu" data-kw="JS异常捕获 window.onerror unhandledrejection Error Boundary 资源错误 try-catch 白屏">
+  <div class="card-head"><span class="tag bagu">#33</span><div class="card-title">JS异常捕获5层方案</div></div>
+  <div class="core">onerror + unhandledrejection + 资源捕获 + Error Boundary + try-catch</div>
+  <div class="card-body">
+    <p><strong>1. window.onerror</strong>：捕获同步/异步运行时错误（脚本、语法错误），拿 msg/url/line/col/error。</p>
+    <p><strong>2. unhandledrejection</strong>：window.addEventListener('unhandledrejection')，捕获未处理的 Promise 异常。</p>
+    <p><strong>3. 资源加载错误</strong>：window.addEventListener('error', fn, true)，捕获阶段监听 img/script/css 加载失败。</p>
+    <p><strong>4. React Error Boundary</strong>：componentDidCatch 捕获子组件渲染错误，防白屏。</p>
+    <p><strong>5. try-catch</strong>：业务代码主动包裹已知异常点。</p>
+    <p><strong>注意</strong>：onerror 不能捕获资源错误（需要addEventListener捕获阶段），Promise内部错误不会冒泡到onerror。</p>
+  </div>
+</div>
+
+<div class="card" data-c="bagu" data-kw="白屏检测 MutationObserver FCP 性能 白屏监控 DOM 骨架屏">
+  <div class="card-head"><span class="tag bagu">#34</span><div class="card-title">白屏检测方案</div></div>
+  <div class="core">MutationObserver 3秒无子节点 + PerformanceObserver FCP 超阈值</div>
+  <div class="card-body">
+    <p><strong>方案一：MutationObserver</strong>：监听根容器，页面加载3秒后检查根节点是否有子元素，无子元素则上报白屏告警。</p>
+    <p><strong>方案二：FCP 监控</strong>：PerformanceObserver 监听 paint 类型，FCP > 3s 触发告警。</p>
+    <p><strong>方案三：像素采样</strong>：canvas 截图采样关键点，大面积同色判定白屏（适用于C端）。</p>
+    <p><strong>排查链路</strong>：白屏告警 → TraceID → Sentry 错误日志 → BFF 接口状态 → 后端服务日志，串联全链路定位。</p>
+  </div>
+</div>
+
+<div class="card" data-c="bagu" data-kw="TypeScript Pick Omit Record Partial 映射类型 手写实现 泛型 keyof">
+  <div class="card-head"><span class="tag bagu">#35</span><div class="card-title">TS工具类型手写实现（Pick/Omit/Record）</div></div>
+  <div class="core">Pick = { [P in K]: T[P] }，K extends keyof T 约束子集</div>
+  <div class="card-body">
+    <p><strong>Pick</strong>：从T中取K指定的属性。type MyPick&lt;T, K extends keyof T&gt; = { [P in K]: T[P] };</p>
+    <p><strong>Omit</strong>：排除K指定的属性。type MyOmit&lt;T, K extends keyof T&gt; = Pick&lt;T, Exclude&lt;keyof T, K&gt;&gt;;</p>
+    <p><strong>Record</strong>：构造键为K值为T的类型。type MyRecord&lt;K extends string, T&gt; = { [P in K]: T };</p>
+    <p><strong>Partial</strong>：所有属性变可选。type MyPartial&lt;T&gt; = { [P in keyof T]?: T[P] };</p>
+    <p><strong>三步法</strong>：① K extends keyof T 约束K必须是T的key子集；② [P in K] 遍历K的每个key；③ T[P] 取原类型对应值类型。</p>
+  </div>
+</div>
+
 <!-- ==================== 手撕代码 ==================== -->
 <div class="card" data-c="code" data-kw="速查 索引 题型 关键词 定位 套路 哪个 怎么搜">
   <div class="card-head"><span class="tag code">速查</span><div class="card-title">题目关键词 → 搜什么（第一张看这个）</div></div>
@@ -1361,6 +1397,36 @@ class LRUCache {
     }
   }
   return dp[m][n];
+}</div>
+</div>
+
+<div class="card" data-c="code" data-kw="数组转树 扁平 树形 parentId 递归 Map 拼多多 菜单">
+  <div class="card-head"><span class="tag code">真题</span><div class="card-title">扁平数组转树结构（拼多多真题）</div></div>
+  <div class="core">递归 filter+map 或 Map 一次遍历 O(n)</div>
+  <div class="card-body">
+    <p><strong>递归版</strong>（面试先写这个，清晰）：filter 找 parentId 匹配的，map 递归 children。</p>
+    <p><strong>Map 版</strong>（主动提优化）：一次遍历建 Map，二次遍历挂 children，O(n)。</p>
+  </div>
+  <div class="code-blk">// 递归版 O(n²)
+function buildTree(list, parentId = null) {
+  return list
+    .filter(item => item.parentId === parentId)
+    .map(item => ({
+      ...item,
+      children: buildTree(list, item.id)
+    }));
+}
+
+// Map优化版 O(n)
+function buildTreeOptimized(list) {
+  const map = {};
+  const roots = [];
+  list.forEach(i => { map[i.id] = { ...i, children: [] }; });
+  list.forEach(i => {
+    if (i.parentId == null) roots.push(map[i.id]);
+    else map[i.parentId].children.push(map[i.id]);
+  });
+  return roots;
 }</div>
 </div>
 
