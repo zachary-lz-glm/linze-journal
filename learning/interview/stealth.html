@@ -1430,6 +1430,53 @@ function buildTreeOptimized(list) {
 }</div>
 </div>
 
+<div class="card" data-c="code" data-kw="get 嵌套对象 路径取值 reduce 可选链 lodash 起点">
+  <div class="card-head"><span class="tag code">真题</span><div class="card-title">get(obj, path) 按路径取嵌套值（起点真题）</div></div>
+  <div class="core">路径 split 成 keys，reduce + 可选链逐层访问</div>
+  <div class="card-body">
+    <p><strong>核心思路</strong>：把 'a.b.c' 拆成 ['a','b','c']，用 reduce 逐层访问，可选链兜底。</p>
+    <p><strong>注意</strong>：要处理 a[0].b 的数组下标写法，用正则转成 .0.b 再 split。</p>
+  </div>
+  <div class="code-blk">function get(obj, path, defaultValue) {
+  const keys = path
+    .replace(/\[(\d+)\]/g, '.$1')
+    .split('.');
+  return keys.reduce(
+    (acc, key) => acc?.[key], obj
+  ) ?? defaultValue;
+}
+
+// get({a:{b:{c:1}}}, 'a.b.c') → 1
+// get({x:[{y:2}]}, 'x[0].y')  → 2
+// get({}, 'a.b', '默认')      → '默认'</div>
+</div>
+
+<div class="card" data-c="code" data-kw="flatten 对象拍平 嵌套 递归 reduce 路径拼接 起点">
+  <div class="card-head"><span class="tag code">真题</span><div class="card-title">flatten(obj) 嵌套对象拍平（起点真题）</div></div>
+  <div class="core">递归遍历+路径拼接，对象则递归，否则赋值</div>
+  <div class="card-body">
+    <p><strong>核心思路</strong>：遍历 entries，拼接 a.b.c 路径。值是对象则递归，否则直接赋值。</p>
+    <p><strong>注意</strong>：排除 null 和数组（typeof null === 'object'），用 reduce 累积结果。</p>
+  </div>
+  <div class="code-blk">function flatten(obj, prefix = '') {
+  return Object.entries(obj).reduce(
+    (res, [key, val]) => {
+      const path = prefix
+        ? `${prefix}.${key}` : key;
+      if (val && typeof val === 'object'
+        && !Array.isArray(val)) {
+        Object.assign(res, flatten(val, path));
+      } else {
+        res[path] = val;
+      }
+      return res;
+    }, {});
+}
+
+// flatten({a:{b:{c:1},d:2}})
+// → {'a.b.c': 1, 'a.d': 2}</div>
+</div>
+
 <!-- ==================== AI 工程 ==================== -->
 <div class="card" data-c="ai" data-kw="AI 理解项目 Reference SSOT Evidence Index 知识库">
   <div class="card-head"><span class="tag ai">D21</span><div class="card-title">AI 怎么理解陌生项目？</div></div>
