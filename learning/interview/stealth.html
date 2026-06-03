@@ -1751,6 +1751,17 @@ function buildTreeOptimized(list) {
   </div>
 </div>
 
+<div class="card" data-c="ai" data-kw="结构化索引 向量检索 embedding 倒排 正则 RAG 检索方案 选型 对比 BM25">
+  <div class="card-head"><span class="tag ai">E25</span><div class="card-title">结构化索引 vs 向量检索怎么选？</div></div>
+  <div class="core">结构化高→正则索引；语义模糊→向量检索</div>
+  <div class="card-body">
+    <p><strong>结构化索引（正则/倒排）</strong>：用规则从代码中提取实体关系（函数名、字段名、文件路径），构建倒排表。精准、轻量、无需模型。适合：代码库、配置文件等结构化程度高的场景。</p>
+    <p><strong>向量检索（Embedding）</strong>：把文本切成 chunk → 用 embedding 模型向量化 → 存向量数据库 → 余弦相似度检索。能理解语义相似但字面不同的内容。适合：自然语言文档、FAQ、非结构化知识库。</p>
+    <p><strong>混合检索</strong>：实际生产中通常两者结合——BM25 关键词匹配保精准，向量检索补语义。再接 Reranker 重排序。</p>
+    <p><strong>面试口诀</strong>：它们不是替代关系，是互补关系。正则索引 = 精确查找，向量检索 = 语义查找。场景结构化程度高就用正则就够了，场景有自然语言模糊性就需要向量。</p>
+  </div>
+</div>
+
 <div class="card" data-c="ai" data-kw="AGI 通用人工智能 ANI 弱AI 强AI Scaling Law">
   <div class="card-head"><span class="tag ai">E23</span><div class="card-title">AGI 概念与现状</div></div>
   <div class="core">通用人工智能——一个模型做所有认知任务</div>
