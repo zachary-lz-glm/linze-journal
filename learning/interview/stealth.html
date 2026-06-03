@@ -2249,22 +2249,28 @@ cpFab.addEventListener('touchend',()=>clearTimeout(cpLongT));
 cpFab.addEventListener('touchcancel',()=>clearTimeout(cpLongT));
 
 function toggleCopilot(){
+  cpFab.textContent='...';
   if(cpListening) stopCopilot(); else startCopilot();
 }
 
 function startCopilot(){
   const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
-  if(!SR){cpFab.classList.add('err');cpStatus.textContent='不支持';return}
+  if(!SR){cpFab.classList.add('err');cpFab.textContent='✕';cpStatus.textContent='不支持';return}
   cpRecognition=new SR();
   cpRecognition.continuous=true;
   cpRecognition.interimResults=true;
   cpRecognition.lang='zh-CN';
   cpRecognition.onresult=onCpResult;
-  cpRecognition.onerror=e=>{if(e.error!=='no-speech')cpStatus.textContent='错误:'+e.error};
+  cpRecognition.onerror=e=>{
+    if(e.error!=='no-speech'){
+      cpFab.classList.add('err');cpFab.textContent='✕';
+      cpStatus.textContent='错误:'+e.error;
+    }
+  };
   cpRecognition.onend=()=>{if(cpListening)setTimeout(()=>{try{cpRecognition.start()}catch(e){}},200)};
-  try{cpRecognition.start()}catch(e){cpStatus.textContent='启动失败';return}
+  try{cpRecognition.start()}catch(e){cpFab.textContent='✕';cpStatus.textContent='启动失败:'+e.message;return}
   cpListening=true;
-  cpFab.classList.add('on');cpFab.classList.remove('err');
+  cpFab.classList.add('on');cpFab.classList.remove('err');cpFab.textContent='⏺';
   cpPanel.classList.add('open');
   cpStatus.textContent='监听中';
   cpFinalText='';cpTranscript.innerHTML='—';
@@ -2316,6 +2322,8 @@ function onQuestion(text){
   const key=localStorage.getItem('cp_key');
   if(aiOn&&key) callLLM(text,matches);
 }
+
+function matchCards(query){
   const q=query.toLowerCase();
   const words=q.split(/[\s,，。？?！!、]+/).filter(w=>w.length>=2);
   const scored=[];
