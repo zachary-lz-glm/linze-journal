@@ -95,9 +95,6 @@ body{overscroll-behavior-y:contain}
 .cp-match-title{font-size:12px;font-weight:700;color:#ddd;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .cp-match-core{font-size:12px;color:var(--core);line-height:1.3}
 
-/* LLM ANSWER */
-.cp-answer{font-size:13px;color:#ccc;line-height:1.5;background:#0a0a0a;border:1px solid #1a1a1a;border-radius:8px;padding:8px 10px;white-space:pre-wrap}
-
 /* SETTINGS MODAL */
 .cp-settings{position:fixed;top:0;left:0;right:0;bottom:0;z-index:400;background:rgba(0,0,0,.7);display:none;align-items:center;justify-content:center}
 .cp-settings.open{display:flex}
@@ -2097,16 +2094,6 @@ function buildTreeOptimized(list) {
   <div class="cp-body">
     <div class="cp-section"><div class="cp-section-label">转写</div><div class="cp-transcript" id="cpTranscript">—</div></div>
     <div class="cp-section" id="cpMatchSec" style="display:none"><div class="cp-section-label">匹配卡片</div><div id="cpMatches"></div></div>
-    <div class="cp-section" id="cpAnsSec" style="display:none"><div class="cp-section-label">AI 答案</div><div class="cp-answer" id="cpAnswer"></div></div>
-  </div>
-</div>
-<div class="cp-settings" id="cpSettings">
-  <div class="cp-settings-box">
-    <h3>Copilot 设置</h3>
-    <label>API Key</label>
-    <input type="password" id="cpKey" placeholder="sk-..." autocomplete="off">
-    <div class="row"><span>启用 AI 生成</span><div class="cp-toggle" id="cpToggle" onclick="this.classList.toggle('on')"></div></div>
-    <button onclick="saveCpSettings()">保存</button>
   </div>
 </div>
 
@@ -2221,35 +2208,27 @@ const cpFab=document.getElementById('cpFab'),
   cpStatus=document.getElementById('cpStatus'),
   cpTranscript=document.getElementById('cpTranscript'),
   cpMatchSec=document.getElementById('cpMatchSec'),
-  cpMatches=document.getElementById('cpMatches'),
-  cpAnsSec=document.getElementById('cpAnsSec'),
-  cpAnswer=document.getElementById('cpAnswer'),
-  cpSettings=document.getElementById('cpSettings');
+  cpMatches=document.getElementById('cpMatches');
 
-let cpListening=false, cpRecognition=null, cpFinalText='', cpTimer=null, cpAbortCtrl=null;
+let cpListening=false, cpRecognition=null, cpFinalText='', cpTimer=null, cpBusy=false;
 
-// Init settings from localStorage
-const cpKeyInput=document.getElementById('cpKey');
-const cpToggleEl=document.getElementById('cpToggle');
-cpKeyInput.value=localStorage.getItem('cp_key')||'sk-F6cY6aHIOfkJYtEpsHwaWmEzKKGjh6S4MOmt5qbYql3NvfLP';
-if(!localStorage.getItem('cp_key')) localStorage.setItem('cp_key',cpKeyInput.value);
-if(localStorage.getItem('cp_ai')!=='0') cpToggleEl.classList.add('on');
-localStorage.setItem('cp_ai','1');
-
-function saveCpSettings(){
-  localStorage.setItem('cp_key',cpKeyInput.value);
-  localStorage.setItem('cp_ai',cpToggleEl.classList.contains('on')?'1':'0');
-  cpSettings.classList.remove('open');
+// Build card index once (tag + title + keywords → condensed list for LLM)
+let cpCardIndex='';
+function buildCardIndex(){
+  if(cpCardIndex) return cpCardIndex;
+  const cards=document.querySelectorAll('.card');
+  const lines=[];
+  cards.forEach((c,i)=>{
+    const tag=(c.querySelector('.tag')||{}).textContent||'';
+    const title=(c.querySelector('.card-title')||{}).textContent||'';
+    const kw=c.dataset.kw||'';
+    lines.push(i+'|'+tag+'|'+title+'|'+kw);
+  });
+  cpCardIndex=lines.join('\n');
+  return cpCardIndex;
 }
 
-// Long press FAB → settings
-let cpLongT=0;
-cpFab.addEventListener('touchstart',()=>{cpLongT=setTimeout(()=>cpSettings.classList.add('open'),600)});
-cpFab.addEventListener('touchend',()=>clearTimeout(cpLongT));
-cpFab.addEventListener('touchcancel',()=>clearTimeout(cpLongT));
-
 function toggleCopilot(){
-  cpFab.textContent='...';
   if(cpListening) stopCopilot(); else startCopilot();
 }
 
@@ -2274,15 +2253,16 @@ function startCopilot(){
   cpPanel.classList.add('open');
   cpStatus.textContent='监听中';
   cpFinalText='';cpTranscript.innerHTML='—';
+  cpMatchSec.style.display='none';
+  buildCardIndex();
 }
 
 function stopCopilot(){
   cpListening=false;
   if(cpRecognition){try{cpRecognition.stop()}catch(e){}}
-  cpFab.classList.remove('on');
+  cpFab.classList.remove('on');cpFab.textContent='\u{1F3A4}';
   cpPanel.classList.remove('open');
   cpStatus.textContent='已停止';
-  if(cpAbortCtrl){cpAbortCtrl.abort();cpAbortCtrl=null}
 }
 
 function onCpResult(e){
@@ -2293,42 +2273,44 @@ function onCpResult(e){
   }
   if(final_) cpFinalText+=final_;
   cpTranscript.innerHTML=cpFinalText+(interim?'<span class="interim"> '+interim+'</span>':'');
-  // Reset question boundary timer
   clearTimeout(cpTimer);
   cpTimer=setTimeout(()=>onQuestion(cpFinalText.trim()),1500);
 }
 
 function onQuestion(text){
-  if(!text||text.length<3) return;
-  // Local card matching
-  const matches=matchCards(text);
-  if(matches.length>0){
-    cpMatchSec.style.display='block';
-    cpMatches.innerHTML=matches.map(m=>{
-      const tag=m.card.querySelector('.tag');
-      const title=m.card.querySelector('.card-title');
-      const core=m.card.querySelector('.core');
-      return '<div class="cp-match" onclick="scrollToCard(this)" data-idx="'+m.idx+'">'+
-        '<div class="cp-match-head"><span class="tag '+m.card.dataset.c+'">'+(tag?tag.textContent:'')+'</span>'+
-        '<span class="cp-match-title">'+(title?title.textContent:'')+'</span></div>'+
-        (core?'<div class="cp-match-core">'+core.textContent+'</div>':'')+
-        '</div>';
-    }).join('');
-  } else {
-    cpMatchSec.style.display='none';
+  if(!text||text.length<3||cpBusy) return;
+  cpStatus.textContent='匹配中…';
+  // Try local match first (instant)
+  const local=matchCards(text);
+  if(local.length>0&&local[0].score>=4){
+    showMatches(local);
+    cpStatus.textContent='监听中';
   }
-  // Optional LLM
-  const aiOn=localStorage.getItem('cp_ai')==='1';
-  const key=localStorage.getItem('cp_key');
-  if(aiOn&&key) callLLM(text,matches);
+  // Always ask LLM for semantic match (overrides local if better)
+  askLLM(text);
+}
+
+function showMatches(matches){
+  if(matches.length===0){cpMatchSec.style.display='none';return}
+  cpMatchSec.style.display='block';
+  cpMatches.innerHTML=matches.map(m=>{
+    const tag=m.card.querySelector('.tag');
+    const title=m.card.querySelector('.card-title');
+    const core=m.card.querySelector('.core');
+    return '<div class="cp-match" onclick="scrollToCard(this)" data-idx="'+m.idx+'">'+
+      '<div class="cp-match-head"><span class="tag '+m.card.dataset.c+'">'+(tag?tag.textContent:'')+'</span>'+
+      '<span class="cp-match-title">'+(title?title.textContent:'')+'</span></div>'+
+      (core?'<div class="cp-match-core">'+core.textContent+'</div>':'')+
+      '</div>';
+  }).join('');
+  scrollToCard(cpMatches.querySelector('.cp-match'));
 }
 
 function matchCards(query){
   const q=query.toLowerCase();
   const words=q.split(/[\s,，。？?！!、]+/).filter(w=>w.length>=2);
   const scored=[];
-  const cards=document.querySelectorAll('.card');
-  cards.forEach((card,i)=>{
+  document.querySelectorAll('.card').forEach((card,i)=>{
     const kw=(card.dataset.kw||'').toLowerCase();
     const title=((card.querySelector('.card-title')||{}).textContent||'').toLowerCase();
     const core=((card.querySelector('.core')||{}).textContent||'').toLowerCase();
@@ -2344,108 +2326,51 @@ function matchCards(query){
 }
 
 function scrollToCard(el){
+  if(!el) return;
   const idx=parseInt(el.dataset.idx);
   const card=document.querySelectorAll('.card')[idx];
   if(!card) return;
-  // Show card if hidden by category filter
   card.classList.remove('hide');
   card.scrollIntoView({behavior:'smooth',block:'center'});
-  // Flash highlight
   card.style.outline='2px solid #10B981';
-  setTimeout(()=>card.style.outline='',2000);
+  setTimeout(()=>card.style.outline='',3000);
 }
 
-// Extract candidate profile from opening cards (cached)
-let cpProfile='';
-function getCpProfile(){
-  if(cpProfile) return cpProfile;
-  const cards=document.querySelectorAll('.card[data-c="open"],.card[data-c="proj"]');
-  let parts=[];
-  cards.forEach(c=>{
-    const core=c.querySelector('.core');
-    const body=c.querySelector('.card-body');
-    if(core) parts.push(core.textContent);
-    if(body){
-      const ps=body.querySelectorAll('p:not(.hint)');
-      ps.forEach(p=>{if(p.textContent.trim().length>10) parts.push(p.textContent.trim())});
-    }
-  });
-  cpProfile=parts.join('\n').slice(0,2000);
-  return cpProfile;
-}
-
-// Build knowledge context from matched cards
-function buildKnowledgeCtx(matches){
-  let ctx='【候选人背景】\n'+getCpProfile();
-  if(matches&&matches.length>0){
-    ctx+='\n\n【相关知识卡片】\n';
-    matches.forEach(m=>{
-      const tag=m.card.querySelector('.tag');
-      const title=m.card.querySelector('.card-title');
-      const core=m.card.querySelector('.core');
-      const body=m.card.querySelector('.card-body');
-      ctx+=(tag?tag.textContent+' ':'')+((title?title.textContent:''))+'\n';
-      if(core) ctx+='核心：'+core.textContent+'\n';
-      if(body){
-        const ps=body.querySelectorAll('p:not(.hint)');
-        ps.forEach(p=>ctx+=p.textContent.trim()+'\n');
-      }
-      ctx+='\n';
-    });
-  }
-  return ctx;
-}
-
-async function callLLM(question,matches){
-  const key=localStorage.getItem('cp_key');
-  if(!key) return;
-  if(cpAbortCtrl) cpAbortCtrl.abort();
-  cpAbortCtrl=new AbortController();
-  cpAnsSec.style.display='block';
-  cpAnswer.textContent='思考中…';
-  const knowledge=buildKnowledgeCtx(matches);
+// LLM semantic matching — returns card indices only
+async function askLLM(question){
+  cpBusy=true;
   try{
     const resp=await fetch('https://cc.580ai.net/v1/messages',{
       method:'POST',
       headers:{
         'Content-Type':'application/json',
-        'x-api-key':key,
+        'x-api-key':'sk-F6cY6aHIOfkJYtEpsHwaWmEzKKGjh6S4MOmt5qbYql3NvfLP',
         'anthropic-version':'2023-06-01',
         'anthropic-dangerous-direct-browser-access':'true'
       },
       body:JSON.stringify({
         model:'claude-haiku-4-5-20251001',
-        max_tokens:512,
-        stream:true,
-        system:'你是面试助手。候选人资料和知识卡片会作为参考提供给你。请基于候选人的真实项目经验来组织回答，优先引用知识卡片中的具体数据（如"20+活动类型"、"400+权益组件"、"零事故"等）。给出简洁结构化答案（<200字）。用中文。如果有代码要点，用简短伪代码。',
-        messages:[{role:'user',content:knowledge+'\n\n【面试官问题】\n'+question}]
-      }),
-      signal:cpAbortCtrl.signal
+        max_tokens:64,
+        system:'你是一个面试卡片索引器。下面是一个卡片列表，格式：编号|标签|标题|关键词。\n\n'+cpCardIndex+'\n\n用户会给你面试官的问题。你需要找出最相关的1-3张卡片，只返回卡片编号（用逗号分隔），不要任何其他文字。\n示例：5,12,38',
+        messages:[{role:'user',content:question}]
+      })
     });
-    if(!resp.ok){cpAnswer.textContent='API错误: '+resp.status;return}
-    const reader=resp.body.getReader();
-    const decoder=new TextDecoder();
-    cpAnswer.textContent='';
-    let buf='';
-    while(true){
-      const{done,value}=await reader.read();
-      if(done) break;
-      buf+=decoder.decode(value,{stream:true});
-      const lines=buf.split('\n');
-      buf=lines.pop();
-      for(const line of lines){
-        if(!line.startsWith('data: ')) continue;
-        const data=line.slice(6).trim();
-        if(data==='[DONE]') break;
-        try{
-          const json=JSON.parse(data);
-          if(json.type==='content_block_delta') cpAnswer.textContent+=json.delta?.text||'';
-        }catch(e){}
-      }
-    }
-  }catch(e){
-    if(e.name!=='AbortError') cpAnswer.textContent='请求失败: '+e.message;
-  }
+    if(!resp.ok){cpBusy=false;return}
+    const json=await resp.json();
+    const text=json.content?.[0]?.text||'';
+    // Parse card indices from LLM response
+    const indices=text.match(/\d+/g);
+    if(!indices||indices.length===0){cpBusy=false;return}
+    const allCards=document.querySelectorAll('.card');
+    const matches=indices.slice(0,3).map(i=>{
+      const idx=parseInt(i);
+      if(idx>=0&&idx<allCards.length) return {card:allCards[idx],score:99,idx};
+      return null;
+    }).filter(Boolean);
+    if(matches.length>0) showMatches(matches);
+  }catch(e){}
+  cpBusy=false;
+  cpStatus.textContent='监听中';
 }
 </script>
 </body>
