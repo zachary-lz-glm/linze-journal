@@ -1913,14 +1913,19 @@ function buildTreeOptimized(list) {
   </div>
 </div>
 
-<div class="card" data-c="ai" data-kw="AI工作流 定义 定位 产品边界 为什么做 隐性知识 认知偏差 蒸馏 Graphify OpenSpec prd-tools">
-  <div class="card-head"><span class="tag ai">D30</span><div class="card-title">AI工作流项目定位：是什么、为什么、跟谁不一样</div></div>
-  <div class="core">PRD→结构化开发计划的蒸馏工作流，解决认知偏差和隐性知识两个痛点，不做代码生成</div>
+<div class="card" data-c="ai" data-kw="AI工作流 定义 定位 产品边界 为什么做 怎么做 隐性知识 认知偏差 SSOT 证据链 门控 蒸馏 Graphify OpenSpec prd-tools 面试答题">
+  <div class="card-head"><span class="tag ai">D30</span><div class="card-title">AI工作流完整介绍（面试第一答）</div></div>
+  <div class="core">把PRD自动蒸馏成结构化开发计划，靠SSOT+证据链+多层门控保质量</div>
   <div class="card-body">
-    <p><strong>一句话定义</strong>：从PRD自动产出结构化技术方案和开发计划的AI工作流。不是让AI写代码，是把PRD从自然语言蒸馏成有证据支撑的开发计划。</p>
-    <p><strong>为什么做</strong>：需求链路有两个核心痛点。①认知偏差：PM写PRD→人工口传→开发理解，每一步都有信息损耗导致返工。②隐性知识：项目经验全在老员工脑子里，新人上手成本高，换人就丢。</p>
-    <p><strong>产品边界</strong>：只做PRD到结构化任务拆解这一个环节。下游用户可以选择Cursor、Windsurf、Claude Code等任意AI Coding工具来执行。市面上已有成熟的code generation工具，不做重复的事，而是解决它们上游"需求理解不准确"的痛点。</p>
-    <p><strong>vs现有工具</strong>：Graphify等做了知识图谱但没有业务定制的蒸馏流程；OpenSpec等有工作流规范但缺少从PRD到需求拆解的自动化闭环；Cursor/Windsurf是从0到1的工具，不解决已有项目（几万行代码+大量历史逻辑）的需求理解问题。</p>
+    <p><strong>是什么</strong>：从PRD自动产出结构化技术方案(Spec)和开发计划(Plan)的AI工作流。不是让AI写代码，是把PRD从自然语言蒸馏成有证据支撑的开发计划。</p>
+    <p><strong>为什么做</strong>：需求链路两个核心痛点。①认知偏差：PM写PRD→人工口传→开发理解，每步信息损耗导致返工。②隐性知识：项目经验全在老员工脑子里，新人上手成本高，换人就丢。</p>
+    <p><strong>怎么做（三大支柱）</strong>：</p>
+    <p>· <strong>SSOT</strong>：Reference插件把项目知识蒸馏成6个领域知识文件，每个事实只存在一处，避免AI冗余编造。</p>
+    <p>· <strong>证据链</strong>：定义8种证据类型（PRD/源码/文档等），AI每条结论必须引用Evidence ID，可追溯到原始出处。</p>
+    <p>· <strong>多层门控</strong>：贯穿11步流水线——摄入门控检查PRD读取质量，Spec Review Gate要求人工确认后才允许生成Plan，Readiness Score做五维度综合评分，Final Quality Gate做5项确定性检查。</p>
+    <p><strong>效果</strong>：效率提升60%（人工3.5天→工具1.5天），文件覆盖率80%，已推广到几十人团队。</p>
+    <p><strong>产品边界</strong>：只做PRD到任务拆解。下游对接任意AI Coding工具（Cursor/Windsurf/Claude Code），不重复造轮子。</p>
+    <p><strong>vs现有工具</strong>：Graphify做了知识图谱但没有蒸馏流程；OpenSpec有工作流规范但缺PRD到需求拆解闭环；Cursor/Windsurf不解决已有项目（几万行代码+历史逻辑）的需求理解问题。</p>
   </div>
 </div>
 
@@ -2057,16 +2062,23 @@ function buildTreeOptimized(list) {
   </div>
 </div>
 
-<div class="card" data-c="proj" data-kw="AI工作流 prd-to-code 架构 模块 状态流转 中间文件 pipeline">
+<div class="card" data-c="proj" data-kw="AI工作流 prd-to-code 架构 模块 状态流转 中间文件 pipeline 11步 蒸馏流水线">
   <div class="card-head"><span class="tag proj">架构</span><div class="card-title">AI工作流技术架构全景</div></div>
   <div class="core">双插件：Reference建知识库(6文件+索引)→Distill蒸馏(11步3阶段→spec+plan)</div>
   <div class="card-body">
     <p><strong>reference插件（6阶段）</strong>：上下文丰富化→结构扫描→深度分析(6子阶段)→质量门→Evidence Index→反馈摄入。产出6个YAML知识库文件(project-profile/01-codebase/02-coding-rules/03-contracts/04-routing-playbooks/05-domain/00-portal) + 4个索引文件(entities/edges/inverted-index/manifest)。</p>
-    <p><strong>Distill Skill（11步3阶段）</strong>：</p>
-    <p>A.摄取(S1-3)：PRD解析(ingest-docx.py)→证据账本(evidence.yaml)→需求IR(requirement-ir.yaml)</p>
-    <p>B.分析(S4-5)：查询计划(context-pack.py)→图谱上下文(3阶段扫描)→层影响(代码锚点)→上下文包→契约差异</p>
-    <p>C.输出(S6-11)：spec.md→用户确认硬停止→plan.md→readiness评分→Reference回流建议→quality-gate.py终检</p>
-    <p><strong>中间文件传递状态</strong>：每步产出YAML/MD中间文件，下游步骤只能读allowed_inputs，不能读must_not_read。SSOT原则：每个事实只存在于一个文件中。</p>
+    <p><strong>Distill 11步蒸馏流水线</strong>：</p>
+    <p>S1 <strong>PRD摄入</strong>：支持md/txt/docx和粘贴。docx用ingest-docx.py提取文字+图片，图片由子Agent分批≤8并行分析。</p>
+    <p>S2 <strong>证据账本</strong>：建立evidence.yaml，定义8种证据类型，后续所有判断只引用Evidence ID。</p>
+    <p>S3 <strong>需求IR</strong>：把PRD转成requirement-ir.yaml，每个需求点含change_type/acceptance_criteria/evidence_ids。</p>
+    <p>S4 <strong>代码搜索与层影响</strong>：Reference路由定向文件→rg补充扫描→精读源码生成graph-context.md和layer-impact.yaml，每个MODIFY/DELETE必须有code_anchor。</p>
+    <p>S5 <strong>契约差异</strong>：多层协作需求生成contract-delta.yaml，标注前后端API契约变更。</p>
+    <p>S6 <strong>Spec生成</strong> + S7 <strong>人工Review Gate硬停止</strong>：用户确认AI是否读懂PRD，approved后才允许生成Plan。</p>
+    <p>S8 <strong>Plan生成</strong>：基于确认的Spec产出开发计划。</p>
+    <p>S9 <strong>Readiness Score</strong>：五维加权评分(PRD摄入20/证据覆盖25/代码搜索15/契约对齐25/计划完整15)，85/60两阈值分三档。</p>
+    <p>S10 <strong>Reference回流建议</strong>：分析本次需求对知识库的更新建议。</p>
+    <p>S11 <strong>Final Quality Gate</strong>：5项确定性检查(必传文件/上下文包消费/锚点覆盖率/计划完整性/阻塞项质量)。</p>
+    <p><strong>中间文件传递</strong>：每步产出YAML/MD中间文件，下游只能读allowed_inputs。SSOT原则：每个事实只存在于一个文件中。</p>
   </div>
 </div>
 
