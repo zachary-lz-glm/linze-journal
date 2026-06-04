@@ -1815,25 +1815,25 @@ function buildTreeOptimized(list) {
   </div>
 </div>
 
-<div class="card" data-c="ai" data-kw="度量 指标 效果 评估 五维评分 覆盖率 一致性 LLM-as-Judge">
+<div class="card" data-c="ai" data-kw="度量 指标 效果 评估 readiness quality-gate 覆盖率 一致性">
   <div class="card-head"><span class="tag ai">D21</span><div class="card-title">AI工作流效果怎么度量？</div></div>
-  <div class="core">三层评估：工具自评五维打分 → 产物完整性校验 → 人工对比覆盖率</div>
+  <div class="core">两套5维评分 + distill门禁8项检查 + 人工对比覆盖率80%</div>
   <div class="card-body">
-    <p><strong>第一层工具自评</strong>：五维打分——证据链覆盖度、产出完整性、中间文件校验、QA矩阵、置信度分布。每维加权汇总出总分，低于阈值标记需review。</p>
-    <p><strong>第二层产物校验</strong>：每步产出过门禁检查结构完整性，Schema规格文件和Plan执行规划是否有缺失章节（Report 9章/Plan 12章）。</p>
-    <p><strong>第三层人工验证</strong>：拿AI Plan文件列表 vs 实际人工开发改动文件对比，当前覆盖率约80%。三层从自动化到人工逐步收紧。</p>
-    <p><strong>一致性指标（规划中）</strong>：引入LLM-as-Judge做独立评分 + 黄金Case集回归测试，每次变更对比前后评分差值作为一致性代理指标。</p>
+    <p><strong>readiness-spec（管道内置5维）</strong>：PRD摄入20% / 证据覆盖25% / 代码搜索15% / 契约对齐25% / 计划完整15%。85-100=通过，60-84=警告，&lt;60=阻塞。AI在蒸馏过程中自动产出。</p>
+    <p><strong>quality-gate.py final（脚本5项加权）</strong>：required_files 20% / context_pack_consumed 15% / code_anchor_coverage 25% / plan_completeness 25% / blocker_quality 15%。Python脚本独立运行。</p>
+    <p><strong>distill门禁（8项质量+4项覆盖率）</strong>：文件存在、需求IR有evidence、代码锚点、spec确认等8项质量检查；PRD块全覆盖/媒体全覆盖/需求全追溯3项致命覆盖率检查。</p>
+    <p><strong>人工验证</strong>：AI Plan文件列表 vs 实际人工改动文件对比，覆盖率约80%。</p>
   </div>
 </div>
 
-<div class="card" data-c="ai" data-kw="证据链 Evidence 追溯 置信度 来源 门禁 风险点">
+<div class="card" data-c="ai" data-kw="证据链 Evidence EV 追溯 置信度 evidence.yaml negative_code_search">
   <div class="card-head"><span class="tag ai">D22</span><div class="card-title">证据链设计：让AI产出可追溯</div></div>
-  <div class="core">每条结论带Evidence ID标注来源，门禁脚本自动回溯校验，不通过标记风险点</div>
+  <div class="core">Step2建evidence.yaml中央账本，后续所有产物引用EV-*，链条闭合才算通过</div>
   <div class="card-body">
-    <p><strong>来源类型8种</strong>：PRD、代码、Reference文件、上下文包、API文档、Git Log、人工确认、未找到（Code Search Miss）。AI推断的每条事实必须标注来源类型和具体位置。</p>
-    <p><strong>置信度标记</strong>：AI不确定的标低置信度（Low），高确信的标High。最终文档里所有结论都有置信度标签。</p>
-    <p><strong>门禁校验四级</strong>：①结构完整性——requirement IR是否包含evidence字段和能力面标签；②证据可追溯——结论→Evidence ID→中间产物YAML→原文（PRD或源码）映射链是否通；③交叉校验——Reference存在时context pack文件是否完整；④产出完整性——Report/Plan章节是否全覆盖。任何一级不通过写入风险点和待确认点。</p>
-    <p><strong>质量原则</strong>：搜不到要标Code Search Miss不能编造，人为确认项用Pending标记，低置信度结论自动汇总到文档末尾待人工review。</p>
+    <p><strong>流水线</strong>：PRD摄入(Step1)→evidence-map.yaml（PRD块ID映射）→ 证据台账(Step2)→context/evidence.yaml（SSOT）。后续requirement-ir、layer-impact、contract-delta、spec、plan全部引用EV-*。</p>
+    <p><strong>8种来源类型</strong>：prd / tech_doc / code / git_diff / negative_code_search / human / api_doc / reference。找不到也是证据——negative_code_search表示"搜了但没找到"，不是"我不知道"。</p>
+    <p><strong>证据ID前缀分类</strong>：EV-BG-*（PRD原始块）、EV-REF-*（Reference消费）、EV-CODE-BUILD-*（构建差异）、EV-INGEST-*（摄入提取）等。</p>
+    <p><strong>证据优先级</strong>：接口文档 > PRD推断 > 负向搜索。置信度三档：high/medium/low，不确定就标低不能编造。</p>
   </div>
 </div>
 
@@ -1859,14 +1859,14 @@ function buildTreeOptimized(list) {
   </div>
 </div>
 
-<div class="card" data-c="ai" data-kw="质量门控 三级门禁 XML约束 评分 事前 事中 事后">
-  <div class="card-head"><span class="tag ai">D25</span><div class="card-title">质量门控：三级门禁怎么设计</div></div>
-  <div class="core">XML声明约束行为 + 过程门禁检查产物 + 整体评分兜底</div>
+<div class="card" data-c="ai" data-kw="质量门控 门禁 quality-gate Step间 Spec Review 评分 readiness">
+  <div class="card-head"><span class="tag ai">D25</span><div class="card-title">质量门控：prd-tools的门禁体系</div></div>
+  <div class="core">L1 Step间前置检查 → L2 distill门禁8项+覆盖率4项 → L3 final五维评分，层层收紧</div>
   <div class="card-body">
-    <p><strong>事前约束</strong>：每个Step开头用XML格式声明必须做什么和必须不做什么，跟说明文档区分开强制AI注意。如：原文证据从PRD映射获取、源码证据定位到文件和符号、搜不到标Code Search Miss。</p>
-    <p><strong>事中门禁</strong>：进行下一步前自动检查上一步产物的结构完整性——中间文件是否存在、关键节点内容是否包含、evidence和能力面标签是否齐全。不通过则重跑上一步。</p>
-    <p><strong>事后评分</strong>：整个链路跑完后五维评分（证据链覆盖度/产出完整性/置信度分布/QA矩阵/结构合规），低于阈值标记需人工review。同时产出风险点和待确认点汇总。</p>
-    <p><strong>设计原则</strong>：声明不够才加门禁，门禁不够才加评分，层层收紧。</p>
+    <p><strong>L1 Step间前置检查</strong>：11步蒸馏管道中，每步执行前检查上一步产物存在且非空。每个Step开头有XML声明（must_not_produce / must_not_read_by_default）约束AI行为。不通过则重跑上一步。</p>
+    <p><strong>L2 distill门禁</strong>：quality-gate.py distill，8项质量检查（文件存在/需求IR有evidence/代码锚点/spec确认等）+ 4项覆盖率检查（PRD块全覆盖/媒体全覆盖/需求全追溯，3项致命）。以及Reference阶段的quality-gate.py reference检查知识库完整性。</p>
+    <p><strong>L3 最终评分</strong>：两套5维系统——①readiness-spec.yaml（管道内置：PRD摄入/证据覆盖/代码搜索/契约对齐/计划完整，85分通过）；②quality-gate.py final（脚本：required_files/context_pack_consumed/code_anchor_coverage/plan_completeness/blocker_quality）。加上Spec Review Gate：spec生成后硬停止等人工approved才能生成plan。</p>
+    <p><strong>设计原则</strong>：声明约束不够加门禁，门禁不够加评分，评分不够加人工硬停止。</p>
   </div>
 </div>
 
@@ -1888,7 +1888,7 @@ function buildTreeOptimized(list) {
     <p><strong>核心矛盾</strong>：更好的模型+更长的上下文=更好的效果，但也=更高的成本。不能无脑上最强模型，需要找到效果和成本的甜蜜点。</p>
     <p><strong>Token管理</strong>：上下文预算管理——只传必要信息，用Reference/知识库做预筛选；渐进式披露——不一次性给全部上下文；中间文件传递——Skill间不重复传上下文。</p>
     <p><strong>记忆压缩</strong>：对话历史不能每轮全传，需要做压缩（类似MemGPT思路）。大厂通常自研对话压缩，去掉历史无关信息只保留关键上下文。</p>
-    <p><strong>工程手段补短板</strong>：用幻觉检测、重试机制、质量门控等工程手段弥补模型能力不足，而不是简单换更贵的模型。prd-tools的三级门控就是这个思路——用约束换可靠性。</p>
+    <p><strong>工程手段补短板</strong>：用质量门控（L1前置检查+L2 distill门禁+L3 final评分）、证据链、Spec Review硬停止等工程手段弥补模型能力不足，而不是简单换更贵的模型。prd-tools的多层门控就是这个思路——用约束换可靠性。</p>
   </div>
 </div>
 
