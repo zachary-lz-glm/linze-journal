@@ -1516,14 +1516,6 @@ function buildTreeOptimized(list) {
   </div>
 </div>
 
-<div class="card" data-c="ai" data-kw="Agent ReAct MCP XState 状态机 工具调用">
-  <div class="card-head"><span class="tag ai">E2</span><div class="card-title">AI Agent 前端架构</div></div>
-  <div class="core">把 Agent 过程显式状态化</div>
-  <div class="card-body">
-    <p>五层模型：conversation → message → run → step → tool call。每步有状态（streaming/waiting_tool/executing/done/failed）。工具调用展示输入输出、参数、耗时。状态机推荐 XState。</p>
-    <p>项目桥接：prd-tools 双 Skill 本质就是 Agent 工作流。</p>
-  </div>
-</div>
 
 <div class="card" data-c="ai" data-kw="RAG 检索增强 向量 Embedding BM25">
   <div class="card-head"><span class="tag ai">E3</span><div class="card-title">RAG 前端能做什么？</div></div>
@@ -1534,21 +1526,7 @@ function buildTreeOptimized(list) {
   </div>
 </div>
 
-<div class="card" data-c="ai" data-kw="MCP Function Calling 协议 Skills A2A">
-  <div class="card-head"><span class="tag ai">E4</span><div class="card-title">MCP vs Function Calling</div></div>
-  <div class="core">MCP 是标准化工具协议，Function Calling 是模型能力，互补</div>
-  <div class="card-body">
-    <p>MCP：Anthropic 开放协议，Client-Server 架构，JSON-RPC，不绑定模型厂商，支持长连接和工具发现。Function Calling：OpenAI 定义，绑定模型，单次调用。A2A：Google 的 Agent 间通信协议，和 MCP 互补。</p>
-  </div>
-</div>
 
-<div class="card" data-c="ai" data-kw="ROI 提效 量化 指标 prd-tools">
-  <div class="card-head"><span class="tag ai">追问</span><div class="card-title">prd-tools 提效多少？</div></div>
-  <div class="core">不说虚假数字，说可衡量的中间指标</div>
-  <div class="card-body">
-    <p>蒸馏从人工 2-3 小时缩短到自动化 5 分钟。代码锚点覆盖率 80%+。质量门控能在计划阶段拦截低质量输出。真正提效应该是减少需求理解偏差的返工——需要更长时间数据积累。</p>
-  </div>
-</div>
 
 <div class="card" data-c="ai" data-kw="幻觉 hallucination 编造 实例 证据">
   <div class="card-head"><span class="tag ai">追问</span><div class="card-title">LLM 幻觉举实例</div></div>
@@ -1694,14 +1672,39 @@ function buildTreeOptimized(list) {
   </div>
 </div>
 
-<div class="card" data-c="ai" data-kw="Agent 模式 ReAct Plan-Execute Reflection 循环 推理行动">
-  <div class="card-head"><span class="tag ai">E16</span><div class="card-title">AI Agent 三大模式</div></div>
-  <div class="core">Agent = 感知 → 思考 → 行动 循环</div>
+<div class="card" data-c="ai" data-kw="Agent 架构 ReAct Plan-and-Execute Reflection Tool Use Function Calling Memory 状态机 循环 推理行动">
+  <div class="card-head"><span class="tag ai">E16</span><div class="card-title">Agent 架构全解（面试必考）</div></div>
+  <div class="core">Agent = LLM + Tool Use + Memory 的循环决策系统</div>
   <div class="card-body">
-    <p><strong>ReAct</strong>：Reasoning + Acting 交替，每步先想再干。最常用，GPT/Claude 默认模式。</p>
-    <p><strong>Plan-and-Execute</strong>：先做完整计划再逐步执行，适合多步骤复杂任务。可中途重规划。</p>
-    <p><strong>Reflection</strong>：执行后自我评估，发现错误就修正再执行。提升输出质量但成本翻倍。</p>
-    <p class="hint">项目桥接：prd-tools 11 步工作流 = Plan-and-Execute，Evidence Index = Reflection。</p>
+    <p><strong>定义</strong>：让 LLM 自主决策"下一步做什么"。普通 Chat 是单轮问答，Agent 是多轮循环——感知（接收输入+工具结果）→ 思考（LLM 推理）→ 行动（调用工具），不断迭代到任务完成。</p>
+    <p><strong>三大模式</strong>：</p>
+    <p>· <strong>ReAct</strong>：Reasoning + Acting 交替，每步先想再干。GPT/Claude 默认模式，适合工具调用场景。</p>
+    <p>· <strong>Plan-and-Execute</strong>：先做完整计划再逐步执行，适合多步骤复杂任务，可中途重规划。项目桥接：prd-tools 11步工作流。</p>
+    <p>· <strong>Reflection</strong>：执行后自我评估，发现错误修正再执行。提升质量但成本翻倍。项目桥接：Evidence Index。</p>
+    <p><strong>Tool Use 底层链路</strong>：① 开发者定义 function schema（名称+参数+描述）→ ② LLM 根据语义判断是否调用工具 → ③ 输出 tool_call JSON → ④ 运行时执行工具获得结果 → ⑤ 结果注入上下文继续推理。循环直到不再调用工具。</p>
+    <p><strong>Memory 三层</strong>：短期记忆（当前对话窗口）、长期记忆（摘要压缩/向量存储）、工作记忆（当前任务中间状态）。prd-tools reference = 长期记忆工程化。</p>
+    <p><strong>面试答题句式</strong>："Agent 核心是 ReAct 循环——感知→思考→行动不断迭代。扩展靠 Tool Use，通过 function schema 定义工具接口，LLM 语义选择调用。框架层面 LangGraph 适合复杂编排。我的 prd-to-code 用双 Skill + 证据链约束 Agent 行为。"</p>
+  </div>
+</div>
+
+<div class="card" data-c="ai" data-kw="LangChain LangGraph 框架 Chain Agent Tool Memory StateGraph Node Edge Checkpoint HITL 状态机 工作流">
+  <div class="card-head"><span class="tag ai">E20</span><div class="card-title">LangChain + LangGraph 详解</div></div>
+  <div class="core">LangChain 链式编排，LangGraph 图状态机精确控制 Agent</div>
+  <div class="card-body">
+    <p><strong>LangChain 六大核心</strong>：</p>
+    <p>· <strong>Chain</strong>：链式调用，把多个 LLM 调用和工具串起来。LCEL（LangChain Expression Language）声明式编排。</p>
+    <p>· <strong>Agent</strong>：自动选择工具和决策的执行器，核心是 ReAct 循环。</p>
+    <p>· <strong>Tool</strong>：工具定义和注册。支持自定义函数、API 调用、代码执行。</p>
+    <p>· <strong>Memory</strong>：对话历史管理。Buffer（全保留）/ Summary（摘要压缩）/ Window（滑动窗口）。</p>
+    <p>· <strong>Retriever</strong>：RAG 检索器。对接向量数据库、BM25、混合检索。</p>
+    <p>· <strong>Callback</strong>：全链路观测。日志、trace、token 计数、流式输出。</p>
+    <p><strong>LangGraph 核心概念</strong>：LangChain 团队出的独立框架，解决复杂 Agent 编排。</p>
+    <p>· <strong>StateGraph</strong>：有向图状态机。节点是处理步骤（LLM/工具/条件判断），边是跳转规则。</p>
+    <p>· <strong>Node + Edge</strong>：节点是函数，边是跳转规则。Conditional Edge 支持分支。</p>
+    <p>· <strong>Checkpoint</strong>：状态持久化。每步自动保存，支持暂停恢复、崩溃恢复。</p>
+    <p>· <strong>Human-in-the-loop</strong>：任意节点插入人工审核点，Agent 暂停等人确认后继续。项目桥接：prd-tools Review Gate。</p>
+    <p><strong>LangChain vs LangGraph</strong>：LangChain 适合线性链式（A→B→C），上手快但复杂场景难控。LangGraph 适合循环、分支、人工介入的工作流，控制力更强。项目桥接：prd-tools 双 Skill 11步 = LangGraph 模式——明确步骤、条件分支、Review Gate。</p>
+    <p><strong>其他</strong>：CrewAI（多 Agent 协作）适合团队分工模拟；LlamaIndex（RAG 专精）适合数据问答。</p>
   </div>
 </div>
 
@@ -1726,26 +1729,30 @@ function buildTreeOptimized(list) {
   </div>
 </div>
 
-<div class="card" data-c="ai" data-kw="MCP 协议 架构 Host Client Server Tools Resources JSON-RPC">
-  <div class="card-head"><span class="tag ai">E19</span><div class="card-title">MCP 深度解析</div></div>
-  <div class="core">Anthropic 主导的开放协议，让 AI 应用标准化接入工具</div>
+<div class="card" data-c="ai" data-kw="MCP 协议 Host Client Server Tools Resources Prompts JSON-RPC stdio SSE 开发 Function Calling A2A">
+  <div class="card-head"><span class="tag ai">E19</span><div class="card-title">MCP 协议全解</div></div>
+  <div class="core">LLM 的 USB 接口——标准化连接外部工具和数据</div>
   <div class="card-body">
-    <p><strong>架构</strong>：Host（Claude Desktop/Cursor）→ Client（协议客户端）→ Server（工具提供方）。一对多：一个 Host 可连多个 MCP Server。</p>
-    <p><strong>通信</strong>：JSON-RPC 2.0，支持 stdio（本地）和 SSE（远程）两种传输。</p>
-    <p><strong>三大能力</strong>：Tools（可调用函数）、Resources（可读数据源）、Prompts（预设模板）。</p>
-    <p><strong>为什么重要</strong>：一次开发到处用——写一个 MCP Server，Claude/Cursor/Windsurf/Cline 都能用。解决了 AI 工具生态碎片化问题。</p>
+    <p><strong>架构</strong>：Host（Claude Desktop/Cursor/VS Code）→ Client（协议客户端）→ Server（工具提供方）。一对多：一个 Host 可连多个 MCP Server。</p>
+    <p><strong>通信</strong>：JSON-RPC 2.0。两种传输——stdio（本地进程通信，Server 作为子进程）和 SSE（远程 HTTP 长连接）。</p>
+    <p><strong>三大能力</strong>：</p>
+    <p>· <strong>Tools</strong>：可调用函数。定义 name + inputSchema(JSON Schema) + description，LLM 根据语义选择调用。类似 Function Calling 但跨平台。</p>
+    <p>· <strong>Resources</strong>：可读数据源。文件、数据库记录、API 响应，用 URI 标识，Agent 按需读取。</p>
+    <p>· <strong>Prompts</strong>：预置提示词模板。参数化 prompt，Agent 调用时传参。</p>
+    <p><strong>开发实战</strong>：TypeScript SDK（@modelcontextprotocol/sdk），定义 Server → 注册 Tools/Resources → 启动 stdio 监听，Host 自动发现。我开发过内部 MCP Server——从飞书文档提取 PRD 转 Markdown，Claude Code 和 Cursor 都能用。</p>
+    <p><strong>MCP vs Function Calling vs A2A</strong>：MCP 解决 Agent ↔ 工具（纵向），不绑定模型厂商，一次开发到处用。Function Calling 是 OpenAI 模型内置能力，绑定模型，单次调用。A2A 是 Google Agent 间通信协议（横向），解决 Agent ↔ Agent 协作。三者互补。</p>
   </div>
 </div>
 
-<div class="card" data-c="ai" data-kw="LangGraph LangChain CrewAI LlamaIndex 框架 选型 工作流 图">
-  <div class="card-head"><span class="tag ai">E20</span><div class="card-title">AI 框架生态与选型</div></div>
-  <div class="core">LangGraph 编排 Agent，LlamaIndex 专精 RAG，各有所长</div>
+<div class="card" data-c="ai" data-kw="量化 提效 准确率 覆盖率 基线 ROI 度量 prd-tools 效果评估">
+  <div class="card-head"><span class="tag ai">追问</span><div class="card-title">怎么量化 AI 工程工具的效果？</div></div>
+  <div class="core">基线对比 + 文件覆盖率，分三个维度答</div>
   <div class="card-body">
-    <p><strong>LangGraph</strong>：基于图的状态机，节点是函数，边是条件跳转，支持循环（Agent Loop）。复杂 Agent 编排首选。</p>
-    <p><strong>LangChain</strong>：LangGraph 上层，链式调用 LLM + 工具，适合线性流程。生态最大但抽象层多。</p>
-    <p><strong>LlamaIndex</strong>：RAG 专精——数据摄取 → 索引 → 查询，开箱即用。数据问答场景首选。</p>
-    <p><strong>CrewAI</strong>：多 Agent 协作，每个 Agent 有角色和工具，适合模拟团队分工。</p>
-    <p>选型：简单链式 LangChain，复杂 Agent LangGraph，数据问答 LlamaIndex，多角色协作 CrewAI。</p>
+    <p><strong>答题模板（分三步答）</strong>：</p>
+    <p>① <strong>转化效率</strong>：人工基线 vs 工具自动化。人工读 PRD + 开会确认平均 2-3 小时，工具自动化 5 分钟，效率提升 60%。</p>
+    <p>② <strong>准确率</strong>：实际开发分支修改的文件集合 vs plan 产出文件集合做匹配，命中率 80%。20% gap 来自 PRD 本身不完整——AI 主动标记让人确认。</p>
+    <p>③ <strong>稳定性</strong>：质量门控在计划阶段拦截低质量输出，Readiness Score 低于阈值自动降级。</p>
+    <p><strong>口径原则</strong>：不说"效率提升 10 倍"这种虚数，说可衡量的中间指标——文件覆盖率、门控拦截率、人工确认项数量。</p>
   </div>
 </div>
 
@@ -2349,6 +2356,23 @@ function buildTreeOptimized(list) {
   <div class="card-body">
     <p><strong>"这个问题我实际遇到过…"</strong> → 锚定项目经验，把话题往熟悉领域引导。</p>
     <p><strong>"如果让我重新设计…"</strong> → 展现反思能力。</p>
+  </div>
+</div>
+
+<div class="card" data-c="emer" data-kw="结构化 回答 总分总 STAR 口头禅 然后 就是 表达 面试技巧">
+  <div class="card-head"><span class="tag emer">表达</span><div class="card-title">面试回答结构化框架</div></div>
+  <div class="core">先说结论再展开，每个回答都有头有尾</div>
+  <div class="card-body">
+    <p><strong>总分总模板</strong>：</p>
+    <p>· <strong>总</strong>（10秒）：一句话核心结论。"这是一个 Schema 驱动的营销中台。"</p>
+    <p>· <strong>分</strong>（30-60秒）：2-3 个关键点，用"第一...第二...第三..."引导。</p>
+    <p>· <strong>总</strong>（10秒）：收尾呼应。"所以核心价值是 XX。"</p>
+    <p><strong>STAR 法则（项目类问题）</strong>：S 背景 → T 任务 → A 行动（重点）→ R 结果（要有数字）。</p>
+    <p><strong>口头禅克制</strong>：</p>
+    <p>· "然后" → 停顿或用"第一...第二..."替代。</p>
+    <p>· "就是" → 删除，直接说。</p>
+    <p>· "对对对" → 点一次头就够了。</p>
+    <p>· 练习方法：录音自己说一段话，数"然后"次数，目标降到 5 次以内。</p>
   </div>
 </div>
 
