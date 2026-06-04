@@ -26,7 +26,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","PingFang SC",sa
 .tab[data-c="emer"].on{background:#F59E0B}
 
 /* CARDS */
-.container{padding:4px 6px;max-width:900px;margin:0 auto}
+.container{display:flex;flex-direction:column;padding:4px 6px;max-width:900px;margin:0 auto}
+.sec-hd{padding:12px 10px 4px;font-size:12px;font-weight:700;color:#666;letter-spacing:1px;margin-top:4px}
 .card{background:var(--card);border-radius:var(--radius);margin-bottom:5px;border:1px solid var(--border);overflow:hidden}
 .card.hide{display:none}
 .card-head{padding:8px 10px 2px;display:flex;align-items:flex-start;gap:6px}
@@ -2309,6 +2310,13 @@ function buildTreeOptimized(list) {
 let curCat='all';
 const drawer=document.getElementById('drawer'),dMask=document.getElementById('dMask'),dList=document.getElementById('dList'),dHead=document.getElementById('dHead');
 const catNames={all:'全部',open:'开场',proj:'项目',bagu:'基础',code:'手撕',ai:'AI',emer:'应急'};
+const subOrder={
+  '营销中台':1,'AI 工作流':2,
+  'React':1,'JS 核心':2,'CSS':3,'网络':4,'浏览器/性能':5,'TypeScript':6,'工程化':7,'框架扩展':8,
+  'AI 前端':1,'AI 实践':2,'AI 理论':3,'AI 架构':4,'知识库':5,'追问':6,
+  '速查':0,'手写 API':1,'数组/双指针':2,'链表':3,'树/BFS/DFS':4,'回溯':5,'排序/TopK':6,'DP/贪心':7,'栈':8,'二分':9,'综合':10,
+  '项目数据':1,'软技能':2,'反问':3,'话术急救':4
+};
 
 function setCat(c){
   curCat=c;
@@ -2318,14 +2326,34 @@ function setCat(c){
   window.scrollTo({top:0,behavior:'smooth'});
 }
 function apply(){
-  const cards=document.querySelectorAll('.card');
+  const container=document.getElementById('cards');
+  container.querySelectorAll('.sec-hd').forEach(h=>h.remove());
+  const allCards=[...container.querySelectorAll('.card')];
   let n=0;
-  cards.forEach(c=>{
+  allCards.forEach(c=>{
     const v=curCat==='all'||c.dataset.c===curCat;
     c.classList.toggle('hide',!v);
+    c.style.order='';
     if(v)n++;
   });
-  document.getElementById('noRes').style.display=n===0?'block':'none';
+  const noRes=document.getElementById('noRes');
+  noRes.style.order='';
+  if(curCat!=='all'&&n>0){
+    const vis=allCards.filter(c=>!c.classList.contains('hide'));
+    vis.sort((a,b)=>(subOrder[getGroup(a)]??99)-(subOrder[getGroup(b)]??99));
+    let lastG='',ord=0;
+    vis.forEach(c=>{
+      const g=getGroup(c);
+      if(g&&g!==lastG){
+        const hd=document.createElement('div');
+        hd.className='sec-hd';hd.textContent=g;hd.style.order=ord;
+        container.insertBefore(hd,noRes);ord++;lastG=g;
+      }
+      c.style.order=ord;ord++;
+    });
+    noRes.style.order=9999;
+  }
+  noRes.style.display=n===0?'block':'none';
 }
 function toggleDrawer(){
   const open=drawer.classList.toggle('open');
@@ -2346,11 +2374,7 @@ function getGroup(c){
     return '话术急救';
   }
   if(cat==='proj'){
-    if(/微前端|qiankun|渐进|接入层|Changesets/.test(t))return '微前端';
-    if(tag==='扩展')return '扩展';
-    if(/A3|A8/.test(tag)||/事故|审查/.test(t))return '组件库';
-    if(/A4|A9|A10/.test(tag)||/AI|PRD|LLM|SSOT|prd/.test(t))return 'AI 工作流';
-    if(/Q2[24]/.test(tag)||/工程|设计模式/.test(t))return '工程体系';
+    if(/^(A4|A9|A10)$/.test(tag)||tag==='架构')return 'AI 工作流';
     return '营销中台';
   }
   if(cat==='bagu'){
@@ -2390,20 +2414,19 @@ function getGroup(c){
 function buildIndex(){
   dHead.textContent=(catNames[curCat]||'')+' · 卡片索引';
   dList.innerHTML='';
+  const all=[...document.querySelectorAll('.card')];
+  const vis=curCat==='all'?all:all.filter(c=>c.dataset.c===curCat);
+  if(curCat!=='all')vis.sort((a,b)=>(subOrder[getGroup(a)]??99)-(subOrder[getGroup(b)]??99));
   let lastG='';
-  document.querySelectorAll('.card').forEach(c=>{
-    if(curCat!=='all'&&c.dataset.c!==curCat)return;
-    const tag=c.querySelector('.tag');
-    const title=c.querySelector('.card-title');
+  vis.forEach(c=>{
+    const tag=c.querySelector('.tag'),title=c.querySelector('.card-title');
     if(!tag||!title)return;
     const g=curCat==='all'?catNames[c.dataset.c]||'':getGroup(c);
     if(g&&g!==lastG){
-      const h=document.createElement('div');
-      h.className='drawer-group';h.textContent=g;
+      const h=document.createElement('div');h.className='drawer-group';h.textContent=g;
       dList.appendChild(h);lastG=g;
     }
-    const item=document.createElement('div');
-    item.className='drawer-item';
+    const item=document.createElement('div');item.className='drawer-item';
     item.innerHTML='<span class="tag '+c.dataset.c+'">'+tag.textContent+'</span><span>'+title.textContent+'</span>';
     item.onclick=()=>{closeDrawer();setTimeout(()=>c.scrollIntoView({behavior:'smooth',block:'start'}),200)};
     dList.appendChild(item);
