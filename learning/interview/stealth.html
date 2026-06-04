@@ -194,6 +194,16 @@ body{overscroll-behavior-y:contain}
   </div>
 </div>
 
+<div class="card" data-c="proj" data-kw="异步组件 远程数据 地址选择器 级联 自定义组件 Schema声明">
+  <div class="card-head"><span class="tag proj">追问</span><div class="card-title">异步组件（地址选择器）Schema怎么描述？</div></div>
+  <div class="core">不是不支持，是远程数据组件通过自定义组件+异步属性声明来处理</div>
+  <div class="card-body">
+    <p>地址选择器这种需要按级联请求远程数据的组件，确实不是Schema声明能闭环的，因为数据不在本地。处理方式是注册为自定义组件，组件内部自己管理异步数据请求和级联逻辑。</p>
+    <p>Schema层只声明组件类型和必要的配置（比如接口地址、级联层级），具体的异步请求逻辑封装在组件代码里。这和Formily处理远程数据组件的方式本质一样——复杂异步组件都需要代码层介入，纯配置搞不定。</p>
+    <p>我们的原则是：Schema管结构和联动，代码管复杂交互。98%的表单场景Schema直接覆盖，剩下2%的自定义组件兜底。</p>
+  </div>
+</div>
+
 <div class="card" data-c="proj" data-kw="版本管理 Changesets 发版 alpha release yalc">
   <div class="card-head"><span class="tag proj">A8</span><div class="card-title">组件库版本管理和发布？</div></div>
   <div class="core">Changesets 管理 + alpha/release 双环境</div>
@@ -372,6 +382,16 @@ body{overscroll-behavior-y:contain}
   <div class="core">JSON Schema 做验证，不做 UI 渲染和联动</div>
   <div class="card-body">
     <p>JSON Schema 只能说字段必须是数字，不能说用 Slider 还是 InputNumber 渲染，更不能描述联动。我们扩展了 d_component（组件类型）、d_actions（联动配置）、visible/disabled（UI 状态）。</p>
+  </div>
+</div>
+
+<div class="card" data-c="proj" data-kw="Formily 表单 选型 联动 为什么不 DSL BFF 端到端">
+  <div class="card-head"><span class="tag proj">扩展</span><div class="card-title">为什么不用 Formily？</div></div>
+  <div class="core">Formily是纯前端表单方案，我们需要从BFF到前端的端到端联动DSL</div>
+  <div class="card-body">
+    <p>Formily确实能做联动和自定义扩展，JSON Schema描述表单结构，x-decorator/x-component控制渲染， reactionary做响应式联动。但这些都在客户端闭环。</p>
+    <p>我们的特殊性在于联动不是前端自闭环的。很多联动需要调BFF接口查业务数据，BFF根据结果重新拼接Schema下发给前端做整体替换。这意味着联动配置必须嵌在BFF模板里，和后端逻辑紧耦合，Formily的客户端方案覆盖不了这一层。</p>
+    <p>所以我们需要一套从BFF模板引擎到前端渲染引擎的端到端联动DSL，而不是纯前端表单方案。如果只是前端渲染层，Formily完全可以。我们的选择不是因为Formily不行，而是场景不同。</p>
   </div>
 </div>
 
@@ -1914,6 +1934,18 @@ function buildTreeOptimized(list) {
     <p><strong>图片并行策略</strong>：主上下文禁止直接Read图片。分批≤8张开1个foreground子Agent，>8张按数量拆多个子Agent在同一条消息中并行启动。每个子Agent产出media-analysis-part-N.yaml，全部完成后合并为media-analysis.yaml。</p>
     <p><strong>质量约束</strong>：没有人工确认的图片内容不能生成高置信度需求。AI看图提取的信息默认medium置信度，关键结论仍需文本证据或人工确认才能升为high。extraction-quality.yaml三档：pass可继续，warn继续但spec暴露风险，block暂停。</p>
     <p><strong>设计思想</strong>：用foreground并行而非background——保证子Agent完成后主流程才继续，避免异步竞态。批量大小8是上下文预算与并行效率的平衡点。</p>
+  </div>
+</div>
+
+<div class="card" data-c="proj" data-kw="PRD 超长 2万字 context 爆炸 分段 摘要 检索 多Agent 长文档">
+  <div class="card-head"><span class="tag proj">追问</span><div class="card-title">PRD超大（2万字）怎么不爆context？</div></div>
+  <div class="core">PRD先做分段摘要提取需求骨架，再按需检索相关段落，不一次性灌入</div>
+  <div class="card-body">
+    <p>实际场景确实会遇到20-30页的重构级PRD，直接灌入context会打爆。三层处理策略。</p>
+    <p><strong>第一层，分段摘要</strong>：输入时先对PRD做分段，提取需求骨架——涉及哪些模块、哪些业务场景、哪些改动范围。摘要控制在2000字以内，作为主context的输入。</p>
+    <p><strong>第二层，按需检索</strong>：根据摘要分析结果，从原文中只检索和当前需求点相关的段落做精确分析。不是把整个PRD都喂进去，而是按需求点逐个定位。</p>
+    <p><strong>第三层，多Agent并行</strong>：对超长的表格数据或图片，通过多个子Agent分批并行处理，每个Agent只处理一个片段。</p>
+    <p>核心思路是"先摘要定位，再按需深入"，而不是把整个PRD一次性灌入context。目前这个策略还在优化中，是对工作流的重要补充。</p>
   </div>
 </div>
 
