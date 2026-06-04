@@ -1815,6 +1815,83 @@ function buildTreeOptimized(list) {
   </div>
 </div>
 
+<div class="card" data-c="ai" data-kw="度量 指标 效果 评估 五维评分 覆盖率 一致性 LLM-as-Judge">
+  <div class="card-head"><span class="tag ai">D21</span><div class="card-title">AI工作流效果怎么度量？</div></div>
+  <div class="core">三层评估：工具自评五维打分 → 产物完整性校验 → 人工对比覆盖率</div>
+  <div class="card-body">
+    <p><strong>第一层工具自评</strong>：五维打分——证据链覆盖度、产出完整性、中间文件校验、QA矩阵、置信度分布。每维加权汇总出总分，低于阈值标记需review。</p>
+    <p><strong>第二层产物校验</strong>：每步产出过门禁检查结构完整性，Schema规格文件和Plan执行规划是否有缺失章节（Report 9章/Plan 12章）。</p>
+    <p><strong>第三层人工验证</strong>：拿AI Plan文件列表 vs 实际人工开发改动文件对比，当前覆盖率约80%。三层从自动化到人工逐步收紧。</p>
+    <p><strong>一致性指标（规划中）</strong>：引入LLM-as-Judge做独立评分 + 黄金Case集回归测试，每次变更对比前后评分差值作为一致性代理指标。</p>
+  </div>
+</div>
+
+<div class="card" data-c="ai" data-kw="证据链 Evidence 追溯 置信度 来源 门禁 风险点">
+  <div class="card-head"><span class="tag ai">D22</span><div class="card-title">证据链设计：让AI产出可追溯</div></div>
+  <div class="core">每条结论带Evidence ID标注来源，门禁脚本自动回溯校验，不通过标记风险点</div>
+  <div class="card-body">
+    <p><strong>来源类型8种</strong>：PRD、代码、Reference文件、上下文包、API文档、Git Log、人工确认、未找到（Code Search Miss）。AI推断的每条事实必须标注来源类型和具体位置。</p>
+    <p><strong>置信度标记</strong>：AI不确定的标低置信度（Low），高确信的标High。最终文档里所有结论都有置信度标签。</p>
+    <p><strong>门禁校验四级</strong>：①结构完整性——requirement IR是否包含evidence字段和能力面标签；②证据可追溯——结论→Evidence ID→中间产物YAML→原文（PRD或源码）映射链是否通；③交叉校验——Reference存在时context pack文件是否完整；④产出完整性——Report/Plan章节是否全覆盖。任何一级不通过写入风险点和待确认点。</p>
+    <p><strong>质量原则</strong>：搜不到要标Code Search Miss不能编造，人为确认项用Pending标记，低置信度结论自动汇总到文档末尾待人工review。</p>
+  </div>
+</div>
+
+<div class="card" data-c="ai" data-kw="BMAD Skill拆分 中间文件 渐进式 上下文隔离 Bismuth 多Agent">
+  <div class="card-head"><span class="tag ai">D23</span><div class="card-title">BMAD架构：多Skill拆分+中间文件传递</div></div>
+  <div class="core">每个Skill独立上下文窗口，Skill间通过中间文件传递状态，不共享上下文</div>
+  <div class="card-body">
+    <p><strong>BMAD核心思想</strong>：把复杂任务拆成多个独立Skill（架构思考→讨论→出文档→执行→复盘），每个Skill有独立上下文窗口专注一个维度，避免窗口膨胀导致幻觉和跳步。</p>
+    <p><strong>中间文件传递</strong>：Skill间不直接传上下文，而是每步产出JSON/YAML中间文件，下一步读取上一步的状态。人为确认中间产物后才继续下一步（渐进式披露）。</p>
+    <p><strong>借鉴到prd-tools</strong>：Reference和PRD蒸馏拆成两个独立Skill。简化了颗粒度（BMAD拆更细，我们把蒸馏相关步骤揉在一个Skill里便于团队推广）。</p>
+    <p><strong>适用场景</strong>：任务可拆成独立阶段、每个阶段有不同的上下文需求、需要人为介入确认中间产物的场景。</p>
+  </div>
+</div>
+
+<div class="card" data-c="ai" data-kw="双Skill Reference 蒸馏 上下文隔离 按需加载 Context Engineering">
+  <div class="card-head"><span class="tag ai">D24</span><div class="card-title">双Skill体系：Reference+PRD蒸馏</div></div>
+  <div class="core">第一个Skill建领域知识库，第二个Skill做PRD蒸馏，拆开是为了上下文隔离</div>
+  <div class="card-body">
+    <p><strong>为什么拆两个</strong>：项目知识理解跟需求分析是不同认知任务，上下文混在一起AI会跳步和幻觉。核心是Context Engineering——信息筛选+排序+预算管理。</p>
+    <p><strong>Reference工作流</strong>：输入Git Log+历史PRD+技术文档，参考Google Mentor思路，多轮分析后产出6个SSOT领域知识文件 + 实体倒排索引（字段→文件映射），加速AI定位候选文件。</p>
+    <p><strong>PRD蒸馏工作流</strong>：基于Reference产出的知识做结构化蒸馏，从PRD产出Schema规格文件和开发Plan。能力面适配器在蒸馏前约束AI思考方向。</p>
+    <p><strong>按需加载</strong>：不是一次性把所有知识塞给AI，而是先判断涉及哪个端，只加载对应域的Reference文件和能力面。</p>
+  </div>
+</div>
+
+<div class="card" data-c="ai" data-kw="质量门控 三级门禁 XML约束 评分 事前 事中 事后">
+  <div class="card-head"><span class="tag ai">D25</span><div class="card-title">质量门控：三级门禁怎么设计</div></div>
+  <div class="core">XML声明约束行为 + 过程门禁检查产物 + 整体评分兜底</div>
+  <div class="card-body">
+    <p><strong>事前约束</strong>：每个Step开头用XML格式声明必须做什么和必须不做什么，跟说明文档区分开强制AI注意。如：原文证据从PRD映射获取、源码证据定位到文件和符号、搜不到标Code Search Miss。</p>
+    <p><strong>事中门禁</strong>：进行下一步前自动检查上一步产物的结构完整性——中间文件是否存在、关键节点内容是否包含、evidence和能力面标签是否齐全。不通过则重跑上一步。</p>
+    <p><strong>事后评分</strong>：整个链路跑完后五维评分（证据链覆盖度/产出完整性/置信度分布/QA矩阵/结构合规），低于阈值标记需人工review。同时产出风险点和待确认点汇总。</p>
+    <p><strong>设计原则</strong>：声明不够才加门禁，门禁不够才加评分，层层收紧。</p>
+  </div>
+</div>
+
+<div class="card" data-c="ai" data-kw="优化 迭代 Benchmark 黄金Case 回归 LLM-as-Judge A/B">
+  <div class="card-head"><span class="tag ai">D26</span><div class="card-title">AI工作流怎么优化和迭代</div></div>
+  <div class="core">黄金Case集 + Benchmark回归 + LLM-as-Judge，实验组vs对照组</div>
+  <div class="card-body">
+    <p><strong>黄金Case集</strong>：维护一套已人工验证的完整需求案例（5-10个中等复杂度需求），覆盖典型场景。每次变更后用这套Case重跑，对比前后评分。</p>
+    <p><strong>Benchmark回归</strong>：用已跑完的case当用例评分集，优化Prompt或配置后重跑，对比五维评分和文件覆盖率的变化——进步还是退步。相当于A/B测试。</p>
+    <p><strong>LLM-as-Judge（规划中）</strong>：用另一个大模型对产物做独立五维质量评分，建立可复现的自动化评估Pipeline。评分差值作为执行一致性的代理指标。</p>
+    <p><strong>迭代节奏</strong>：每次只改一个变量（Prompt/门禁阈值/能力面配置），跑黄金Case看效果，确认无退化后再合入。</p>
+  </div>
+</div>
+
+<div class="card" data-c="ai" data-kw="成本 Token 压缩 记忆 效果 权衡 幻觉 稳定性">
+  <div class="card-head"><span class="tag ai">D27</span><div class="card-title">大模型成本优化策略</div></div>
+  <div class="core">效果vs成本权衡：更贵模型≠更好效果，用工程手段补齐短板</div>
+  <div class="card-body">
+    <p><strong>核心矛盾</strong>：更好的模型+更长的上下文=更好的效果，但也=更高的成本。不能无脑上最强模型，需要找到效果和成本的甜蜜点。</p>
+    <p><strong>Token管理</strong>：上下文预算管理——只传必要信息，用Reference/知识库做预筛选；渐进式披露——不一次性给全部上下文；中间文件传递——Skill间不重复传上下文。</p>
+    <p><strong>记忆压缩</strong>：对话历史不能每轮全传，需要做压缩（类似MemGPT思路）。大厂通常自研对话压缩，去掉历史无关信息只保留关键上下文。</p>
+    <p><strong>工程手段补短板</strong>：用幻觉检测、重试机制、质量门控等工程手段弥补模型能力不足，而不是简单换更贵的模型。prd-tools的三级门控就是这个思路——用约束换可靠性。</p>
+  </div>
+</div>
+
 <!-- ==================== 项目数据速查 ==================== -->
 <div class="card" data-c="emer" data-kw="数据 口径 指标 简历 400 60% 追问 计算">
   <div class="card-head"><span class="tag emer">速查</span><div class="card-title">项目关键数据 + 口径（被问怎么算的）</div></div>
