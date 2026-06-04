@@ -2084,6 +2084,55 @@ function buildTreeOptimized(list) {
   </div>
 </div>
 
+<div class="card" data-c="proj" data-kw="落地 场景 使用 团队 日常 需求交付 自动化 PM PRD 评审">
+  <div class="card-head"><span class="tag proj">工作流</span><div class="card-title">AI工作流在团队怎么落地的？</div></div>
+  <div class="core">PM写PRD → 工具自动产出结构化技术方案，替代需求评审到技术评审环节</div>
+  <div class="card-body">
+    <p><strong>日常流程</strong>：PM写PRD → 工具自动分析 → 产出Spec规格和开发Plan。把原来"需求评审会→三方对齐→出技术方案"这个环节自动化。</p>
+    <p><strong>验证</strong>：选了5个中等复杂度已完成需求做对照，人工平均3.5天（读PRD→评审会→三方对齐→技术方案），工具约1.5天（PRD输入→自动产出结构化方案）。</p>
+  </div>
+</div>
+
+<div class="card" data-c="proj" data-kw="效率 提升 60% 口径 怎么算 数据 度量 对比 提效">
+  <div class="card-head"><span class="tag proj">工作流</span><div class="card-title">"效率提升60%"这个数怎么算的？</div></div>
+  <div class="core">同需求对照：人工3.5天 vs 工具1.5天，5个中等复杂度需求取平均</div>
+  <div class="card-body">
+    <p><strong>口径</strong>：同一个需求，人工流程（读PRD→需求评审会→三方对齐→出技术方案）对比工具流程（PRD输入→自动产出结构化方案）。</p>
+    <p><strong>样本</strong>：5个中等复杂度已完成需求，连续5个迭代中随机选取，不是cherry-picking。</p>
+    <p><strong>局限</strong>：目前是团队内部小样本验证，没有跨团队横向对比。</p>
+  </div>
+</div>
+
+<div class="card" data-c="proj" data-kw="稳定性 质量 保证 三层 XML 约束 门禁 评分 Skill 执行">
+  <div class="card-head"><span class="tag proj">工作流</span><div class="card-title">Skill执行结果不稳定怎么保证质量？</div></div>
+  <div class="core">三层保障——事前XML约束行为 + 事中门禁检查产物 + 事后五维评分兜底</div>
+  <div class="card-body">
+    <p><strong>第一层事前约束</strong>：每个Step开头用XML声明必须做/不做的事（如"必须引用Evidence ID"、"不允许凭空推断"）。</p>
+    <p><strong>第二层事中门禁</strong>：下一步前自动检查上一步产物结构完整性（required files是否存在且非空），不通过就重跑。</p>
+    <p><strong>第三层事后评分</strong>：链路跑完后五维评分（证据链覆盖度/产出完整性/置信度/QA矩阵/结构合规），低于阈值标记需人工review。</p>
+  </div>
+</div>
+
+<div class="card" data-c="proj" data-kw="一致性 重复 结果不同 幂等 LLM-as-Judge 黄金Case 回归 致命追问">
+  <div class="card-head"><span class="tag proj">工作流</span><div class="card-title">同一个PRD跑两次结果不一样怎么办？（致命追问）</div></div>
+  <div class="core">已知最大Gap，规划LLM-as-Judge + 黄金Case回归补</div>
+  <div class="card-body">
+    <p><strong>坦诚承认</strong>：这是目前已知最大的Gap，暂无量化一致性指标。目前验证靠抽样和人工review，不够系统。</p>
+    <p><strong>规划方案</strong>：引入LLM-as-Judge——用另一个大模型对产物五维质量做独立评分，建立自动化评估Pipeline。</p>
+    <p><strong>回归机制</strong>：维护黄金Case集（已人工验证的完整需求案例），每次变更对比前后评分差值，用差值作为一致性代理指标。</p>
+  </div>
+</div>
+
+<div class="card" data-c="proj" data-kw="PRD 过时 过期 改动 同步 源码 SSOT 不一致 更新 临时">
+  <div class="card-head"><span class="tag proj">工作流</span><div class="card-title">PRD过时或临时改动了怎么同步？</div></div>
+  <div class="core">源码为SSOT，历史PRD仅作业务理解参考，不确定的标记人工确认</div>
+  <div class="card-body">
+    <p><strong>历史PRD定位</strong>：帮AI理解业务场景模式（如新增活动涉及哪些步骤、联动怎么配），不提供精确指令。所以"错了"不会有后果。</p>
+    <p><strong>冲突处理</strong>：PRD和代码有分叉时以源码为准。工具会把不确定的点标记为"需人工确认"，而不是强行执行。</p>
+    <p><strong>核心依赖</strong>：最终所有结论落到源码确认，不依赖PRD文本的精确性。</p>
+  </div>
+</div>
+
 <div class="card" data-c="proj" data-kw="前置校验 沙箱 sandbox 预渲染 Schema 验证 发布前 类型检查">
   <div class="card-head"><span class="tag proj">工程</span><div class="card-title">Schema配置前置校验怎么做？</div></div>
   <div class="core">三层防线：沙箱预渲染→声明式校验→TS类型约束</div>
@@ -2374,7 +2423,7 @@ function getGroup(c){
     return '话术急救';
   }
   if(cat==='proj'){
-    if(/^(A4|A9|A10)$/.test(tag)||tag==='架构')return 'AI 工作流';
+    if(/^(A4|A9|A10)$/.test(tag)||tag==='架构'||tag==='工作流')return 'AI 工作流';
     return '营销中台';
   }
   if(cat==='bagu'){
