@@ -103,7 +103,7 @@ body{overscroll-behavior-y:contain}
     <p>面试官好，我是邓泽林，滴滴国际化高级前端，4年经验。</p>
     <p><strong>第一，Schema驱动营销中台。</strong>覆盖20+活动类型，新增活动前端开发成本归零，上线从两周缩到两天。</p>
     <p><strong>第二，400+权益组件库。</strong>Schema同构渲染 + Register扩展模式，覆盖8个业务，线上两年零事故。</p>
-    <p><strong>第三，AI工程工作流。</strong>我独立设计，PRD→结构化开发计划，6文件SSOT + 证据链 + 三级门控，效率提升60%。</p>
+    <p><strong>第三，AI工程工作流。</strong>我独立设计，PRD→结构化开发计划，双插件SSOT + 证据链 + 多层门控，效率提升60%。</p>
     <p>核心优势是从业务抽取共性做架构抽象，以及对全流程质量把控。来贵司是因为<strong>[填公司方向]</strong>跟我第三条线高度匹配。</p>
     <p class="hint">语速 ~250 字/分钟，约 45 秒。分三点结构说，最后一句连接目标公司。说完停顿等追问。</p>
   </div>
@@ -155,7 +155,7 @@ body{overscroll-behavior-y:contain}
   <div class="card-head"><span class="tag proj">A4</span><div class="card-title">AI 工程怎么保证可靠性？</div></div>
   <div class="core">不押宝模型聪明不聪明，靠流程约束它</div>
   <div class="card-body">
-    <p>四层。证据链：每个事实追到 PRD、源码或文档。代码锚定：build-index 静态分析 + context-pack 精准匹配。质量门控：quality-gate 五项加权评分。反馈回流：蒸馏新知识更新 reference，benchmark 做回归。</p>
+    <p>三个核心机制贯穿11步蒸馏流水线。证据链：Evidence Ledger定义8种证据类型(prd/tech_doc/code/git_diff/negative_code_search/human/api_doc/reference)，每条结论必须引用EV-ID。代码锚定：build-index静态分析+context-pack精准匹配，MODIFY/DELETE类Impact必须有code_anchor(graph/rg/reference/inferred)。多层门控：摄入门控→Spec Review Gate人工确认→Readiness Score五维评分→Final Quality Gate五项检查。反馈回流：蒸馏新知识更新reference，benchmark做回归。</p>
   </div>
 </div>
 
@@ -1841,7 +1841,7 @@ function buildTreeOptimized(list) {
 
 <div class="card" data-c="ai" data-kw="证据链 Evidence EV 追溯 置信度 evidence.yaml negative_code_search">
   <div class="card-head"><span class="tag ai">D22</span><div class="card-title">证据链设计：让AI产出可追溯</div></div>
-  <div class="core">Step2建evidence.yaml中央账本，后续所有产物引用EV-*，链条闭合才算通过</div>
+  <div class="core">Step2建evidence.yaml中央账本，8种证据类型，后续所有产物引用EV-*，链条闭合才算通过</div>
   <div class="card-body">
     <p><strong>流水线</strong>：PRD摄入(Step1)→evidence-map.yaml（PRD块ID映射）→ 证据台账(Step2)→context/evidence.yaml（SSOT）。后续requirement-ir、layer-impact、contract-delta、spec、plan全部引用EV-*。</p>
     <p><strong>8种来源类型</strong>：prd / tech_doc / code / git_diff / negative_code_search / human / api_doc / reference。找不到也是证据——negative_code_search表示"搜了但没找到"，不是"我不知道"。</p>
@@ -1856,19 +1856,19 @@ function buildTreeOptimized(list) {
   <div class="card-body">
     <p><strong>BMAD核心思想</strong>：把复杂任务拆成多个独立Skill（架构思考→讨论→出文档→执行→复盘），每个Skill有独立上下文窗口专注一个维度，避免窗口膨胀导致幻觉和跳步。</p>
     <p><strong>中间文件传递</strong>：Skill间不直接传上下文，而是每步产出JSON/YAML中间文件，下一步读取上一步的状态。人为确认中间产物后才继续下一步（渐进式披露）。</p>
-    <p><strong>借鉴到prd-tools</strong>：Reference和PRD蒸馏拆成两个独立Skill。简化了颗粒度（BMAD拆更细，我们把蒸馏相关步骤揉在一个Skill里便于团队推广）。</p>
+    <p><strong>借鉴到prd-tools</strong>：Reference和PRD蒸馏拆成两个独立插件（各含2个Skill）。简化了颗粒度（BMAD拆更细，我们把蒸馏相关步骤揉在一个Skill里便于团队推广）。</p>
     <p><strong>适用场景</strong>：任务可拆成独立阶段、每个阶段有不同的上下文需求、需要人为介入确认中间产物的场景。</p>
   </div>
 </div>
 
-<div class="card" data-c="ai" data-kw="双Skill Reference 蒸馏 上下文隔离 按需加载 Context Engineering">
-  <div class="card-head"><span class="tag ai">D24</span><div class="card-title">双Skill体系：Reference+PRD蒸馏</div></div>
-  <div class="core">第一个Skill建领域知识库，第二个Skill做PRD蒸馏，拆开是为了上下文隔离</div>
+<div class="card" data-c="ai" data-kw="双插件 Reference 蒸馏 上下文隔离 按需加载 Context Engineering 插件 plugin">
+  <div class="card-head"><span class="tag ai">D24</span><div class="card-title">双插件体系：Reference+PRD蒸馏</div></div>
+  <div class="core">第一个插件建领域知识库，第二个插件做PRD蒸馏，拆开是为了上下文隔离</div>
   <div class="card-body">
-    <p><strong>为什么拆两个</strong>：项目知识理解跟需求分析是不同认知任务，上下文混在一起AI会跳步和幻觉。核心是Context Engineering——信息筛选+排序+预算管理。</p>
-    <p><strong>Reference工作流</strong>：输入Git Log+历史PRD+技术文档，参考Google Mentor思路，多轮分析后产出6个SSOT领域知识文件 + 实体倒排索引（字段→文件映射），加速AI定位候选文件。</p>
-    <p><strong>PRD蒸馏工作流</strong>：基于Reference产出的知识做结构化蒸馏，从PRD产出Schema规格文件和开发Plan。能力面适配器在蒸馏前约束AI思考方向。</p>
-    <p><strong>按需加载</strong>：不是一次性把所有知识塞给AI，而是先判断涉及哪个端，只加载对应域的Reference文件和能力面。</p>
+    <p><strong>为什么拆两个插件</strong>：项目知识理解跟需求分析是不同认知任务，上下文混在一起AI会跳步和幻觉。核心是Context Engineering——信息筛选+排序+预算管理。</p>
+    <p><strong>reference插件</strong>：含reference和team-reference两个Skill。输入Git Log+历史PRD+技术文档，参考Google Mentor思路，多轮分析后产出6个SSOT领域知识文件(01-codebase/02-coding-rules/03-contracts/04-routing-playbooks/05-domain/00-portal) + Evidence Index(4个索引文件)。</p>
+    <p><strong>prd-distill插件</strong>：含prd-distill和team-distill两个Skill。基于reference产出的知识做11步结构化蒸馏，从PRD产出Spec和开发Plan。能力面适配器在蒸馏前约束AI思考方向。</p>
+    <p><strong>按需加载</strong>：不是一次性把所有知识塞给AI，而是先判断涉及哪个层（前端/BFF/后端），只加载对应层的Reference文件和能力面。</p>
   </div>
 </div>
 
@@ -1876,10 +1876,43 @@ function buildTreeOptimized(list) {
   <div class="card-head"><span class="tag ai">D25</span><div class="card-title">质量门控：prd-tools的门禁体系</div></div>
   <div class="core">L1 Step间前置检查 → L2 distill门禁8项+覆盖率4项 → L3 final五维评分，层层收紧</div>
   <div class="card-body">
-    <p><strong>L1 Step间前置检查</strong>：11步蒸馏管道中，每步执行前检查上一步产物存在且非空。每个Step开头有XML声明（must_not_produce / must_not_read_by_default）约束AI行为。不通过则重跑上一步。</p>
+    <p><strong>L1 Step间前置检查</strong>：11步蒸馏管道中，每步执行前检查上一步产物存在且非空（HARD GATE）。如Step 6 Spec生成前必须检查evidence.yaml/requirement-ir.yaml/graph-context.md/layer-impact.yaml/contract-delta.yaml全部存在。不通过则重跑上一步。</p>
     <p><strong>L2 distill门禁</strong>：quality-gate.py distill，8项质量检查（文件存在/需求IR有evidence/代码锚点/spec确认等）+ 4项覆盖率检查（PRD块全覆盖/媒体全覆盖/需求全追溯，3项致命）。以及Reference阶段的quality-gate.py reference检查知识库完整性。</p>
     <p><strong>L3 最终评分</strong>：两套5维系统——①readiness-spec.yaml（管道内置：PRD摄入/证据覆盖/代码搜索/契约对齐/计划完整，85分通过）；②quality-gate.py final（脚本：required_files/context_pack_consumed/code_anchor_coverage/plan_completeness/blocker_quality）。加上Spec Review Gate：spec生成后硬停止等人工approved才能生成plan。</p>
     <p><strong>设计原则</strong>：声明约束不够加门禁，门禁不够加评分，评分不够加人工硬停止。</p>
+  </div>
+</div>
+
+<div class="card" data-c="ai" data-kw="Readiness Score 评分 权重 阈值 prd_ingestion evidence_coverage code_search contract_alignment plan_completeness 85 60 硬性降级">
+  <div class="card-head"><span class="tag ai">D28</span><div class="card-title">Readiness Score精确评分体系</div></div>
+  <div class="core">5维加权(20/25/15/25/15)，85/60两阈值分三档，硬性降级兜底</div>
+  <div class="card-body">
+    <p><strong>5个维度与权重</strong>：PRD摄入率(20) / 证据覆盖率(25) / 代码搜索命中率(15) / 契约对齐度(25) / 计划完整性(15)。加权汇总后对照85和60两个阈值。</p>
+    <p><strong>三档判定</strong>：85-100 pass可直接进开发 → 60-84 warning需owner确认 → 0-59 blocked必须修。另有Final Quality Gate 5项确定性检查(required_files/context_pack_consumed/code_anchor_coverage/plan_completeness/blocker_quality)，权重0.20/0.15/0.25/0.25/0.15，同样按85/60分档。</p>
+    <p><strong>硬性降级规则</strong>：extraction-quality为block直接fail、任一P0契约blocked直接fail、多层需求缺contract-delta直接fail、required_files有missing_critical直接fail。</p>
+    <p><strong>口径一致性</strong>：人工验证环节拿AI Plan文件列表vs实际开发改动对比，覆盖率约80%。Benchmark回归用黄金Case集做A/B对照。</p>
+  </div>
+</div>
+
+<div class="card" data-c="ai" data-kw="PRD 摄入 输入 docx md 图片 子Agent 并行 foreground media-analysis ingest">
+  <div class="card-head"><span class="tag ai">D29</span><div class="card-title">PRD摄入：多格式输入与图片并行策略</div></div>
+  <div class="core">md/txt/docx/粘贴四种输入，图片由子Agent分批≤8并行分析，主上下文禁看图</div>
+  <div class="card-body">
+    <p><strong>四种输入格式</strong>：.md/.txt直接读取写入_ingest/document.md，远程图片URL自动下载到media/；.docx用ingest-docx.py提取文字+图片；粘贴文本手工建来源。不用unzip -d（macOS权限坑）。</p>
+    <p><strong>图片并行策略</strong>：主上下文禁止直接Read图片。分批≤8张开1个foreground子Agent，>8张按数量拆多个子Agent在同一条消息中并行启动。每个子Agent产出media-analysis-part-N.yaml，全部完成后合并为media-analysis.yaml。</p>
+    <p><strong>质量约束</strong>：没有人工确认的图片内容不能生成高置信度需求。AI看图提取的信息默认medium置信度，关键结论仍需文本证据或人工确认才能升为high。extraction-quality.yaml三档：pass可继续，warn继续但spec暴露风险，block暂停。</p>
+    <p><strong>设计思想</strong>：用foreground并行而非background——保证子Agent完成后主流程才继续，避免异步竞态。批量大小8是上下文预算与并行效率的平衡点。</p>
+  </div>
+</div>
+
+<div class="card" data-c="ai" data-kw="AI工作流 定义 定位 产品边界 为什么做 隐性知识 认知偏差 蒸馏 Graphify OpenSpec prd-tools">
+  <div class="card-head"><span class="tag ai">D30</span><div class="card-title">AI工作流项目定位：是什么、为什么、跟谁不一样</div></div>
+  <div class="core">PRD→结构化开发计划的蒸馏工作流，解决认知偏差和隐性知识两个痛点，不做代码生成</div>
+  <div class="card-body">
+    <p><strong>一句话定义</strong>：从PRD自动产出结构化技术方案和开发计划的AI工作流。不是让AI写代码，是把PRD从自然语言蒸馏成有证据支撑的开发计划。</p>
+    <p><strong>为什么做</strong>：需求链路有两个核心痛点。①认知偏差：PM写PRD→人工口传→开发理解，每一步都有信息损耗导致返工。②隐性知识：项目经验全在老员工脑子里，新人上手成本高，换人就丢。</p>
+    <p><strong>产品边界</strong>：只做PRD到结构化任务拆解这一个环节。下游用户可以选择Cursor、Windsurf、Claude Code等任意AI Coding工具来执行。市面上已有成熟的code generation工具，不做重复的事，而是解决它们上游"需求理解不准确"的痛点。</p>
+    <p><strong>vs现有工具</strong>：Graphify等做了知识图谱但没有业务定制的蒸馏流程；OpenSpec等有工作流规范但缺少从PRD到需求拆解的自动化闭环；Cursor/Windsurf是从0到1的工具，不解决已有项目（几万行代码+大量历史逻辑）的需求理解问题。</p>
   </div>
 </div>
 
@@ -2018,9 +2051,9 @@ function buildTreeOptimized(list) {
 
 <div class="card" data-c="proj" data-kw="AI工作流 prd-to-code 架构 模块 状态流转 中间文件 pipeline">
   <div class="card-head"><span class="tag proj">架构</span><div class="card-title">AI工作流技术架构全景</div></div>
-  <div class="core">双Skill：Reference建知识库(6文件+索引)→Distill蒸馏(11步3阶段→spec+plan)</div>
+  <div class="core">双插件：Reference建知识库(6文件+索引)→Distill蒸馏(11步3阶段→spec+plan)</div>
   <div class="card-body">
-    <p><strong>Reference Skill（6阶段）</strong>：上下文丰富化→结构扫描→深度分析(6子阶段)→质量门→Evidence Index→反馈摄入。产出6个YAML知识库文件(project-profile/codebase/coding-rules/contracts/routing-playbooks/domain) + 4个索引文件(entities/edges/inverted-index/manifest)。</p>
+    <p><strong>reference插件（6阶段）</strong>：上下文丰富化→结构扫描→深度分析(6子阶段)→质量门→Evidence Index→反馈摄入。产出6个YAML知识库文件(project-profile/01-codebase/02-coding-rules/03-contracts/04-routing-playbooks/05-domain/00-portal) + 4个索引文件(entities/edges/inverted-index/manifest)。</p>
     <p><strong>Distill Skill（11步3阶段）</strong>：</p>
     <p>A.摄取(S1-3)：PRD解析(ingest-docx.py)→证据账本(evidence.yaml)→需求IR(requirement-ir.yaml)</p>
     <p>B.分析(S4-5)：查询计划(context-pack.py)→图谱上下文(3阶段扫描)→层影响(代码锚点)→上下文包→契约差异</p>
@@ -2042,9 +2075,9 @@ function buildTreeOptimized(list) {
 
 <div class="card" data-c="proj" data-kw="证据链 evidence SSOT 追溯 事实 置信度 溯源 negative_code_search">
   <div class="card-head"><span class="tag proj">架构</span><div class="card-title">证据链机制详解</div></div>
-  <div class="core">AI每个事实追溯到PRD/源码/文档，7种证据类型+高/中/低置信度</div>
+  <div class="core">AI每个事实追溯到PRD/源码/文档，8种证据类型+高/中/低置信度</div>
   <div class="card-body">
-    <p><strong>证据实体</strong>：每条含id/type/source/desc/confidence。7种类型：prd(文本)/code(源码)/tech_doc/git_diff/negative_code_search(确认不存在)/human(人工)/api_doc/reference(知识库)。</p>
+    <p><strong>证据实体</strong>：每条含id/type/source/desc/confidence。8种类型：prd(PRD原文)/tech_doc(技术文档)/code(源码)/git_diff(代码变更)/negative_code_search(确认不存在)/human(人工确认)/api_doc(接口文档)/reference(知识库)。</p>
     <p><strong>完整追溯链</strong>：PRD解析→evidence-map.yaml(block→章节)→evidence.yaml(权威注册表)→requirement-ir.evidence_ids→layer-impact.code_anchors(文件/符号/行号/置信度)→graph-context(来源:graph|rg|reference|inferred)→spec/plan引用EV ID。</p>
     <p><strong>SSOT原则</strong>：每个事实只存在于6个YAML文件中的一个，跨文件用contract_ref/ref_rule/playbook_ref引用。high需源码/PRD直接证据，medium部分证据，low仅线索。</p>
   </div>

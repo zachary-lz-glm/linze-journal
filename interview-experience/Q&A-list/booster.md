@@ -13,32 +13,32 @@
 **展开**：我们的产品边界很明确：只做PRD到开发计划的蒸馏和拆解。下游用户可以选择Cursor、Windsurf、Claude Code等任意AI Coding工具来执行。市面上已经有很成熟的code generation工具了，所以我们不做重复的事，而是解决它们上游"需求理解不准确"的痛点。
 
 ## Q3: PRD和代码之间缺少可追溯中间产物，怎么设计的？
-**核心句**：四层——证据链、代码锚定、质量门控、5维评分
-**展开**：第一层是证据链，AI产出的每个事实必须追溯到PRD源文档。第二层是代码锚定，通过Reference阶段的SSOT和代码实体索引，做精准的context pack匹配。第三层是质量门控，分事前（XML声明约束AI行为）、事中（每步产出做完整性校验）、事后（全链路5维评分兜底）。第四层是评分体系，从PRD摄入率、证据覆盖率、代码搜索命中率、契约对齐度、计划完整性五个维度评估。
+**核心句**：11步蒸馏流水线，证据链+代码锚定+多层门控贯穿全程
+**展开**：整个工作流是一条11步的蒸馏流水线，可追溯性由三个核心机制保障。第一是Evidence Ledger（第2步），定义了8种证据类型——prd、tech_doc、code、git_diff、negative_code_search、human、api_doc、reference，AI产出的每条结论必须引用Evidence ID。第二是代码锚定（第4步），每个Layer Impact必须挂code_anchor，标注来源（graph源码确认/rg搜索/reference路由/inferred推断），MODIFY/DELETE类型没有锚点不允许过。第三是多层门控——摄入门控检查PRD读取质量、Spec Review Gate要求人工确认AI是否读懂PRD才允许生成Plan、Readiness Score做5维度综合评分、Final Quality Gate做5项确定性检查（必传文件/上下文包消费/锚点覆盖率/计划完整性/阻塞项质量）。每个环节通过YAML中间文件传递状态，有明确的输入输出契约。
 
 ## Q4: 评分根据什么来评？
-**核心句**：5维度加权评分+85/80/60三档阈值
-**展开**：评分从五个维度来：PRD需求摄入率、证据覆盖率、代码搜索命中率、契约对齐度、计划完整性。每个维度按百分比打分，加权汇总后对照85/80/60三档阈值。另外我们还有实际验证环节——拿工具产出的开发计划和实际开发改动的文件做diff对比，目前准确率在80%左右，持续迭代中。
+**核心句**：5维度加权评分+85/60两个阈值分三档
+**展开**：Readiness Score从五个维度加权打分：PRD摄入率（权重20）、证据覆盖率（权重25）、代码搜索命中率（权重15）、契约对齐度（权重25）、计划完整性（权重15）。加权汇总后对照85和60两个阈值分三档：85-100分pass可直接进开发，60-84分warning需owner确认，0-59分blocked。另外还有硬性降级规则：P0契约blocked直接fail、多层需求缺contract-delta直接fail。实际验证环节——拿AI产出的Plan文件列表跟实际开发改动做diff对比，覆盖率约80%。
 
 ## Q5: PRD过时/临时改动没同步，怎么处理？
 **核心句**：源码为SSOT，历史PRD仅作业务理解参考
 **展开**：历史PRD的作用是帮AI理解业务场景模式——比如新增活动通常涉及哪些步骤、联动关系怎么配。它不提供精确指令，所以"错了"不会有后果。最终所有结论都落到源码确认。如果PRD和代码有分叉，以源码为准，工具会把不确定的点标记为"需人工确认"，而不是强行执行。
 
 ## Q6: PRD不明确时，从输入到产出的技术环节？
-**核心句**：PRD解析→需求拆解→代码定位→计划生成，每步有中间产物和校验
-**展开**：技术上分几个模块：首先是PRD解析模块（Python脚本提取文字/表格/图片→结构化XML），然后是需求拆解模块（把PRD拆成独立需求点并关联源章节），接着是代码定位模块（以Reference索引为起点，结合能力面适配器搜索候选文件），最后是计划生成模块（根据证据链和门控校验产出spec+plan）。每个模块之间通过中间文件（XML/YAML）传递状态，有明确的输入输出契约。
+**核心句**：11步蒸馏流水线，每步有YAML中间产物和门控校验
+**展开**：技术上是11步蒸馏流水线。第1步PRD Ingestion：支持md/txt/docx和粘贴文本，docx用Python脚本提取文字和图片到_ingest/document.md，图片由子Agent并行分析产出media-analysis.yaml。第2步Evidence Ledger：建立evidence.yaml，后续所有判断只引用Evidence ID。第3步Requirement IR：把PRD转成requirement-ir.yaml，每个需求点含change_type/acceptance_criteria/evidence_ids。第4步Code Search & Layer Impact：先通过Reference路由定位候选文件，再用rg补充扫描，最后精读源码生成graph-context.md和layer-impact.yaml。第5步Contract Delta：多层协作需求生成contract-delta.yaml。第6-7步Spec生成+人工Review Gate。第8步Plan生成。第9步Readiness Score五维评分。第10步Reference回流建议。第11步Final Quality Gate做5项确定性检查。每步通过YAML/MD中间文件传递状态。
 
 ## Q7: PRD怎么输入给AI？图片怎么处理？
-**核心句**：Python脚本提取→XML中间文件→图片并行子Agent
-**展开**：PRD可能是doc/docx格式，通过Python脚本提取文字、表格、图片。文字直接存入XML的document节点，图片存入media节点。图片分析比较吃上下文，所以设计了并行子Agent策略——7张图开1个Agent，10+张开2个，等子Agent全部完成后再整合进document做完整分析。最终产出需求清单，每个需求点标记对应的PRD章节和模块。
+**核心句**：多格式输入→_ingest目录→图片子Agent并行分析
+**展开**：PRD支持四种输入格式：.md/.txt直接读取写入_ingest/document.md；.docx用Python脚本（ingest-docx.py）提取文字和图片，文字写入document.md，图片存入media/目录并在文本中插入本地引用占位符；粘贴文本手工建立来源定位。图片分析比较吃上下文，所以设计了并行子Agent策略——主上下文禁止直接读图，每批≤8张图片开1个foreground子Agent，>8张按数量拆成多个子Agent在同一条消息中并行启动。每个子Agent产出media-analysis-part-N.yaml，全部完成后合并为media-analysis.yaml。关键规则：没有人工确认的图片内容不能生成高置信度需求，AI看图提取的信息默认medium置信度。
 
 ## Q8: 图片用什么格式提供给AI？
 **核心句**：Base64编码通过API的image字段传入
 **展开**：图片通常通过Base64编码，放在API请求的content里的image类型消息中传给模型。也可以传图片URL让模型自己下载。对于Claude API，用base64类型传入；对于OpenAI，用image_url类型。我们用的是Base64方式，因为图片已经在本地了，不需要额外的网络请求。
 
 ## Q9: 代码仓库很大，AI怎么精准找到需要的代码？
-**核心句**：能力面适配器定向搜索+多轮迭代校准+源码最终确认
-**展开**：具体给AI提供两层信息：第一层是Reference阶段产出的结构化索引——包括项目的目录结构、关键文件的摘要、API契约、路由映射等，存在6个知识库文件里。第二层是运行时动态搜索——AI根据当前需求，沿着能力面（前端关注路由/组件/状态管理，后端关注API/校验/审计）的方向，用grep/文件搜索定位候选文件，然后读取源码内容作为上下文。关键是多轮迭代——第一轮粗定位，第二轮精读，不足再回流补充Reference。
+**核心句**：Reference路由定向+三阶段源码扫描+代码锚点校验
+**展开**：代码定位分三阶段。第一阶段Reference路由：从requirement-ir提取业务实体和动作词，匹配04-routing-playbooks.yaml的信号→能力面映射，从01-codebase.yaml提取精确文件路径，如存在Evidence Index则用context-pack.py生成预匹配锚点。第二阶段补充扫描：用rg/glob搜索阶段1未覆盖的业务实体，读取命中文件获取callers/callees/imports，对MODIFY/DELETE候选追踪引用链评估blast radius。第三阶段汇总：将命中符号写成函数级技术线索，标注来源（reference_routing或code_scan），每个MODIFY/DELETE类Layer Impact必须有至少一个code_anchor（标注graph/rg/reference/inferred来源），低置信度锚点进入spec风险或plan假设。能力面分前端（9个surface：ui_route/view_component/form_or_schema等）、BFF（10个surface）、后端（10个surface）三个层。
 
 ## Q10: Skills在AI里在什么环节调用？AI怎么知道什么时候用？
 **核心句**：Skills通过Agent的system prompt注入，模型按指令匹配调用
