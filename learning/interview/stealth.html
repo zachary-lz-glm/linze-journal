@@ -112,7 +112,7 @@ body{overscroll-behavior-y:contain}
 
 <div class="card" data-c="open" data-kw="开场白 自我介绍 30秒 精简">
   <div class="card-head"><span class="tag open">开场</span><div class="card-title">30 秒项目开场白</div></div>
-  <div class="core">Schema 驱动架构 → BFF 生成 → 前端渲染 → AI 工程化</div>
+  <div class="core">Schema驱动营销中台 + AI工程工作流，4年做了两套中台</div>
   <div class="card-body">
     <p>我在滴滴国际化做了四年营销中台前端，核心做的是一套 Schema 驱动的全栈架构。</p>
     <p>简单说就是：BFF 层用模板引擎生成 Schema，前端通过渲染引擎动态消费。中间最核心的设计叫 injectDActions，是一次声明、双重求值——BFF 端先算一次保证初始状态正确，序列化给前端运行时再算一次做联动。联动分两种，需要后端数据的走 fetchApi 回调 BFF 重生成，纯前端的走本地 eval。这样新增活动类型，前端基本不用写新代码。</p>
@@ -138,7 +138,7 @@ body{overscroll-behavior-y:contain}
   <div class="card-body">
     <p>三层：后端 API 给原始数据，BFF 用模板引擎生成 Schema，前端按 Schema 渲染。</p>
     <p>最核心是 injectDActions，一次声明、双重求值：BFF 先 safeEval 算初始状态，序列化给前端运行时再算。联动分 fetchApi 型和 state 型，16 个联动模板。</p>
-    <p>前端通过 formatName 拍平嵌套路径，Listener 发布订阅执行联动。组件双轨制：基础走 switch-case，业务走 RegisteredComponents，35 个动态渲染。</p>
+    <p>前端通过路径拍平处理嵌套字段名，用发布订阅模式执行联动。组件分两种：基础组件用switch-case匹配，业务组件用Register模式动态注册，目前有35个动态渲染组件。</p>
     <p>新增活动类型前端基本零代码。</p>
   </div>
 </div>
@@ -156,13 +156,17 @@ body{overscroll-behavior-y:contain}
   <div class="card-head"><span class="tag proj">A4</span><div class="card-title">AI 工程怎么保证可靠性？</div></div>
   <div class="core">不押宝模型聪明不聪明，靠流程约束它</div>
   <div class="card-body">
-    <p>三个核心机制贯穿11步蒸馏流水线。证据链：Evidence Ledger定义8种证据类型(prd/tech_doc/code/git_diff/negative_code_search/human/api_doc/reference)，每条结论必须引用EV-ID。代码锚定：build-index静态分析+context-pack精准匹配，MODIFY/DELETE类Impact必须有code_anchor(graph/rg/reference/inferred)。多层门控：摄入门控→Spec Review Gate人工确认→Readiness Score五维评分→Final Quality Gate五项检查。反馈回流：蒸馏新知识更新reference，benchmark做回归。</p>
+    <p>三个核心机制贯穿11步蒸馏流水线：</p>
+    <p>① <strong>证据链</strong>：定义8种证据来源（PRD原文、源码、技术文档等），AI每条结论必须引用证据ID，可追溯到原始出处。</p>
+    <p>② <strong>代码锚定</strong>：通过静态分析和精准匹配定位代码位置，涉及修改或删除的操作必须有源码级别的锚点，不能凭空推断。</p>
+    <p>③ <strong>多层门控</strong>：摄入阶段检查PRD读取质量，Spec阶段要求人工确认后才允许生成Plan，最终做五维度综合评分和五项确定性检查。</p>
+    <p>另外还有反馈回流——每次蒸馏的新知识会更新知识库，配合已验证案例集做回归防退化。</p>
   </div>
 </div>
 
 <div class="card" data-c="proj" data-kw="挑战 最难 技术挑战 项目选择 架构选型 MCP Agent">
   <div class="card-head"><span class="tag proj">A5</span><div class="card-title">最有技术挑战的项目？</div></div>
-  <div class="core">AI工作流MCP→Agent架构选型演变，从架构瓶颈到突破</div>
+  <div class="core">AI工作流走过架构弯路：MCP单次调用是瓶颈，转向Agent+Skill模式才突破</div>
   <div class="card-body">
     <p><strong>选 prd-tools</strong>（面试官对 AI 感兴趣）：最大难点是架构选型错误导致瓶颈。</p>
     <p>背景：市面上有Cursor、Windsurf这些从0到1的工具，但针对已有项目（几万行代码、大量历史逻辑），怎么让AI理解需求是空白领域。</p>
@@ -183,7 +187,7 @@ body{overscroll-behavior-y:contain}
 
 <div class="card" data-c="proj" data-kw="联动引擎 injectDActions 双重求值 fetchApi state">
   <div class="card-head"><span class="tag proj">A7</span><div class="card-title">联动引擎怎么设计？</div></div>
-  <div class="core">一次声明，两端求值</div>
+  <div class="core">BFF声明联动规则，前后端各求值一次，新增活动零代码</div>
   <div class="card-body">
     <p>BFF 端 injectDActions 声明式注入，双重求值：BFF 先 safeEval 算一次保证 SSR 初始状态，前端运行时再算一次。</p>
     <p>两种联动：fetchApi 型（需后端数据）回调 BFF 重生成；state 型（纯前端）本地 eval。16 个联动模板，listener.on 支持链式联动。</p>
@@ -200,18 +204,18 @@ body{overscroll-behavior-y:contain}
 
 <div class="card" data-c="proj" data-kw="AI 代码 质量 验证 审计 锚定">
   <div class="card-head"><span class="tag proj">A9</span><div class="card-title">AI 生成代码怎么验证质量？</div></div>
-  <div class="core">审计 + 锚定 + 门控 + 回归</div>
+  <div class="core">不信任AI输出，四道防线逐层收紧</div>
   <div class="card-body">
-    <p>四件事：证据链审计（每个需求有 PRD 证据）；代码锚定（build-index + context-pack）；多层质量门控（11 步工作流有 Review Gate 硬停止）；benchmark 回归（oracle 用例评分防退步）。</p>
+    <p>四件事：① 证据链审计——每个需求必须有PRD原文证据支撑；② 代码锚定——静态分析+精准匹配定位代码位置；③ 质量门控——11步工作流有Review Gate人工硬停止；④ 回归测试——用已验证案例集评分防退化。</p>
   </div>
 </div>
 
 <div class="card" data-c="proj" data-kw="PRD 上线 链路 蒸馏 回流 完整流程">
   <div class="card-head"><span class="tag proj">A10</span><div class="card-title">从 PRD 到上线的完整链路？</div></div>
-  <div class="core">PRD → reference → 蒸馏 → 锚定 → 门控 → 实施 → 回流</div>
+  <div class="core">先把项目知识结构化，再蒸馏PRD成开发计划，全程有证据和门控</div>
   <div class="card-body">
-    <p>reference 构建知识库（六文件 SSOT + Evidence Index）→ prd-distill 11 步蒸馏 → context-pack 精准锚定 → quality-gate 五项评分 → Review Gate 硬停止 → 按 plan 实施 → 回流更新 reference。</p>
-    <p>核心：把 PRD 从自然语言变成有证据的结构化开发计划，不是让 AI 直接写代码。</p>
+    <p>第一步reference构建知识库——把几万行代码蒸馏成6个领域知识文件。第二步prd-distill做11步蒸馏——从PRD产出结构化的技术方案和开发计划。中间每一步都有代码锚定（精准定位改哪）和质量门控（不合格就拦住）。第三步人工确认plan后按计划开发，开发完新知识回流更新知识库。</p>
+    <p>核心：把PRD从自然语言变成有证据的结构化开发计划，不是让AI直接写代码。</p>
   </div>
 </div>
 
@@ -392,7 +396,7 @@ body{overscroll-behavior-y:contain}
 
 <div class="card" data-c="bagu" data-kw="setState Scheduler Reconciler Fiber Committer 渲染更新 Batching lane">
   <div class="card-head"><span class="tag bagu">#2</span><div class="card-title">React 从 setState 到视图更新的完整流程</div></div>
-  <div class="core">setState→调度→协调(diff)→提交(DOM)→绘制，Effect在不同阶段介入</div>
+  <div class="core">setState触发后经历调度、协调、提交、绘制四个阶段，Effect在不同阶段介入</div>
   <div class="card-body">
     <p><strong>1.调度</strong>：setState触发更新进入Scheduler，根据lane优先级安排执行时机。React 18 automatic batching合并多次setState为一次更新。</p>
     <p><strong>2.协调(Reconciler)</strong>：从触发组件开始DFS遍历Fiber树，双缓冲(current/workInProgress)做diff，标记effectTag。</p>
@@ -1494,7 +1498,7 @@ function buildTreeOptimized(list) {
 <!-- ==================== AI 工程 ==================== -->
 <div class="card" data-c="ai" data-kw="AI 理解项目 Reference SSOT Evidence Index 知识库">
   <div class="card-head"><span class="tag ai">D21</span><div class="card-title">AI 怎么理解陌生项目？</div></div>
-  <div class="core">Reference v4.0 六文件 SSOT + Evidence Index 静态分析</div>
+  <div class="core">把项目知识蒸馏成6个领域知识文件，每个事实只存一处，AI按需查询</div>
   <div class="card-body">
     <p>六个文件：codebase（静态清单）、coding-rules（编码规则）、contracts（跨层契约）、routing-playbooks（PRD 路由）、domain（业务领域）、portal（导航）。Evidence Index 做 TypeScript 正则扫描，提取代码实体、构建调用边和 BM25 索引。</p>
   </div>
@@ -1502,7 +1506,7 @@ function buildTreeOptimized(list) {
 
 <div class="card" data-c="ai" data-kw="PRD 代码 变更分类 蒸馏 最难">
   <div class="card-head"><span class="tag ai">D22</span><div class="card-title">PRD 到代码最难的一步？</div></div>
-  <div class="core">变更分类（ADD/MODIFY/DELETE/NO_CHANGE）</div>
+  <div class="core">判断PRD每句话对应代码是新增、修改还是删除，难在不知道项目现状就无法判断</div>
   <div class="card-body">
     <p>判断每句话对应代码是新增/修改/删除。难在不知道项目现状就无法判断，PRD 描述模糊，跨模块影响难预估。解法：reference 路由匹配 + BM25 + context-pack 锚定 + Review Gate 硬停止。</p>
   </div>
@@ -1838,18 +1842,18 @@ function buildTreeOptimized(list) {
 
 <div class="card" data-c="ai" data-kw="度量 指标 效果 评估 readiness quality-gate 覆盖率 一致性">
   <div class="card-head"><span class="tag ai">D21</span><div class="card-title">AI工作流效果怎么度量？</div></div>
-  <div class="core">两套5维评分 + distill门禁8项检查 + 人工对比覆盖率80%</div>
+  <div class="core">自动化三层评估 + 人工验证兜底，文件覆盖率约80%</div>
   <div class="card-body">
-    <p><strong>readiness-spec（管道内置5维）</strong>：PRD摄入20% / 证据覆盖25% / 代码搜索15% / 契约对齐25% / 计划完整15%。85-100=通过，60-84=警告，&lt;60=阻塞。AI在蒸馏过程中自动产出。</p>
-    <p><strong>quality-gate.py final（脚本5项加权）</strong>：required_files 20% / context_pack_consumed 15% / code_anchor_coverage 25% / plan_completeness 25% / blocker_quality 15%。Python脚本独立运行。</p>
-    <p><strong>distill门禁（8项质量+4项覆盖率）</strong>：文件存在、需求IR有evidence、代码锚点、spec确认等8项质量检查；PRD块全覆盖/媒体全覆盖/需求全追溯3项致命覆盖率检查。</p>
-    <p><strong>人工验证</strong>：AI Plan文件列表 vs 实际人工改动文件对比，覆盖率约80%。</p>
+    <p><strong>第一层：蒸馏过程评分</strong>——五个维度加权打分：PRD摄入质量、证据覆盖率、代码搜索命中率、契约对齐度、计划完整性。85分以上直接通过，60-84分需owner确认，低于60必须修。</p>
+    <p><strong>第二层：终检脚本</strong>——独立运行的Python脚本做五项确定性检查：必传文件完整性、上下文包消费情况、代码锚点覆盖率、计划完整性、阻塞项质量。</p>
+    <p><strong>第三层：蒸馏门禁</strong>——12项检查（8项质量+4项覆盖率），包括文件存在、需求有证据支撑、代码锚点、Spec确认等。其中3项覆盖率是致命项——PRD内容没全覆盖直接不通过。</p>
+    <p><strong>人工验证</strong>：AI产出的Plan文件列表 vs 实际开发改动文件对比，覆盖率约80%。</p>
   </div>
 </div>
 
 <div class="card" data-c="ai" data-kw="证据链 Evidence EV 追溯 置信度 evidence.yaml negative_code_search">
   <div class="card-head"><span class="tag ai">D22</span><div class="card-title">证据链设计：让AI产出可追溯</div></div>
-  <div class="core">Step2建evidence.yaml中央账本，8种证据类型，后续所有产物引用EV-*，链条闭合才算通过</div>
+  <div class="core">AI每条结论必须引用证据ID，定义8种来源类型，链条闭合才算通过</div>
   <div class="card-body">
     <p><strong>流水线</strong>：PRD摄入(Step1)→evidence-map.yaml（PRD块ID映射）→ 证据台账(Step2)→context/evidence.yaml（SSOT）。后续requirement-ir、layer-impact、contract-delta、spec、plan全部引用EV-*。</p>
     <p><strong>8种来源类型</strong>：prd / tech_doc / code / git_diff / negative_code_search / human / api_doc / reference。找不到也是证据——negative_code_search表示"搜了但没找到"，不是"我不知道"。</p>
@@ -1874,7 +1878,7 @@ function buildTreeOptimized(list) {
   <div class="core">第一个插件建领域知识库，第二个插件做PRD蒸馏，拆开是为了上下文隔离</div>
   <div class="card-body">
     <p><strong>为什么拆两个插件</strong>：项目知识理解跟需求分析是不同认知任务，上下文混在一起AI会跳步和幻觉。核心是Context Engineering——信息筛选+排序+预算管理。</p>
-    <p><strong>reference插件</strong>：含reference和team-reference两个Skill。输入Git Log+历史PRD+技术文档，参考Google Mentor思路，多轮分析后产出6个SSOT领域知识文件(01-codebase/02-coding-rules/03-contracts/04-routing-playbooks/05-domain/00-portal) + Evidence Index(4个索引文件)。</p>
+    <p><strong>reference插件</strong>：含reference和team-reference两个Skill。输入Git Log+历史PRD+技术文档，多轮分析后产出6个领域知识文件——代码结构、编码规则、跨层契约、PRD路由映射、业务领域、导航入口——加上代码实体索引和倒排索引。</p>
     <p><strong>prd-distill插件</strong>：含prd-distill和team-distill两个Skill。基于reference产出的知识做11步结构化蒸馏，从PRD产出Spec和开发Plan。能力面适配器在蒸馏前约束AI思考方向。</p>
     <p><strong>按需加载</strong>：不是一次性把所有知识塞给AI，而是先判断涉及哪个层（前端/BFF/后端），只加载对应层的Reference文件和能力面。</p>
   </div>
@@ -1882,29 +1886,29 @@ function buildTreeOptimized(list) {
 
 <div class="card" data-c="ai" data-kw="质量门控 门禁 quality-gate Step间 Spec Review 评分 readiness">
   <div class="card-head"><span class="tag ai">D25</span><div class="card-title">质量门控：prd-tools的门禁体系</div></div>
-  <div class="core">L1 Step间前置检查 → L2 distill门禁8项+覆盖率4项 → L3 final五维评分，层层收紧</div>
+  <div class="core">三层门控层层收紧：步骤间前置检查 → 蒸馏门禁12项 → 最终五维评分</div>
   <div class="card-body">
-    <p><strong>L1 Step间前置检查</strong>：11步蒸馏管道中，每步执行前检查上一步产物存在且非空（HARD GATE）。如Step 6 Spec生成前必须检查evidence.yaml/requirement-ir.yaml/graph-context.md/layer-impact.yaml/contract-delta.yaml全部存在。不通过则重跑上一步。</p>
-    <p><strong>L2 distill门禁</strong>：quality-gate.py distill，8项质量检查（文件存在/需求IR有evidence/代码锚点/spec确认等）+ 4项覆盖率检查（PRD块全覆盖/媒体全覆盖/需求全追溯，3项致命）。以及Reference阶段的quality-gate.py reference检查知识库完整性。</p>
-    <p><strong>L3 最终评分</strong>：两套5维系统——①readiness-spec.yaml（管道内置：PRD摄入/证据覆盖/代码搜索/契约对齐/计划完整，85分通过）；②quality-gate.py final（脚本：required_files/context_pack_consumed/code_anchor_coverage/plan_completeness/blocker_quality）。加上Spec Review Gate：spec生成后硬停止等人工approved才能生成plan。</p>
+    <p><strong>第一层：步骤间前置检查</strong>：11步蒸馏中，每步执行前检查上一步产物存在且非空。不通过就重跑上一步。</p>
+    <p><strong>第二层：蒸馏门禁</strong>：12项检查——8项质量（文件存在、需求有证据、代码锚点、Spec确认等）+ 4项覆盖率（PRD内容全覆盖、图片全覆盖、需求全追溯，这3项是致命项，不通过直接停）。</p>
+    <p><strong>第三层：最终评分</strong>：两套五维系统——蒸馏过程内置评分（PRD摄入/证据覆盖/代码搜索/契约对齐/计划完整）+ 独立脚本终检（必传文件/上下文消费/锚点覆盖/计划完整/阻塞项质量）。加上Spec Review Gate：Spec生成后硬停止等人工确认才允许生成Plan。</p>
     <p><strong>设计原则</strong>：声明约束不够加门禁，门禁不够加评分，评分不够加人工硬停止。</p>
   </div>
 </div>
 
 <div class="card" data-c="ai" data-kw="Readiness Score 评分 权重 阈值 prd_ingestion evidence_coverage code_search contract_alignment plan_completeness 85 60 硬性降级">
   <div class="card-head"><span class="tag ai">D28</span><div class="card-title">Readiness Score精确评分体系</div></div>
-  <div class="core">5维加权(20/25/15/25/15)，85/60两阈值分三档，硬性降级兜底</div>
+  <div class="core">五个维度加权评分，85分直接通过，60分需确认，低于60必须修</div>
   <div class="card-body">
-    <p><strong>5个维度与权重</strong>：PRD摄入率(20) / 证据覆盖率(25) / 代码搜索命中率(15) / 契约对齐度(25) / 计划完整性(15)。加权汇总后对照85和60两个阈值。</p>
-    <p><strong>三档判定</strong>：85-100 pass可直接进开发 → 60-84 warning需owner确认 → 0-59 blocked必须修。另有Final Quality Gate 5项确定性检查(required_files/context_pack_consumed/code_anchor_coverage/plan_completeness/blocker_quality)，权重0.20/0.15/0.25/0.25/0.15，同样按85/60分档。</p>
-    <p><strong>硬性降级规则</strong>：extraction-quality为block直接fail、任一P0契约blocked直接fail、多层需求缺contract-delta直接fail、required_files有missing_critical直接fail。</p>
-    <p><strong>口径一致性</strong>：人工验证环节拿AI Plan文件列表vs实际开发改动对比，覆盖率约80%。Benchmark回归用黄金Case集做A/B对照。</p>
+    <p><strong>五个维度</strong>：PRD摄入质量（权重20%）、证据覆盖率（25%）、代码搜索命中率（15%）、契约对齐度（25%）、计划完整性（15%）。加权汇总后对照两个阈值。</p>
+    <p><strong>三档判定</strong>：85-100分通过可直接进开发，60-84分需owner确认，0-59分阻塞必须修。</p>
+    <p><strong>硬性降级</strong>：PRD读取质量为block直接fail，核心契约blocked直接fail，多层协作需求缺契约差异直接fail。</p>
+    <p><strong>终检脚本</strong>：独立运行的Python脚本做五项确定性检查（必传文件/上下文消费/锚点覆盖/计划完整/阻塞项质量），同样按85/60分档。</p>
   </div>
 </div>
 
 <div class="card" data-c="ai" data-kw="PRD 摄入 输入 docx md 图片 子Agent 并行 foreground media-analysis ingest">
   <div class="card-head"><span class="tag ai">D29</span><div class="card-title">PRD摄入：多格式输入与图片并行策略</div></div>
-  <div class="core">md/txt/docx/粘贴四种输入，图片由子Agent分批≤8并行分析，主上下文禁看图</div>
+  <div class="core">支持四种文档格式输入，图片由AI子进程分批并行分析，不影响主流程</div>
   <div class="card-body">
     <p><strong>四种输入格式</strong>：.md/.txt直接读取写入_ingest/document.md，远程图片URL自动下载到media/；.docx用ingest-docx.py提取文字+图片；粘贴文本手工建来源。不用unzip -d（macOS权限坑）。</p>
     <p><strong>图片并行策略</strong>：主上下文禁止直接Read图片。分批≤8张开1个foreground子Agent，>8张按数量拆多个子Agent在同一条消息中并行启动。每个子Agent产出media-analysis-part-N.yaml，全部完成后合并为media-analysis.yaml。</p>
@@ -1931,7 +1935,7 @@ function buildTreeOptimized(list) {
 
 <div class="card" data-c="ai" data-kw="优化 迭代 Benchmark 黄金Case 回归 LLM-as-Judge A/B">
   <div class="card-head"><span class="tag ai">D26</span><div class="card-title">AI工作流怎么优化和迭代</div></div>
-  <div class="core">黄金Case集 + Benchmark回归 + LLM-as-Judge，实验组vs对照组</div>
+  <div class="core">维护已验证的需求案例集，每次优化后重跑对比评分，防退化</div>
   <div class="card-body">
     <p><strong>黄金Case集</strong>：维护一套已人工验证的完整需求案例（5-10个中等复杂度需求），覆盖典型场景。每次变更后用这套Case重跑，对比前后评分。</p>
     <p><strong>Benchmark回归</strong>：用已跑完的case当用例评分集，优化Prompt或配置后重跑，对比五维评分和文件覆盖率的变化——进步还是退步。相当于A/B测试。</p>
@@ -2066,7 +2070,7 @@ function buildTreeOptimized(list) {
   <div class="card-head"><span class="tag proj">架构</span><div class="card-title">AI工作流技术架构全景</div></div>
   <div class="core">双插件：Reference建知识库(6文件+索引)→Distill蒸馏(11步3阶段→spec+plan)</div>
   <div class="card-body">
-    <p><strong>reference插件（6阶段）</strong>：上下文丰富化→结构扫描→深度分析(6子阶段)→质量门→Evidence Index→反馈摄入。产出6个YAML知识库文件(project-profile/01-codebase/02-coding-rules/03-contracts/04-routing-playbooks/05-domain/00-portal) + 4个索引文件(entities/edges/inverted-index/manifest)。</p>
+    <p><strong>reference插件（6阶段）</strong>：上下文丰富化→结构扫描→深度分析→质量门→Evidence Index→反馈摄入。产出6个领域知识文件（代码结构、编码规则、跨层契约、PRD路由映射、业务领域、导航入口）加上代码实体和倒排索引。</p>
     <p><strong>Distill 11步蒸馏流水线</strong>：</p>
     <p>S1 <strong>PRD摄入</strong>：支持md/txt/docx和粘贴。docx用ingest-docx.py提取文字+图片，图片由子Agent分批≤8并行分析。</p>
     <p>S2 <strong>证据账本</strong>：建立evidence.yaml，定义8种证据类型，后续所有判断只引用Evidence ID。</p>
@@ -2084,7 +2088,7 @@ function buildTreeOptimized(list) {
 
 <div class="card" data-c="proj" data-kw="上下文管理 context pack 能力面 适配器 搜索 代码定位 Reference 索引">
   <div class="card-head"><span class="tag proj">架构</span><div class="card-title">代码上下文怎么精准定位？</div></div>
-  <div class="core">Reference路由优先→Index精确扫描→rg/glob补充，多轮迭代校准</div>
+  <div class="core">知识库路由优先定向 → 索引精确扫描 → 全局搜索补充，三轮逐步精准</div>
   <div class="card-body">
     <p><strong>给AI提供了什么</strong>：两层。①静态层：6个YAML知识库（目录/枚举/契约/路由映射/编码规则/领域术语）+ 4个索引文件（实体/边/倒排索引/清单）；②动态层：运行时按需求搜索源码。</p>
     <p><strong>三阶段扫描</strong>：Phase1 Reference路由（04-routing-playbooks匹配关键词→定向文件路径）→ Phase2 Index精确扫描（context-pack.py构建查询计划匹配实体）→ Phase3 rg/glob补充（覆盖未命中）。</p>
@@ -2124,7 +2128,7 @@ function buildTreeOptimized(list) {
 
 <div class="card" data-c="proj" data-kw="稳定性 质量 保证 三层 XML 约束 门禁 评分 Skill 执行">
   <div class="card-head"><span class="tag proj">工作流</span><div class="card-title">Skill执行结果不稳定怎么保证质量？</div></div>
-  <div class="core">三层保障——事前XML约束行为 + 事中门禁检查产物 + 事后五维评分兜底</div>
+  <div class="core">事前用结构化声明约束AI行为，事中检查每步产物完整性，事后五维评分兜底</div>
   <div class="card-body">
     <p><strong>第一层事前约束</strong>：每个Step开头用XML声明必须做/不做的事（如"必须引用Evidence ID"、"不允许凭空推断"）。</p>
     <p><strong>第二层事中门禁</strong>：下一步前自动检查上一步产物结构完整性（required files是否存在且非空），不通过就重跑。</p>
@@ -2134,7 +2138,7 @@ function buildTreeOptimized(list) {
 
 <div class="card" data-c="proj" data-kw="一致性 重复 结果不同 幂等 LLM-as-Judge 黄金Case 回归 致命追问">
   <div class="card-head"><span class="tag proj">工作流</span><div class="card-title">同一个PRD跑两次结果不一样怎么办？（致命追问）</div></div>
-  <div class="core">已知最大Gap，规划LLM-as-Judge + 黄金Case回归补</div>
+  <div class="core">目前是已知短板，计划引入AI评审做自动化一致性检查</div>
   <div class="card-body">
     <p><strong>坦诚承认</strong>：这是目前已知最大的Gap，暂无量化一致性指标。目前验证靠抽样和人工review，不够系统。</p>
     <p><strong>规划方案</strong>：引入LLM-as-Judge——用另一个大模型对产物五维质量做独立评分，建立自动化评估Pipeline。</p>
