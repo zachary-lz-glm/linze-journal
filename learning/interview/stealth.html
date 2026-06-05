@@ -1514,6 +1514,48 @@ function buildTreeOptimized(list) {
   </div>
 </div>
 
+<div class="card" data-c="ai" data-kw="大厂 AI工程化 行业 实践 腾讯 阿里 拼多多 落地 架构 成熟度">
+  <div class="card-head"><span class="tag ai">AI</span><div class="card-title">大厂AI工程化实践图谱（面试官亲述）</div></div>
+  <div class="core">工作流是过渡态，业务知识沉淀才是长期价值，模型越强工作流越轻知识越重</div>
+  <div class="card-body">
+    <p><strong>腾讯（短视频AIGC）</strong>：已实现issue驱动的Agent编码——人提issue，Agent自主调研出方案编码，人只做CR合并。大模型正在吃掉传统交互工具的价值，工具平台核心从交互转向效率管理。</p>
+    <p><strong>阿里淘天（B端基建）</strong>：做三件事——领域模型训练（开源蒸馏+强化学习）、AI门户（对话驱动研发入口）、IDE插件（VS Code代码辅助）。知识库本质是约束层和导航层，不是全量知识，核心难题是保鲜而非构建。</p>
+    <p><strong>拼多多（机器人）</strong>：三层AI架构——工程层（模型调优+监控告警）、RAG能力层（记忆压缩+推荐+工具调用）、调度层（网关+策略+配置）。核心挑战是效果vs成本权衡，必须自研对话压缩。</p>
+    <p><strong>Booster（机器人IDE）</strong>：工作流会随模型进化而贬值，真正需要沉淀的是AI从外部获取不了的业务知识和踩坑经验。</p>
+    <p><strong>面试用法</strong>：被问"你怎么看AI工程化"时，先说行业光谱（探索期→成熟期分层），再聚焦目标公司的阶段和做法。</p>
+  </div>
+</div>
+
+<div class="card" data-c="ai" data-kw="AI编程 质量保障 CR Code Review Agent 编码 三层 规范 测试">
+  <div class="card-head"><span class="tag ai">AI</span><div class="card-title">AI编程质量保障怎么做？（腾讯实践）</div></div>
+  <div class="core">规范类全交AI，小改动人CR，核心改动自动化测试加模块负责人审查</div>
+  <div class="card-body">
+    <p><strong>三层分工</strong>：规范类问题（lint、类型检查、静态分析）完全交给AI，提交前自动修好。小改动Agent直接编码，人做Code Review后合并。核心改动必须跑端到端自动化测试出差异化报告，加上对应模块负责人仔细审查。</p>
+    <p><strong>关键认知</strong>：AI编程的质量保障不是"AI写完人检查"这么简单，而是按改动风险分层——低风险全自动化，中风险人审AI做，高风险双重保障。端到端测试的差异化报告是核心工具，能自动检测AI引入的回归。</p>
+    <p><strong>面试用法</strong>：被问"AI写的代码怎么保证质量"时，用三层分层回答，比笼统说"人review"更有说服力。</p>
+  </div>
+</div>
+
+<div class="card" data-c="ai" data-kw="知识库 定位 约束 导航 保鲜 过时 本质 阿里 context">
+  <div class="card-head"><span class="tag ai">AI</span><div class="card-title">AI知识库的本质定位（阿里面试官纠正）</div></div>
+  <div class="core">知识库不是全量业务知识，是帮AI筛选信息和做context管理的约束层</div>
+  <div class="card-body">
+    <p><strong>核心纠正</strong>：阿里面试官通过追问帮求职者厘清——知识库有信息丢失，本质上是在帮AI做约束，减少上下文、筛选信息、做context管理，不是维护一份全量业务知识。</p>
+    <p><strong>保鲜是核心难题</strong>：冷启动知识天然会过时。比如会员等级逻辑6月1号改了，知识库里还是旧的，AI coding就会引入错误。三层防护：冷启动用最新PRD构建、每次蒸馏后自动回流更新、产物输出前人工review。但纯动态业务知识的自动检测目前还没做好。</p>
+    <p><strong>面试用法</strong>：被问"知识库怎么设计"时，先说定位是约束层和导航层，再说保鲜的三层防护，最后承认自动检测是未解决的Gap——比回避问题更加分。</p>
+  </div>
+</div>
+
+<div class="card" data-c="proj" data-kw="提效 数据 口径 环节 全链路 务实 60% 效率提升 追问">
+  <div class="card-head"><span class="tag proj">追问</span><div class="card-title">提效数据怎么说才不被追问穿？（鸿湖二面教训）</div></div>
+  <div class="core">主动区分环节提效和全链路提效，环节60%全链路20-30%，口径要务实</div>
+  <div class="card-body">
+    <p><strong>教训</strong>：鸿湖二面面试官追问"60%提升包含联调测试吗"，引导出全链路实际提效20-30%的结论。如果说"整体提效60%"会被当场戳穿。</p>
+    <p><strong>正确口径</strong>：PRD→Plan环节提效60%，纯开发环节50-60%（一周缩到一两天），但全链路含联调、环境搭建、合作方依赖这些AI替代不了的协同成本，整体提效20-30%。排期10天的需求现在大概7-8天。</p>
+    <p><strong>面试策略</strong>：主动说"我分两个口径给你"，先给环节数据再说全链路，比被动纠正好得多。面试官要的是务实，不是夸大。</p>
+  </div>
+</div>
+
 <!-- ==================== 项目数据速查 ==================== -->
 <div class="card" data-c="emer" data-kw="数据 口径 指标 简历 400 60% 追问 计算">
   <div class="card-head"><span class="tag emer">速查</span><div class="card-title">项目关键数据 + 口径（被问怎么算的）</div></div>
