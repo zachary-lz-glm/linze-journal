@@ -2009,6 +2009,17 @@ function buildTreeOptimized(list) {
   </div>
 </div>
 
+<div class="card" data-c="ai" data-kw="前端AI未来 编码自动化 Agentic 用户侧AI 对话UI 智能表单 Vibe Coding">
+  <div class="card-head"><span class="tag ai">AI</span><div class="card-title">前端在AI时代能做什么？</div></div>
+  <div class="core">三层递进——编码自动化、工程全流程Agentic、用户侧AI交互</div>
+  <div class="card-body">
+    <p><strong>第一层编码自动化</strong>：Copilot、Cursor、Windsurf已经在做，文件级改动很准，取代重复性编码。这一层已经成熟。</p>
+    <p><strong>第二层工程全流程Agentic</strong>：Agent接管需求分析、技术方案、代码生成、测试、部署的完整链路。前端工程师的角色从"写代码"变成"设计Agent的行为和质量门控"，核心能力变成系统设计和流程编排。</p>
+    <p><strong>第三层用户侧AI交互</strong>：对话式UI、智能表单、个性化推荐等需要前端和AI结合的新交互形态。前端工程师的价值从"实现页面"变成"设计人机协作的系统"。</p>
+    <p><strong>不可替代的部分</strong>：业务知识库、历史踩坑经验、跨团队协作上下文——这些AI从外部获取不了，必须靠人持续沉淀。模型能力越强工作流越轻，但业务知识越重。</p>
+  </div>
+</div>
+
 <!-- ==================== 项目数据速查 ==================== -->
 <div class="card" data-c="emer" data-kw="数据 口径 指标 简历 400 60% 追问 计算">
   <div class="card-head"><span class="tag emer">速查</span><div class="card-title">项目关键数据 + 口径（被问怎么算的）</div></div>
@@ -2207,6 +2218,27 @@ function buildTreeOptimized(list) {
     <p><strong>拓扑排序</strong>：被依赖的公共包先构建（如packages/components），依赖它的业务包后构建。无依赖关系的包并行构建。</p>
     <p><strong>构建缓存</strong>：NX/Turborepo增量构建——源码没变且依赖没变直接用缓存。Turborepo还支持远程缓存（团队共享构建产物）。</p>
     <p><strong>实践</strong>：pnpm workspace管理依赖，Lerna管独立发版，NX做构建缓存和增量构建。每个业务模块独立部署，packages公共包被业务包依赖。</p>
+  </div>
+</div>
+
+<div class="card" data-c="proj" data-kw="技术评审 技术方案 checklist 灰度 兼容性 回滚 流程图">
+  <div class="card-head"><span class="tag proj">工程</span><div class="card-title">技术评审应该包含哪些内容？</div></div>
+  <div class="core">八模块——概览→需求拆分→能力对比→流程图→开发计划→契约矩阵→灰度回滚→QA待确认</div>
+  <div class="card-body">
+    <p><strong>①需求概览</strong>：一句话说清做什么、为什么要做。②需求点拆分：功能点清单，每个点标注优先级。③能力面对比：已有/迭代/复用/新增，让听众快速了解改动范围。④技术方案流程图：数据流向和关键节点，这张图是评审的核心锚点。⑤开发计划：步骤、涉及文件、前后端分工。⑥契约变更矩阵：上下游对接表格，明确谁改什么、接口怎么变。⑦灰度方案加兼容性加回滚策略：这部分最容易漏但评审必问。⑧QA矩阵加待确认项加工时排期。</p>
+    <p><strong>常见遗漏</strong>：灰度策略、向后兼容、回滚方案、流程图——这四项是评审被追问的高频点。</p>
+  </div>
+</div>
+
+<div class="card" data-c="proj" data-kw="归因 自修复 可观测性 知识库缺失 模型能力 上下文 质量诊断">
+  <div class="card-head"><span class="tag proj">工程</span><div class="card-title">AI工作流出错了怎么归因和修复？</div></div>
+  <div class="core">三维度归因——知识库缺失补数据，模型能力不足加约束，上下文不够扩检索</div>
+  <div class="card-body">
+    <p>当AI产物质量不达标时，门禁脚本先判断哪步出了问题，然后按三个维度归因并采取不同修复策略。</p>
+    <p><strong>知识库缺失</strong>：AI基于不完整的信息做了错误推断。修复方式是触发Reference回流，把缺失的知识补进去，下次不会再犯同样的错。</p>
+    <p><strong>模型能力不足</strong>：AI跳步或逻辑错误，信息给了但没用好。修复方式是加强那一步的prompt约束和硬校验，把软约束变成硬规则。</p>
+    <p><strong>上下文不够</strong>：AI理解偏差，检索到的相关信息不足。修复方式是扩大源码扫描的召回率，增加上下文包的信息量。</p>
+    <p><strong>目标</strong>：从"人工发现AI错了"变成"系统自动定位为什么错了"，最终形成数据飞轮。</p>
   </div>
 </div>
 
