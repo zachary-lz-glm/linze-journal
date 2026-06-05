@@ -227,6 +227,7 @@ body{overscroll-behavior-y:contain}
   <div class="core">表达力有上限，复杂联动和特殊 UI 仍需定制开发</div>
   <div class="card-body">
     <p>三个边界。表达力上限：联动嵌套超过三层模板难维护，拆成多个模板各管一层。调试困难：动态生成不能断点，加了 Schema diff 工具。类型安全弱化：字符串键值编译时无法检查，BFF 模板层做字段枚举校验。</p>
+    <p><strong>样式隔离演进（起点读书面试官补充）</strong>：Schema渲染的组件样式隔离有三种主流方案——CSS Modules（编译时hash隔离，简单但不够灵活）、CSS-in-JS（运行时动态样式，灵活但有性能开销）、CSS原生方案（@layer+CSS自定义属性+Shadow DOM，零运行时开销但浏览器兼容性限制）。趋势是向CSS原生方案迁移。</p>
   </div>
 </div>
 
@@ -1437,7 +1438,7 @@ function buildTreeOptimized(list) {
   <div class="card-head"><span class="tag proj">架构</span><div class="card-title">AI工作流完整介绍（面试第一答）</div></div>
   <div class="core">把PRD自动蒸馏成结构化开发计划，靠SSOT+证据链+多层门控保质量</div>
   <div class="card-body">
-    <p><strong>是什么</strong>：从PRD自动产出结构化技术方案(Spec)和开发计划(Plan)的AI工作流。不是让AI写代码，是把PRD从自然语言蒸馏成有证据支撑的开发计划。</p>
+    <p><strong>是什么</strong>：从PRD自动产出结构化技术方案(Spec)和开发计划(Plan)的AI工作流。不是让AI写代码，是把PRD从自然语言蒸馏成有证据支撑的开发计划。这是Spec-Driven Development的工程化实践。</p>
     <p><strong>为什么做</strong>：需求链路两个核心痛点。①认知偏差：PM写PRD→人工口传→开发理解，每步信息损耗导致返工。②隐性知识：项目经验全在老员工脑子里，新人上手成本高，换人就丢。</p>
     <p><strong>怎么做（三大支柱）</strong>：</p>
     <p>· <strong>SSOT</strong>：Reference插件把项目知识蒸馏成6个领域知识文件，每个事实只存在一处，避免AI冗余编造。</p>
@@ -1511,6 +1512,7 @@ function buildTreeOptimized(list) {
     <p><strong>第二层工程全流程Agentic</strong>：Agent接管需求分析、技术方案、代码生成、测试、部署的完整链路。前端工程师的角色从"写代码"变成"设计Agent的行为和质量门控"，核心能力变成系统设计和流程编排。</p>
     <p><strong>第三层用户侧AI交互</strong>：对话式UI、智能表单、个性化推荐等需要前端和AI结合的新交互形态。前端工程师的价值从"实现页面"变成"设计人机协作的系统"。</p>
     <p><strong>不可替代的部分</strong>：业务知识库、历史踩坑经验、跨团队协作上下文——这些AI从外部获取不了，必须靠人持续沉淀。模型能力越强工作流越轻，但业务知识越重。</p>
+    <p><strong>前端Agent方向（腾讯+Booster+鸿湖三源佐证）</strong>：腾讯团队产品都在用AI写代码，工程师角色从"写代码"转为"把控质量"。Booster认为前端需要自己的Agent去做能力补充。鸿湖二面面试官提出"前端自有Agent给协同团队和用户提供能力"。结论：前端工程师的未来不是写更多页面，而是构建前端Agent——让AI在前端领域也能自主执行复杂任务。</p>
   </div>
 </div>
 
@@ -1522,6 +1524,7 @@ function buildTreeOptimized(list) {
     <p><strong>阿里淘天（B端基建）</strong>：最完整的工业级AI研发体系。自研Coding Agent云端运行，起点是PRD，产物直接对齐CI/CD流水线自动部署。知识图谱承接业务文档。核心壁垒是自验证+自修复闭环——Harness自动验证、云真机环境、PRD驱动测试用例自动生成执行、运行环境感知+修复Agent Loop。知识库本质是约束层和导航层，核心难题是保鲜而非构建。</p>
     <p><strong>拼多多（机器人）</strong>：三层AI架构——工程层（模型调优+监控告警）、RAG能力层（记忆压缩+推荐+工具调用）、调度层（网关+策略+配置）。核心挑战是效果vs成本权衡，必须自研对话压缩。</p>
     <p><strong>Booster（机器人IDE）</strong>：工作流会随模型进化而贬值，真正需要沉淀的是AI从外部获取不了的业务知识和踩坑经验。</p>
+    <p><strong>阿里淘天（B端基建，最完整）</strong>：PRD→Coding Agent生成代码→知识图谱提供上下文→Harness自动验证→Agent Loop自修复→CI/CD自动部署。核心壁垒不是代码生成，是自验证+自修复闭环。Booster也确认：工作流会随模型增强变轻，真正该沉淀的是AI从外部获取不了的业务知识。</p>
     <p><strong>面试用法</strong>：被问"你怎么看AI工程化"时，先说行业光谱（探索期→成熟期分层），再聚焦目标公司的阶段和做法。</p>
   </div>
 </div>
@@ -1533,6 +1536,7 @@ function buildTreeOptimized(list) {
     <p><strong>三层分工</strong>：规范类问题（lint、类型检查、静态分析）完全交给AI，提交前自动修好。小改动Agent直接编码，人做Code Review后合并。核心改动必须跑端到端自动化测试出差异化报告，加上对应模块负责人仔细审查。</p>
     <p><strong>关键认知</strong>：AI编程的质量保障不是"AI写完人检查"这么简单，而是按改动风险分层——低风险全自动化，中风险人审AI做，高风险双重保障。端到端测试的差异化报告是核心工具，能自动检测AI引入的回归。</p>
     <p><strong>面试用法</strong>：被问"AI写的代码怎么保证质量"时，用三层分层回答，比笼统说"人review"更有说服力。</p>
+    <p><strong>拼多多佐证（双层CR）</strong>：拼多多也确认了类似机制——AI初筛+人工复审的双层Code Review。多源交叉验证：腾讯三层分层（规范类全AI、小改动人CR、核心改动双重保障）和拼多多双层CR（AI初筛+骨干复审）本质一致，说明这是行业共识而非个例。</p>
   </div>
 </div>
 
@@ -1543,6 +1547,7 @@ function buildTreeOptimized(list) {
     <p><strong>核心纠正</strong>：阿里面试官通过追问帮求职者厘清——知识库有信息丢失，本质上是在帮AI做约束，减少上下文、筛选信息、做context管理，不是维护一份全量业务知识。</p>
     <p><strong>保鲜是核心难题</strong>：冷启动知识天然会过时。比如会员等级逻辑6月1号改了，知识库里还是旧的，AI coding就会引入错误。三层防护：冷启动用最新PRD构建、每次蒸馏后自动回流更新、产物输出前人工review。但纯动态业务知识的自动检测目前还没做好。</p>
     <p><strong>面试用法</strong>：被问"知识库怎么设计"时，先说定位是约束层和导航层，再说保鲜的三层防护，最后承认自动检测是未解决的Gap——比回避问题更加分。</p>
+    <p><strong>小仓库口径（阿里面试官追问）</strong>：面试官犀利追问"50个组件的仓库，让Claude Code init一遍也能达到一样效果"。诚实承认：小仓库场景下自建知识库增量价值有限，大仓库（几百个文件）才有明显差异。面试时主动说"小仓库init就行，大仓库才需要结构化知识库"，比回避问题更可信。</p>
   </div>
 </div>
 
@@ -1600,6 +1605,69 @@ function buildTreeOptimized(list) {
   </div>
 </div>
 
+<div class="card" data-c="ai" data-kw="阿里 淘天 AI研发 全托管 Coding Agent CI/CD 自验证 自修复 知识图谱 Harness">
+  <div class="card-head"><span class="tag ai">AI</span><div class="card-title">阿里淘天AI研发全托管体系（最完整工业级）</div></div>
+  <div class="core">PRD出发端到端自动化，核心壁垒是自验证加自修复闭环而非代码生成</div>
+  <div class="card-body">
+    <p><strong>完整链路</strong>：PRD作为起点，Coding Agent在云端运行生成代码，知识图谱提供业务上下文，Harness做自动验证，发现问题后Agent Loop自动修复，产物直接对齐CI/CD流水线自动部署。</p>
+    <p><strong>核心壁垒</strong>：不是代码生成（模型能力在提升），而是自验证加自修复闭环——包括云真机环境验证、PRD驱动测试用例自动生成执行、运行环境感知加修复Agent Loop。这套闭环让AI不只是"写代码"，而是"写可信赖的代码"。</p>
+    <p><strong>知识库定位</strong>：知识图谱承接业务文档，但知识库本质是约束层和导航层——帮AI筛选信息和做context管理，不是维护全量业务知识。核心难题是保鲜而非构建。</p>
+    <p><strong>面试用法</strong>：被问"你了解哪些工业级AI研发体系"时，先说阿里这套全托管链路（说明你见过最前沿的），再说自己的prd-tools是轻量版（说明你有判断力），最后对比差异（全托管vs人机协作）。</p>
+  </div>
+</div>
+
+<div class="card" data-c="ai" data-kw="AI Agent issue驱动 无PRD 编码 自动化 腾讯 Codex 元宝 办公Agent">
+  <div class="card-head"><span class="tag ai">AI</span><div class="card-title">AI Agent开发前沿：issue驱动+无PRD模式</div></div>
+  <div class="core">人提issue Agent自主调研编码人只做CR合并，产品经理也在用AI写代码了</div>
+  <div class="card-body">
+    <p><strong>腾讯实践</strong>：已实现issue驱动的Agent编码——人提issue描述需求，Agent自主调研技术方案、编码实现，人只做Code Review和合并。关键是产品经理也在用AI写代码直接提issue，工程师角色从"写代码"转为"把控质量"。</p>
+    <p><strong>行业趋势</strong>：通用办公Agent是巨头必争之地。腾讯元宝和ima、字节豆包、OpenAI Codex都在转向"口袋式Agent"模式——把编码、文档、沟通、调度全部塞进一个Agent里。正在重塑所有软件的入口形态。</p>
+    <p><strong>面试用法</strong>：被问"你怎么看AI编码的未来"时，用issue驱动模式做回答框架——从"AI辅助写代码"到"AI自主编码人审核"到"AI全流程自动化"的三阶段演进，目前头部公司在第二阶段。</p>
+  </div>
+</div>
+
+<div class="card" data-c="ai" data-kw="AI编码 边界 视觉还原 C端 中后台 70% 能力 替代 起点读书">
+  <div class="card-head"><span class="tag ai">AI</span><div class="card-title">AI编码能力边界：C端70%、中后台已可用</div></div>
+  <div class="core">C端视觉要求高AI只能到70%还原，中后台视觉要求低AI已经做得不错</div>
+  <div class="card-body">
+    <p><strong>起点读书（阅文）面试官判断</strong>：偏C端产品对视觉还原要求很高，AI目前只能做到70%左右，还有欠缺。但中后台产品视觉要求不高，AI编码已经做得还不错，可以实际落地。</p>
+    <p><strong>多源佐证</strong>：小红书搜索团队80-90%代码AI生成（偏中后台工具和搜索产品），腾讯短视频团队产品都在用AI写代码，阿里淘天已经全托管流水线。这些案例集中在中后台和工具型产品。</p>
+    <p><strong>面试用法</strong>：被问"AI会取代前端吗"时，用这个判断做分层回答——C端（视觉敏感型）AI短期到不了100%，中后台（功能敏感型）AI已经能大幅提效。前端工程师要做的是理解这个边界，在AI擅长的领域做编排者，在AI不擅长的领域做手艺人。</p>
+  </div>
+</div>
+
+<div class="card" data-c="ai" data-kw="对话压缩 context 压缩 Token 优化 LLMLingua 自研 星河觉醒 拼多多 中间件">
+  <div class="card-head"><span class="tag ai">AI</span><div class="card-title">对话压缩：AI应用的核心基建</div></div>
+  <div class="core">每轮对话都把上下文扔给模型积分很快超，对话压缩是AI应用公司自研的核心中间件</div>
+  <div class="card-body">
+    <p><strong>为什么必须做</strong>：多轮对话场景下，每轮都把完整上下文发送给模型，Token消耗指数级增长。不做压缩，积分和成本很快失控。星河觉醒和拼多多两个AI应用公司都提到这是必选项。</p>
+    <p><strong>为什么自研不用开源</strong>：对话压缩直接影响用户体验（压缩过度丢失关键信息、压缩不足浪费Token），是核心竞争力。AI应用公司倾向自研而非直接用开源方案，因为需要针对自己的业务场景做定制优化。</p>
+    <p><strong>相关技术</strong>：LLMLingua（微软的Token级压缩）、递归摘要（把旧对话压缩成摘要块）、MemWalker（结构化记忆遍历）。拼多多明确做了自己的对话压缩作为三层架构中RAG能力层的核心组件。</p>
+    <p><strong>面试用法</strong>：被问"AI应用怎么控制成本"时，先说对话压缩是第一优先级，再展开技术方案选择。</p>
+  </div>
+</div>
+
+<div class="card" data-c="ai" data-kw="AI-first 团队 工作方式 工程师 角色 Prompt Skill 运行环境 审核 反馈闭环">
+  <div class="card-head"><span class="tag ai">AI</span><div class="card-title">AI-first团队工作方式：工程师做什么？</div></div>
+  <div class="core">80-90%代码AI生成，工程师核心是设计运行环境和建立反馈闭环而非写代码</div>
+  <div class="card-body">
+    <p><strong>小红书搜索团队实况</strong>：80-90%代码由AI生成，没有代码覆盖率考核。工程师工作流程是：把PRD转化为Claude Code能理解的运行环境，让AI生成代码，自己做Code Review，建立反馈链路告诉AI怎么做更好，循环优化后提交代码走pipeline。</p>
+    <p><strong>腾讯佐证</strong>：产品经理也在用AI写代码直接提issue。工程师的核心价值从"写代码"变成"把控质量"。</p>
+    <p><strong>工程师新角色</strong>：三件事——①设计运行环境（Prompt/Skill/MCP配置），让AI在正确的上下文中工作。②审核AI产出（Code Review加质量门控），确保产出可信赖。③建立反馈闭环（错误纠正加知识沉淀），让AI持续变好。</p>
+    <p><strong>面试用法</strong>：被问"你怎么看AI时代的工程师角色"时，用小红书和腾讯的真实案例做佐证，比泛泛而谈"要用好AI"有说服力得多。</p>
+  </div>
+</div>
+
+<div class="card" data-c="ai" data-kw="PRD 质量 卡口 反推 缺项 赋能 替代 产品 AI 鸿湖">
+  <div class="card-head"><span class="tag ai">AI</span><div class="card-title">PRD质量卡口：赋能产品而非替代</div></div>
+  <div class="core">AI反推PRD缺项给补全建议，让产品先确认不缺东西再给研发，是赋能不是替代</div>
+  <div class="card-body">
+    <p><strong>鸿湖二面面试官建议</strong>：与其自建PM工作流替产品写PRD（产品会觉得你在抢活），更落地的方案是用AI做反推——根据产品输入的PRD自动检测缺项、给出补全建议，让产品自己确认"不缺东西"再给研发。核心是给产品质量卡口工具，不替产品做产品决策。</p>
+    <p><strong>对比两种路径</strong>：自建PM工作流（替产品写PRD）看起来酷但落地阻力大，产品不买账。PRD质量卡口（帮产品检查PRD）产品欢迎、研发受益、落地阻力小。选择赋能路径而非替代路径。</p>
+    <p><strong>面试用法</strong>：被问"你的AI工作流怎么跟产品协作"时，先说"赋能而非替代"这个定位，再说具体的卡口机制（缺项检测加补全建议加产品确认），比直接说"帮产品写PRD"更被面试官认可。</p>
+  </div>
+</div>
+
 <div class="card" data-c="proj" data-kw="提效 数据 口径 环节 全链路 务实 60% 效率提升 追问">
   <div class="card-head"><span class="tag proj">追问</span><div class="card-title">提效数据怎么说才不被追问穿？（鸿湖二面教训）</div></div>
   <div class="core">主动区分环节提效和全链路提效，环节60%全链路20-30%，口径要务实</div>
@@ -1607,6 +1675,7 @@ function buildTreeOptimized(list) {
     <p><strong>教训</strong>：鸿湖二面面试官追问"60%提升包含联调测试吗"，引导出全链路实际提效20-30%的结论。如果说"整体提效60%"会被当场戳穿。</p>
     <p><strong>正确口径</strong>：PRD→Plan环节提效60%，纯开发环节50-60%（一周缩到一两天），但全链路含联调、环境搭建、合作方依赖这些AI替代不了的协同成本，整体提效20-30%。排期10天的需求现在大概7-8天。</p>
     <p><strong>面试策略</strong>：主动说"我分两个口径给你"，先给环节数据再说全链路，比被动纠正好得多。面试官要的是务实，不是夸大。</p>
+    <p><strong>人工评审边界（鸿湖二面教训）</strong>：面试官明确打断"方案评审怎么着也要拉大家过一下，AI给的技术方案不一定是对的"。正确表述是"AI做80%基础工作，人工focus验证和决策"。另外，与其自建PM工作流替产品写PRD，更落地的方案是AI反推PRD缺项给产品补全建议——赋能而非替代。</p>
   </div>
 </div>
 
