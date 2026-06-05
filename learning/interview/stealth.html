@@ -1546,6 +1546,60 @@ function buildTreeOptimized(list) {
   </div>
 </div>
 
+<div class="card" data-c="ai" data-kw="Tools Skill 区别 区分 Function Calling 粒度 状态 原子 编排">
+  <div class="card-head"><span class="tag ai">AI</span><div class="card-title">Tools vs Skill 有什么区别？</div></div>
+  <div class="core">Tool给Agent能力，Skill给Agent判断力——一个是锤子扳手，一个是施工手册</div>
+  <div class="card-body">
+    <p><strong>相同点</strong>：底层都走Function Calling机制，都是模型识别意图后注入上下文，结果都反馈给模型继续推理。</p>
+    <p><strong>三个关键区别</strong>：</p>
+    <p>· <strong>粒度不同</strong>：Tool是原子操作，比如查天气、调接口，一次调用一个结果。Skill是多步骤编排，比如分析PRD到产出Spec再到生成Plan，是一套完整的流程。</p>
+    <p>· <strong>本质不同</strong>：Tool是外部集成，本质是API的包装器，给模型"能做什么"。Skill是可复用的过程知识，本质是一组Markdown指令集，教模型"怎么做更好"。Skill不增加新能力，而是指导已有能力的使用方式。</p>
+    <p>· <strong>状态不同</strong>：Tool是无状态的一次调用，调完就结束。Skill是有状态的流程编排，包含前置条件、中间产物传递、质量门控，整个流程有生命周期。</p>
+    <p><strong>面试一句话</strong>："Tool是工人手里的工具，Skill是施工手册——工具决定能做什么，手册决定怎么做最靠谱。"</p>
+  </div>
+</div>
+
+<div class="card" data-c="ai" data-kw="Tool 识别率 准确率 下降 优化 多工具 路由 动态激活 描述">
+  <div class="card-head"><span class="tag ai">AI</span><div class="card-title">Tool多了识别率下降怎么优化？</div></div>
+  <div class="core">三层策略——分层路由先分类再选、动态激活按需加载、优化描述降低认知负担</div>
+  <div class="card-body">
+    <p><strong>问题有多严重</strong>：研究数据明确——从4个Tool增加到51个Tool时，GPT-4o准确率从43%降到2%。Tool数量和跨领域混叠是核心杀手。</p>
+    <p><strong>策略一：分层路由</strong>。不做一次性从几十个Tool里选，先用Router模型（可以是小模型）分类用户意图到具体领域（天气、金融、客服），再让对应领域的子Agent从少量Tool里选择。本质是把一个N选1的问题变成两次小范围选择。</p>
+    <p><strong>策略二：动态激活</strong>。每次请求不传所有Tool定义，先做意图匹配只注入相关Tool，减少上下文噪音和Token消耗。LangChain的ReAct实验证明，不相关Tool的混入会显著拉低准确率。</p>
+    <p><strong>策略三：优化Tool描述质量</strong>。函数名用"操作-实体-数据"命名规范，比如get_stock_data而不是stock_info。参数控制在5个以内，复杂参数展平避免深层嵌套。有固定取值的参数用枚举约束，不让模型自由发挥。描述越精确，模型选错的概率越低。</p>
+    <p><strong>效果</strong>：三策略叠加可以把准确率从33%提升到74%。</p>
+  </div>
+</div>
+
+<div class="card" data-c="ai" data-kw="传统工程 AI 设计模式 映射 架构 相同 MVC 状态机 缓存 适配器">
+  <div class="card-head"><span class="tag ai">AI</span><div class="card-title">传统工程思维在AI系统中的映射</div></div>
+  <div class="core">大量传统架构模式在AI系统里换了新名字重新出现，本质完全一样</div>
+  <div class="card-body">
+    <p><strong>核心观点</strong>：AI工程没有推翻传统软件工程，而是把同样的设计思维用在了新的接口层——以前接口是JSON，现在接口是自然语言。</p>
+    <p><strong>六个典型映射</strong>：</p>
+    <p>· <strong>Prompt模板引擎 = MVC的View模板</strong>。用户输入是变量，Prompt是模板，跟Jinja2或Mustache完全一样的思路。变量注入前要做输入校验防Prompt注入，就像防SQL注入。</p>
+    <p>· <strong>Function Calling = 适配器模式</strong>。把模型的自然语言输出翻译成结构化的API调用，就是经典的Adapter——把一个接口转换成另一个接口。</p>
+    <p>· <strong>MCP协议 = USB-C标准化</strong>。统一接口让任意AI客户端连接任意工具，跟USB-C让任意设备连接任意充电器一个道理。Write once, run anywhere。</p>
+    <p>· <strong>Progressive Summarization = 日志轮转压缩</strong>。递归压缩旧消息保持固定大小，跟Log Rotation一模一样——老的压缩归档，新的完整保留。</p>
+    <p>· <strong>语义缓存 = Memoization模式</strong>。相似请求直接返回缓存结果，本质就是函数式编程里的记忆化——相同的输入不重复计算。</p>
+    <p>· <strong>Flow Engineering = 状态机</strong>。用LangGraph把Agent行为建模成确定性状态转换，跟XState或Redux管理前端状态是同一个模式——节点是处理步骤，边是跳转规则。</p>
+    <p><strong>面试用法</strong>：被问"AI和传统工程有什么关系"时，用这个映射表快速展示跨领域理解力。能说出三组以上映射的候选人很少。</p>
+  </div>
+</div>
+
+<div class="card" data-c="ai" data-kw="Agent 记忆 工作记忆 Summary 压缩 MemGPT Letta 上下文 管理">
+  <div class="card-head"><span class="tag ai">AI</span><div class="card-title">Agent工作记忆怎么管理？</div></div>
+  <div class="core">Progressive Summarization递归压缩旧消息保持上下文固定大小，类似操作系统的虚拟内存分页</div>
+  <div class="card-body">
+    <p><strong>核心问题</strong>：对话越长上下文越满，Token消耗线性增长、延迟增加、模型注意力被稀释。必须压缩，但不能丢关键信息。</p>
+    <p><strong>方案一：Progressive Summarization</strong>。把最老的消息递归压缩成摘要块放在Prompt开头，上下文保持固定大小。优点是成本和延迟恒定，缺点是有损压缩——多次摘要后会丢失细节，像传话游戏。</p>
+    <p><strong>方案二：MemGPT/Letta分页机制</strong>。设置上下文阈值，超过就把旧内容flush成摘要存到外部存储，需要时再检索回来。跟操作系统的虚拟内存分页一个思路——主存放不下就换到磁盘，用的时候再换回来。</p>
+    <p><strong>方案三：Observation Masking</strong>（JetBrains研究）。不真删旧消息，用简短占位符替换，保留对话结构信息但大幅减少Token。比如把一段50行的讨论压缩成"[讨论了API设计，决定用REST]"。</p>
+    <p><strong>实际工程中的做法</strong>：Claude Code的Memory文件就是长期记忆和短期记忆的桥梁——自动提取关键决策和约束存成Markdown，下次对话自动注入。这解决了"每次对话从零开始"的问题。</p>
+    <p><strong>面试一句话</strong>："工作记忆管理本质是信息压缩问题——像操作系统管内存一样，主存（上下文窗口）放不下就换页（flush到外部存储），但压缩策略决定了你会丢多少细节。"</p>
+  </div>
+</div>
+
 <div class="card" data-c="proj" data-kw="提效 数据 口径 环节 全链路 务实 60% 效率提升 追问">
   <div class="card-head"><span class="tag proj">追问</span><div class="card-title">提效数据怎么说才不被追问穿？（鸿湖二面教训）</div></div>
   <div class="core">主动区分环节提效和全链路提效，环节60%全链路20-30%，口径要务实</div>
