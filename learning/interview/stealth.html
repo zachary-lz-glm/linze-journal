@@ -240,9 +240,12 @@ body{overscroll-behavior-y:contain}
 
 <div class="card" data-c="proj" data-kw="大表单 性能 200字段 虚拟滚动">
   <div class="card-head"><span class="tag proj">追问</span><div class="card-title">大表单 200+ 字段性能？</div></div>
-  <div class="core">分步渲染 + 字段级更新 + 虚拟滚动</div>
+  <div class="core">分步渲染 + 字段级更新 + 虚拟滚动 + 联动接口SW缓存</div>
   <div class="card-body">
-    <p>三层：渲染层——按步骤分组，当前步全渲染，前后步只渲染摘要。更新层——Listener 按依赖图触发，只重渲染受影响组件。组件层——长列表用虚拟滚动。实测首屏从 1.2s 降到 300ms。</p>
+    <p><strong>渲染层</strong>：按步骤分组，当前步全渲染，前后步只渲染摘要。实测首屏从 1.2s 降到 300ms。</p>
+    <p><strong>更新层</strong>：Listener 按依赖图触发，只重渲染受影响组件，不触发全表单重渲染。</p>
+    <p><strong>组件层</strong>：长列表用虚拟滚动。</p>
+    <p><strong>联动接口层</strong>：性能瓶颈不在渲染在接口——用户改一个配置项可能触发1-2个联动接口调用。Service Worker拦截联动请求做缓存匹配，同一联动接口入参相同直接返回缓存结果不发请求，和业务逻辑解耦不需改BFF层代码。</p>
   </div>
 </div>
 
@@ -1962,6 +1965,16 @@ function buildTreeOptimized(list) {
     <p><strong>效果</strong>：效率提升60%（人工3.5天→工具1.5天），文件覆盖率80%，已推广到几十人团队。</p>
     <p><strong>产品边界</strong>：只做PRD到任务拆解。下游对接任意AI Coding工具（Cursor/Windsurf/Claude Code），不重复造轮子。</p>
     <p><strong>vs现有工具</strong>：Graphify做了知识图谱但没有蒸馏流程；OpenSpec有工作流规范但缺PRD到需求拆解闭环；Cursor/Windsurf不解决已有项目（几万行代码+历史逻辑）的需求理解问题。</p>
+  </div>
+</div>
+
+<div class="card" data-c="proj" data-kw="Spec Plan 产物 章节格式 结构化 需求分析报告 开发计划">
+  <div class="card-head"><span class="tag proj">架构</span><div class="card-title">AI工作流产出的Spec和Plan长什么样？</div></div>
+  <div class="core">Spec是需求分析报告三段式，Plan是开发执行计划三段式，都有固定章节模板</div>
+  <div class="card-body">
+    <p><strong>Spec三段</strong>：①需求理解——30秒概览说清做什么，然后需求点拆分，每个点标注PRD来源段落。②契约对齐——BFF需关注的需求点和不需关注的分开列出，前后端分工一目了然。③风险检查——AI不确定的点生成表格标红，需人工补充确认，不让AI凭空推测。</p>
+    <p><strong>Plan三段</strong>：①架构概览——开发顺序依赖图，先做什么后做什么。②需求点到文件映射——每个改动点标注来源是哪个需求、涉及哪个文件、改什么内容。③QA矩阵——测试场景清单加上下游契约对齐确认。</p>
+    <p><strong>面试要点</strong>：Spec生成后有硬停止，必须人工确认风险点后才允许生成Plan。两个文档章节固定、格式统一，团队推广时降低认知成本。</p>
   </div>
 </div>
 
