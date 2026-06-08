@@ -1260,6 +1260,23 @@ function buildTreeOptimized(list) {
   </div>
 </div>
 
+<div class="card" data-c="ai" data-kw="单Agent Multi-Agent 多Agent 区别 对比 使用场景 协作 分工 AutoGen CrewAI 编排">
+  <div class="card-head"><span class="tag ai">AI</span><div class="card-title">单Agent vs Multi-Agent：区别、对比、使用场景</div></div>
+  <div class="core">单Agent是一把瑞士军刀，Multi-Agent是一个团队——任务异构且需要专精时才值得拆</div>
+  <div class="card-body">
+    <p><strong>单Agent</strong>：一个LLM实例完成所有步骤——感知、推理、调用工具、记忆管理全靠一个模型。优点是简单、调试容易、上下文共享直接。缺点是上下文窗口有上限，任务越复杂越容易"顾此失彼"——既要分析PRD又要校验代码规范，两个维度的指令混在一起互相干扰。</p>
+    <p><strong>Multi-Agent</strong>：多个Agent各司其职，每个Agent有独立上下文窗口和专属prompt。Agent间通过消息/中间文件传递状态。优点是每个Agent专注一件事，prompt更精准，上下文不互相污染。缺点是编排复杂、调试困难、Agent间通信成本高。</p>
+    <p><strong>核心区别</strong>：</p>
+    <p>· <strong>上下文管理</strong>：单Agent共享一个窗口，好处是信息天然流通，坏处是窗口拥挤。Multi-Agent各管各的窗口，好处是互不干扰，坏处是信息传递要显式编码。</p>
+    <p>· <strong>调试难度</strong>：单Agent出问题看一条链路。Multi-Agent出问题要在多条链路和交叉点之间定位——"是A的输出有问题还是B的理解有问题？"</p>
+    <p>· <strong>成本</strong>：Multi-Agent多实例运行，Token消耗通常2-3倍于单Agent。但每个Agent可以用小模型——粗活用便宜模型，精活用贵模型，反而可能省成本。</p>
+    <p><strong>什么时候用Multi-Agent</strong>：①任务有明显异构子任务——一个分析代码、一个分析文档、一个做Review，各需要不同的知识背景和推理方式。②单Agent的prompt已经膨胀到互相干扰——指令太多模型分不清优先级。③需要并行加速——多个Agent同时处理不同子任务，最后汇总。</p>
+    <p><strong>什么时候不该用</strong>：①任务本身是线性单链路——A→B→C顺序执行，拆开反而增加通信开销。②团队没有Multi-Agent编排经验——AutoGen/CrewAI的学习曲线不低，强行上Multi-Agent容易翻车。③调试成本不可接受——生产环境问题要快速定位，Multi-Agent的排查链路太长。</p>
+    <p><strong>项目桥接</strong>：prd-tools用双Skill（Reference + PRD蒸馏）但共享同一个Agent上下文——本质是"单Agent+多Skill"模式。如果未来PRD分析需要同时做代码理解+竞品分析+用户研究，可能值得拆成Multi-Agent。目前单Agent+Skill编排够用。</p>
+    <p><strong>面试一句话</strong>："Multi-Agent不是银弹——用团队类比：一个人能干好的活没必要拉一个团队。只有任务异构到需要不同的专业知识、或者需要并行加速时，Multi-Agent才值得付出编排复杂度的代价。"</p>
+  </div>
+</div>
+
 
 <div class="card" data-c="ai" data-kw="LangChain LangGraph 框架 Chain Agent Tool Memory StateGraph Node Edge Checkpoint HITL 状态机 工作流">
   <div class="card-head"><span class="tag ai">E20</span><div class="card-title">LangChain + LangGraph 详解</div></div>
@@ -1355,6 +1372,59 @@ function buildTreeOptimized(list) {
     <p><strong>L5 评估观测</strong>：输出质量检查（质量门控、日志 trace）。</p>
     <p><strong>L6 约束恢复</strong>：安全边界、失败恢复、人工兜底。</p>
     <p class="hint">项目桥接：prd-tools 整个架构就是 Harness——reference=L1, MCP+Skill=L2, 11步工作流=L3, Evidence Index=L4, quality-gate=L5, 置信度+questions.md=L6。</p>
+  </div>
+</div>
+
+<div class="card" data-c="ai" data-kw="Evals 评测 评估 evaluation 为什么重要 LLM-as-Judge 基线 自动化 可重复">
+  <div class="card-head"><span class="tag ai">AI</span><div class="card-title">AI Evals是什么？为什么评测体系是必需品？</div></div>
+  <div class="core">没有Evals的AI系统就是"凭感觉开车"——Evals是AI系统的仪表盘和刹车</div>
+  <div class="card-body">
+    <p><strong>Evals是什么</strong>：Systematic evaluation——用可重复、可量化的方法衡量AI系统质量。不是"感觉这次回答不错"，而是用定义好的测试集+评分标准，自动跑分，客观比较不同版本/配置/prompt的效果。</p>
+    <p><strong>为什么"凭感觉"不行</strong>：①不可重复——同一个prompt不同时间结果不同，人的主观判断也不稳定。②不可比较——换了prompt或模型，"感觉差不多"到底变好了还是变差了？说不清。③不可扩展——10条输出能人肉看，1000条怎么办？</p>
+    <p><strong>Evals三层体系</strong>：</p>
+    <p>· <strong>Benchmark（模型选型层）</strong>：用标准化数据集评测模型本身的能力（MMLU、HumanEval等），帮你在选模型时有据可依。</p>
+    <p>· <strong>Eval Suite（任务质量层）</strong>：针对你的具体任务（比如PRD分析、代码生成），构造专属测试集+评分标准，衡量你的prompt/workflow在这个任务上的表现。</p>
+    <p>· <strong>Production Monitor（生产监控层）</strong>：上线后持续监控实际产出的质量，发现退化及时告警。相当于线上的CI/CD测试。</p>
+    <p><strong>LLM-as-Judge</strong>：用LLM来评判LLM的输出质量——构造评分prompt，让GPT-4/Claude给输出打分。优点是可扩展（1000条也能自动评），缺点是评判本身也有误差。实践中必须先跟人工标注校准，确认Judge准确率够高才能信赖。Langfuse、Arize AI等工具都支持这个模式。</p>
+    <p><strong>项目桥接</strong>：prd-tools的Readiness Score就是Eval Suite的轻量版——定义评分维度、自动打分、达标才放行。未来扩展方向是构造标准PRD测试集，做版本间A/B对比。</p>
+    <p><strong>面试一句话</strong>："没有Evals的AI系统是不可信赖的——你不知道改了一个prompt是变好了还是变差了。Evals的本质是把AI质量从主观感受变成客观数据，跟传统软件的测试一个道理。"</p>
+  </div>
+</div>
+
+<div class="card" data-c="ai" data-kw="Benchmark 排行榜 MMLU HumanEval AgentBench BFCL 评测 数据污染 区分度 怎么看">
+  <div class="card-head"><span class="tag ai">AI</span><div class="card-title">LLM Benchmark体系：排行榜到底在评什么？</div></div>
+  <div class="core">Benchmark测的是模型能力上限，不是你的业务效果——选模型看Benchmark，调效果看Evals</div>
+  <div class="card-body">
+    <p><strong>通用能力类</strong>：</p>
+    <p>· <strong>MMLU</strong>：多学科知识理解，57个学科的选择题。测的是"知识储备"——模型懂多少领域知识。GPT-4o约88%，Claude Opus约87%。</p>
+    <p>· <strong>GSM8K</strong>：小学数学应用题。别小看，测的是"多步推理"——模型能不能一步步算对而不跳步。早期模型在这上面栽得很惨。</p>
+    <p>· <strong>MMLU-Pro/MMLU-Hard</strong>：更难的版本，区分度更高。2026年原版MMLU区分度已严重下降——头部模型都在90%+，拉不开差距。</p>
+    <p><strong>代码能力类</strong>：</p>
+    <p>· <strong>HumanEval</strong>：164道Python编程题，测函数级代码生成。通过率（pass@1）是核心指标。Claude Sonnet约92%，GPT-4o约90%。</p>
+    <p>· <strong>SWE-bench</strong>：真实GitHub issue修复任务。比HumanEval难得多——不只是写代码，还要理解已有代码库。2026年成为Agent评测的事实标准。</p>
+    <p><strong>Agent能力类</strong>：</p>
+    <p>· <strong>AgentBench</strong>：综合评测Agent的多维能力——规划、工具使用、自反思、记忆管理。覆盖Web、操作系统、数据库等多个环境。</p>
+    <p>· <strong>BFCL</strong>（Berkeley Function Calling Leaderboard）：专注评测Function Calling准确率。从4个Tool到50+个Tool时的表现衰减就是这个数据集揭示的。</p>
+    <p><strong>2026年Benchmark的三个问题</strong>：①区分度下降——头部模型分数越来越接近，排行榜挤成一团。②数据污染——训练数据可能包含测试集，分数虚高。③跟实际业务脱节——Benchmark高分不等于你的场景表现好。</p>
+    <p><strong>面试一句话</strong>："Benchmark告诉你模型的能力上限，但不告诉你你的业务效果。选模型看Benchmark，调效果看自己的Evals——不要拿排行榜分数当产品质量。"</p>
+  </div>
+</div>
+
+<div class="card" data-c="ai" data-kw="Agent 评测 评估 规划 工具使用 自反思 多步评估 LLM Judge Win Rate 人工验证">
+  <div class="card-head"><span class="tag ai">AI</span><div class="card-title">Agent评测怎么做？跟LLM评测有什么区别？</div></div>
+  <div class="core">LLM评测是单轮输入输出，Agent评测是多步决策+工具调用的完整轨迹评估</div>
+  <div class="card-body">
+    <p><strong>核心区别</strong>：LLM评测是"给一个输入看输出对不对"，一次判定。Agent评测是"给一个任务看整个执行轨迹好不好"——包括规划是否合理、工具选择是否正确、中间判断是否准确、最终结果是否达标。复杂度不在一个量级。</p>
+    <p><strong>Agent评测的三个维度</strong>：</p>
+    <p>· <strong>规划能力</strong>：任务分解是否合理？步骤顺序是否正确？有没有遗漏关键步骤？评测方法：把Agent的规划过程跟人工黄金路径对比，算步骤覆盖率和顺序准确率。</p>
+    <p>· <strong>工具使用</strong>：选了正确的工具吗？参数传对了吗？在应该调用工具时调用了、不该调用时没乱调？BFCL就是专门测这个的。评测方法：工具选择准确率+参数正确率+无效调用率。</p>
+    <p>· <strong>自反思与恢复</strong>：执行出错后能发现吗？发现了能修正吗？修正后结果改善了吗？评测方法：故意构造会出错的场景，观察Agent的恢复行为。</p>
+    <p><strong>三种评测方法（组合使用）</strong>：</p>
+    <p>· <strong>LLM-as-Judge</strong>：用强模型评判Agent输出。可扩展、成本低，但评判本身有误差。必须先跟人工标注校准。</p>
+    <p>· <strong>Win Rate</strong>：两个Agent做同一个任务，自动或人工判断谁更好。适合对比不同配置/模型的效果。HelloAgents等框架原生支持。</p>
+    <p>· <strong>人工验证</strong>：金标准但不可扩展。通常抽样LLM Judge的判定结果做交叉验证——如果两者一致性高，说明Judge可信赖。</p>
+    <p><strong>项目桥接</strong>：prd-tools的Evidence Index就是Agent评测的简化版——每步产出都有溯源证据，可以事后审计"这个结论从哪来的"。Readiness Score是自动化评分。如果要做完整Agent评测，下一步是构造标准PRD测试集，做版本间Win Rate对比。</p>
+    <p><strong>面试一句话</strong>："Agent评测比LLM评测复杂一个量级——不是评一次输出，而是评整个执行轨迹：规划、工具选择、错误恢复。跟自动驾驶评测一个道理，不只看终点到没到，看全程开得安不安全。"</p>
   </div>
 </div>
 
