@@ -1493,6 +1493,52 @@ function buildTreeOptimized(list) {
   </div>
 </div>
 
+<div class="card" data-c="ai" data-kw="Skill 解决什么 问题 痛点 为什么需要 直接调AI 不可复现 prompt 手写 隐性经验">
+  <div class="card-head"><span class="tag ai">AI</span><div class="card-title">Skill解决什么问题？为什么不能直接调AI？</div></div>
+  <div class="core">直接调AI每次从零开始、结果波动大、经验无法沉淀——Skill把"怎么用好AI"固化成可复用流程</div>
+  <div class="card-body">
+    <p><strong>直接调AI的三大痛点</strong>：①每次手写prompt，同类任务重复劳动，换个同事又要从零摸索。②无状态，上下文靠人脑记忆和手动粘贴，做多步任务容易遗漏。③结果波动大，同样输入不同时间跑出不同质量，无法保证一致性。</p>
+    <p><strong>Skill的本质</strong>：把"人怎么用AI做好一个任务"的隐性经验显性化、结构化、可复用。不是给AI新能力，而是把"什么时候做什么判断、每步产出什么、什么算合格"的流程编码下来。</p>
+    <p><strong>类比</strong>：直接调AI像每次手写SQL查数据，Skill像存好的存储过程——把经验固化，保证一致性和质量。写代码调API是让AI"能干活"，Skill是教AI"怎么干好"。</p>
+    <p><strong>面试一句话</strong>："直接调AI的核心问题是经验无法沉淀——同样任务换人就要重新摸索。Skill把'怎么用好AI做这个任务'的过程知识固化下来，保证一致性和可复用。"</p>
+  </div>
+</div>
+
+<div class="card" data-c="ai" data-kw="Skill vs 写代码 调AI 区别 prompt hardcode 声明式 配置 代码 部署 差异">
+  <div class="card-head"><span class="tag ai">AI</span><div class="card-title">Skill vs 写代码调AI的区别</div></div>
+  <div class="core">写代码调AI是"给模型写客户端"，Skill是"给模型写操作手册"</div>
+  <div class="card-body">
+    <p><strong>写代码调AI</strong>：prompt hardcode在代码里，改动要改代码重新部署。流程逻辑分散在if-else里，换人看不懂全貌。状态管理靠自己造轮子——上下文传递、中间结果存储都要手写。本质是在写"调用AI的客户端程序"。</p>
+    <p><strong>Skill方式</strong>：prompt即配置，改Markdown文件就能调整，不需要动代码。流程声明式定义在workflow.md里，步骤、依赖、门控一目了然。中间文件传递和质量门控是内置机制，不需要自己实现。本质是在写"AI的操作手册"。</p>
+    <p><strong>关键差异</strong>：写代码调AI解决的是"能不能调通"（能力问题），Skill解决的是"怎么每次都做好"（质量问题）。前者关注API调用，后者关注过程编排和质量保障。</p>
+    <p><strong>项目桥接</strong>：prd-tools最早也是写代码调AI，prompt散落在各个TypeScript文件里。后来发现同样的PRD分析逻辑每次都在重写prompt，才抽象成Skill——workflow.md管流程、steps/管约束、中间文件管状态传递。</p>
+    <p><strong>面试一句话</strong>："写代码调AI是给模型写客户端，Skill是给模型写操作手册——一个解决调通不通，一个解决每次好不好。"</p>
+  </div>
+</div>
+
+<div class="card" data-c="ai" data-kw="Skill 适用 场景 边界 什么时候 该做 拆分 判断 粒度 一次性 重复">
+  <div class="card-head"><span class="tag ai">AI</span><div class="card-title">什么时候该做Skill？适用边界</div></div>
+  <div class="core">跑第三次还在写类似prompt → 该做Skill了</div>
+  <div class="card-body">
+    <p><strong>适合做Skill的信号</strong>：①同类任务出现3次以上，每次都在改prompt重新调试。②任务超过3个步骤有依赖关系，手动做容易漏步或顺序错乱。③结果质量需要一致性保证，不能这次好下次差。</p>
+    <p><strong>不适合做Skill的</strong>：一次性探索（做一次就够的任务不需要固化）。简单单步调用（一个prompt就能搞定的事情不用过度设计）。创意发散类任务（需要开放性输出，约束反而降低效果）。</p>
+    <p><strong>拆分粒度判断</strong>：一个Skill一个明确目标。如果一个Skill的workflow超过15步还在做不同维度的事，说明该拆了。拆分标准是"能独立验证的最小完整流程"。</p>
+    <p><strong>项目桥接</strong>：prd-tools从单文件prompt演进到双插件+11步，就是"发现重复→抽象成Skill"的典型路径。最先做Skill的是PRD分析（重复最多），后来才扩展到Reference知识库（复杂度最高）。</p>
+    <p><strong>面试一句话</strong>："我的判断标准是三次法则——同类任务出现三次就该做Skill了。一次是探索，两次是验证，三次还不固化就是浪费。"</p>
+  </div>
+</div>
+
+<div class="card" data-c="ai" data-kw="Skill 三层价值 效率 质量 知识沉淀 组织记忆 团队 经验 可复用">
+  <div class="card-head"><span class="tag ai">AI</span><div class="card-title">Skill的三层价值：效率→质量→知识沉淀</div></div>
+  <div class="core">第一层解决效率，第二层解决质量，第三层解决组织记忆</div>
+  <div class="card-body">
+    <p><strong>第一层效率</strong>：减少重复prompt编写，同类任务一键触发。把"每次花30分钟调prompt"变成"一次设计，次次复用"。这是最表层、最容易量化的价值。</p>
+    <p><strong>第二层质量</strong>：流程约束+质量门控+证据链，保证每次产出达到标准。不是"这次运气好产出好"，而是"流程保证了每次都不会太差"。Readiness Score评分体系就是这层的实现。</p>
+    <p><strong>第三层知识沉淀</strong>：把团队"怎么做好这个业务"的经验固化在Skill里。新成员接手项目直接用Skill，不依赖老员工口口相传。这是最深层的价值——模型会越来越强，但"怎么用好模型做这个业务"的经验不会从天上掉下来。</p>
+    <p><strong>面试用法</strong>："被问Skill的价值时，先说效率再上升——效率是表，质量是里，知识沉淀才是根。模型越强，写代码调AI的效率差距越小，但'怎么用好AI做这个业务'的经验差距会越来越大。"</p>
+  </div>
+</div>
+
 <div class="card" data-c="ai" data-kw="图片 Base64 image API Claude OpenAI Vision 多模态 传参">
   <div class="card-head"><span class="tag ai">AI</span><div class="card-title">AI API 图片传参方式</div></div>
   <div class="core">Base64编码通过content的image类型传入，也可传URL</div>
@@ -1828,6 +1874,50 @@ function buildTreeOptimized(list) {
   </div>
 </div>
 
+<!-- ==================== 业务面（鸿湖出行） ==================== -->
+<div class="card" data-c="proj" data-kw="开场白 自我介绍 鸿湖 花小猪 业务面 定制 三面">
+  <div class="card-head"><span class="tag proj">业务</span><div class="card-title">鸿湖业务面开场白（定制版）</div></div>
+  <div class="core">Schema中台+AI工作流+技术栈一致零迁移，锚定PRD→代码全链路</div>
+  <div class="card-body">
+    <p>我在滴滴国际化做了四年营销中台，核心是Schema驱动架构，覆盖20+活动类型，新活动前端零代码。另外落地了AI工程工作流，把PRD结构化成可执行的开发计划。</p>
+    <p>了解到咱们也在做PRD→代码的全链路和前端Agent，这块我有完整的从0到1经验，包括知识库搭建、质量门控、落地推广。技术栈和上线流程跟滴滴一致，可以快速上手。</p>
+    <p class="hint">30秒。重点不是技术多强，是"你做的事我做过，你的技术栈我会，来了就能干活"。</p>
+  </div>
+</div>
+
+<div class="card" data-c="proj" data-kw="业务理解 出行 花 小猪 聚合打车 迁移 B端 配置化 经验复用 鸿湖 组合爆炸">
+  <div class="card-head"><span class="tag proj">业务</span><div class="card-title">出行业务理解 + 经验迁移（鸿湖）</div></div>
+  <div class="core">B端配置化本质一样：多城市×多运力×多产品线 ≈ 多国家×多活动类型</div>
+  <div class="card-body">
+    <p><strong>出行业务前端痛点</strong>：聚合打车接入多家运力，多城市×多产品线×多价格策略的组合爆炸。B端配置页面多、设计稿少、以原型为主，跟国际化营销中台一模一样。</p>
+    <p><strong>经验直接迁移</strong>：Schema驱动架构天然适合B端配置化——模板引擎管理不同城市的配置差异，联动DSL处理价格策略的条件组合，新增城市/运力前端零代码。技术栈和上线流程（O1/奥丁）跟滴滴内部一致，零迁移成本。</p>
+    <p><strong>加分锚点</strong>：主动点出"本质都是组合爆炸问题，只是维度不同——我们用国家×活动类型，出行用城市×运力×产品线"。</p>
+  </div>
+</div>
+
+<div class="card" data-c="proj" data-kw="Agent 前端Agent 场景设计 配置校验 契约比对 需求拆分 鸿湖 PRD 代码 产品能力">
+  <div class="card-head"><span class="tag proj">业务</span><div class="card-title">如果让你设计前端Agent？（鸿湖业务面高频题）</div></div>
+  <div class="core">三个方向按落地优先级——配置校验 > 契约比对 > 需求拆分</div>
+  <div class="card-body">
+    <p><strong>①配置校验Agent（最快落地）</strong>：Schema配置上线前自动校验联动完整性——检查字段引用是否存在、联动表达式语法是否正确、循环依赖检测。我们已有沙箱预渲染，升级为Agent后能自动定位问题字段并给修复建议。</p>
+    <p><strong>②契约比对Agent（中期价值最大）</strong>：后端接口变更时，自动比对前后端契约差异，检测前端影响面。本质是Reference知识库的跨层契约文件 + 变更检测。后端改了一个字段枚举值，Agent自动通知所有消费方并标记需改动的组件。</p>
+    <p><strong>③需求拆分Agent（长期方向，已有prd-tools基础）</strong>：PRD→结构化开发计划的自动化，我在滴滴已经做了完整落地。来这边可以复用知识库+证据链的方法论，知识库重新建。</p>
+    <p class="hint">先说"我分三个优先级"，从最快落地的讲。考的不是技术多强，是业务判断力——知道什么先做什么后做。</p>
+  </div>
+</div>
+
+<div class="card" data-c="proj" data-kw="推广 ROI 成本收益 团队 落地 试点 量化 经营视角 鸿湖 提效 投入产出">
+  <div class="card-head"><span class="tag proj">业务</span><div class="card-title">AI工作流推广ROI（业务面必考）</div></div>
+  <div class="core">单团队建库1-2天，之后每需求省2.5h，5团队月省125h，但必须扣掉协同成本</div>
+  <div class="card-body">
+    <p><strong>成本</strong>：单团队建知识库1-2天（跑Reference蒸馏），学习成本约半天（三步上手），之后自动回流不重复建库。</p>
+    <p><strong>收益</strong>：PRD→Plan环节每需求省2-3h人工评审，5个团队月均50需求 × 2.5h = 125h/月。纯开发环节一周缩到1-2天。</p>
+    <p><strong>全链路修正</strong>：含联调、环境搭建、合作方依赖这些AI替代不了的，整体提效20-30%。排期10天的需求现在7-8天。主动给这个务实口径。</p>
+    <p><strong>推广路径</strong>：先找1-2个意愿高的团队试点 → 产出前后对比数据 → 内部分享 → 逐步扩大。不要说"写个README就行"，业务面不买这个。</p>
+    <p class="hint">业务面考的不是技术指标，是经营思维——你能不能算清投入产出比。</p>
+  </div>
+</div>
+
 <!-- ==================== 软技能 ==================== -->
 <div class="card" data-c="emer" data-kw="AI 取代 前端 未来 转型 观点">
   <div class="card-head"><span class="tag emer">软技能</span><div class="card-title">AI 会取代前端吗？</div></div>
@@ -1916,6 +2006,10 @@ function buildTreeOptimized(list) {
     <p>· 团队规模和组成？前端多少人？</p>
     <p>· 绩效考核标准是什么样的？</p>
     <p>· 团队的入职 onboarding 流程？</p>
+    <p><strong>业务面（鸿湖）</strong>：</p>
+    <p>· 咱们在做PRD→代码全链路，目前最大卡点是PRD结构化、设计稿标准化，还是代码生成质量管控？</p>
+    <p>· 前端Agent想覆盖的协同场景，更偏内部提效（自动化回归、契约比对），还是偏用户侧（智能表单、对话式配置）？</p>
+    <p>· 新人加入后是先跟一个已有方向，还是可以直接开拓新方向？</p>
     <p class="hint">选 2-3 个问，别全问。优先问和工作内容直接相关的——展现你对岗位的认真思考，不是来凑数的。</p>
   </div>
 </div>
@@ -1979,7 +2073,7 @@ let curCat='all';
 const drawer=document.getElementById('drawer'),dMask=document.getElementById('dMask'),dList=document.getElementById('dList'),dHead=document.getElementById('dHead');
 const catNames={all:'全部',open:'开场',proj:'项目',bagu:'基础',code:'手撕',ai:'AI',emer:'应急'};
 const subOrder={
-  '营销中台':1,'AI 工作流':2,
+  '营销中台':1,'AI 工作流':2,'业务面':3,
   'React':1,'JS 核心':2,'CSS':3,'网络':4,'浏览器/性能':5,'TypeScript':6,'工程化':7,'框架扩展':8,
   'AI 前端':1,'AI 实践':2,'AI 理论':3,'AI 架构':4,'知识库':5,'追问':6,
   '速查':0,'手写 API':1,'数组/双指针':2,'链表':3,'树/BFS/DFS':4,'回溯':5,'排序/TopK':6,'DP/贪心':7,'栈':8,'二分':9,'综合':10,
@@ -2042,6 +2136,7 @@ function getGroup(c){
     return '话术急救';
   }
   if(cat==='proj'){
+    if(tag==='业务')return '业务面';
     if(/^(A4|A9|A10)$/.test(tag)||tag==='架构'||tag==='工作流')return 'AI 工作流';
     return '营销中台';
   }
