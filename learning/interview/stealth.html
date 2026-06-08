@@ -2140,6 +2140,41 @@ function buildTreeOptimized(list) {
   </div>
 </div>
 
+<div class="card" data-c="proj" data-kw="架构决策 为什么选Schema 替代方案 权衡 取舍 设计 选择 if-else 低代码 Formily 天花板 局限">
+  <div class="card-head"><span class="tag proj">业务</span><div class="card-title">架构决策故事：为什么选Schema？（三面必考）</div></div>
+  <div class="core">排除了if-else维护和低代码平台的方案，Schema在灵活性和可控性之间取到最优解</div>
+  <div class="card-body">
+    <p><strong>当时的三个选项</strong>：①继续if-else堆逻辑（存量方案，几万行月均20起线上问题）②上低代码平台（可视化拖拽生成页面）③用JSON Schema做声明式配置驱动。</p>
+    <p><strong>为什么排除①</strong>：维护成本已经失控。新人改一处影响多处，每次国际化扩城市都在if-else里加分支，月均线上问题一二十起。不可持续。</p>
+    <p><strong>为什么排除②</strong>：低代码平台解决了简单页面，但我们有复杂联动——城市选择影响产品线下拉，产品线影响价格策略，跨接口联动需要BFF调后端拿新配置。低代码的联动描述能力不够，而且我们的B端设计稿少以原型为主，可视化拖拽的ROI不高。</p>
+    <p><strong>Schema的权衡</strong>：好处是声明式可静态校验、联动关系清晰可追溯、新人看Schema就能理解页面结构。代价是学习曲线——新人要理解DSL语法和渲染引擎协议，大概一周上手。同时Schema有天花板——超复杂的交互（比如拖拽排序+实时协作）还是需要写代码，不能全靠配置。</p>
+    <p class="hint">考的不是"你选了什么"，是"你排除了什么、为什么、代价是什么"。架构决策的核心是取舍。</p>
+  </div>
+</div>
+
+<div class="card" data-c="proj" data-kw="跨团队 推广 落地 组件库 权益 400 8个业务 从1到8 试点 文档 反馈迭代">
+  <div class="card-head"><span class="tag proj">业务</span><div class="card-title">跨团队推广故事：组件库如何从1到8？（三面高频）</div></div>
+  <div class="core">先试点解决痛点再文档化，不是"写个README等别人来用"</div>
+  <div class="card-body">
+    <p><strong>起点</strong>：权益SDK最早只服务国际化一个业务，注册30-40个基础组件。其他7个业务团队各有自己的权益组件实现，重复开发严重。</p>
+    <p><strong>推广路径</strong>：第一步不是写文档，是找痛点最大的业务做试点——拉美团队因为多国家配置最复杂，主动找过来。我帮他们接SDK同时收集问题。第二步把接入过程中的坑沉淀成接入文档和最佳实践。第三步拿试点数据（接入工作量从2周缩到3天）做内部分享。后面是业务主动找过来，不是我去推。</p>
+    <p><strong>关键设计</strong>：Register注册模式让业务自定义组件和通用组件共存——通用组件注册一次所有业务复用，业务定制组件只注册到自己的命名空间。这样不会出现"通用组件满足不了就fork一份改"的问题。</p>
+    <p><strong>经验教训</strong>：推广技术方案最大的阻力不是技术，是信任。试点数据比文档管用，"隔壁团队用了省了多少"比"这个方案多好"有说服力。</p>
+    <p class="hint">业务面考的是"你怎么让别人用你的东西"，不是"你的东西有多好"。</p>
+  </div>
+</div>
+
+<div class="card" data-c="proj" data-kw="Hybrid JSBridge 原生 混合开发 Flutter WebView 容器 bridge 调用 兜底 诚实">
+  <div class="card-head"><span class="tag proj">业务</span><div class="card-title">Hybrid/JSBridge兜底话术（JD硬性要求）</div></div>
+  <div class="core">没有深度原生经验但理解原理，用Schema中台的容器对接经验桥接</div>
+  <div class="card-body">
+    <p><strong>诚实定位</strong>：我在滴滴做的是Web端营销中台，和原生容器的交互主要是通过JSBridge调用客户端能力（获取定位、支付回调、页面跳转），但没有自己写过原生容器或Flutter插件。</p>
+    <p><strong>桥接经验</strong>：Schema渲染引擎在H5容器中运行，需要处理原生和Web的通信——比如原生传入城市信息触发Schema联动，联动结果通过Bridge回传给原生刷新运力列表。本质是消息通信和状态同步，和纯Web的组件通信思路一致，只是传输层从事件总线变成了JSBridge。</p>
+    <p><strong>学习计划</strong>：如果这个方向是重点，我可以在入职后快速补齐——核心是理解容器生命周期和Bridge协议设计，Web→原生的消息机制跟我做过的BFF接口层设计思路相通。</p>
+    <p class="hint">JD写了Hybrid是硬性要求但简历没有，不编不躲。说"理解原理+有相关桥接经验+可以快速补"比硬编项目经验好。</p>
+  </div>
+</div>
+
 <!-- ==================== 软技能 ==================== -->
 <div class="card" data-c="emer" data-kw="AI 取代 前端 未来 转型 观点">
   <div class="card-head"><span class="tag emer">软技能</span><div class="card-title">AI 会取代前端吗？</div></div>
