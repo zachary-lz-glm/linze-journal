@@ -233,15 +233,6 @@ body{overscroll-behavior-y:contain}
 </div>
 
 <!-- ==================== 项目追问 ==================== -->
-<div class="card" data-c="proj" data-kw="Schema 边界 风险 不足 调试 类型安全">
-  <div class="card-head"><span class="tag proj">追问</span><div class="card-title">Schema 架构有什么边界和风险？</div></div>
-  <div class="core">表达力有上限，复杂联动和特殊 UI 仍需定制开发</div>
-  <div class="card-body">
-    <p>三个边界。表达力上限：联动嵌套超过三层模板难维护，拆成多个模板各管一层。调试困难：动态生成不能断点，加了 Schema diff 工具。类型安全弱化：字符串键值编译时无法检查，BFF 模板层做字段枚举校验。</p>
-    <p><strong>样式隔离演进（起点读书面试官补充）</strong>：Schema渲染的组件样式隔离有三种主流方案——CSS Modules（编译时hash隔离，简单但不够灵活）、CSS-in-JS（运行时动态样式，灵活但有性能开销）、CSS原生方案（@layer+CSS自定义属性+Shadow DOM，零运行时开销但浏览器兼容性限制）。趋势是向CSS原生方案迁移。</p>
-  </div>
-</div>
-
 <div class="card" data-c="proj" data-kw="大表单 性能 200字段 虚拟滚动">
   <div class="card-head"><span class="tag proj">追问</span><div class="card-title">大表单 200+ 字段性能？</div></div>
   <div class="core">分步渲染 + 字段级更新 + 虚拟滚动 + 联动接口SW缓存</div>
@@ -249,7 +240,7 @@ body{overscroll-behavior-y:contain}
     <p><strong>渲染层</strong>：按步骤分组，当前步全渲染，前后步只渲染摘要。实测首屏从 1.2s 降到 300ms。</p>
     <p><strong>更新层</strong>：Listener 按依赖图触发，只重渲染受影响组件，不触发全表单重渲染。</p>
     <p><strong>组件层</strong>：长列表用虚拟滚动。</p>
-    <p><strong>联动接口层</strong>：性能瓶颈不在渲染在接口——用户改一个配置项可能触发1-2个联动接口调用。Service Worker拦截联动请求做缓存匹配，同一联动接口入参相同直接返回缓存结果不发请求，和业务逻辑解耦不需改BFF层代码。</p>
+    <p><strong>联动接口层</strong>：性能瓶颈不在渲染在接口——用户改一个配置项可能触发1-2个联动接口调用。用Service Worker做network-first缓存，详见SW缓存专项卡片。</p>
   </div>
 </div>
 
@@ -313,16 +304,6 @@ body{overscroll-behavior-y:contain}
   <div class="card-body">
     <p>Rollup 天生为库打包。ESM 静态 import/export 分析，未引用导出直接删除。Webpack 的 tree-shaking 靠 Terser 分析副作用，不如 Rollup 精确，且有运行时代码。</p>
     <p>一份配置出三份产物：ESM、CJS、d.ts。peerDependencies 声明 react 避免重复打包。</p>
-  </div>
-</div>
-
-<div class="card" data-c="proj" data-kw="Formily 表单 选型 联动 为什么不 DSL BFF 端到端">
-  <div class="card-head"><span class="tag proj">扩展</span><div class="card-title">为什么不用 Formily？</div></div>
-  <div class="core">Formily是纯前端表单方案，我们需要从BFF到前端的端到端联动DSL</div>
-  <div class="card-body">
-    <p>Formily确实能做联动和自定义扩展，JSON Schema描述表单结构，x-decorator/x-component控制渲染， reactionary做响应式联动。但这些都在客户端闭环。</p>
-    <p>我们的特殊性在于联动不是前端自闭环的。很多联动需要调BFF接口查业务数据，BFF根据结果重新拼接Schema下发给前端做整体替换。这意味着联动配置必须嵌在BFF模板里，和后端逻辑紧耦合，Formily的客户端方案覆盖不了这一层。</p>
-    <p>所以我们需要一套从BFF模板引擎到前端渲染引擎的端到端联动DSL，而不是纯前端表单方案。如果只是前端渲染层，Formily完全可以。我们的选择不是因为Formily不行，而是场景不同。</p>
   </div>
 </div>
 
@@ -1110,7 +1091,7 @@ class LRUCache {
 </div>
 
 <div class="card" data-c="code" data-kw="数组转树 扁平 树形 parentId 递归 Map 拼多多 菜单">
-  <div class="card-head"><span class="tag code">真题</span><div class="card-title">扁平数组转树结构（拼多多真题）</div></div>
+  <div class="card-head"><span class="tag code">真题</span><div class="card-title">扁平数组转树结构</div></div>
   <div class="core">递归 filter+map 或 Map 一次遍历 O(n)</div>
   <div class="card-body">
     <p><strong>递归版</strong>（面试先写这个，清晰）：filter 找 parentId 匹配的，map 递归 children。</p>
@@ -1140,7 +1121,7 @@ function buildTreeOptimized(list) {
 </div>
 
 <div class="card" data-c="code" data-kw="get 嵌套对象 路径取值 reduce 可选链 lodash 起点">
-  <div class="card-head"><span class="tag code">真题</span><div class="card-title">get(obj, path) 按路径取嵌套值（起点真题）</div></div>
+  <div class="card-head"><span class="tag code">真题</span><div class="card-title">get(obj, path) 按路径取嵌套值</div></div>
   <div class="core">路径 split 成 keys，reduce + 可选链逐层访问</div>
   <div class="card-body">
     <p><strong>核心思路</strong>：把 'a.b.c' 拆成 ['a','b','c']，用 reduce 逐层访问，可选链兜底。</p>
@@ -1161,7 +1142,7 @@ function buildTreeOptimized(list) {
 </div>
 
 <div class="card" data-c="code" data-kw="flatten 对象拍平 嵌套 递归 reduce 路径拼接 起点">
-  <div class="card-head"><span class="tag code">真题</span><div class="card-title">flatten(obj) 嵌套对象拍平（起点真题）</div></div>
+  <div class="card-head"><span class="tag code">真题</span><div class="card-title">flatten(obj) 嵌套对象拍平</div></div>
   <div class="core">递归遍历+路径拼接，对象则递归，否则赋值</div>
   <div class="card-body">
     <p><strong>核心思路</strong>：遍历 entries，拼接 a.b.c 路径。值是对象则递归，否则直接赋值。</p>
@@ -1471,36 +1452,6 @@ function buildTreeOptimized(list) {
   </div>
 </div>
 
-<div class="card" data-c="proj" data-kw="知识 过期 衰减 回流 矛盾 更新 reference">
-  <div class="card-head"><span class="tag proj">工作流</span><div class="card-title">知识过期怎么办？</div></div>
-  <div class="core">三层：被动衰减监控 + 主动反馈回流 + 质量门控守门</div>
-  <div class="card-body">
-    <p>第一层被动监控：reference 文件记录 last_verified，14 天没验证就标过期，健康检查对比源码发现矛盾。第二层主动回流：prd-distill 蒸馏时如果发现代码和 reference 矛盾，会生成回流建议文件，人工确认后更新 reference，越用越准。第三层守门：质量门控检查 enum、field、contract 是否和源码冲突，冲突就是致命项直接不通过。</p>
-  </div>
-</div>
-
-<div class="card" data-c="proj" data-kw="度量 指标 效果 评估 readiness quality-gate 覆盖率 一致性">
-  <div class="card-head"><span class="tag proj">架构</span><div class="card-title">AI工作流效果怎么度量？</div></div>
-  <div class="core">自动化三层评估 + 人工验证兜底，文件覆盖率约80%</div>
-  <div class="card-body">
-    <p><strong>第一层：蒸馏过程评分</strong>——五个维度加权打分：PRD摄入质量、证据覆盖率、代码搜索命中率、契约对齐度、计划完整性。85分以上直接通过，60-84分需owner确认，低于60必须修。</p>
-    <p><strong>第二层：终检脚本</strong>——独立运行的Python脚本做五项确定性检查：必传文件完整性、上下文包消费情况、代码锚点覆盖率、计划完整性、阻塞项质量。</p>
-    <p><strong>第三层：蒸馏门禁</strong>——12项检查（8项质量+4项覆盖率），包括文件存在、需求有证据支撑、代码锚点、Spec确认等。其中3项覆盖率是致命项——PRD内容没全覆盖直接不通过。</p>
-    <p><strong>人工验证</strong>：AI产出的Plan文件列表 vs 实际开发改动文件对比，覆盖率约80%。</p>
-  </div>
-</div>
-
-<div class="card" data-c="proj" data-kw="证据链 Evidence EV 追溯 置信度 evidence.yaml negative_code_search">
-  <div class="card-head"><span class="tag proj">架构</span><div class="card-title">证据链设计：让AI产出可追溯</div></div>
-  <div class="core">AI每条结论必须引用证据ID，定义8种来源类型，链条闭合才算通过</div>
-  <div class="card-body">
-    <p><strong>流水线</strong>：PRD摄入(Step1)→evidence-map.yaml（PRD块ID映射）→ 证据台账(Step2)→context/evidence.yaml（SSOT）。后续requirement-ir、layer-impact、contract-delta、spec、plan全部引用EV-*。</p>
-    <p><strong>8种来源类型</strong>：prd / tech_doc / code / git_diff / negative_code_search / human / api_doc / reference。找不到也是证据——negative_code_search表示"搜了但没找到"，不是"我不知道"。</p>
-    <p><strong>证据ID前缀分类</strong>：EV-BG-*（PRD原始块）、EV-REF-*（Reference消费）、EV-CODE-BUILD-*（构建差异）、EV-INGEST-*（摄入提取）等。</p>
-    <p><strong>证据优先级</strong>：接口文档 > PRD推断 > 负向搜索。置信度三档：high/medium/low，不确定就标低不能编造。</p>
-  </div>
-</div>
-
 <div class="card" data-c="proj" data-kw="BMAD Skill拆分 中间文件 渐进式 上下文隔离 Bismuth 多Agent">
   <div class="card-head"><span class="tag proj">架构</span><div class="card-title">BMAD架构：多Skill拆分+中间文件传递</div></div>
   <div class="core">每个Skill独立上下文窗口，Skill间通过中间文件传递状态，不共享上下文</div>
@@ -1692,7 +1643,7 @@ function buildTreeOptimized(list) {
     <p><strong>第二层工程全流程Agentic</strong>：Agent接管需求分析、技术方案、代码生成、测试、部署的完整链路。前端工程师的角色从"写代码"变成"设计Agent的行为和质量门控"，核心能力变成系统设计和流程编排。</p>
     <p><strong>第三层用户侧AI交互</strong>：对话式UI、智能表单、个性化推荐等需要前端和AI结合的新交互形态。前端工程师的价值从"实现页面"变成"设计人机协作的系统"。</p>
     <p><strong>不可替代的部分</strong>：业务知识库、历史踩坑经验、跨团队协作上下文——这些AI从外部获取不了，必须靠人持续沉淀。模型能力越强工作流越轻，但业务知识越重。</p>
-    <p><strong>前端Agent方向（腾讯+Booster+鸿湖三源佐证）</strong>：腾讯团队产品都在用AI写代码，工程师角色从"写代码"转为"把控质量"。Booster认为前端需要自己的Agent去做能力补充。鸿湖二面面试官提出"前端自有Agent给协同团队和用户提供能力"。结论：前端工程师的未来不是写更多页面，而是构建前端Agent——让AI在前端领域也能自主执行复杂任务。</p>
+    <p><strong>前端Agent方向（腾讯+Booster三源佐证）</strong>：腾讯团队产品都在用AI写代码，工程师角色从"写代码"转为"把控质量"。Booster认为前端需要自己的Agent去做能力补充。面试官也提出"前端自有Agent给协同团队和用户提供能力"。结论：前端工程师的未来不是写更多页面，而是构建前端Agent——让AI在前端领域也能自主执行复杂任务。</p>
   </div>
 </div>
 
@@ -1949,17 +1900,6 @@ function buildTreeOptimized(list) {
   </div>
 </div>
 
-<div class="card" data-c="proj" data-kw="提效 数据 口径 环节 全链路 务实 60% 效率提升 追问">
-  <div class="card-head"><span class="tag proj">追问</span><div class="card-title">提效数据怎么说才不被追问穿？（鸿湖二面教训）</div></div>
-  <div class="core">主动区分环节提效和全链路提效，环节60%全链路20-30%，口径要务实</div>
-  <div class="card-body">
-    <p><strong>教训</strong>：鸿湖二面面试官追问"60%提升包含联调测试吗"，引导出全链路实际提效20-30%的结论。如果说"整体提效60%"会被当场戳穿。</p>
-    <p><strong>正确口径</strong>：PRD→Plan环节提效60%，纯开发环节50-60%（一周缩到一两天），但全链路含联调、环境搭建、合作方依赖这些AI替代不了的协同成本，整体提效20-30%。排期10天的需求现在大概7-8天。</p>
-    <p><strong>面试策略</strong>：主动说"我分两个口径给你"，先给环节数据再说全链路，比被动纠正好得多。面试官要的是务实，不是夸大。</p>
-    <p><strong>人工评审边界（鸿湖二面教训）</strong>：面试官明确打断"方案评审怎么着也要拉大家过一下，AI给的技术方案不一定是对的"。正确表述是"AI做80%基础工作，人工focus验证和决策"。另外，与其自建PM工作流替产品写PRD，更落地的方案是AI反推PRD缺项给产品补全建议——赋能而非替代。</p>
-  </div>
-</div>
-
 <!-- ==================== 项目数据速查 ==================== -->
 <div class="card" data-c="emer" data-kw="数据 口径 指标 简历 400 60% 追问 计算">
   <div class="card-head"><span class="tag emer">速查</span><div class="card-title">项目关键数据 + 口径（被问怎么算的）</div></div>
@@ -2014,6 +1954,7 @@ function buildTreeOptimized(list) {
     <p><strong>证据实体</strong>：每条含id/type/source/desc/confidence。8种类型：prd(PRD原文)/tech_doc(技术文档)/code(源码)/git_diff(代码变更)/negative_code_search(确认不存在)/human(人工确认)/api_doc(接口文档)/reference(知识库)。</p>
     <p><strong>完整追溯链</strong>：PRD解析→evidence-map.yaml(block→章节)→evidence.yaml(权威注册表)→requirement-ir.evidence_ids→layer-impact.code_anchors(文件/符号/行号/置信度)→graph-context(来源:graph|rg|reference|inferred)→spec/plan引用EV ID。</p>
     <p><strong>SSOT原则</strong>：每个事实只存在于6个YAML文件中的一个，跨文件用contract_ref/ref_rule/playbook_ref引用。high需源码/PRD直接证据，medium部分证据，low仅线索。</p>
+    <p><strong>证据优先级</strong>：接口文档 > PRD推断 > 负向搜索。证据ID前缀分类：EV-BG-*（PRD原始块）、EV-REF-*（Reference消费）、EV-CODE-BUILD-*（构建差异）、EV-INGEST-*（摄入提取）。找不到也是证据——negative_code_search表示"搜了但没找到"，不是"我不知道"。</p>
   </div>
 </div>
 
@@ -2026,15 +1967,6 @@ function buildTreeOptimized(list) {
   </div>
 </div>
 
-<div class="card" data-c="proj" data-kw="效率 提升 60% 口径 怎么算 数据 度量 对比 提效">
-  <div class="card-head"><span class="tag proj">工作流</span><div class="card-title">"效率提升60%"这个数怎么算的？</div></div>
-  <div class="core">同需求对照：人工3.5天 vs 工具1.5天，5个中等复杂度需求取平均</div>
-  <div class="card-body">
-    <p><strong>口径</strong>：同一个需求，人工流程（读PRD→需求评审会→三方对齐→出技术方案）对比工具流程（PRD输入→自动产出结构化方案）。</p>
-    <p><strong>样本</strong>：5个中等复杂度已完成需求，连续5个迭代中随机选取，不是cherry-picking。</p>
-    <p><strong>局限</strong>：目前是团队内部小样本验证，没有跨团队横向对比。</p>
-  </div>
-</div>
 
 <div class="card" data-c="proj" data-kw="稳定性 质量 保证 三层 XML 约束 门禁 评分 Skill 执行">
   <div class="card-head"><span class="tag proj">工作流</span><div class="card-title">Skill执行结果不稳定怎么保证质量？</div></div>
@@ -2109,9 +2041,9 @@ function buildTreeOptimized(list) {
   </div>
 </div>
 
-<!-- ==================== 业务面（鸿湖出行） ==================== -->
+<!-- ==================== 业务面 ==================== -->
 <div class="card" data-c="proj" data-kw="开场白 自我介绍 鸿湖 花小猪 业务面 定制 三面">
-  <div class="card-head"><span class="tag proj">业务</span><div class="card-title">鸿湖业务面开场白（定制版）</div></div>
+  <div class="card-head"><span class="tag proj">业务</span><div class="card-title">业务面开场白（定制版）</div></div>
   <div class="core">Schema中台+AI工作流+技术栈一致零迁移，锚定PRD→代码全链路</div>
   <div class="card-body">
     <p>我在滴滴国际化做了四年营销中台，核心是Schema驱动架构，覆盖20+活动类型，新活动前端零代码。另外落地了AI工程工作流，把PRD结构化成可执行的开发计划。</p>
@@ -2121,7 +2053,7 @@ function buildTreeOptimized(list) {
 </div>
 
 <div class="card" data-c="proj" data-kw="业务理解 出行 花 小猪 聚合打车 迁移 B端 配置化 经验复用 鸿湖 组合爆炸">
-  <div class="card-head"><span class="tag proj">业务</span><div class="card-title">出行业务理解 + 经验迁移（鸿湖）</div></div>
+  <div class="card-head"><span class="tag proj">业务</span><div class="card-title">出行业务理解 + 经验迁移</div></div>
   <div class="core">B端配置化本质一样：多城市×多运力×多产品线 ≈ 多国家×多活动类型</div>
   <div class="card-body">
     <p><strong>出行业务前端痛点</strong>：聚合打车接入多家运力，多城市×多产品线×多价格策略的组合爆炸。B端配置页面多、设计稿少、以原型为主，跟国际化营销中台一模一样。</p>
@@ -2131,7 +2063,7 @@ function buildTreeOptimized(list) {
 </div>
 
 <div class="card" data-c="proj" data-kw="Agent 前端Agent 场景设计 配置校验 契约比对 需求拆分 鸿湖 PRD 代码 产品能力">
-  <div class="card-head"><span class="tag proj">业务</span><div class="card-title">如果让你设计前端Agent？（鸿湖业务面高频题）</div></div>
+  <div class="card-head"><span class="tag proj">业务</span><div class="card-title">如果让你设计前端Agent？</div></div>
   <div class="core">三个方向按落地优先级——配置校验 > 契约比对 > 需求拆分</div>
   <div class="card-body">
     <p><strong>①配置校验Agent（最快落地）</strong>：Schema配置上线前自动校验联动完整性——检查字段引用是否存在、联动表达式语法是否正确、循环依赖检测。我们已有沙箱预渲染，升级为Agent后能自动定位问题字段并给修复建议。</p>
@@ -2189,7 +2121,7 @@ function buildTreeOptimized(list) {
 </div>
 
 <div class="card" data-c="proj" data-kw="最有价值 A绩效 项目 挑战 解决 STAR 成就感 鸿湖 业务面 必考 逐字稿">
-  <div class="card-head"><span class="tag proj">业务</span><div class="card-title">最有价值项目（STAR逐字稿·鸿湖原题）</div></div>
+  <div class="card-head"><span class="tag proj">业务</span><div class="card-title">最有价值项目（STAR逐字稿）</div></div>
   <div class="core">Schema营销中台——从if-else地狱到声明式配置，前端开发成本归零</div>
   <div class="card-body">
     <p><strong>Situation</strong>：国际化营销有20+活动类型，覆盖8个国家的多城市多产品线。老代码if-else几万行，每次扩城市都在里面加分支。新人改一处影响多处，月均线上问题一二十起。上线一个新活动前端要两周，后端配合又要一周。</p>
@@ -2202,7 +2134,7 @@ function buildTreeOptimized(list) {
 </div>
 
 <div class="card" data-c="proj" data-kw="事故 线上故障 滴滴 崩溃 两地部署 华南 容灾 基础设施 吸取教训 监控 降级">
-  <div class="card-head"><span class="tag proj">业务</span><div class="card-title">线上事故反思 + 基础设施架构判断（鸿湖原题）</div></div>
+  <div class="card-head"><span class="tag proj">业务</span><div class="card-title">线上事故反思 + 基础设施架构判断</div></div>
   <div class="core">事故响应三部曲+容灾架构判断：两地同区域不算真容灾，异地双活才是</div>
   <div class="card-body">
     <p><strong>事故处理方法论</strong>：不管哪次事故，核心都是三步——①快速止血（回滚/降级/摘流量）②根因分析（不追责，追机制漏洞）③流程改进（加监控、加校验、加灰度）。我的经验是yarn.lock锁版本+CI加diff检测，本质都是第三步。</p>
@@ -2213,7 +2145,7 @@ function buildTreeOptimized(list) {
 </div>
 
 <div class="card" data-c="proj" data-kw="核心竞争力 优势 不可替代 从业务抽共性 全流程质量 从0到1 个人价值">
-  <div class="card-head"><span class="tag proj">业务</span><div class="card-title">你的核心竞争力是什么？（鸿湖原题）</div></div>
+  <div class="card-head"><span class="tag proj">业务</span><div class="card-title">你的核心竞争力是什么？</div></div>
   <div class="core">三句话：从业务抽共性做抽象、全流程质量把控不漏环节、新技术从0到1落地闭环</div>
   <div class="card-body">
     <p><strong>第一，从业务抽共性做抽象</strong>。20+活动类型的if-else我抽象成Schema驱动，30-40个权益组件我统一成Register注册模式。不是需求来了就写代码，而是先看有没有共性可以做抽象。这个能力让我每次接新业务都不是从零开始。</p>
@@ -2224,7 +2156,7 @@ function buildTreeOptimized(list) {
 </div>
 
 <div class="card" data-c="proj" data-kw="前端扎实 证明 举例 产出 渲染引擎 联动DSL 性能 组件库 设计能力 架构能力">
-  <div class="card-head"><span class="tag proj">业务</span><div class="card-title">怎么证明前端扎实？（鸿湖原题）</div></div>
+  <div class="card-head"><span class="tag proj">业务</span><div class="card-title">怎么证明前端扎实？</div></div>
   <div class="core">举Schema渲染引擎——从零设计了完整的解析→渲染→联动→性能优化链路</div>
   <div class="card-body">
     <p><strong>最好的例子是Schema渲染引擎</strong>：从零设计了一套完整的JSON Schema解析和渲染系统。不是用现成的Formily或Ajv，而是自己设计了联动DSL（dAction），实现了injectDActions双求值机制——先扫描Schema收集所有联动声明构建依赖图，然后注入运行时求值函数。组件间联动从命令式的if-else变成声明式的模板表达式。</p>
@@ -2235,7 +2167,7 @@ function buildTreeOptimized(list) {
 </div>
 
 <div class="card" data-c="proj" data-kw="SDD体系 深度介绍 设计思路 落地过程 可追溯性 证据链 PRD 代码 鸿湖 逐字稿 详细回答">
-  <div class="card-head"><span class="tag proj">业务</span><div class="card-title">SDD体系深度介绍（被追问时这样答·鸿湖原题）</div></div>
+  <div class="card-head"><span class="tag proj">业务</span><div class="card-title">SDD体系深度介绍（被追问时这样答）</div></div>
   <div class="core">两套Skill工作流：Reference蒸馏知识+PRD蒸馏需求，中间靠证据链保证可追溯</div>
   <div class="card-body">
     <p><strong>先说全局框架</strong>：SDD体系是两套Skill工作流。Reference是知识底座——跑一遍项目代码，蒸馏出6个领域文件（代码结构、编码规则、跨层契约、PRD路由映射、业务领域Map、代码实体索引）。PRD蒸馏是核心产出——拿到PRD后经过11个步骤，最终产出Spec规格文档和Execution Plan。</p>
@@ -2247,7 +2179,7 @@ function buildTreeOptimized(list) {
 </div>
 
 <div class="card" data-c="proj" data-kw="Schema架构 BFF 动态生成 前端动态渲染 协同 联动 dAction 双端解析 鸿湖 逐字稿">
-  <div class="card-head"><span class="tag proj">业务</span><div class="card-title">Schema+BFF/前端协同链路（技术深挖·鸿湖原题）</div></div>
+  <div class="card-head"><span class="tag proj">业务</span><div class="card-title">Schema+BFF/前端协同链路（技术深挖）</div></div>
   <div class="core">Schema是中间协议，BFF模板引擎生成配置接口，前端渲染引擎解析生成页面，联动DSL桥接两端</div>
   <div class="card-body">
     <p><strong>Schema是什么</strong>：基于JSON Schema Draft-07扩展的中间协议。在标准JSON Schema上加了三个扩展——dAction联动描述（组件间依赖关系）、componentMap组件映射（Schema字段到UI组件的对应关系）、fetchConfig跨接口联动配置（城市/产品线变化时调哪个接口拿新配置）。Schema是前后端共享的唯一真相源。</p>
@@ -2290,6 +2222,7 @@ function buildTreeOptimized(list) {
     <p><strong>量化维度</strong>：Jira工时对比法。对照组：取过去20个需求的人工流程耗时（读PRD+需求评审+技术评审+写计划），均值2-3天。实验组：同样复杂度的需求用工具流程，从PRD到产出Spec+Plan平均1-2小时。前后端各取5个需求做对照样本，PRD→Plan环节提效60%。但坦诚说这不是严格AB实验——没有随机分组、没有控制变量，是同一团队前后流程的工时对比。</p>
     <p><strong>定性维度</strong>：三个信号证明方案有效。第一，Plan质量——5个验证需求中，AI产出的Plan和资深工程师手写的Plan对比，改动点覆盖率在85%以上，差异主要在灰度策略和回滚方案（这些本来就需要人工补充）。第二，使用意愿——从"陪着跑"到"独立使用"，同事自发使用说明产出确实有价值。第三，问题发现——有一次AI通过跨层契约分析发现了前端调用了一个已经下线的BFF接口，这个是人工评审没发现的。</p>
     <p><strong>诚实边界</strong>：单环节提效60%，全链路（含联调/环境/协同）提效20-30%。AI提效不了的部分是合作方依赖和环境搭建这些人际协同环节。主动给出这个务实口径比夸大效果好得多。</p>
+    <p><strong>面试策略（实战教训）</strong>：主动说"我分两个口径给你"，先给环节数据再说全链路，比被动纠正好得多。另外面试官会明确追问"方案评审也要拉大家过一下吧，AI给的方案不一定是对的"——正确表述是"AI做80%基础工作，人工focus验证和决策"。与其自建PM工作流替产品写PRD，更落地的方案是AI反推PRD缺项给产品补全建议——赋能而非替代。</p>
     <p class="hint">面试官问"怎么证明"时，不要回避。最好的策略是先说方法论（工时对比），再说局限性（不是严格实验），然后说定性佐证（质量/意愿/意外发现）。诚实比包装有说服力。</p>
   </div>
 </div>
@@ -2370,6 +2303,7 @@ function buildTreeOptimized(list) {
     <p><strong>坦诚说：不能覆盖所有</strong>。Schema驱动的前提是"页面结构可以用JSON描述"。但实际业务中有几类场景是Schema难以描述的——动态增删表单组（可变数组嵌套复杂联动）、条件渲染逻辑特别复杂的自定义交互（比如拖拽排序配置权益优先级）、跨步骤的全局状态依赖（后面步骤的配置影响前面步骤的显示）。</p>
     <p><strong>遇到不满足的三步处理</strong>。第一步，Schema里标记custom类型——componentMap支持"custom"标记，渲染引擎遇到custom字段时不走标准渲染流程，直接渲染业务方register的自定义组件，自定义组件自己处理内部逻辑。第二步，联动DSL扩展——如果发现多个业务都有类似的custom需求，提取共性模式扩展dAction DSL。比如初版不支持"数组操作"类型的联动，后来扩展了arrayPush/arrayRemove/arraySort三种操作类型，从custom沉淀为标准能力。第三步，保持克制——不是所有custom都要标准化，只沉淀出现3次以上的模式，低频定制就让它待在custom里。</p>
     <p><strong>实际案例</strong>：上线后遇到过"权益包配置"场景——用户可以动态添加多个权益包，每个权益包内部又有联动规则（选择权益类型后显示不同配置项）。初版联动DSL的value-type只支持静态值，不支持嵌套Schema引用。处理方式是先custom走通，第二个迭代扩展了$ref联动类型支持嵌套引用，然后把这个场景从custom迁回标准流程。这个过程本身就是Schema方案的持续迭代——不是一次设计到位，是在业务中逐步完善。</p>
+    <p><strong>其他已知边界</strong>：联动嵌套超过三层时模板难维护，需拆成多个模板各管一层。动态生成不能断点调试，通过Schema diff工具辅助排查。字符串键值编译时无法检查类型安全，在BFF模板层做字段枚举校验兜底。样式隔离方面，Schema渲染组件有三种方案——CSS Modules（编译时hash隔离，简单但不够灵活）、CSS-in-JS（运行时动态样式，灵活但有性能开销）、CSS原生方案（@layer+自定义属性+Shadow DOM，零运行时开销但浏览器兼容性限制），趋势是向CSS原生方案迁移。</p>
     <p class="hint">这道题考的是方案的工程成熟度。好的回答不是"什么都能做"，是"有明确的边界、有边界case的处理机制、有持续演进的路径"。面试官想听的是你遇到了什么真实的限制、怎么务实地解决的。</p>
   </div>
 </div>
