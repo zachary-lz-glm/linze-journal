@@ -2259,6 +2259,121 @@ function buildTreeOptimized(list) {
   </div>
 </div>
 
+<!-- ==================== 项目深挖·追问防御 ==================== -->
+
+<div class="card" data-c="proj" data-kw="冷启动 知识库 准确性 过时文档 gitlog 历史PRD 无效信息 蒸馏 验证 逐字稿">
+  <div class="card-head"><span class="tag proj">业务</span><div class="card-title">AI知识库冷启动：过时文档怎么处理？</div></div>
+  <div class="core">不是把历史文档直接灌进去，是分两类处理：活代码扫描（不会过时）+ 文档蒸馏（要验证清洗）</div>
+  <div class="card-body">
+    <p><strong>核心区分</strong>：Reference的6个领域文件分两类。第一类是从活代码扫描生成的——代码结构、编码规则、代码实体索引，这些直接分析源码和AST，不存在过时问题。第二类依赖文档和历史信息——跨层契约、PRD路由映射、业务领域Map，这些才有过时风险。</p>
+    <p><strong>第二类的清洗策略</strong>：三步。第一步，git log只取最近6个月的有效commit，太久远的变更不在当前代码里了就过滤掉。第二步，PRD路由映射生成后跑5个已知需求做反向验证——如果路由指向的文件或函数已经不存在了，说明这个映射过时了，直接丢弃。第三步，业务领域Map通过交叉验证——字段如果在PRD中出现但代码里已经没有引用了，标记为deprecated不进入知识库。</p>
+    <p><strong>关键认知</strong>：冷启动不需要100%准确。Reference是给AI提供思考方向的，不是给AI当答案用的。真正保证准确性的是证据链机制——AI拿到知识库的映射后，还要去源码里验证这个映射是不是对的，标注evidence来源。知识库里有少量过时信息不会导致错误结论，因为AI会去源码确认。但如果知识库空白，AI连思考方向都没有，那才是真正的问题。</p>
+    <p class="hint">这道题考的是你对"知识工程"的理解深度。不要说"我们人工review了所有文档"——那不现实。要体现的是系统性思维：分而治之（活代码vs文档）、自动化验证（反向验证）、容错设计（证据链兜底）。</p>
+  </div>
+</div>
+
+<div class="card" data-c="proj" data-kw="知识同步 更新 过时信息 回流 增量 蒸馏 保鲜机制 逐字稿">
+  <div class="card-head"><span class="tag proj">业务</span><div class="card-title">知识库怎么同步更新？过时信息会干扰AI吗？</div></div>
+  <div class="core">两条线：PRD蒸馏后自动回流新知识 + Reference定期增量更新，过时信息靠证据链的"缺失证据"标记自动失效</div>
+  <div class="card-body">
+    <p><strong>同步机制</strong>：两条线。第一条，每次PRD蒸馏完有回流环节——AI分析本次蒸馏过程中发现了哪些新知识（新字段、新接口、新的编码模式），生成回流建议，用户确认后自动补充到Reference。新需求跑完就回流，知识库跟着业务走。第二条，Reference定期跑增量更新——对比上次扫描的commit范围，只分析增量变更，更新对应领域文件。不需要全量重建。</p>
+    <p><strong>过时信息的干扰控制</strong>：分两层。预防层——回流和增量更新时，如果引用的源文件已经不存在了，自动从知识库移除对应条目。执行层——即使有过时信息没清干净，证据链机制会兜底。AI在蒸馏过程中必须标注信息来源（文件路径+行号），如果来源不存在或内容已变，AI会标注为"缺失证据"而不是当作事实使用。Plan里出现缺失证据会触发门禁告警，要求人工确认或AI回溯重做。</p>
+    <p><strong>实际影响</strong>：过时信息的干扰远小于"没有信息"。AI最怕的不是参考了旧文档，是完全没有方向只能瞎猜。Reference给的是思考路径，不是最终答案。即使映射略有偏差，AI在源码精读阶段会自行修正。</p>
+    <p class="hint">面试官问这个是在考你有没有考虑过知识库的生命周期管理。核心逻辑：知识库是活的不是死的，更新机制和容错机制比初始数据质量更重要。</p>
+  </div>
+</div>
+
+<div class="card" data-c="proj" data-kw="证明 提效 效果 数据 效率提升 量化 度量 工时 Jira 逐字稿">
+  <div class="card-head"><span class="tag proj">业务</span><div class="card-title">怎么证明AI方案真的提升了效率？</div></div>
+  <div class="core">不是AB实验，是工时前后对比+定性反馈双维度验证，坦诚承认不是严格实验设计</div>
+  <div class="card-body">
+    <p><strong>量化维度</strong>：Jira工时对比法。对照组：取过去20个需求的人工流程耗时（读PRD+需求评审+技术评审+写计划），均值2-3天。实验组：同样复杂度的需求用工具流程，从PRD到产出Spec+Plan平均1-2小时。前后端各取5个需求做对照样本，PRD→Plan环节提效60%。但坦诚说这不是严格AB实验——没有随机分组、没有控制变量，是同一团队前后流程的工时对比。</p>
+    <p><strong>定性维度</strong>：三个信号证明方案有效。第一，Plan质量——5个验证需求中，AI产出的Plan和资深工程师手写的Plan对比，改动点覆盖率在85%以上，差异主要在灰度策略和回滚方案（这些本来就需要人工补充）。第二，使用意愿——从"陪着跑"到"独立使用"，同事自发使用说明产出确实有价值。第三，问题发现——有一次AI通过跨层契约分析发现了前端调用了一个已经下线的BFF接口，这个是人工评审没发现的。</p>
+    <p><strong>诚实边界</strong>：单环节提效60%，全链路（含联调/环境/协同）提效20-30%。AI提效不了的部分是合作方依赖和环境搭建这些人际协同环节。主动给出这个务实口径比夸大效果好得多。</p>
+    <p class="hint">面试官问"怎么证明"时，不要回避。最好的策略是先说方法论（工时对比），再说局限性（不是严格实验），然后说定性佐证（质量/意愿/意外发现）。诚实比包装有说服力。</p>
+  </div>
+</div>
+
+<div class="card" data-c="proj" data-kw="上下文爆炸 冷启动 大量前置问题 token 分步加载 路由 逐字稿">
+  <div class="card-head"><span class="tag proj">业务</span><div class="card-title">冷启动上下文爆炸怎么解决？</div></div>
+  <div class="core">不是一次性灌全部上下文，是分阶段加载——Reference先蒸馏压缩，PRD蒸馏按步骤按需加载</div>
+  <div class="card-body">
+    <p><strong>核心设计：知识压缩不是知识堆砌</strong>。Reference的6个领域文件本身就是对海量信息的蒸馏——不是把全部源码灌进去，是提炼出结构化的映射关系。比如代码结构不是把每个文件内容都放进去，是产出目录树+模块职责+依赖关系的摘要。编码规则不是把所有代码放进去，是提炼出命名规范、组件模式、错误处理风格这些模式。</p>
+    <p><strong>PRD蒸馏的分步加载</strong>：11个步骤不是每步都加载全部上下文。第1-3步只需要PRD+能力面约束（几十KB）。第4步证据账本建立后，才通过Reference路由映射定位候选文件——不是加载全部源码，是根据PRD中的业务关键字定位到最相关的5-10个文件。第5步源码精读只加载这5-10个文件的内容。第6步契约差异分析只加载涉及的接口定义。每一步的上下文窗口控制在合理范围内。</p>
+    <p><strong>如果项目特别大怎么办</strong>：路由映射是关键。Reference里的PRD路由映射和代码实体索引（倒排索引）就是解决这个问题的——根据需求场景定位到具体的文件和函数，不需要全量扫描。如果一个需求涉及30+文件，说明需求拆分粒度可能有问题，建议先拆分再蒸馏。</p>
+    <p class="hint">这道题考的是你对LLM上下文窗口限制的工程化应对。核心思路：检索增强生成（RAG）的本质就是"用检索替代全量加载"。Reference的6个领域文件本质上就是为检索服务的索引。</p>
+  </div>
+</div>
+
+<div class="card" data-c="proj" data-kw="PRD转化率 60% 实验组 对照组 AB实验 统计口径 样本 逐字稿">
+  <div class="card-head"><span class="tag proj">业务</span><div class="card-title">PRD转化率60%的实验组和对照组是什么？</div></div>
+  <div class="core">不是AB实验，是同一团队前后流程的工时对比，取20个需求样本做均值比较</div>
+  <div class="card-body">
+    <p><strong>研究设计</strong>：坦诚说这不是严格意义上的AB实验——没有随机分组，没有控制组。是同一个团队、同一类需求、前后流程改变的工时对比。</p>
+    <p><strong>对照组（人工流程）</strong>：取过去20个需求的Jira工时记录，统计从PRD接入到产出技术方案的耗时。包括：读PRD（2-4小时）+ 需求评审会（1-2小时）+ 技术评审会（1-2小时）+ 写技术方案文档（4-8小时）。均值2-3天（含跨天协作等待时间）。</p>
+    <p><strong>实验组（工具流程）</strong>：取同样复杂度的10个新需求，用prd-tools从PRD到产出Spec+Execution Plan的耗时。PRD摄入（5分钟）+ 证据账本建立（10分钟）+ 需求AR生成（5分钟）+ 源码精读和契约分析（20-30分钟）+ Spec生成（10分钟）+ Plan生成（10分钟）+ 门禁校验（5分钟）。纯工作时间1-2小时。加上人工确认Spec的30分钟，总共1.5-2.5小时。</p>
+    <p><strong>为什么不是AB实验</strong>：团队规模小（前端5人），无法同时维持两套流程跑严格对照。选择前后对比是因为现实可行。如果团队更大，理想设计是同一批需求随机分配给人工组和工具组，双盲评审产出质量。但当前样本量已经足以说明方向性结论——工具流程在单环节的效率提升是显著的。</p>
+    <p class="hint">面试官问这个是在考你的数据素养。最好的回答是：先说清楚方法论，再主动说局限性，最后说如果有条件会怎么做更严格的实验。"坦诚缺陷"比"包装完美"得分高。</p>
+  </div>
+</div>
+
+<div class="card" data-c="proj" data-kw="Schema 适用场景 页面类型 表单 配置 营销 B端 边界 逐字稿">
+  <div class="card-head"><span class="tag proj">业务</span><div class="card-title">Schema驱动解决什么类型页面的开发效率？</div></div>
+  <div class="core">B端营销配置类页面——表单密集、联动复杂、多国家多业务线配置组合爆炸的场景</div>
+  <div class="card-body">
+    <p><strong>核心适用场景</strong>：三个特征决定了页面适合Schema驱动。第一，表单密集——页面上80%是表单输入+选择+配置，不是自由布局的展示页。第二，联动复杂——字段之间有显隐联动、值联动、跨接口联动，纯手写if-else维护成本爆炸。第三，配置组合爆炸——多国家×多业务线×多产品线×多城市，同样的页面逻辑但要配出几百种组合。这三个特征同时存在时，Schema驱动的收益最大。</p>
+    <p><strong>具体页面类型</strong>：活动配置页（优惠券/折扣/立减的创建和编辑）、权益投放页（选择城市+产品线+用户标签后配置权益内容）、营销规则页（条件组合+动作配置的决策表）、国际化运营页（同一套Schema根据国家/语言生成不同产物）。本质上都是"配置驱动内容"的页面，不是"设计稿驱动UI"的页面。</p>
+    <p><strong>不适合的场景</strong>：三类。第一，C端自由布局页面——首页/详情页这些设计稿驱动、交互复杂的页面，Schema描述不了。第二，数据可视化大屏——图表组合和布局规则跟表单完全不同。第三，高度定制化的交互场景——拖拽排序、可视化编辑器这些，配置化方案反而增加复杂度。Schema的价值边界很清晰：把重复的配置类页面从"写代码"变成"配数据"。</p>
+    <p class="hint">这道题考的是你对方案适用边界的判断力。面试官想听的不是"什么都能解决"，是"什么能解决、什么不能、边界在哪"。主动说"不适合"的场景比夸大覆盖范围更加分。</p>
+  </div>
+</div>
+
+<div class="card" data-c="proj" data-kw="Formily 技术选型 为什么不用 自研 Schema 联动 BFF 双端 差异对比 逐字稿">
+  <div class="card-head"><span class="tag proj">业务</span><div class="card-title">为什么不用Formily？和自研方案有什么差异？</div></div>
+  <div class="core">Formily是纯前端方案，我们的联动需要BFF双端解析；但如果只需要纯前端表单，Formily是更好的选择</div>
+  <div class="card-body">
+    <p><strong>Formily的能力边界</strong>：Formily确实是成熟的JSON Schema驱动表单方案，支持x-reactions联动描述、自定义组件扩展、路径系统。对于纯前端表单场景——一个页面、一套联动、纯客户端计算——Formily完全够用，而且生态更完善。</p>
+    <p><strong>我们的场景差异在哪</strong>：核心差异是"双端联动"。我们的联动不只是前端组件间的依赖，还涉及BFF层的接口联动——用户切换城市，前端不是直接调后端拿数据，是调BFF，BFF根据城市+产品线+活动类型重新裁剪Schema再返回。这个"前端触发→BFF重新生成配置→前端重新渲染"的链路，Formily的x-reactions覆盖不了，因为它只管前端层。</p>
+    <p><strong>第二个差异——联动DSL的表达能力</strong>：我们的dAction DSL有两种联动类型。State型是组件间依赖（A变→B隐/禁/改值），这个Formily能做。Fetch型是跨接口联动（城市变→调BFF拿新配置→重新渲染），这个需要BFF有对应的模板引擎来处理，不是前端表单库能解决的。Formily如果要做Fetch型联动，需要自己写大量的自定义副作用（effects），本质上还是要自研联动层，那不如从头设计一个统一的DSL。</p>
+    <p><strong>选型决策</strong>：如果只看前端表单层，Formily是更好的选择——社区活跃、文档完善、开箱即用。但我们的场景需要前后端共享同一套Schema协议、BFF有模板引擎做动态裁剪、联动描述要双端都能解析。这不是"表单渲染"的问题，是"配置驱动双端协同"的问题。选自研不是因为Formily不好，是因为问题域不一样。</p>
+    <p class="hint">这道题考的是技术选型的判断力。好的回答不是"Formily不行"，是"问题域不同"。主动承认Formily在纯前端场景更好，反而说明你做过认真对比。千万不要贬低开源方案。</p>
+  </div>
+</div>
+
+<div class="card" data-c="proj" data-kw="Service Worker 缓存 联动接口 BFF配置 Fetch型 离线 network-first 逐字稿">
+  <div class="card-head"><span class="tag proj">业务</span><div class="card-title">为什么用Service Worker做联动接口缓存？</div></div>
+  <div class="core">Fetch型联动调BFF拿配置数据量大且变化不频繁，SW的network-first策略让操作响应快+断网可用</div>
+  <div class="card-body">
+    <p><strong>背景</strong>：Fetch型联动的触发场景是用户在表单里切换城市或产品线，前端调BFF拿新的运行时Schema配置。这个接口返回的不是一个简单值，是整段配置（包含该城市/产品线下所有字段的显隐规则、联动规则、默认值、校验规则），数据量通常几十KB。而且海外网络环境不稳定，东南亚/拉美部分地区3G网络延迟可能500ms+。</p>
+    <p><strong>为什么用SW而不是HTTP缓存</strong>：三个原因。第一，精细控制——SW可以按业务逻辑决定缓存策略，HTML永远走网络保证页面更新，配置接口用network-first+超时回退缓存，静态资源走cache-first。HTTP缓存靠响应头控制，粒度不够。第二，离线兜底——海外弱网环境偶尔断线，SW的超时回退机制让用户操作不白费（3秒内没返回就走缓存）。第三，跨页面共享——同一个人的城市配置在不同活动页是一样的，SW缓存天然跨页面共享，不用每个页面实例单独缓存。</p>
+    <p><strong>具体策略</strong>：HTML走网络优先（保证每次打开都是最新页面）。非HTML资源（JS/CSS/配置接口）走network-first + 3秒超时回退缓存——先请求网络拿最新数据，同时缓存一份；网络慢了3秒还没返回就先用缓存让用户继续操作；网络请求到了再替换缓存。这样兼顾了数据新鲜度和操作流畅性。</p>
+    <p class="hint">这道题考的是你对缓存策略的工程化理解。关键不是"用了SW"，是"为什么SW比其他方案更适合这个场景"。核心逻辑：配置类数据的特点是"量大、变化不频繁、对响应速度敏感"，刚好匹配network-first策略。</p>
+  </div>
+</div>
+
+<div class="card" data-c="proj" data-kw="性能优化 懒加载 按需加载 Schema 渲染 组件 权益SDK 逐字稿">
+  <div class="card-head"><span class="tag proj">业务</span><div class="card-title">性能优化和懒加载怎么做的？</div></div>
+  <div class="core">三层：Schema级按section分块渲染 + 组件级dynamic import + SDK级按业务线注册</div>
+  <div class="card-body">
+    <p><strong>Schema渲染层——按section分块</strong>：一个活动配置页可能有50+字段，不是一次性渲染所有组件。渲染引擎把Schema按section（区域/步骤）分组，首屏只渲染可见section，其他section在用户滚动或切换tab时按需渲染。联动触发时只更新受影响的组件（通过依赖图精确定位），不重渲染整棵组件树。</p>
+    <p><strong>组件层——dynamic import按需加载</strong>：componentMap不是启动时全部import，是注册了组件的加载路径（factory函数），首次渲染某个组件类型时才dynamic import对应的React组件。通用组件（Input/Select/DatePicker）打包在主bundle里直接可用，业务定制组件（地图选择器/复杂权益配置面板）按需加载。这样首屏JS体积控制在合理范围。</p>
+    <p><strong>SDK层——按业务线注册</strong>：权益SDK的register机制天然支持按需——每个业务模块只register自己用到的权益组件，不会把8个业务的400+组件全加载进来。国际化业务可能只用30个通用组件+5个定制组件，打包体积只包含实际register的部分。</p>
+    <p><strong>监控指标</strong>：首屏FCP控制在1.5s以内（海外CDN加速），配置接口响应时间P99在800ms以内，联动触发到UI更新在100ms以内（State型本地计算）。</p>
+    <p class="hint">这道题考的是从框架设计到具体实现的完整链路。不要只说"用了lazy loading"，要说清楚在哪三层做了、为什么分层、每层解决什么问题。架构层面的性能优化比单纯的代码技巧更有价值。</p>
+  </div>
+</div>
+
+<div class="card" data-c="proj" data-kw="Schema 覆盖 所有场景 满足不了 边界 定制 自定义渲染 fallback 逐字稿">
+  <div class="card-head"><span class="tag proj">业务</span><div class="card-title">Schema能覆盖所有表单场景吗？遇到不满足的怎么处理？</div></div>
+  <div class="core">不能覆盖所有场景，遇到边界case走custom标记降级到自定义组件渲染，逐步把高频custom模式沉淀进Schema</div>
+  <div class="card-body">
+    <p><strong>坦诚说：不能覆盖所有</strong>。Schema驱动的前提是"页面结构可以用JSON描述"。但实际业务中有几类场景是Schema难以描述的——动态增删表单组（可变数组嵌套复杂联动）、条件渲染逻辑特别复杂的自定义交互（比如拖拽排序配置权益优先级）、跨步骤的全局状态依赖（后面步骤的配置影响前面步骤的显示）。</p>
+    <p><strong>遇到不满足的三步处理</strong>。第一步，Schema里标记custom类型——componentMap支持"custom"标记，渲染引擎遇到custom字段时不走标准渲染流程，直接渲染业务方register的自定义组件，自定义组件自己处理内部逻辑。第二步，联动DSL扩展——如果发现多个业务都有类似的custom需求，提取共性模式扩展dAction DSL。比如初版不支持"数组操作"类型的联动，后来扩展了arrayPush/arrayRemove/arraySort三种操作类型，从custom沉淀为标准能力。第三步，保持克制——不是所有custom都要标准化，只沉淀出现3次以上的模式，低频定制就让它待在custom里。</p>
+    <p><strong>实际案例</strong>：上线后遇到过"权益包配置"场景——用户可以动态添加多个权益包，每个权益包内部又有联动规则（选择权益类型后显示不同配置项）。初版联动DSL的value-type只支持静态值，不支持嵌套Schema引用。处理方式是先custom走通，第二个迭代扩展了$ref联动类型支持嵌套引用，然后把这个场景从custom迁回标准流程。这个过程本身就是Schema方案的持续迭代——不是一次设计到位，是在业务中逐步完善。</p>
+    <p class="hint">这道题考的是方案的工程成熟度。好的回答不是"什么都能做"，是"有明确的边界、有边界case的处理机制、有持续演进的路径"。面试官想听的是你遇到了什么真实的限制、怎么务实地解决的。</p>
+  </div>
+</div>
+
 <!-- ==================== 软技能 ==================== -->
 <div class="card" data-c="emer" data-kw="成就感 成就 最有价值 技术成果 非技术 团队 AI工程 逐字稿 必考">
   <div class="card-head"><span class="tag emer">软技能</span><div class="card-title">最有成就感的事（技术+非技术）</div></div>
