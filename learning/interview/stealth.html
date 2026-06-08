@@ -2177,6 +2177,19 @@ function buildTreeOptimized(list) {
   </div>
 </div>
 
+<div class="card" data-c="proj" data-kw="最有价值 A绩效 项目 挑战 解决 STAR 成就感 鸿湖 业务面 必考 逐字稿">
+  <div class="card-head"><span class="tag proj">业务</span><div class="card-title">最有价值项目（STAR逐字稿·鸿湖原题）</div></div>
+  <div class="core">Schema营销中台——从if-else地狱到声明式配置，前端开发成本归零</div>
+  <div class="card-body">
+    <p><strong>Situation</strong>：国际化营销有20+活动类型，覆盖8个国家的多城市多产品线。老代码if-else几万行，每次扩城市都在里面加分支。新人改一处影响多处，月均线上问题一二十起。上线一个新活动前端要两周，后端配合又要一周。</p>
+    <p><strong>Task</strong>：我作为前端负责人，需要在不停业务的前提下重构整个营销配置体系。目标三个——新增活动前端零开发、上线周期从两周缩到三天、线上问题降到接近零。</p>
+    <p><strong>Action</strong>：三个关键决策。第一个决策是选Schema驱动而不是低代码——因为B端设计稿少以原型为主，低代码的可视化拖拽ROI不高，而且复杂联动（城市→产品线→价格策略跨接口联动）低代码描述不了。第二个决策是双端解析架构——前端渲染引擎解析Schema生成表单，BFF模板引擎解析Schema生成配置接口，两套引擎共享Schema协议但各自关注不同维度。第三个决策是联动DSL——设计了dAction声明式联动，组件间依赖从if-else命令式变成模板表达式声明式，联动关系在Schema里一眼可见。</p>
+    <p><strong>Result</strong>：新活动前端开发成本归零（配置化），上线从两周缩到三天（运营自助配置），线上问题从月均20起降到接近零（静态校验+灰度+监控三层防控）。后来架构推广到中台其他系统。</p>
+    <p><strong>最有成就感</strong>：不是技术多复杂，是"新人来了看Schema就能理解页面结构"——从人依赖代码变成了人依赖配置。这个抽象让团队以后接任何新业务都有基础。</p>
+    <p class="hint">这个题考的是讲故事能力——STAR格式，每段30秒，总共2分钟。不要省细节，面试官说"详细说一下"就是想听这个。</p>
+  </div>
+</div>
+
 <div class="card" data-c="proj" data-kw="事故 线上故障 滴滴 崩溃 两地部署 华南 容灾 基础设施 吸取教训 监控 降级">
   <div class="card-head"><span class="tag proj">业务</span><div class="card-title">线上事故反思 + 基础设施架构判断（鸿湖原题）</div></div>
   <div class="core">事故响应三部曲+容灾架构判断：两地同区域不算真容灾，异地双活才是</div>
@@ -2207,6 +2220,31 @@ function buildTreeOptimized(list) {
     <p><strong>性能层面</strong>：400+组件的权益配置页面，做了虚拟滚动+按需渲染——只渲染视口内的组件，联动触发时精确更新受影响的组件而非全量重渲染。这不是调调API写写页面的前端，是从渲染引擎层面做架构设计。</p>
     <p><strong>工程层面</strong>：组件库用Rollup双模式打包（ESM+CJS），tree-shaking精确到组件粒度，Lerna独立版本管理+Nx增量构建。这些不是"用过"，是"设计过"。</p>
     <p class="hint">面试官说"你的前端这儿我没怎么问"——潜台词是"前面聊了太多AI和架构，我需要确认你前端底子没问题"。用渲染引擎做证据，不泛泛而谈。</p>
+  </div>
+</div>
+
+<div class="card" data-c="proj" data-kw="SDD体系 深度介绍 设计思路 落地过程 可追溯性 证据链 PRD 代码 鸿湖 逐字稿 详细回答">
+  <div class="card-head"><span class="tag proj">业务</span><div class="card-title">SDD体系深度介绍（被追问时这样答·鸿湖原题）</div></div>
+  <div class="core">两套Skill工作流：Reference蒸馏知识+PRD蒸馏需求，中间靠证据链保证可追溯</div>
+  <div class="card-body">
+    <p><strong>先说全局框架</strong>：SDD体系是两套Skill工作流。Reference是知识底座——跑一遍项目代码，蒸馏出6个领域文件（代码结构、编码规则、跨层契约、PRD路由映射、业务领域Map、代码实体索引）。PRD蒸馏是核心产出——拿到PRD后经过11个步骤，最终产出Spec规格文档和Execution Plan。</p>
+    <p><strong>再说设计思路</strong>：核心解决的问题是"AI拿到PRD后该改哪些文件、改什么、上下游怎么对齐"。传统做法是资深工程师凭经验判断，新人完全不知道从哪下手。SDD本质是把资深工程师的思考路径结构化成可复用的流程。三大机制——SSOT保证知识单源（六文件是唯一真相源）、证据链防止幻觉（每个结论附带源文件引用和行号）、质量门控防止跳步（Python脚本校验中间产物完整性）。</p>
+    <p><strong>落地过程</strong>：分三期。一期建Reference知识库——跑项目代码生成六文件，验证5个需求确认知识覆盖度。二期建PRD蒸馏流程——11步骤从PRD摄入到门禁校验，关键是第四步证据账本，定义8种证据类型让AI标注每个信息的来源（源码引用/文档引用/接口定义/配置项/历史需求/环境约束/团队约定/推断结论）。三期做质量门禁——Readiness Score五项加权自评 + 门禁脚本确定性检查（文件消费率、锚点覆盖率、计划完整性）。</p>
+    <p><strong>PRD到代码可追溯性</strong>：证据链是核心。每个需求点在Spec中标注了evidence ID和来源文件行号。从Plan中的改动项可以回溯到Spec中的需求点，再回溯到PRD中的原文，再回溯到源码中的具体位置。四级追溯链：PRD原文→需求AR→Spec→Plan→源码位置。如果Plan说"改A文件第200行的B字段"，你能一路追回到PRD为什么要求改这个字段。这就解决了"AI给出方案但不知道为什么"的问题。</p>
+    <p class="hint">面试官说"你好像不太想回答"——千万别缩。这个题要展开讲2-3分钟，从全局框架到具体机制到落地过程到可追溯性，每个环节30秒。越详细越说明你真做过。</p>
+  </div>
+</div>
+
+<div class="card" data-c="proj" data-kw="Schema架构 BFF 动态生成 前端动态渲染 协同 联动 dAction 双端解析 鸿湖 逐字稿">
+  <div class="card-head"><span class="tag proj">业务</span><div class="card-title">Schema+BFF/前端协同链路（技术深挖·鸿湖原题）</div></div>
+  <div class="core">Schema是中间协议，BFF模板引擎生成配置接口，前端渲染引擎解析生成页面，联动DSL桥接两端</div>
+  <div class="card-body">
+    <p><strong>Schema是什么</strong>：基于JSON Schema Draft-07扩展的中间协议。在标准JSON Schema上加了三个扩展——dAction联动描述（组件间依赖关系）、componentMap组件映射（Schema字段到UI组件的对应关系）、fetchConfig跨接口联动配置（城市/产品线变化时调哪个接口拿新配置）。Schema是前后端共享的唯一真相源。</p>
+    <p><strong>BFF动态生成</strong>：BFF层有一套模板引擎（Template Engine），接收运营在后台配置的Schema + 业务数据（城市列表、产品线枚举、价格策略等），模板引擎根据Schema中的条件表达式动态裁剪配置。比如巴西用户看到的字段和墨西哥不同，不是两套代码，是同一份Schema根据条件生成不同产物。BFF输出的是经过裁剪的"运行时Schema"——包含当前用户应该看到的所有字段、联动规则、初始值。</p>
+    <p><strong>前端动态渲染</strong>：前端渲染引擎拿到BFF输出的运行时Schema后，三步处理。第一步解析Schema构建组件树——根据componentMap映射到具体的React组件。第二步注入联动——injectDActions先扫描整个Schema收集所有dAction声明，构建组件间依赖图，然后为每个联动注入运行时求值函数。第三步渲染——按依赖图顺序渲染组件，联动触发时只更新受影响的组件，不重渲染整棵树。</p>
+    <p><strong>协同工作流程</strong>：运营在后台配Schema → BFF模板引擎根据用户条件裁剪 → 输出运行时Schema给前端 → 前端渲染引擎解析+注入联动+渲染 → 用户操作触发联动 → State型联动前端本地计算 → Fetch型联动调BFF拿新配置 → 新配置进入渲染引擎重新处理。整个链路是配置驱动的闭环，新增活动类型只需要配一份Schema，不需要写代码。</p>
+    <p><strong>最有成就感的点</strong>：联动从命令式变成声明式。以前新人看到一段if-else不知道在处理什么场景，现在打开Schema，联动关系、条件表达式、影响范围一眼可见。从"读代码才能理解业务"变成了"看配置就能理解业务"。</p>
+    <p class="hint">这道题是纯技术深挖，面试官想听完整链路。从Schema定义→BFF处理→前端渲染→联动触发，每段30秒，画一条线讲下来。不要只讲概念，要讲数据怎么流的。</p>
   </div>
 </div>
 
