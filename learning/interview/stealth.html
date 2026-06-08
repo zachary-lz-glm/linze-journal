@@ -81,7 +81,7 @@ body{overscroll-behavior-y:contain}
   <button class="tab" data-c="bagu" onclick="setCat('bagu')">基础</button>
   <button class="tab" data-c="code" onclick="setCat('code')">手撕</button>
   <button class="tab" data-c="ai" onclick="setCat('ai')">AI</button>
-  <button class="tab" data-c="emer" onclick="setCat('emer')">应急</button>
+  <button class="tab" data-c="emer" onclick="setCat('emer')">综合</button>
 </div>
 
 <!-- INDEX BTN -->
@@ -2392,6 +2392,72 @@ function buildTreeOptimized(list) {
   </div>
 </div>
 
+<!-- ==================== HR面 ==================== -->
+<div class="card" data-c="emer" data-kw="空窗期 裸辞 间隔期 gap 辞职 为什么离职 休息 HR 逐字稿">
+  <div class="card-head"><span class="tag emer">HR</span><div class="card-title">空窗期/裸辞怎么解释？</div></div>
+  <div class="core">空窗期不是扣分项，关键是要讲清楚这段时间在做什么、为什么做、产出了什么</div>
+  <div class="card-body">
+    <p><strong>回答公式</strong>：客观原因（一句话带过）+ 主动做了什么（重点展开）+ 现在的状态（准备好回归）。</p>
+    <p><strong>逐字稿</strong>："上一份工作做了四年，完成了从0到1的架构搭建和落地推广，该验证的都验证完了。离职后我没有急着投简历，而是花了一段时间做两件事——第一，系统梳理了这四年的架构经验，把Schema驱动和AI工程化的方法论沉淀成了一套开源工具；第二，深度体验了市面上的AI Coding产品，建立了对行业的真实感知。现在工具已经开源、方法已经验证，我觉得是时候把这些能力带到更大的场景里去了。"</p>
+    <p><strong>三个禁忌</strong>：不要说"被裁了找不到工作"（即使是真的也换个说法）、不要说"太累了想休息"（HR会担心你的抗压能力）、不要说"在看机会但没合适的"（暗示市场不认可你）。</p>
+    <p class="hint">HR问空窗期的本质是在考察：1）你是不是被动离职 2）空窗期有没有荒废 3）稳定性有没有问题。只要证明"主动选择+持续成长+明确方向"，空窗期反而是加分项。</p>
+  </div>
+</div>
+
+<div class="card" data-c="emer" data-kw="offer 其他公司 面试 手上 选择 对比 HR 逐字稿">
+  <div class="card-head"><span class="tag emer">HR</span><div class="card-title">手上有没有其他offer？</div></div>
+  <div class="core">适度透露1-2个证明竞争力，不暴露具体薪资和公司名，保持谈判空间</div>
+  <div class="card-body">
+    <p><strong>有offer的情况</strong>："目前在流程中有几个机会，其中有两个已经到了终面或offer阶段。方向都跟我的AI工程化经验相关，但我最看重的还是团队能做的事和我能做的事的匹配度——这也是我今天来聊的原因。"——既证明市场认可度，又表达对当前公司的真实兴趣。</p>
+    <p><strong>没有offer的情况</strong>："目前刚开始看机会，之前一直在系统整理项目经验和行业认知，没有大规模投递。贵司是我认真准备的第一批，因为方向确实很匹配。"——不暴露"没offer"的弱势，把重点放在"精心选择"上。</p>
+    <p><strong>绝对不要说</strong>：具体公司名（HR会打听）、具体薪资（暴露底牌）、"没有其他offer"（丧失谈判筹码）。</p>
+    <p class="hint">HR问这个问题的本质：1）了解你的市场行情 2）判断你的薪资锚点 3）评估录用后的接offer概率。策略是展示竞争力但不给对方压价的把柄。</p>
+  </div>
+</div>
+
+<div class="card" data-c="emer" data-kw="失败 挫折 犯错 最大 教训 复盘 HR 逐字稿">
+  <div class="card-head"><span class="tag emer">HR</span><div class="card-title">你最大的失败/挫折是什么？</div></div>
+  <div class="core">讲一个真实的、有复盘的、有改进行为的失败，失败不是重点，学到了什么才是</div>
+  <div class="card-body">
+    <p><strong>回答公式</strong>：真实失败事件（30秒）+ 根因分析（20秒）+ 改进行为（30秒）+ 现在的变化（10秒）。</p>
+    <p><strong>逐字稿</strong>："最大的挫折是Monorepo的yarn解析器事故。当时yarn从rc.31自动升到rc.48导致整个项目构建全挂，影响了所有业务模块的发版。事后复盘，根因不是我写错了代码，而是我对依赖管理缺乏敬畏——没有锁版本、没有CI检测、没有升级验证流程。这次事故后我建了三道防线：yarn.lock加入git保护禁止自动升级、CI加lockfile diff检测、依赖升级必须staging验证。这个事故让我对所有'自动更新'都保持警惕，后来在设计prd-tools的时候，质量门禁的设计思路就是从这次教训来的——不能信任任何自动化流程不经检查就通过。"</p>
+    <p><strong>三个禁忌</strong>：不要说"我太追求完美"（假的失败）、不要说跟同事/领导冲突（暴露人际问题）、不要说"没经历过大的失败"（要么说谎要么没反思）。</p>
+    <p class="hint">HR问失败不是想听你多惨，是看三个东西：1）你能不能诚实面对自己的错误 2）你有没有分析问题的能力 3）你是不是一个会从错误中学习的人。好的失败回答比好的成功回答更能打动面试官。</p>
+  </div>
+</div>
+
+<div class="card" data-c="emer" data-kw="意见不一致 冲突 领导 上级 争论 决策 分歧 HR 逐字稿">
+  <div class="card-head"><span class="tag emer">HR</span><div class="card-title">和上级意见冲突怎么办？</div></div>
+  <div class="core">先理解对方的立场和约束，再用数据说话，最后尊重决策但保留意见</div>
+  <div class="card-body">
+    <p><strong>回答公式</strong>：理解对方 → 数据佐证 → 寻找共识 → 尊重决策。</p>
+    <p><strong>逐字稿</strong>："遇到过一次技术路线分歧——我想用Schema驱动替代if-else，但技术负责人觉得重构风险太大，不如继续在现有代码上修补。我没有直接反驳，而是先理解他的顾虑——确实上线压力大，重构期间可能出现回归问题。然后我提了一个折中方案：新活动类型用Schema方式开发，老活动不动，两边并行跑一个月看数据。一个月后新方式开发的活动上线时间从两周缩到两天，且零线上问题。拿着数据再沟通，负责人主动说'后面老活动也迁移吧'。这件事教会我：技术决策不能靠说服力，要靠数据。领导的顾虑通常不是'不同意你的想法'，而是'不确定风险可控'——把风险量化了，决策自然就清晰了。"</p>
+    <p><strong>关键原则</strong>：永远不要在公开场合跟领导争论。私下沟通、带方案、带数据。如果最终决策跟你意见不同，先执行再复盘。</p>
+    <p class="hint">这道题考的是你的沟通方式和职业成熟度。HR想看的是：你有没有ego管理能力、能不能站在对方角度思考、是不是一个理性沟通的人。绝对不要说"我会坚持我的意见"或"领导说什么就什么"。</p>
+  </div>
+</div>
+
+<div class="card" data-c="emer" data-kw="加班 996 高强度 工作节奏 平衡 抗压 HR 逐字稿">
+  <div class="card-head"><span class="tag emer">HR</span><div class="card-title">你怎么看待加班/高强度工作？</div></div>
+  <div class="core">不排斥高强度，但关注效率而非时长；项目期全力投入，日常注重可持续节奏</div>
+  <div class="card-body">
+    <p><strong>逐字稿</strong>："我不排斥高强度工作——滴滴国际化四年，刚搭Schema架构的时候连续两个月高强度迭代，活动上线期也经常加班赶进度。但我的判断是，加班应该是项目驱动的阶段性状态，不是常态。可持续的产出比短期冲刺更重要。我在团队里做的事情其实就是在提升效率——Schema方案让新活动开发成本归零，prd-tools让PRD到计划提效60%，这些本质上都是在减少低效加班的需求。所以我更关注的是'工作产出有没有价值'，而不是'工作时长够不够长'。"</p>
+    <p><strong>避免两个极端</strong>：不要说"我热爱加班"（太假）或"我坚决不加班"（太刚）。正确态度是务实的——项目需要时全力以赴，但长期来看效率比时长重要。</p>
+    <p class="hint">HR问这个问题的本质是考察：1）你的抗压能力 2）你对工作节奏的真实预期 3）你会不会入职后因为强度问题快速离职。答案要体现"能扛事"但不是"无条件接受"。</p>
+  </div>
+</div>
+
+<div class="card" data-c="emer" data-kw="薪资 低于预期 谈判 降价 降价 space 拒绝 讨价还价 HR 逐字稿">
+  <div class="card-head"><span class="tag emer">HR</span><div class="card-title">如果我们给的薪资低于你的预期？</div></div>
+  <div class="core">不直接拒绝也不直接接受，用"综合评估"争取空间，同时展示非薪资维度的关注</div>
+  <div class="card-body">
+    <p><strong>逐字稿</strong>："薪资当然是重要因素，但我选公司从来不只看这一个维度。我更关注的是——团队在做什么方向的事、我进来之后有多大空间发挥架构能力、技术上能不能持续成长。如果这些方面都很匹配，薪资我们可以再聊。当然也希望公司能给一个合理的、体现市场价值的package，这样双方都舒服，入职后我也更有动力。"</p>
+    <p><strong>谈判策略</strong>：三步。第一步，不先亮底牌——被问到期望时给范围不给固定数字。第二步，如果对方出价低于预期，不直接说"太低了"，而是说"这个数比我预期低一些，能聊聊空间吗？"。第三步，如果base谈不上去，争取其他维度——签字费、期权、年终奖系数、到岗时间灵活性。</p>
+    <p><strong>底线思维</strong>：面试前想清楚自己的最低接受线。低于这个线的offer直接拒绝，不犹豫——接受一个让自己不满意的offer，入职后大概率会因为心态问题影响表现。</p>
+    <p class="hint">薪资谈判的核心逻辑：HR的目标是促成Offer而不是压到最低。HR也知道过度压价会导致入职后不稳定。所以谈判不是对抗，是寻找双方都能接受的平衡点。</p>
+  </div>
+</div>
+
 <!-- ==================== 反问面试官 ==================== -->
 <div class="card" data-c="emer" data-kw="反问 问面试官 提问 最后 问题">
   <div class="card-head"><span class="tag emer">反问</span><div class="card-title">有什么想问我的？（每次面试必问）</div></div>
@@ -2480,7 +2546,7 @@ const subOrder={
   'React':1,'JS 核心':2,'CSS':3,'网络':4,'浏览器/性能':5,'TypeScript':6,'工程化':7,'框架扩展':8,
   'AI 前端':1,'AI 实践':2,'AI 理论':3,'AI 架构':4,'知识库':5,'追问':6,
   '速查':0,'手写 API':1,'数组/双指针':2,'链表':3,'树/BFS/DFS':4,'回溯':5,'排序/TopK':6,'DP/贪心':7,'栈':8,'二分':9,'综合':10,
-  '项目数据':1,'软技能':2,'反问':3,'话术急救':4
+  '项目数据':1,'软技能':2,'HR面':3,'反问':4,'话术急救':5
 };
 
 function setCat(c){
@@ -2534,6 +2600,7 @@ function getGroup(c){
   if(cat==='open')return '';
   if(cat==='emer'){
     if(tag==='速查')return '项目数据';
+    if(tag==='HR')return 'HR面';
     if(tag==='软技能')return '软技能';
     if(tag==='反问')return '反问';
     return '话术急救';
