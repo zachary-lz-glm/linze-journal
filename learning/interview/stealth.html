@@ -1900,6 +1900,60 @@ function buildTreeOptimized(list) {
   </div>
 </div>
 
+<div class="card" data-c="ai" data-kw="AI编程工具 Cursor Copilot Claude Code 对比 选型 IDE 插件 CLI 效率 agent coding">
+  <div class="card-head"><span class="tag ai">AI</span><div class="card-title">AI编程工具横向对比：Cursor vs Copilot vs Claude Code</div></div>
+  <div class="core">Cursor=AI编辑器(图形界面全栈)，Copilot=IDE插件(快速补全)，Claude Code=终端CLI(复杂任务最准)</div>
+  <div class="card-body">
+    <table>
+    <tr><th>维度</th><th>Cursor</th><th>GitHub Copilot</th><th>Claude Code</th></tr>
+    <tr><td><strong>形态</strong></td><td>独立AI编辑器(VS Code魔改)</td><td>IDE插件(兼容所有IDE)</td><td>终端CLI工具</td></tr>
+    <tr><td><strong>核心优势</strong></td><td>多模型切换、图形界面、深度整合</td><td>速度快、免费版可用、生态广</td><td>准确率最高、复杂多文件任务强</td></tr>
+    <tr><td><strong>适合场景</strong></td><td>全栈/前端日常开发</td><td>快速补全、日常编码</td><td>复杂代码库理解、CI/CD自动化</td></tr>
+    <tr><td><strong>Agent能力</strong></td><td>Composer多文件编辑</td><td>Agent模式(有限)</td><td>多文件修改、Bash执行、自主循环</td></tr>
+    <tr><td><strong>Skill/Plugin</strong></td><td>.cursorrules配置</td><td>插件生态</td><td>Skill机制+MCP Server</td></tr>
+    <tr><td><strong>劣势</strong></td><td>闭源付费、资源占用高</td><td>复杂任务成功率低</td><td>无图形界面、学习曲线陡</td></tr>
+    </table>
+    <p><strong>面试回答框架</strong>：①日常用Claude Code处理复杂任务(代码库理解+多文件重构) ②Cursor做前端日常开发(图形界面+实时预览) ③Copilot做快速补全。关键方法论：先让AI理解代码库再动手、单Chat专注单功能、AI生成后必须人工Review、核心路径做压测和边界测试。</p>
+    <p><strong>被问"AI会取代前端吗"</strong>：编码效率提升50-70%但价值点迁移——需求拆解>业务理解>架构感知>Prompt表达能力。未来工程师更像"AI协调者"，核心竞争力是系统设计能力和复杂业务建模。</p>
+  </div>
+</div>
+
+<div class="card" data-c="ai" data-kw="AI基础设施 GPU集群 训练调度 K8s 推理框架 资产管理 工单 MiniMax 基础架构 SRE">
+  <div class="card-head"><span class="tag ai">AI</span><div class="card-title">AI基础设施领域知识速查（前端面试前置知识）</div></div>
+  <div class="core">训练=用数据调参数(吃GPU)，推理=用模型做预测(要低延迟)，K8s管调度，前端做可视化</div>
+  <div class="card-body">
+    <p><strong>核心概念速查</strong>：</p>
+    <p><strong>训练 vs 推理</strong>：训练=用大量数据调整模型参数(GPU密集，跑几天到几周)；推理=用训练好的模型做预测(低延迟要求，毫秒级响应)。同一集群常混合运行两种任务。</p>
+    <p><strong>GPU集群管理</strong>：多GPU服务器统一管理监控。核心指标：使用率、显存占用、温度、功耗。常用卡型A100/H800/L40。前端做资源面板+实时监控。</p>
+    <p><strong>K8s GPU调度</strong>：K8s原生只能整卡分配GPU，无法按显存/算力精细调度。解决方案：Volcano(批调度)、HAMi(显存切分)、MIG(物理分区)。前端做调度策略配置+任务排队可视化。</p>
+    <p><strong>训练任务概念</strong>：Job→任务单元(含batch/epoch/checkpoint)；DAG→任务依赖关系(数据并行/张量并行/流水线并行)；Queue→多团队排队等待GPU资源。前端做任务列表+DAG拓扑图+队列看板。</p>
+    <p><strong>推理框架</strong>：vLLM(高吞吐推理)、Triton(NVIDIA推理服务)、SGLang(快速推理)。前端关注：模型服务状态、请求QPS、延迟P99、版本管理。</p>
+    <p><strong>前端在AI基建做什么</strong>：①GPU资源监控面板(实时指标+告警) ②训练任务管理(创建/排队/日志/状态) ③网络拓扑可视化(GPU节点间通信拓扑) ④工单系统(资源申请/审批/归还) ⑤在线代码编辑器(调试/实验配置)。</p>
+    <p class="hint">面试tips：不用深入底层，但要知道训练和推理的区别、K8s做调度的基本思路、GPU利用率为什么重要（一张卡几十万，利用率低=烧钱）。</p>
+  </div>
+</div>
+
+<div class="card" data-c="ai" data-kw="大模型 对比 排行 GPT Claude Gemini DeepSeek MiniMax GLM Kimi 2026 选型 编程">
+  <div class="card-head"><span class="tag ai">AI</span><div class="card-title">2026年热门AI大模型对比与选型</div></div>
+  <div class="core">写代码Claude最强，长文档Gemini，通用均衡GPT，性价比DeepSeek，速度MiniMax</div>
+  <div class="card-body">
+    <table>
+    <tr><th>模型</th><th>核心优势</th><th>关键指标</th><th>适合场景</th></tr>
+    <tr><td><strong>GPT-5.5</strong></td><td>最均衡、Agent全流程</td><td>Terminal-Bench 82.7%</td><td>通用均衡、Agent自动化</td></tr>
+    <tr><td><strong>Claude Opus 4.7</strong></td><td>编程最强、长上下文</td><td>SWE-bench Pro 64.3%</td><td>写代码、代码审查</td></tr>
+    <tr><td><strong>Gemini 3 Pro</strong></td><td>上下文最长200万字</td><td>ARC-AGI-2 45.1%</td><td>长文档处理、多模态</td></tr>
+    <tr><td><strong>DeepSeek V4</strong></td><td>性价比极高、中文强</td><td>开源生态最活跃</td><td>性价比、中文场景</td></tr>
+    <tr><td><strong>MiniMax M2.5</strong></td><td>响应极快、编程出色</td><td>编程评测80.2%</td><td>低延迟、实时交互</td></tr>
+    <tr><td><strong>GLM-5(智谱)</strong></td><td>开源编程最高</td><td>编程评测77.8%</td><td>开源定制、国产替代</td></tr>
+    <tr><td><strong>Kimi K2.5</strong></td><td>开源生态、代码能力强</td><td>代码超GPT</td><td>开源社区、长上下文</td></tr>
+    </table>
+    <p><strong>编程能力第一梯队</strong>：Claude Opus 4.6(81.42%) > MiniMax M2.5(80.2%) > GPT-5.3 Codex(~80%) > GLM-5(77.8%)。</p>
+    <p><strong>六维度选型</strong>：价格性价比→DeepSeek；上下文窗口→Gemini；推理能力→Gemini Deep Think/GPT-5.5；编程性能→Claude；中文质量→DeepSeek/Kimi；响应速度→MiniMax。</p>
+    <p><strong>面试加分点</strong>：MiniMax的产品线——海螺AI(国内C端)、Talkie(海外)、MiniMax-Text-01(文本模型)、海螺2.3视频模型(1080P视频生成)。知道这些说明你对面试公司做过功课。</p>
+    <p class="hint">数据截至2026年中，不同基准测试排名可能变化。面试时说"据我了解"比说死数字更安全。</p>
+  </div>
+</div>
+
 <!-- ==================== 项目数据速查 ==================== -->
 <div class="card" data-c="emer" data-kw="数据 口径 指标 简历 400 60% 追问 计算">
   <div class="card-head"><span class="tag emer">速查</span><div class="card-title">项目关键数据 + 口径（被问怎么算的）</div></div>
