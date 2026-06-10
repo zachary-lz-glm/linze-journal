@@ -1954,6 +1954,24 @@ function buildTreeOptimized(list) {
   </div>
 </div>
 
+<div class="card" data-c="ai" data-kw="AI搜索 搜索产品 问一问 Perplexity 流式渲染 引用溯源 结构化摘要 产品sense PE 搜索 前端 SSE 小红书 百度 豆包">
+  <div class="card-head"><span class="tag ai">AI</span><div class="card-title">AI搜索产品认知（PE岗必考）</div></div>
+  <div class="core">AI搜索的核心价值：搜完直接给答案，不用再从蓝色链接里找</div>
+  <div class="card-body">
+    <p><strong>产品矩阵</strong>：</p>
+    <table>
+    <tr><th>产品</th><th>核心优势</th><th>前端体验亮点</th><th>不足</th></tr>
+    <tr><td><strong>问一问（小红书）</strong></td><td>嵌入搜索心智，学习成本零</td><td>结果页直接出结构化摘要，格式化好、生成快</td><td>引用源不够丰富</td></tr>
+    <tr><td><strong>Perplexity</strong></td><td>信息密度最高，可信可验证</td><td>每条回答带引用源可逐条验证</td><td>中文场景弱</td></tr>
+    <tr><td><strong>百度AI搜索</strong></td><td>中文理解强、生态完整</td><td>跟搜索框深度整合</td><td>广告干扰、摘要质量不稳定</td></tr>
+    <tr><td><strong>豆包搜索</strong></td><td>字节生态、响应快</td><td>多模态结果（图文混排）</td><td>深度不足</td></tr>
+    </table>
+    <p><strong>前端架构三个关键点</strong>：①<strong>流式渲染（SSE）</strong>：AI回答逐token生成，前端用Server-Sent Events做流式展示。关键是增量渲染性能——不能用innerHTML全量替换，要用DOM diff增量追加，否则长回答会卡顿。②<strong>引用溯源</strong>：回答中每个论点标记来源链接，点击可跳转原文。技术上需要在流式生成的同时做实体标记（类似Annotation机制），后端配合返回结构化的引用块而非纯文本。③<strong>结构化摘要</strong>：不是一大段文字，而是分点分块渲染——标题、要点、对比表、引用列表。需要后端配合结构化输出。</p>
+    <p><strong>PE工程师视角</strong>：搜索不是纯前端岗——需要理解检索排序逻辑（才能设计合理的摘要UI和引用展示）、理解模型推理成本（才能做合理的流式策略和缓存设计）、理解用户搜索意图（才能设计好的交互形态，比如追问、相关推荐）。PE = 产品sense + 全栈技术，不是"写页面的"。</p>
+    <p class="hint">小红书AI搜索部门的PE岗，面试官期望你不仅会写代码，还要对搜索产品有自己的判断。回答时主动对比不同产品体验差异，展现产品感知力。用过问一问的一定要说出真实体验感受。</p>
+  </div>
+</div>
+
 <!-- ==================== 项目数据速查 ==================== -->
 <div class="card" data-c="emer" data-kw="数据 口径 指标 简历 400 60% 追问 计算">
   <div class="card-head"><span class="tag emer">速查</span><div class="card-title">项目关键数据 + 口径（被问怎么算的）</div></div>
@@ -2124,6 +2142,18 @@ function buildTreeOptimized(list) {
     <p><strong>②契约比对Agent（中期价值最大）</strong>：后端接口变更时，自动比对前后端契约差异，检测前端影响面。本质是Reference知识库的跨层契约文件 + 变更检测。后端改了一个字段枚举值，Agent自动通知所有消费方并标记需改动的组件。</p>
     <p><strong>③需求拆分Agent（长期方向，已有prd-tools基础）</strong>：PRD→结构化开发计划的自动化，我在滴滴已经做了完整落地。来这边可以复用知识库+证据链的方法论，知识库重新建。</p>
     <p class="hint">先说"我分三个优先级"，从最快落地的讲。考的不是技术多强，是业务判断力——知道什么先做什么后做。</p>
+  </div>
+</div>
+
+<div class="card" data-c="ai" data-kw="Agent 系统设计 架构 推理循环 工具路由 记忆管理 分层路由 动态激活 架构图 全栈 设计题">
+  <div class="card-head"><span class="tag ai">AI</span><div class="card-title">Agent系统怎么设计？（架构级系统设计）</div></div>
+  <div class="core">三层架构：推理循环是骨架、工具调用是手脚、记忆管理是大脑，缺一不可</div>
+  <div class="card-body">
+    <p><strong>①推理循环（Perception→Reasoning→Action）</strong>：Agent不是调用一次模型就结束，而是持续循环——感知上下文变化（用户输入/工具返回/环境状态）→推理决策（下一步做什么、用什么工具）→执行动作（调API/读文件/生成代码）→再感知结果变化。关键设计：每轮循环要有明确终止条件（目标达成/达到最大轮次/用户中断），否则会死循环。我的证据链机制本质就是循环内的质量门控——每轮执行后校验产出是否达标，不达标就再推理一轮修正。</p>
+    <p><strong>②工具路由（最关键的工程难题）</strong>：核心矛盾——工具越多能力越强，但识别准确率越低（51个工具时GPT-4o准确率仅2%）。解决方案是两层路由——第一层Router Agent做意图分类把请求分配到对应领域；第二层子Agent只从5-8个相关工具里选。具体实现三策略叠加：工具描述用{操作}_{实体}_{数据}命名规范，参数控制在5个以内展平嵌套；每次请求先做embedding匹配只注入相关工具定义减少上下文噪音；分层路由后子集选择准确率从33%提升到74%。</p>
+    <p><strong>③记忆三层架构</strong>：短期记忆=当前对话上下文（直接放prompt，受窗口限制，超了就用Progressive Summarization压缩旧消息）；长期记忆=跨会话知识沉淀（我的Reference知识库就是这种——6个SSOT文件存项目领域知识，需要时RAG检索注入上下文）；工作记忆=当前任务中间状态（用状态图谱追踪多步骤任务进度，记录"做到哪了、下一步是什么、哪些已完成"，避免Agent丢失任务上下文）。</p>
+    <p><strong>架构数据流</strong>：用户请求→Router分类意图→子Agent推理循环（读三层记忆+选工具+执行+更新状态+质量门控）→输出结果→写入长期记忆。</p>
+    <p class="hint">系统设计题的答法：先给整体框架（三层），再每层展开（怎么实现、什么数据结构、什么trade-off），最后落到你自己项目的映射（Reference=长期记忆、证据链=质量门控、prd-tools=工作流编排）。别只讲概念，要能画出数据流。</p>
   </div>
 </div>
 
@@ -2394,6 +2424,17 @@ function buildTreeOptimized(list) {
   </div>
 </div>
 
+<div class="card" data-c="emer" data-kw="冲突 push 推动 阻力 不配合 意见分歧 技术方案 争议 协作 团队推动 push不动 拒绝 反对">
+  <div class="card-head"><span class="tag emer">软技能</span><div class="card-title">方案push不动/遇到阻力怎么办？</div></div>
+  <div class="core">试点数据 > 口头说服，让别人看到收益而不是听你讲道理</div>
+  <div class="card-body">
+    <p><strong>真实案例1：Schema重构的阻力</strong>。推Schema架构时，后端觉得"现在if-else能用为什么要改"，前端老人觉得学习成本高。我没有一开始就推全员切换，而是先拿一个新活动类型做试点——用Schema配置方式交付只花了半天，同样的需求用老方式要3天。拿着这个数据去跟后端负责人聊，他看到的是"以后新活动不用再改BFF代码了"，阻力自然消了。<strong>核心经验：技术方案的推广不能靠PPT，要靠活生生的对比数据</strong>。</p>
+    <p><strong>真实案例2：prd-tools信任问题</strong>。AI工作流推到团队时，同事不信任AI产出质量——"AI写的Plan能靠谱吗？"。我的策略是前5个需求我自己陪着跑，每个Plan都人工Review一遍，产出跟人工对比让同事看差异。跑了5次后大家发现AI出的Plan格式比人还稳定、内容覆盖率也不低，之后就开始独立用了。<strong>核心经验：新技术的信任建立靠"陪着跑"，不是"甩个工具给你"</strong>。</p>
+    <p><strong>通用策略三步</strong>：第一步找痛点最大的合作方做试点（他们动力最强）；第二步用前后对比数据说话（不是讲技术多好，是讲省了多少时间）；第三步让试点方自发传播（"隔壁团队用了省了多少"比"我做的工具多好"有说服力十倍）。如果实在推不动，先做自己的——prd-tools最初就是我自己用了三个月有了成果数据，推广就水到渠成了。</p>
+    <p class="hint">考的是影响力——不是"你怎么说服别人"，是"你怎么让别人主动想来用"。高级工程师的推动力不是职级给的，是信任和结果累积出来的。</p>
+  </div>
+</div>
+
 <div class="card" data-c="emer" data-kw="职业 规划 发展 方向 目标">
   <div class="card-head"><span class="tag emer">软技能</span><div class="card-title">你的职业规划是什么？</div></div>
   <div class="core">前端架构 → AI 工程融合 → 技术领导者</div>
@@ -2444,6 +2485,7 @@ function buildTreeOptimized(list) {
   <div class="card-body">
     <p><strong>三句话公式</strong>：[我的方向] + [你们做的事] + [交集在哪]。</p>
     <p><strong>示例（奇迹）</strong>："我个人方向是想深入AI应用层，你们做的是AI+体育视频理解，这两个正好重叠。而且我本身是体育爱好者，篮球校队队长，对体育内容有真实感知，不是纯技术视角。我觉得这种结合点很难得。"</p>
+    <p><strong>示例（小红书AI搜索PE）</strong>："我做的事情和你们要的几乎完全匹配——我在滴滴做了Schema驱动的营销中台，核心是设计渲染引擎和数据适配层，这是PE岗的全栈能力底子。更重要的是我从0到1搭了AI工程工作流（prd-tools），你们团队80-90%代码AI生成的工作方式我非常认同，我自己就是用Claude Code + Skill体系做日常开发的。而且问一问在AI搜索里体验做得最好——搜索结果直接出结构化摘要不用跳转，说明团队有很强的产品sense，这正是我想学的。"</p>
     <p><strong>反例</strong>："觉得AI有前景，想来试试。"——太空，没有连接任何具体的东西。</p>
     <p class="hint">面试前必须想好这句话。如果面试中没法自然说出"为什么选你们"，说明对公司了解不够。</p>
   </div>
@@ -2560,6 +2602,11 @@ function buildTreeOptimized(list) {
     <p>· 咱们在做PRD→代码全链路，目前最大卡点是PRD结构化、设计稿标准化，还是代码生成质量管控？</p>
     <p>· 前端Agent想覆盖的协同场景，更偏内部提效（自动化回归、契约比对），还是偏用户侧（智能表单、对话式配置）？</p>
     <p>· 新人加入后是先跟一个已有方向，还是可以直接开拓新方向？</p>
+    <p><strong>小红书AI搜索PE（二面/技术负责人）</strong>：</p>
+    <p>· PE岗要求产品sense+全栈，进来后前半年最重要的1-2件事是什么？偏搜索产品体验还是偏AI工程基建？</p>
+    <p>· 问一问目前AI摘要的流式渲染和引用溯源，前端架构上最大的挑战是什么？</p>
+    <p>· 团队80-90%代码AI生成的工作方式，新人上手最大的适应难点是什么？Skill/Tool体系是怎么设计的？</p>
+    <p>· 搜索场景下Agent的落地机会在哪里？比如用户追问、多轮对话理解、个性化摘要？</p>
     <p class="hint">选 2-3 个问，别全问。优先问和工作内容直接相关的——展现你对岗位的认真思考，不是来凑数的。</p>
   </div>
 </div>
