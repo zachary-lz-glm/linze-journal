@@ -384,6 +384,22 @@ body{overscroll-behavior-y:contain}
   </div>
 </div>
 
+<div class="card" data-c="bagu" data-kw="HTTPS TLS 握手 加密 证书 对称 非对称 session key HTTP区别">
+  <div class="card-head"><span class="tag bagu">#36</span><div class="card-title">HTTPS / TLS 握手 5 步</div></div>
+  <div class="core">HTTP是TCP三次握手后直接传明文，HTTPS在TCP之上多一次TLS握手协商加密</div>
+  <div class="card-body">
+    <p><strong>HTTP</strong>：TCP三次握手（SYN → SYN+ACK → ACK）→ 直接开始传HTTP报文（明文）。</p>
+    <p><strong>HTTPS</strong>：TCP三次握手 → <strong>TLS握手5步</strong> → 加密通道传输：</p>
+    <p>· <strong>1. ClientHello</strong>：客户端发送支持的TLS版本、加密套件列表、客户端随机数。</p>
+    <p>· <strong>2. ServerHello</strong>：服务端选定TLS版本、加密套件、返回服务端随机数。</p>
+    <p>· <strong>3. Certificate</strong>：服务端发送SSL证书（含公钥），客户端用CA公钥验证证书合法性。</p>
+    <p>· <strong>4. Key Exchange</strong>：客户端生成pre-master secret用服务端公钥加密发送（或ECDHE协商）→ 双方用三个随机数算出session key。</p>
+    <p>· <strong>5. Finished</strong>：双方用session key加密发送握手摘要，互相验证握手完整性。</p>
+    <p>之后所有HTTP报文用session key对称加密传输。<strong>TLS 1.3优化</strong>：合并步骤，1-RTT完成握手（甚至0-RTT恢复会话）。</p>
+    <p class="hint">千问一面被问到这块只答了"多一层密钥过程"——漏掉了ClientHello/ServerHello/Certificate/Key Exchange/Finished的具体步骤。</p>
+  </div>
+</div>
+
 <!-- ==================== 基础补充 ==================== -->
 <div class="card" data-c="bagu" data-kw="CSS BFC Flex Grid 布局 块级格式化">
   <div class="card-head"><span class="tag bagu">#9</span><div class="card-title">CSS 布局：BFC + Flexbox + Grid</div></div>
@@ -413,6 +429,18 @@ body{overscroll-behavior-y:contain}
     <p><strong>渲染层</strong>：SSR/SSG 首屏直出 HTML（不用等 JS）、骨架屏降低感知时间、Critical CSS 内联。</p>
     <p><strong>网络层</strong>：CDN 静态资源就近分发、HTTP/2 多路复用减少连接、资源预加载（preload/prefetch）、Service Worker 缓存。</p>
     <p>量化口诀：LCP < 2.5s 是 Good，FCP < 1.8s 是 Good。</p>
+  </div>
+</div>
+
+<div class="card" data-c="bagu" data-kw="SSR 服务端渲染 Hydration 水合 注水 virtual DOM mismatch React Next.js 同构">
+  <div class="card-head"><span class="tag bagu">#24</span><div class="card-title">SSR + Hydration 详解（千问一面卡壳题）</div></div>
+  <div class="core">SSR是服务端拼HTML直出首屏，Hydration是客户端React对比virtual DOM后复用节点并绑定事件</div>
+  <div class="card-body">
+    <p><strong>SSR流程6步</strong>：客户端发起请求 → Node服务器匹配路由 → 执行数据预取函数（如getServerSideProps）→ 调后端API拿数据 → React把组件树renderToString成HTML字符串 → 数据注入HTML（window.__INITIAL_STATE__）→ 返回浏览器直接绘制（首屏快）。</p>
+    <p><strong>Hydration水合6步</strong>：浏览器下载HTML立即显示（用户已能看到内容）→ JS bundle下载执行 → React在内存基于同样的组件构建virtual DOM → <strong>对比</strong>virtual DOM和SSR的DOM节点（匹配则复用，不匹配报Mismatch warning）→ 给现有DOM节点<strong>绑定事件监听</strong>（这是为什么按钮在hydration前点了没反应）→ 组件state和effect激活，页面变成可交互。</p>
+    <p><strong>关键坑——Hydration Mismatch</strong>：用了Date.now()、Math.random()、window.innerWidth等会导致服务端和客户端渲染结果不一致，React会丢弃SSR HTML重渲染，性能收益归零。解决：用useEffect里设置这些值，或typeof window !== 'undefined'判断。</p>
+    <p><strong>React 18增强</strong>：Selective Hydration（优先hydrate用户正在交互的部分）+ Concurrent Features，避免大页面hydration阻塞整个交互。</p>
+    <p class="hint">千问一面被追问到这块时只答到"DOM树构建+事件绑定"——核心漏掉了"对比virtual DOM匹配则复用"这个机制和Mismatch坑。</p>
   </div>
 </div>
 
@@ -528,9 +556,12 @@ body{overscroll-behavior-y:contain}
 }</div>
 </div>
 
-<div class="card" data-c="code" data-kw="手写 深拷贝 防抖 节流 instanceof EventEmitter">
+<div class="card" data-c="code" data-kw="手写 深拷贝 防抖 节流 instanceof EventEmitter 回城 技能CD">
   <div class="card-head"><span class="tag code">#1-3</span><div class="card-title">深拷贝 + 防抖节流 + instanceof</div></div>
-  <div class="core">深拷贝（循环引用）+ 防抖 + 节流</div>
+  <div class="core">深拷贝（循环引用）+ 防抖（回城被打断重读条）+ 节流（技能CD固定频率）</div>
+  <div class="card-body">
+    <p><strong>正确比喻（千问一面翻车点）</strong>：<strong>防抖=英雄联盟回城</strong>——你每次按都重新读条，只有最后那次能完成（被打断就重来）；<strong>节流=技能冷却</strong>——技能用完后固定CD内不能再放，但CD到了就一定能放。<strong>核心区别</strong>：防抖只执行最后一次（quiet period后），节流执行第一次然后每隔delay执行一次。<strong>典型场景</strong>：防抖=搜索框输入/window resize；节流=scroll/mousemove/按钮防连点。</p>
+  </div>
   <div class="code-blk">// 深拷贝（处理循环引用）
 function deepClone(obj, map = new WeakMap()) {
   if (obj === null || typeof obj !== 'object') return obj;
@@ -541,13 +572,13 @@ function deepClone(obj, map = new WeakMap()) {
   return clone;
 }
 
-// 防抖
+// 防抖：每次清除前一个timer，重新计时
 function debounce(fn, delay) {
   let timer;
   return function(...args) { clearTimeout(timer); timer = setTimeout(() => fn.apply(this, args), delay); };
 }
 
-// 节流
+// 节流：用flag锁，CD内不再放
 function throttle(fn, interval) {
   let lastTime = 0;
   return function(...args) {
@@ -1674,6 +1705,7 @@ function buildTreeOptimized(list) {
     <p><strong>第三层用户侧AI交互</strong>：对话式UI、智能表单、个性化推荐等需要前端和AI结合的新交互形态。前端工程师的价值从"实现页面"变成"设计人机协作的系统"。</p>
     <p><strong>不可替代的部分</strong>：业务知识库、历史踩坑经验、跨团队协作上下文——这些AI从外部获取不了，必须靠人持续沉淀。模型能力越强工作流越轻，但业务知识越重。</p>
     <p><strong>前端Agent方向（腾讯+Booster三源佐证）</strong>：腾讯团队产品都在用AI写代码，工程师角色从"写代码"转为"把控质量"。Booster认为前端需要自己的Agent去做能力补充。面试官也提出"前端自有Agent给协同团队和用户提供能力"。结论：前端工程师的未来不是写更多页面，而是构建前端Agent——让AI在前端领域也能自主执行复杂任务。</p>
+    <p><strong>C端AI渗透实际路径（涂虎面试官校正）</strong>：面试时别说太远的愿景（AI直接操作APP），面试官会追问"现在怎么做"。务实的回答分三个层面：第一，设计还原——Design Token+组件Schema+视觉回归测试三层约束，现有Locofy/Builder.io等工具准确率不错但复杂页面需人工微调；第二，H5优先落地——国内APP生态封闭，AI无法自动化操作APP，但H5和小程序可以做对话式导购、个性化推荐；第三，辅助开发者提效——代码生成、自动化测试、视觉走查这些已经成熟。面试官判断：UI界面短期不会消失，百分百AI生产是目标但还在路上。</p>
   </div>
 </div>
 
@@ -1685,7 +1717,7 @@ function buildTreeOptimized(list) {
     <p><strong>阿里淘天（B端基建）</strong>：最完整的工业级AI研发体系。自研Coding Agent云端运行，起点是PRD，产物直接对齐CI/CD流水线自动部署。知识图谱承接业务文档。核心壁垒是自验证+自修复闭环——Harness自动验证、云真机环境、PRD驱动测试用例自动生成执行、运行环境感知+修复Agent Loop。知识库本质是约束层和导航层，核心难题是保鲜而非构建。</p>
     <p><strong>拼多多（机器人）</strong>：三层AI架构——工程层（模型调优+监控告警）、RAG能力层（记忆压缩+推荐+工具调用）、调度层（网关+策略+配置）。核心挑战是效果vs成本权衡，必须自研对话压缩。</p>
     <p><strong>Booster（机器人IDE）</strong>：工作流会随模型进化而贬值，真正需要沉淀的是AI从外部获取不了的业务知识和踩坑经验。</p>
-    <p><strong>阿里淘天（B端基建，最完整）</strong>：PRD→Coding Agent生成代码→知识图谱提供上下文→Harness自动验证→Agent Loop自修复→CI/CD自动部署。核心壁垒不是代码生成，是自验证+自修复闭环。Booster也确认：工作流会随模型增强变轻，真正该沉淀的是AI从外部获取不了的业务知识。</p>
+    <p><strong>涂虎养车（海外电商，2026面试官亲述）</strong>：AI工程化最激进的团队之一。端到端已跑通——从AI写PRD到代码生成、自动化测试、发布前阶段全链路。今年目标60%以上需求由产品经理直接用AI完成（vibe coding模式）。团队AI使用率约90%。不再分前后端，按业务线划分，前后端都你负责。核心链路仍需review，但随着AI精准度提升逐步脱手。老板目标百分百AI生产，所有人往业务转。技术痛点不在技术上，是怎么用技术完成GMV/订单指标——研发要学业务的skill，用技术驱动业务。</p>
     <p><strong>面试用法</strong>：被问"你怎么看AI工程化"时，先说行业光谱（探索期→成熟期分层），再聚焦目标公司的阶段和做法。</p>
   </div>
 </div>
@@ -1698,6 +1730,7 @@ function buildTreeOptimized(list) {
     <p><strong>关键认知</strong>：AI编程的质量保障不是"AI写完人检查"这么简单，而是按改动风险分层——低风险全自动化，中风险人审AI做，高风险双重保障。端到端测试的差异化报告是核心工具，能自动检测AI引入的回归。</p>
     <p><strong>面试用法</strong>：被问"AI写的代码怎么保证质量"时，用三层分层回答，比笼统说"人review"更有说服力。</p>
     <p><strong>拼多多佐证（双层CR）</strong>：拼多多也确认了类似机制——AI初筛+人工复审的双层Code Review。多源交叉验证：腾讯三层分层（规范类全AI、小改动人CR、核心改动双重保障）和拼多多双层CR（AI初筛+骨干复审）本质一致，说明这是行业共识而非个例。</p>
+    <p><strong>千问/阿里佐证（模型互评+AI工具review+人为介入）</strong>：千问业务运营团队一面面试官亲述三层CR——<strong>①模型互相review</strong>（A模型写完代码后用另一个B模型来review，避免单模型盲区）、<strong>②AI工具自动review</strong>（合并分支时AI检查代码规范+明显逻辑bug）、<strong>③人为介入</strong>（仅针对影响用户规模大或故障严重的场景）。核心特征：低风险变更容忍度高（鼓励快速迭代），只对核心场景人为兜底。三源交叉验证：腾讯按"风险分层"、拼多多按"角色双层"、千问按"模型互评+风险兜底"——三种思路殊途同归，均指向"AI负责规模化初筛+人负责关键决策"。</p>
   </div>
 </div>
 
@@ -2005,6 +2038,18 @@ function buildTreeOptimized(list) {
     <p><strong>PE工程师视角</strong>：搜索不是纯前端岗——需要理解检索排序逻辑（才能设计合理的摘要UI和引用展示）、理解模型推理成本（才能做合理的流式策略和缓存设计）、理解用户搜索意图（才能设计好的交互形态，比如追问、相关推荐）。PE = 产品sense + 全栈技术，不是"写页面的"。</p>
     <p><strong>搜索进化方向（小红书面试官洞察）</strong>：搜索正在从"提供答案"进化到"提供服务"——搜索结果里藏着可执行的服务，不只是信息。更远期，搜索本身被泛化：从"用户输入指令→拿结果"变成"AI无时无刻理解用户需求，主动推送服务"。抖音和谷歌把"猜你喜欢"做到了极致，下一步是AI在用户无感知的情况下主动提供服务。</p>
     <p class="hint">小红书AI搜索部门的PE岗，面试官期望你不仅会写代码，还要对搜索产品有自己的判断。回答时主动对比不同产品体验差异，展现产品感知力。用过问一问的一定要说出真实体验感受。</p>
+  </div>
+</div>
+
+<div class="card" data-c="ai" data-kw="设计稿 AI还原 Figma to Code Design Token 组件Schema 视觉回归 截图对比 C端">
+  <div class="card-head"><span class="tag ai">AI</span><div class="card-title">设计稿AI还原：三层约束方案</div></div>
+  <div class="core">Design Token管基础样式，组件Schema管组合，截图对比管最终验证</div>
+  <div class="card-body">
+    <p><strong>第一层 Design Token</strong>：整理基础样式token（颜色、主次色、圆角、间距、字体）成文档，让AI严格遵守，生成代码时不使用未定义的值。配合Lint规则在提交前自动拦截不符合设计系统的色值和间距。</p>
+    <p><strong>第二层 组件Schema</strong>：把业务组件（卡片、弹窗、表单组）的结构描述成JSON Schema，AI生成时优先组合现有组件而不是从零写div。对于复杂布局引入Layout Token（栅格系统、常见布局模式），让AI从预定义模板中选择。</p>
+    <p><strong>第三层 视觉回归测试</strong>：用Chromatic或Playwright截图断言对比AI生成的页面和设计稿，自动检测像素级偏差。这是Token和Schema之外的最终兜底。</p>
+    <p><strong>现有工具（涂虎面试官追问时参考）</strong>：Locofy.ai（Figma转React准确率最高）、Builder.io Visual Copilot（像素级还原好）、Figma原生AI React生成器。但复杂活动页面布局多变，AI读取有幻觉，这三层约束是必须的补充。</p>
+    <p class="hint">涂虎面试官直接追问"复杂页面怎么还原"，Design Token只够回答第一层，必须补上组件Schema和视觉回归才算完整。</p>
   </div>
 </div>
 
@@ -2643,7 +2688,12 @@ function buildTreeOptimized(list) {
     <p>· 问一问目前AI摘要的流式渲染和引用溯源，前端架构上最大的挑战是什么？</p>
     <p>· 团队80-90%代码AI生成的工作方式，新人上手最大的适应难点是什么？Skill/Tool体系是怎么设计的？</p>
     <p>· 搜索场景下Agent的落地机会在哪里？比如用户追问、多轮对话理解、个性化摘要？</p>
-    <p class="hint">选 2-3 个问，别全问。优先问和工作内容直接相关的——展现你对岗位的认真思考，不是来凑数的。</p>
+    <p><strong>千问业务运营对（阿里）一面</strong>：</p>
+    <p>· 这个岗位具体的team是哪个？JD提到业务运营对，前端在其中的角色定位是什么？</p>
+    <p>· 近半年团队最核心的一个前端项目是什么？这个岗位进来后预期会重点参与哪个？</p>
+    <p>· 千问在做活动运营中台，会不会遇到类似Schema驱动配置化、动态表单这类需求？目前是怎么解决的？</p>
+    <p>· 团队对AI代码生成的接受度怎么样？Code Review流程里AI辅助的边界在哪里？</p>
+    <p class="hint"><strong>选 2-3 个问，别全问</strong>。优先问和岗位工作内容直接相关的——展现你对岗位的认真思考。<strong>⚠️ 千问一面翻车教训：避免问宏大问题</strong>（"千问的核心痛点""后续规划方向""业务线重点"），面试官明确反馈"这种问题跟你关系不大，就算我回答很好跟你个人也没关系"。一定要问<strong>个人强相关</strong>的（岗位做什么、团队用什么技术、进来后做什么），不要问<strong>业务战略级</strong>的。面试前必须做完岗位调研。</p>
   </div>
 </div>
 
