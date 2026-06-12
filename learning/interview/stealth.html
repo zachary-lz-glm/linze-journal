@@ -1363,7 +1363,37 @@ function buildTreeOptimized(list) {
     <p><strong>L4 记忆状态</strong>：对话历史、长期记忆（摘要压缩、向量存储）。</p>
     <p><strong>L5 评估观测</strong>：输出质量检查（质量门控、日志 trace）。</p>
     <p><strong>L6 约束恢复</strong>：安全边界、失败恢复、人工兜底。</p>
-    <p class="hint">项目桥接：prd-tools 整个架构就是 Harness——reference=L1, MCP+Skill=L2, 11步工作流=L3, Evidence Index=L4, quality-gate=L5, 置信度+questions.md=L6。</p>
+    <p><strong>小红书面试官补充：KSG自进化</strong>：传统agent三段式（接收→规划→执行）是无状态的，每个窗口独立。Harness的核心突破是KSG（Knowledge-Skill-Growth）——把短期记忆抽象提取成长期记忆、知识库、技能手册，这是agent自我迭代的引擎。三类核心引擎：合并引擎（整合多agent输出）、通信引擎（agent间状态传递）、反思引擎（从失败中提炼规则）。落地时就是几个Python模块——日志聚合、状态传递、规则提炼。</p>
+    <p><strong>Ratchet机制（错误即规则）</strong>：Harness工程最重要的习惯——每次agent犯错都提炼成永久约束，不是一笑而过。agent提交了注释掉的测试？AGENTS.md加一条"永远不要注释测试"。执行了破坏性命令？加hook拦截。核心原则：每一行规则都应该能追溯到一次具体的失败。（来源：Addy Osmani）</p>
+    <p class="hint">项目桥接：prd-tools 整个架构就是 Harness——reference=L1, MCP+Skill=L2, 11步工作流=L3, Evidence Index=L4, quality-gate=L5, 置信度+questions.md=L6。但缺少KSG自进化闭环，这是后续方向。</p>
+  </div>
+</div>
+
+<div class="card" data-c="ai" data-kw="自进化 闭环 ratchet 反思引擎 技能提炼 错误即规则 KSG 日志 回归 golden sample 持续改进">
+  <div class="card-head"><span class="tag ai">AI</span><div class="card-title">AI Agent自进化闭环怎么设计？</div></div>
+  <div class="core">核心是ratchet机制——每次agent犯错都提炼成新约束，让同样的错误永不发生第二次</div>
+  <div class="card-body">
+    <p><strong>为什么需要自进化</strong>：传统agent每个上下文窗口独立，不会从失败中学习。Harness工程的核心突破是让agent能自我迭代——短期记忆抽象成长期记忆，长期记忆提炼成技能手册，技能手册变成可复用的规则。</p>
+    <p><strong>四步落地闭环</strong>：</p>
+    <p>· ① <strong>日志收集层</strong>：每次工作流运行记录决策日志、工具调用链、产出质量评分。这是进化的原材料。</p>
+    <p>· ② <strong>反思引擎</strong>：定期分析日志，识别高频失败模式（比如总是漏掉某个能力面、总在某个步骤跳步），自动生成候选规则到待审核队列。</p>
+    <p>· ③ <strong>人工审批层</strong>：工程师审核候选规则，确认后写入技能库。不是所有规则都值得保留，人决定哪些是信号哪些是噪声。</p>
+    <p>· ④ <strong>回归验证层</strong>：用golden sample重跑，对比优化前后评分。评分提升才正式上线，下降就回滚分析原因。</p>
+    <p><strong>技能库怎么迭代</strong>：执行任务→发现可复用模式→抽取为skill.md→加入技能库。技能图谱让agent理解自己有哪些能力，原子技能可组合成复杂技能。每次更新后用基准case回归，确认不劣化。版本管理追踪每个技能的演进历史。</p>
+    <p class="hint">小红书面试官追问"这些机制怎么run起来"——他要的不是散的概念堆砌，而是能串成链路的具体方案。四步闭环就是答案骨架。参考：Martin Fowler + Addy Osmani Harness Engineering文章。</p>
+  </div>
+</div>
+
+<div class="card" data-c="ai" data-kw="知识库 防污染 越用越准 golden sample 回归测试 anti-pollution 准确率 回流 验证 证据链">
+  <div class="card-head"><span class="tag ai">AI</span><div class="card-title">知识库怎么保证越用越准、不被污染？</div></div>
+  <div class="core">三层防线：人工check回流、golden sample回归、优化前后评分对比——任何更新必须证明不劣化才能上线</div>
+  <div class="card-body">
+    <p><strong>问题本质</strong>：知识库随着使用不断积累新知识，但新知识可能出错或与存量冲突。核心挑战是"越用越准"而不是"越用越乱"——这在RAG系统里叫anti-pollution，在持续学习里叫避免灾难性遗忘。</p>
+    <p><strong>第一层：人工check回流</strong>：蒸馏完的中间产物文件标注了新增场景和经验，必须人工审核后才回流到reference知识库。比如新增了哪些PRD场景、哪些业务字段映射——人确认了才写入。</p>
+    <p><strong>第二层：Golden Sample回归</strong>：编一批基准案例（典型需求的PRD+预期输出），每次知识库更新后用这些case重跑，对比优化前后的评分。相当于回归测试——代码改了要跑测试，知识库改了也要跑测试。</p>
+    <p><strong>第三层：多维评分对比</strong>：评分维度包括证据链覆盖率、代码搜索锚点准确性、plan与实际开发的文件覆盖率。如果更新后评分下降，说明可能引入了污染，立即回滚并分析原因。</p>
+    <p><strong>面试一句话</strong>："知识库更新和代码发布一样——要有审批、有测试、有回滚机制。golden sample就是知识库的单元测试，每次更新必须证明不劣化才能上线。"</p>
+    <p class="hint">小红书面试官追问"怎么保证越用越准且不被污染"——他要的是具体机制而不是"我们会检查"。三层防线是结构化答案。参考：双记忆架构解决灾难性遗忘（Medium）、The New Stack防遗忘技术。</p>
   </div>
 </div>
 
@@ -1735,7 +1765,12 @@ function buildTreeOptimized(list) {
     <p>· ④ <strong>运行时执行</strong>：客户端代码拿到tool_call，执行真正的函数调用（API请求、数据库查询等），拿到真实结果。</p>
     <p>· ⑤ <strong>结果注入</strong>：工具执行结果作为新消息注入上下文，模型看到结果后继续推理——输出最终回答或继续调工具。循环到不再调工具为止。</p>
     <p><strong>关键认知</strong>：模型本身不执行任何代码，它只是"决定调什么+传什么参数"。真正执行的是你的运行时代码。这个分离是安全性的基础——你可以加白名单、限流、审计，因为执行权在你手里。</p>
-    <p><strong>面试一句话</strong>："Function Calling本质是模型输出结构化的调用意图，运行时负责执行。模型只决策不动手，执行权始终在开发者手里——这既是安全机制，也是你可以加管控的切入点。"</p>
+    <p><strong>MCP vs Function Calling深度对比</strong>：</p>
+    <p>· <strong>运行位置</strong>：Function Calling在服务端（LLM provider侧），MCP在客户端（本地/外部MCP server）。</p>
+    <p>· <strong>协议层</strong>：FC是模型内置能力，输出结构化调用意图。MCP是开放协议，定义了工具发现、调用、结果返回的标准格式——解决的是工具的标准化连接问题。</p>
+    <p>· <strong>跨模型复用</strong>：FC绑定具体厂商（OpenAI），一次开发的工具只能在该模型用。MCP不绑定模型，一次开发的MCP server可以被任何支持MCP的agent使用。</p>
+    <p>· <strong>选型</strong>：只用一家模型且工具少→FC够用；要跨模型复用工具或团队共建工具生态→MCP更合适。实际中两者经常配合——MCP负责工具的标准化暴露，FC负责模型的工具选择决策。</p>
+    <p><strong>面试一句话</strong>："Function Calling是模型决定调什么，MCP是标准化的工具怎么连——一个管决策，一个管连接。FC绑定厂商，MCP跨模型复用。两者经常配合使用。"</p>
   </div>
 </div>
 
@@ -1968,6 +2003,7 @@ function buildTreeOptimized(list) {
     </table>
     <p><strong>前端架构三个关键点</strong>：①<strong>流式渲染（SSE）</strong>：AI回答逐token生成，前端用Server-Sent Events做流式展示。关键是增量渲染性能——不能用innerHTML全量替换，要用DOM diff增量追加，否则长回答会卡顿。②<strong>引用溯源</strong>：回答中每个论点标记来源链接，点击可跳转原文。技术上需要在流式生成的同时做实体标记（类似Annotation机制），后端配合返回结构化的引用块而非纯文本。③<strong>结构化摘要</strong>：不是一大段文字，而是分点分块渲染——标题、要点、对比表、引用列表。需要后端配合结构化输出。</p>
     <p><strong>PE工程师视角</strong>：搜索不是纯前端岗——需要理解检索排序逻辑（才能设计合理的摘要UI和引用展示）、理解模型推理成本（才能做合理的流式策略和缓存设计）、理解用户搜索意图（才能设计好的交互形态，比如追问、相关推荐）。PE = 产品sense + 全栈技术，不是"写页面的"。</p>
+    <p><strong>搜索进化方向（小红书面试官洞察）</strong>：搜索正在从"提供答案"进化到"提供服务"——搜索结果里藏着可执行的服务，不只是信息。更远期，搜索本身被泛化：从"用户输入指令→拿结果"变成"AI无时无刻理解用户需求，主动推送服务"。抖音和谷歌把"猜你喜欢"做到了极致，下一步是AI在用户无感知的情况下主动提供服务。</p>
     <p class="hint">小红书AI搜索部门的PE岗，面试官期望你不仅会写代码，还要对搜索产品有自己的判断。回答时主动对比不同产品体验差异，展现产品感知力。用过问一问的一定要说出真实体验感受。</p>
   </div>
 </div>
