@@ -42,11 +42,18 @@
     - [手写代码（15题）](learning/interview/题库/手写代码.md)
     - [项目题（20题）](learning/interview/题库/项目题.md)
     - [AI题（12题）](learning/interview/题库/AI题.md)
+    - [AI题v2·前沿8题](learning/interview/题库/AI题-v2.md)
+    - [算法突击30题+BFF底层](learning/interview/题库/算法突击-30题+BFF底层.md)
     - [急救包](learning/interview/题库/急救包.md)
   - 公司定向
+    - [蚂蚁财富AI Lab](learning/interview/定向/蚂蚁财富AI-Lab.md)
     - [拼多多](learning/interview/定向/拼多多.md)
+  - 训练
+    - [四段式表达模板](learning/interview/训练/四段式表达模板.md)
+    - [反问策略库](learning/interview/训练/反问策略库.md)
   - 面试复盘
     - [面试记录模板](learning/interview/复盘/面试记录.md)
+  - [简历v3](learning/interview/简历/v3.md)
   - [简历](learning/interview/简历.md)
 
 - **工具**

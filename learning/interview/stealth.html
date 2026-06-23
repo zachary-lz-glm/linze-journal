@@ -2855,6 +2855,447 @@ function buildTreeOptimized(list) {
   </div>
 </div>
 
+<!-- ==================== 补充卡片 v2 · AI 前沿（7 张） ==================== -->
+
+<div class="card" data-c="ai" data-kw="SDD Spec-Driven Development proposal design specs tasks apply verify archive">
+  <div class="card-head"><span class="tag ai">AI</span><div class="card-title">SDD 完整流程（Spec-Driven Development）</div></div>
+  <div class="core">编码前先创建 AI 能直接理解的 Spec，7 步：proposal → design → specs → tasks → apply → verify → archive</div>
+  <div class="card-body">
+    <p><strong>和 Vibe Coding / Harness Engineering 的演进</strong>：Prompt Engineering → Context Engineering → Harness Engineering。Vibe（速度探索）→ SDD（结构化规范）→ Harness（工业级可控）。</p>
+    <p><strong>7 步流程</strong>：① proposal 提案（业务价值）② design 架构 ③ specs 规范 SSOT（接口/字段/约束）④ tasks 原子任务拆分 ⑤ apply AI 执行 ⑥ verify 测试 + 回归 + Review ⑦ archive 沉淀回流。</p>
+    <p><strong>项目桥接</strong>：prd-tools 是 SDD 工程化落地。proposal=PRD摄入，design=能力面适配器，specs=Reference 6 文件 SSOT，tasks=Spec/Plan 11 步，apply=下游 Cursor/Claude Code，verify=quality-gate.py 5 项检查，archive=反馈回流。</p>
+    <p><strong>追问点</strong>：EARS 需求规格化、Spec Kit 工具链（GitHub/OpenAI）、企业内 SDD 落地难点（团队接受度 + Spec 维护）。</p>
+    <p class="hint">蚂蚁财富 AI Lab 必考。讲完主动加一句"金融场景会在 verify 加资损风险评估"。</p>
+  </div>
+</div>
+
+<div class="card" data-c="ai" data-kw="Harness Engineering 合并引擎 通信引擎 反思引擎 KSG Agent">
+  <div class="card-head"><span class="tag ai">AI</span><div class="card-title">Harness 三种引擎（合并/通信/反思）</div></div>
+  <div class="core">Agent = Model + Harness，三种核心引擎让 Agent 自进化</div>
+  <div class="card-body">
+    <p><strong>合并引擎（Merge）</strong>：多 Agent 输出整合，基于优先级 + 置信度，冲突时人工介入。</p>
+    <p><strong>通信引擎（Communication）</strong>：Agent 间状态传递，通过中间文件（YAML/JSON），类似 OS 的 IPC，避免上下文重复加载。</p>
+    <p><strong>反思引擎（Reflection）</strong>：从失败提炼规则。四步：① 日志收集（决策 + 工具调用 + 评分）② 反思分析高频失败模式 → 生成候选规则 ③ 人工审批写入 AGENTS.md ④ golden sample 回归验证。</p>
+    <p><strong>KSG 链路</strong>：短期记忆 → 长期记忆 → 知识库 → 技能手册（逐步抽象）。</p>
+    <p><strong>项目桥接</strong>：prd-tools 是 Harness 雏形。L1 信息边界=SSOT，L2 工具=MCP，L3 编排=11 步，L4 记忆=Evidence Index，L5 评估=quality-gate.py，L6 约束=questions.md。最大缺口在 L4 反思引擎——目前人工回流，没有自动化。</p>
+    <p><strong>业界</strong>：OpenAI AGENTS.md（~100 行精炼）、Anthropic 三 Agent（Planner/Generator/Evaluator）、Stripe Minions（1300+ PR/周）、Ghostty AGENTS.md（每一行都是过去的失败）。</p>
+    <p class="hint">小红书二面失分点。核心是"错误即规则"的 ratchet 机制。</p>
+  </div>
+</div>
+
+<div class="card" data-c="ai" data-kw="流式 Markdown 增量解析 代码块未闭合 marked-streaming Web Worker 虚拟列表">
+  <div class="card-head"><span class="tag ai">AI</span><div class="card-title">流式 Markdown 增量解析（代码块未闭合怎么办）</div></div>
+  <div class="core">逐 token 到达，代码块/表格未闭合时暂存 buffer，闭合后再渲染</div>
+  <div class="card-body">
+    <p><strong>核心挑战</strong>：LLM 流式是逐 token 到达，但代码块/表格/列表跨多个 token 才完整，直接渲染会乱。</p>
+    <p><strong>三个挑战</strong>：① 代码块未闭合（```javascript 未闭合就渲染会变普通文本）② 表格分隔行（|---|）必须先出现 ③ 列表嵌套需要看后续行。</p>
+    <p><strong>性能瓶颈</strong>：每 token 全量 re-render → 万级 token 卡死。</p>
+    <p><strong>主流方案</strong>：① marked-streaming / markdown-it incremental（专用流式解析器，状态机）② 分块渲染（按换行切分）③ 缓冲 + 批量解析（50ms 一批）。</p>
+    <p><strong>性能优化四件套</strong>：① rAF 节流（合并多次渲染）② Web Worker（解析放主线程外）③ 虚拟列表（万级 token 不全量渲染）④ useDeferredValue（React 18+ 不阻塞输入）。</p>
+    <p><strong>Chrome 官方最佳实践</strong>：流式 Markdown 解析器 + 异步 syntax highlighter（Shiki/highlight.js）+ 图片懒加载 + content-visibility:auto。</p>
+    <p class="hint">蚂蚁 JD 明确点名"流式输出"，必考。代码块未闭合是追问杀手锏。</p>
+  </div>
+</div>
+
+<div class="card" data-c="ai" data-kw="Agent Loop ReAct LangGraph 状态机 框架对比">
+  <div class="card-head"><span class="tag ai">AI</span><div class="card-title">Agent Loop vs ReAct vs LangGraph</div></div>
+  <div class="core">三种 Agent 架构：ReAct（推理+行动）、Agent Loop（固定循环）、LangGraph（图状态机）</div>
+  <div class="card-body">
+    <p><strong>ReAct（Reasoning + Acting）</strong>：Thought → Action → Observation 循环。简单灵活，但可能陷入循环 + 上下文膨胀。</p>
+    <p><strong>Agent Loop（OpenAI 风格）</strong>：while not done: model.generate → if tool_call: execute → append result。可控可调试，不够灵活。</p>
+    <p><strong>LangGraph（图状态机）</strong>：节点=处理步骤，边=条件路由，状态=持久化。支持循环 + 分支 + Human-in-the-loop + 状态恢复。复杂工作流首选。</p>
+    <p><strong>关键纠正（腾讯一面）</strong>：LangGraph 不是全量灌入 skill！先把 skill description 拼到一起传一遍做意图匹配，AI 判断需要哪些才按需懒加载（progressive disclosure）。</p>
+    <p><strong>选型</strong>：简单问答→Function Calling；多步骤灵活推理→ReAct；固定流程可控→Agent Loop；复杂工作流+状态持久化→LangGraph；跨模型工具复用→MCP+任一。</p>
+    <p><strong>主流框架</strong>：LangGraph（最灵活）、OpenAI Agents SDK（轻量）、Claude Agent SDK（集成 MCP）、AutoGPT（早期 ReAct）。</p>
+    <p class="hint">追问：ReAct 和 CoT 区别？CoT 只推理不行动，ReAct 推理+行动。</p>
+  </div>
+</div>
+
+<div class="card" data-c="ai" data-kw="KV Cache Transformer PagedAttention GQA 量化 vLLM 内存带宽">
+  <div class="card-head"><span class="tag ai">AI</span><div class="card-title">KV Cache 原理 + 优化方案</div></div>
+  <div class="core">缓存历史 K/V 向量避免重复计算，空间换时间，长上下文内存爆炸</div>
+  <div class="card-body">
+    <p><strong>原理</strong>：Transformer 自回归生成，每步算 Attention 需要历史所有 token 的 K/V。不缓存 O(N²)，缓存后 O(N)。</p>
+    <p><strong>三个工程挑战</strong>：① 内存随序列长度线性增长，长上下文可能超过模型权重本身 ② Decode 阶段每步只生成 1 token，但要从 HBM 读全部 KV Cache，内存带宽成瓶颈 ③ Lost in the Middle，上下文 >40% 进入 Dumb Zone。</p>
+    <p><strong>优化方案</strong>：① PagedAttention（vLLM，类 OS 虚拟内存分页，减少 80% 内存浪费）② GQA/MQA（多个 Query 共享 K/V）③ Quantization（FP16→INT8/INT4，内存减半）④ Context Cache（阿里云，缓存公共前缀 KV）⑤ LMCACHE（批量传输 + 流水线）。</p>
+    <p><strong>前端相关</strong>：为什么上下文越长越贵（Decode 每步读全部 KV）、为什么需要上下文压缩、为什么 prompt caching 能省钱（相同前缀 KV 复用）。</p>
+    <p><strong>追问点</strong>：KV Cache 内存怎么估算？GQA vs MQA？Speculative Decoding（小模型猜，大模型验）。</p>
+    <p class="hint">大模型岗高频。前端岗能讲到"为什么上下文越长越贵"就够了。</p>
+  </div>
+</div>
+
+<div class="card" data-c="ai" data-kw="Token Smart Zone Dumb Zone Prompt Caching 上下文预算 Lost in the Middle">
+  <div class="card-head"><span class="tag ai">AI</span><div class="card-title">Token Smart Zone + Prompt Caching</div></div>
+  <div class="core">上下文 0-40% Smart Zone 质量最高，>40% Dumb Zone 明显下降；相同前缀 KV 可复用降本 90%</div>
+  <div class="card-body">
+    <p><strong>Smart Zone vs Dumb Zone</strong>：0-40% 上下文模型推理质量最高，>40% 逐渐下降，>80% 明显幻觉遗忘（Anthropic Lost in the Middle 研究）。</p>
+    <p><strong>预算分配经验</strong>：系统提示词 5-10%、工具定义 10-20%、检索文档 20-30%、对话历史 20-30%、用户输入 5-10%、输出预留 20-30%。</p>
+    <p><strong>上下文压缩七方案</strong>：① 滑动窗口（保留最近 N 轮）② 关键信息提取（持久化重要实体）③ 自动摘要（递归压缩旧消息）④ Progressive Summarization（递归压缩成摘要块放 prompt 开头）⑤ MemGPT/Letta 分页（超阈值 flush 到外部存储，类似 OS 虚拟内存）⑥ Observation Masking（JetBrains，占位符替换保留结构）⑦ LLMLingua/TKBF（小模型判断 token 重要性）。</p>
+    <p><strong>Prompt Caching</strong>：Anthropic 相同前缀 5 分钟内重复请求便宜 90%，OpenAI 自动启用。应用：系统提示词 + 工具定义 + 知识库前缀固定，每次只变用户输入。</p>
+    <p><strong>项目桥接</strong>：prd-tools 是 Context Engineering 落地——精选 6 个 SSOT，build-index.py 倒排索引，context-pack.py 按 must/should/optional 分层注入。</p>
+    <p class="hint">小红书/星河觉醒失分点。主动说"上下文越长越贵"显得懂底层。</p>
+  </div>
+</div>
+
+<div class="card" data-c="ai" data-kw="对话压缩 LLMLingua MemGPT 分页 MemWalker 递归摘要 上下文压缩">
+  <div class="card-head"><span class="tag ai">AI</span><div class="card-title">对话压缩技术（AI 应用核心基建）</div></div>
+  <div class="core">每轮全量上下文扔模型积分秒超，必须自建压缩层</div>
+  <div class="card-body">
+    <p><strong>为什么必做</strong>：星河觉醒面试官原话"每一轮都把上下文扔给模型，不用积分就肯定会超"。大模型应用没有压缩层 = 不可持续。</p>
+    <p><strong>开源方案</strong>：① LLMLingua（微软，小模型判断 token 重要性，可压 20x）② TKBF（类似思路）③ MemWalker（树状压缩 + 检索）④ MemGPT/Letta（OS 虚拟内存分页思想）。</p>
+    <p><strong>自建方案（星河觉醒实践）</strong>：自己实现对话压缩层，把多轮历史压缩成精简表示。核心：① 短期记忆（当前对话）② 中期记忆（session 摘要）③ 长期记忆（向量库）。</p>
+    <p><strong>渐进式摘要算法</strong>：把最老的消息递归压缩成摘要块放 prompt 开头，上下文保持固定大小但会丢失细节。结合关键信息提取（重要实体/决策持久化）效果好。</p>
+    <p><strong>项目桥接</strong>：prd-tools 的 Reference 6 文件本质就是"项目知识压缩层"——不是全量源码，是精简的领域知识。</p>
+    <p class="hint">星河觉醒二面失分点。能讲清 LLMLingua + MemGPT 两套方案就显得专业。</p>
+  </div>
+</div>
+
+<!-- ==================== 补充卡片 v2 · 表达方法论（3 张） ==================== -->
+
+<div class="card" data-c="emer" data-kw="四段式 表达 角色 做事 难点 效果 STAR 千问 失分">
+  <div class="card-head"><span class="tag emer">表达</span><div class="card-title">四段式表达公式（千问血泪）</div></div>
+  <div class="core">角色-做事-难点-效果，每段不超 30 秒，结论先行</div>
+  <div class="card-body">
+    <p><strong>公式</strong>：</p>
+    <p>· <strong>[角色]</strong>（10s）：我在这个项目里是 X 角色，主导/独立负责 Y 模块。</p>
+    <p>· <strong>[做事]</strong>（30s）：具体做了三件事：①...②...③...（动词开头，每件一句话）。</p>
+    <p>· <strong>[难点]</strong>（30s）：最大技术挑战是 X，我通过 A 方案解决（讲权衡不吹方案）。</p>
+    <p>· <strong>[效果]</strong>（20s）：业务结果（A→B）+ 技术沉淀（B 复用 C）。</p>
+    <p><strong>四条铁律</strong>：① 结论先行，每段第一句就是核心句 ② 三件事上限（人脑记不住第四件）③ 数字必须有口径（"60%"后面跟"5 个需求对照"）④ 难点讲权衡（不是吹方案多牛）。</p>
+    <p><strong>千问一面教训</strong>：面试官原话"聊了这么久，我其实接不到你做了什么"。本质是思维结构问题，不是说话风格。面试官宁可你慢一点停顿整理思路，也不要滔滔不绝讲细节。</p>
+    <p><strong>三版本准备</strong>：30 秒版（自我介绍用）/ 90 秒版（项目主答首选）/ 3 分钟版（追问深挖）。</p>
+    <p><strong>口头禅替换</strong>：然后→第一/第二/第三；对→删除；就是→具体来说；我想想→停顿 2 秒不说话；相当于→本质上是。</p>
+    <p class="hint">阿里系面试官特别吃这一套。每场面试前用四段式重写所有项目复述。</p>
+  </div>
+</div>
+
+<div class="card" data-c="emer" data-kw="反问 策略 强相关 技术深度 禁忌 千问 蚂蚁">
+  <div class="card-head"><span class="tag emer">反问</span><div class="card-title">反问策略分级（千问血泪 + 蚂蚁专属）</div></div>
+  <div class="core">强相关 > 技术深度 > 团队真实，每场选 2-3 个，绝不问宏大战略</div>
+  <div class="card-body">
+    <p><strong>反问本质</strong>：面试官在考察三件事——① 你有没有做岗位调研 ② 你的技术判断力 ③ 你的求职诚意。</p>
+    <p><strong>Level 1 强相关（必问 1-2 个）</strong>：</p>
+    <p>· "这个岗位具体在哪个 team？JD 提到的 X 业务，前端/工程师在其中的角色是偏 AI 工程还是偏前端实现？"</p>
+    <p>· "近半年团队最核心的 1-2 个项目是什么？这个岗位进来后预期会重点参与哪个方向？"</p>
+    <p>· "团队目前 [AI 工程化 / Agent 工作流] 的现状如何？我能发挥的空间在哪？"</p>
+    <p><strong>Level 2 技术深度（展示专业，1-2 个）</strong>：</p>
+    <p>· "你们做 [X 业务]，会不会遇到 [Y - 你擅长的，如 Schema 配置化 / Agent 工作流] 这类问题？目前怎么解决？"</p>
+    <p>· "团队对 AI 编程工具（Claude Code / Cursor）的使用是怎么规范的？有没有内部 AI 辅助研发工作流？"</p>
+    <p>· "团队怎么看 SDD / Harness Engineering / Agentic Workflow 这些前沿范式？有没有内部实践？"</p>
+    <p><strong>蚂蚁财富 AI Lab 专属</strong>：① "Agent 决策的资损防控和合规审核怎么做的？人工兜底还是纯 AI？" ② "团队对 Claude Code 的使用规范？有没有内部 Agent 平台？"</p>
+    <p><strong>❌ 千万别问</strong>：公司战略 / 行业趋势 / "我有什么需要改进的" / 加班福利（HR 面再问）/ 网上能查到的。</p>
+    <p><strong>千问一面血泪</strong>：问"千问核心痛点""近半年最重要的事"被面试官当面怼"你问的跟你关系不大，了解过我们是什么岗位吗"。</p>
+    <p class="hint">反问前必看 JD 圈关键词。强相关 + 技术深度各选 1-2 个，绝不问宏大问题。</p>
+  </div>
+</div>
+
+<div class="card" data-c="emer" data-kw="离职原因 跳槽 四段式 成长空间 主动选择 不逃避">
+  <div class="card-head"><span class="tag emer">行为</span><div class="card-title">离职原因四段式（每场必问）</div></div>
+  <div class="core">不是逃避，是主动选择；4 年 0-1 验证完成，找更大场景</div>
+  <div class="card-body">
+    <p><strong>四段式标准答案</strong>：</p>
+    <p>· <strong>[角色]</strong>：我在滴滴国际化 4 年，从 0 到 1 建了 Schema 中台和 prd-tools AI 工作流。</p>
+    <p>· <strong>[做事]</strong>：完成了架构设计 → 落地 → 稳定运营的全周期，连续 2 年 A 绩效，团队推广到 20+ 人。</p>
+    <p>· <strong>[难点]</strong>：现在业务进入稳定迭代期，新技术探索空间有限。AI 工程化方法论在滴滴内部已验证，但能验证的场景有限。</p>
+    <p>· <strong>[效果]</strong>：所以想在一个更大的场景（如蚂蚁财富 + 金融场景）验证通用性。不是对团队不满，是主动追求更大验证场景。</p>
+    <p><strong>三个关键信号</strong>：① 强调"主动选择"不是"逃避" ② 强调"验证完成"不是"做不下去" ③ 强调"更大场景"对目标公司有针对性。</p>
+    <p><strong>千万别说的</strong>：薪资低（HR 面再谈）、加班多、领导傻、同事烂、业务没意思——任何负面都不要说。</p>
+    <p><strong>蚂蚁定制版</strong>：加一句"蚂蚁财富 AI Lab 是 Agent 工作流 + 金融场景 + AI Native App 三个方向的完美交叉，这正是我想深入的"。</p>
+    <p class="hint">花小猪三面、千问一面、星河觉醒一面都被问过。准备一个标准答案 + 公司定制版。</p>
+  </div>
+</div>
+
+<!-- ==================== 补充卡片 v2 · 蚂蚁专属（2 张） ==================== -->
+
+<div class="card" data-c="emer" data-kw="金融场景 资损防控 合规审核 Spec Review Gate 灰度 回滚">
+  <div class="card-head"><span class="tag emer">蚂蚁</span><div class="card-title">金融场景资损防控（蚂蚁差异化加分项）</div></div>
+  <div class="core">AI 决策必须有兜底，Spec Review Gate 加资损风险评估层</div>
+  <div class="card-body">
+    <p><strong>核心认知</strong>：蚂蚁是金融公司，稳定性要求业内最严。AI 决策涉及钱的必须有兜底，不能纯 AI 自主。</p>
+    <p><strong>三层防控</strong>：</p>
+    <p>· <strong>事前</strong>：Spec Review Gate 加资损风险评估层，关键决策点（涉及交易/资金/权益发放）强制人工审核，AI 不能自主执行。</p>
+    <p>· <strong>事中</strong>：灰度发布（小流量 → 全量）+ 实时监控（资损告警阈值）+ 熔断降级（异常自动停止）。</p>
+    <p>· <strong>事后</strong>：版本快回 + 全链路 TraceID 串联 + 复盘机制（资损事件必须复盘）。</p>
+    <p><strong>prd-tools 适配</strong>：讲完工作流主动加一句——"如果是金融场景，我会在 Spec Review Gate 加一层资损风险评估，关键决策点强制人工审核"。这一句话能让你和 90% 候选人拉开差距。</p>
+    <p><strong>合规审计</strong>：金融场景所有 AI 决策必须可审计——每条结论带 Evidence ID + 操作日志 + 用户授权链路。</p>
+    <p><strong>关键词密度</strong>：讲方案时主动加——灰度发布、回滚机制、降级容灾、全链路追踪、资损防控、数据可衡量。蚂蚁面试官听到这些词会眼前一亮。</p>
+    <p class="hint">蚂蚁稳定性文化是业内最严。所有方案主动往资损防控/灰度/全链路追踪上靠。</p>
+  </div>
+</div>
+
+<div class="card" data-c="emer" data-kw="landing 30 60 90 天 入职 快速上手 团队 信任">
+  <div class="card-head"><span class="tag emer">行为</span><div class="card-title">landing 30/60/90 天计划（三面/主管面必问）</div></div>
+  <div class="core">30 听学 → 60 贡献验证 → 90 建立影响力</div>
+  <div class="card-body">
+    <p><strong>核心认知</strong>：landing 本质不是"学业务"，是"建立信任"。信任靠一件件小事做出来。</p>
+    <p><strong>30 天 - 听和学</strong>：</p>
+    <p>· 吃透业务架构（用户、核心能力、日常支持方式）</p>
+    <p>· 过核心源码（技术栈选型背景 + 编码习惯）</p>
+    <p>· 上下游合作方都聊一遍（开发阶段对接场景）</p>
+    <p>· <strong>最重要</strong>：找到团队当前最大的一个痛点，作为后续切入点</p>
+    <p><strong>60 天 - 贡献和验证</strong>：</p>
+    <p>· 用之前经验快速解决一个实际问题（Schema 配置化/Agent 工作流经验可直接迁移）</p>
+    <p>· 目标不是做大项目，是做小的但可见的改进</p>
+    <p>· 让团队看到"这个人来了是有价值的"</p>
+    <p><strong>90 天 - 建立影响力</strong>：</p>
+    <p>· 参与技术规划讨论，提有数据支撑的改进建议</p>
+    <p>· 逐步承担更多职责</p>
+    <p>· 建立团队沟通节奏（定期技术分享 + Code Review 习惯）</p>
+    <p>· 开始带新同学，传递沉淀的方法论</p>
+    <p><strong>蚂蚁定制</strong>：30 天补一句"金融业务的特殊性（合规、资损、稳定性）会重点吃透"，90 天加"主导一个 AI 体验功能落地（如 Agent 工作流在财富场景的应用）"。</p>
+    <p class="hint">三面/主管面高频。准备一个通用版 + 公司定制版。</p>
+  </div>
+</div>
+
+<!-- ==================== 补充卡片 v2 · 前端前沿（4 张） ==================== -->
+
+<div class="card" data-c="bagu" data-kw="React 19 use Hook Actions useOptimistic useActionState RSC">
+  <div class="card-head"><span class="tag bagu">基础</span><div class="card-title">React 19 新特性（use Hook + Actions + RSC）</div></div>
+  <div class="core">use Hook 打破顶层调用限制，Actions 统一异步操作，RSC 正式版</div>
+  <div class="card-body">
+    <p><strong>use Hook（革命性）</strong>：在组件内<strong>条件性</strong>读取 Promise/Context，打破 Hooks 必须顶层调用的限制。可以在 if 里调用！</p>
+    <p><strong>Actions（表单处理新范式）</strong>：统一处理异步操作。核心 API：useActionState（替代 useState + 异步 reducer）、useFormStatus、useOptimistic（乐观更新）。</p>
+    <p><strong>RSC（React Server Components）正式版</strong>：组件在服务端渲染，<strong>运行时无 JS</strong>，减少 bundle size。</p>
+    <p>· <strong>和 SSR 本质区别</strong>：SSR 是页面级 + 需要 hydration（客户端重新执行 JS）；RSC 是组件级 + <strong>不需要 hydration</strong>。</p>
+    <p>· <strong>限制</strong>：不能有交互（onClick），需要交互的部分用 Client Component（'use client'）。</p>
+    <p><strong>其他新特性</strong>：① Document Metadata（原生支持 title/meta）② Asset Loading（preload/preinit）③ Ref as Prop（不用 forwardRef 了）④ React Compiler（自动 memoization，不用手写 useMemo/useCallback）。</p>
+    <p><strong>安全注意</strong>：RSC 曾爆 CVSS 10 分 RCE 漏洞（服务端渲染时执行恶意 key），Next.js 等框架受影响。</p>
+    <p class="hint">2026 必考。能讲到 RSC vs SSR 区别 + 安全风险显得专业。</p>
+  </div>
+</div>
+
+<div class="card" data-c="bagu" data-kw="RSC Server Components SSR hydration Next.js 'use client'">
+  <div class="card-head"><span class="tag bagu">基础</span><div class="card-title">RSC vs SSR 深度对比</div></div>
+  <div class="core">RSC 组件级无 hydration，SSR 页面级需 hydration</div>
+  <div class="card-body">
+    <p><strong>本质区别</strong>：</p>
+    <p>· <strong>SSR</strong>：服务端把整个页面 renderToString 成 HTML，浏览器下载后<strong>必须 hydration</strong>（React 在内存重建 vDOM，对比 SSR 的 DOM，匹配则复用，不匹配报 Hydration Mismatch）。</p>
+    <p>· <strong>RSC</strong>：服务端渲染后<strong>不需要 hydration</strong>，因为 RSC 输出的是"组件已渲染的描述"，客户端直接消费，不重新执行 JS。</p>
+    <p><strong>性能对比</strong>：</p>
+    <p>· <strong>首屏</strong>：RSC 更快（无 hydration JS 执行）</p>
+    <p>· <strong>TTFB</strong>：RSC 稍慢（服务端要算）</p>
+    <p>· <strong>Bundle</strong>：RSC 减少 40%+ client bundle（静态部分不打进 client）</p>
+    <p><strong>适用场景</strong>：静态内容 + 动态数据混合页面（如博客、电商详情页）。完全交互的 SPA 不适合。</p>
+    <p><strong>Next.js 15 App Router</strong>：默认 RSC，'use client' 切换 Client Component。</p>
+    <p><strong>Hydration Mismatch 常见原因</strong>：用了 Date.now()、Math.random()、window.innerWidth。解决：useEffect 里设置或 typeof window !== 'undefined' 判断。</p>
+    <p class="hint">阿里系高频。能讲清"RSC 不需要 hydration"是关键加分点。</p>
+  </div>
+</div>
+
+<div class="card" data-c="bagu" data-kw="Web Vitals LCP FCP INP CLS TTFB 性能指标 Core Web Vitals">
+  <div class="card-head"><span class="tag bagu">基础</span><div class="card-title">前端性能指标（LCP/FCP/INP/CLS + Web Vitals）</div></div>
+  <div class="core">Core Web Vitals 三大指标：LCP（加载）+ INP（交互）+ CLS（视觉稳定）</div>
+  <div class="card-body">
+    <p><strong>Core Web Vitals 三大核心</strong>：</p>
+    <p>· <strong>LCP（Largest Contentful Paint）</strong>：最大内容渲染时间。指标 <2.5s 良好，>4s 差。优化：CDN + HTTP/3 + critical CSS 内联 + 图片优先级。</p>
+    <p>· <strong>INP（Interaction to Next Paint）</strong>：交互到下次绘制延迟（2024 替代 FID）。指标 <200ms 良好，>500ms 差。优化：长任务拆分 + Web Worker + startTransition。</p>
+    <p>· <strong>CLS（Cumulative Layout Shift）</strong>：累计布局偏移。指标 <0.1 良好，>0.25 差。优化：aspect-ratio + 预留空间 + 字体 font-display:swap。</p>
+    <p><strong>辅助指标</strong>：</p>
+    <p>· <strong>FCP（First Contentful Paint）</strong>：首次内容绘制。<1.8s 良好。</p>
+    <p>· <strong>TTFB（Time to First Byte）</strong>：首字节时间。<800ms 良好。</p>
+    <p>· <strong>TBT（Total Blocking Time）</strong>：总阻塞时间。<200ms 良好。</p>
+    <p><strong>测量工具</strong>：① web-vitals 库（生产环境上报）② Lighthouse（实验室数据）③ Chrome DevTools Performance ④ PageSpeed Insights ⑤ CrUX（真实用户数据）。</p>
+    <p><strong>项目桥接</strong>：千问一面被问"1 秒内实现营销页渲染"，按网络-资源-渲染-感知四层拆解，每层定指标。LCP <2.5s、INP <200ms、CLS <0.1 是底线。</p>
+    <p class="hint">性能优化深挖必考。讲优化方案前先说指标显得专业。</p>
+  </div>
+</div>
+
+<div class="card" data-c="bagu" data-kw="CLS 布局偏移 aspect-ratio content-visibility font-display 图片 懒加载">
+  <div class="card-head"><span class="tag bagu">基础</span><div class="card-title">CLS 布局偏移治理（涂虎/起点问过）</div></div>
+  <div class="core">让浏览器渲染前就知道元素尺寸，三层方案</div>
+  <div class="card-body">
+    <p><strong>CLS 是什么</strong>：Cumulative Layout Shift，累计布局偏移。Core Web Vitals 三大指标之一。<0.1 良好。</p>
+    <p><strong>常见原因</strong>：① 图片/视频未指定尺寸 ② 字体加载导致 FOIT/FOUT ③ 动态注入内容（广告/banner）④ 异步加载组件。</p>
+    <p><strong>三层防御方案</strong>：</p>
+    <p>· <strong>预留空间</strong>：给每个动态组件配置默认高度，渲染前用骨架屏占位。图片用 <code>aspect-ratio: 16/9</code> 配合 width，浏览器加载前就能算出高度。</p>
+    <p>· <strong>异步资源占位</strong>：字体用 <code>font-display: swap</code> 避免 FOIT 导致的跳动。Web 字体加载前用 system font 占位。</p>
+    <p>· <strong>加载顺序控制</strong>：用 <code>content-visibility: auto</code> 让屏幕外组件延迟渲染。按拓扑排序加载有依赖关系的组件。图片用 <code>loading="lazy"</code> 配合显式 width/height。</p>
+    <p><strong>transform vs top/left</strong>：动画用 transform 不会触发布局偏移，用 top/left 会触发回流。优先 transform。</p>
+    <p><strong>测量</strong>：web-vitals 库 + PerformanceObserver + Layout Shift Attribution API。</p>
+    <p class="hint">涂虎养车一面问过。C 端场景必备。</p>
+  </div>
+</div>
+
+<!-- ==================== 补充卡片 v2 · Node/BFF 底层（6 张） ==================== -->
+
+<div class="card" data-c="bagu" data-kw="Node 事件循环 6阶段 timers poll check nextTick setImmediate 微任务 宏任务">
+  <div class="card-head"><span class="tag bagu">基础</span><div class="card-title">Node 事件循环 6 阶段（BFF 必考）</div></div>
+  <div class="core">timers → pending → idle → poll → check → close，微任务穿插</div>
+  <div class="card-body">
+    <p><strong>6 个阶段</strong>：timers（setTimeout/setInterval）→ pending callbacks（系统级）→ idle/prepare（内部）→ <strong>poll（I/O 事件，fs/net）</strong> → check（setImmediate）→ close callbacks。</p>
+    <p><strong>微任务 vs 宏任务</strong>：</p>
+    <p>· <strong>微任务</strong>（每个阶段之间执行）：Promise.then、process.nextTick、queueMicrotask。</p>
+    <p>· <strong>宏任务</strong>（阶段内的任务）：setTimeout、setInterval、setImmediate、I/O。</p>
+    <p><strong>执行顺序</strong>：同步代码 → 微任务清空 → 宏任务一个阶段 → 微任务清空 → 下个阶段 → ...</p>
+    <p><strong>nextTick vs setImmediate</strong>：</p>
+    <p>· <strong>nextTick</strong>：优先级最高，在所有微任务之前。同一次事件循环内立即执行。</p>
+    <p>· <strong>setImmediate</strong>：在 check 阶段执行，下一次事件循环。</p>
+    <p><strong>经典题</strong>：</p>
+    <p>· <code>setImmediate(() => console.log('immediate')); process.nextTick(() => console.log('nextTick'));</code> → 输出 nextTick 先，immediate 后。</p>
+    <p>· <strong>I/O 回调中</strong>：setImmediate 先于 setTimeout(0)（在 check 阶段先执行）。</p>
+    <p><strong>和浏览器事件循环区别</strong>：浏览器只有宏任务 + 微任务队列；Node 分 6 阶段 + process.nextTick。</p>
+    <p class="hint">快手二面失分点。能画出 6 阶段图 + 微任务穿插就过关。</p>
+  </div>
+</div>
+
+<div class="card" data-c="bagu" data-kw="Node 内存泄漏 --inspect Chrome DevTools 堆快照 clinic.js retained size">
+  <div class="card-head"><span class="tag bagu">基础</span><div class="card-title">Node 内存泄漏排查（快手二面失分点）</div></div>
+  <div class="core">--inspect 启动 → Chrome DevTools 堆快照对比 → 找只增不减的对象</div>
+  <div class="card-body">
+    <p><strong>排查步骤</strong>：</p>
+    <p>① 启动时开启 inspect：<code>node --inspect server.js</code></p>
+    <p>② Chrome 打开 chrome://inspect，连接到 Node 进程</p>
+    <p>③ Memory 面板拍快照：Heap snapshot / Allocation timeline / Allocation sampling</p>
+    <p>④ 对比两个快照，找"只增不减"的对象（retained size 大的）</p>
+    <p><strong>实时监控</strong>：<code>process.memoryUsage()</code> 返回 rss（常驻）、heapTotal（堆总量）、heapUsed（堆已用）、external（C++ 对象）。超过阈值告警。</p>
+    <p><strong>常见泄漏原因</strong>：</p>
+    <p>· 全局变量未释放（缓存无限增长）</p>
+    <p>· 闭包持有大对象（闭包引用未释放）</p>
+    <p>· 事件监听器未移除（EventEmitter.on 但没 off）</p>
+    <p>· 定时器未清理（setInterval 没 clearInterval）</p>
+    <p>· 数据库连接未关闭（连接池泄漏）</p>
+    <p><strong>工具</strong>：clinic.js（CPU/内存/事件循环延迟综合分析）、heapdump（生成堆快照文件）、v8-profiler-next（CPU profile）。</p>
+    <p><strong>快手二面原题</strong>："Node 层内存泄漏怎么排查"——你答"不太理解"。正确思路：从 --inspect + Chrome DevTools 切入，再说具体泄漏场景。</p>
+    <p class="hint">所有讲 BFF 的场合都用得上。能讲清 clinic.js + 堆快照对比显得专业。</p>
+  </div>
+</div>
+
+<div class="card" data-c="bagu" data-kw="BFF 错误降级 熔断 Circuit Breaker 舱壁 Bulkhead 超时 Timeout 重试 Retry">
+  <div class="card-head"><span class="tag bagu">基础</span><div class="card-title">BFF 错误降级四件套（熔断/舱壁/超时/重试）</div></div>
+  <div class="core">金融/高可用场景必备，四件套组合拳</div>
+  <div class="card-body">
+    <p><strong>熔断（Circuit Breaker）</strong>：三态 CLOSED → OPEN → HALF_OPEN。失败次数超阈值直接拒绝请求（OPEN），定时尝试（HALF_OPEN），成功则恢复（CLOSED）。防止级联故障。</p>
+    <p><strong>舱壁隔离（Bulkhead）</strong>：不同下游服务用<strong>独立线程池/连接池</strong>，防止某个下游拖垮整体。类似船的舱壁设计。</p>
+    <p><strong>超时（Timeout）</strong>：快速失败。多级超时——连接超时 < 读取超时 < 总超时。超过直接返回兜底数据。</p>
+    <p><strong>重试（Retry）</strong>：指数退避（1s → 2s → 4s）+ 最大重试次数（通常 3 次）。<strong>非幂等接口不能重试</strong>。</p>
+    <p><strong>组合拳</strong>：超时先触发 → 重试 3 次 → 还失败则熔断 → 期间舱壁保护其他服务。兜底返回缓存数据或降级 UI。</p>
+    <p><strong>业界实践</strong>：Hystrix（Java，Netflix）、resilience4j（现代 Java）、opossum（Node.js）。</p>
+    <p><strong>项目桥接</strong>：Schema 营销中台 BFF 16 个联动接口，单一接口故障不能影响整个表单。当前用 Service Worker 缓存做兜底（同入参读缓存），下一步加 Circuit Breaker。</p>
+    <p class="hint">蚂蚁金融场景高频。讲 BFF 必带这四件套。</p>
+  </div>
+</div>
+
+<div class="card" data-c="bagu" data-kw="TraceID 全链路追踪 OpenTelemetry LogInsight 串联 前后端">
+  <div class="card-head"><span class="tag bagu">基础</span><div class="card-title">全链路追踪 TraceID（蚂蚁稳定性核心）</div></div>
+  <div class="core">一个 TraceID 串联前端 → BFF → 后端 → 数据库</div>
+  <div class="card-body">
+    <p><strong>注入 TraceID</strong>：</p>
+    <p>· 前端：每次请求生成 uuid，放 header <code>x-trace-id</code></p>
+    <p>· BFF：中间件读取 header（没有则生成），向下传到所有下游请求</p>
+    <p>· 后端：同样读取 + 向下传</p>
+    <p>· 所有日志带上 TraceID</p>
+    <p><strong>OpenTelemetry（业界标准）</strong>：</p>
+    <p>· <code>tracer.startSpan('bff.getData')</code> 开始追踪</p>
+    <p>· span.setAttribute('user.id', userId) 打标签</p>
+    <p>· span.end() 结束</p>
+    <p>· 自动关联父子 span，形成调用链</p>
+    <p><strong>串联查询</strong>：通过 ELK / Jaeger / LogInsight 搜 TraceID，一次请求的所有日志按时间排序展示。</p>
+    <p><strong>关键场景</strong>：白屏/慢请求/错误请求排查，从 TraceID 切入，秒级定位是哪一层的问题。</p>
+    <p><strong>采样策略</strong>：全量采样成本高，业界常用——头部采样（每秒前 N 个）+ 尾部采样（错误请求必采）。</p>
+    <p><strong>项目桥接</strong>：Schema 营销中台 BFF + LogInsight，前端报错自动带 TraceID 上报，后端日志平台可串联。</p>
+    <p class="hint">蚂蚁稳定性文化核心。讲监控必带 TraceID。</p>
+  </div>
+</div>
+
+<div class="card" data-c="bagu" data-kw="Stream 流 Readable Writable Duplex Transform 背压 Backpressure pipeline">
+  <div class="card-head"><span class="tag bagu">基础</span><div class="card-title">Stream 流 + 背压（BFF 文件处理）</div></div>
+  <div class="core">pipeline 处理错误 + 背压，避免内存堆积</div>
+  <div class="card-body">
+    <p><strong>4 种 Stream</strong>：Readable（fs.createReadStream）、Writable（fs.createWriteStream）、Duplex（TCP socket）、Transform（zlib.createGzip）。</p>
+    <p><strong>背压（Backpressure）原理</strong>：写入速度 &lt; 读取速度时，数据堆积在内存。highWaterMark 触发后 stream 暂停读取，写入端 drain 后恢复。</p>
+    <p><strong>错误做法</strong>：<code>readable.pipe(writable);</code> 不处理错误和背压。</p>
+    <p><strong>正确做法</strong>：</p>
+    <p><code>const { pipeline } = require('stream/promises');</code></p>
+    <p><code>await pipeline(fs.createReadStream('input.txt'), zlib.createGzip(), fs.createWriteStream('output.txt.gz'));</code></p>
+    <p>pipeline 自动处理错误 + 背压 + 资源释放。</p>
+    <p><strong>应用场景</strong>：① 大文件处理（不一次性读到内存）② 实时数据转换（CSV → JSON）③ HTTP 响应流式输出（SSE）。</p>
+    <p><strong>项目桥接</strong>：prd-tools 的 PRD 摄入用 Stream 流式处理 docx 文件，避免大文件爆内存。</p>
+    <p class="hint">BFF 文件处理场景必备。能讲清背压机制显得专业。</p>
+  </div>
+</div>
+
+<div class="card" data-c="bagu" data-kw="Serverless 冷启动 优化 预置并发 瘦身依赖 lazy require 代码分割">
+  <div class="card-head"><span class="tag bagu">基础</span><div class="card-title">Serverless 冷启动 + 优化（简历 Serverless BFF 必考）</div></div>
+  <div class="core">冷启动 500ms-3s，优化到 100ms-500ms</div>
+  <div class="card-body">
+    <p><strong>冷启动原因</strong>：① 容器调度（K8s 分配 Pod + 拉镜像）② 代码加载（Node 启动 + require 整个依赖树）③ V8 优化（JIT 编译预热）。</p>
+    <p><strong>典型耗时</strong>：未优化 500ms-3s，优化后 100ms-500ms。</p>
+    <p><strong>优化方案</strong>：</p>
+    <p>· <strong>预置并发（Provisioned Concurrency）</strong>：几乎无冷启动，但贵（按时间付费）。</p>
+    <p>· <strong>瘦身依赖</strong>：移除未用的 npm 包，用 bundle 打包。加快代码加载。</p>
+    <p>· <strong>延迟加载（lazy require）</strong>：首次请求才加载，不在顶层 require。最有效。</p>
+    <p>· <strong>代码分割</strong>：按需加载，冷启动只加载核心代码。</p>
+    <p>· <strong>复用执行环境</strong>：全局变量在 warm 启动时复用（注意不能存用户状态）。</p>
+    <p><strong>关键技巧</strong>：<strong>减少顶层 require</strong>。把大依赖（如 ORM、SDK）改成函数内 require，只在真正用时才加载。</p>
+    <p><strong>项目桥接</strong>：Schema 营销中台 BFF 是 Serverless 部署，冷启动通过 lazy require 把 3s 降到 800ms。</p>
+    <p class="hint">简历写了 Serverless BFF 就要能讲清冷启动。</p>
+  </div>
+</div>
+
+<!-- ==================== 补充卡片 v2 · C端/微前端（3 张） ==================== -->
+
+<div class="card" data-c="bagu" data-kw="qiankun 微前端 single-spa 沙箱 Proxy 样式隔离 Shadow DOM HTML Entry 渐进式升级">
+  <div class="card-head"><span class="tag bagu">基础</span><div class="card-title">微前端 qiankun 原理（阿里二面空白点）</div></div>
+  <div class="core">single-spa + JS 沙箱（Proxy）+ 样式隔离 + HTML Entry</div>
+  <div class="card-body">
+    <p><strong>核心机制</strong>：</p>
+    <p>· <strong>生命周期</strong>：基于 single-spa，bootstrap → mount → unmount。子应用导出这三个生命周期函数。</p>
+    <p>· <strong>JS 沙箱</strong>：Proxy 代理 window，子应用对 window 的修改在沙箱内，卸载时恢复。多版本共存不冲突。</p>
+    <p>· <strong>样式隔离</strong>：① Shadow DOM（强隔离）② scoped CSS（子应用所有规则加前缀）③ 动态样式表（卸载时移除）。</p>
+    <p>· <strong>HTML Entry</strong>：基于 import-html-entry，fetch 子应用 HTML → 解析 script/style → 执行。不需要子应用打包成特定格式。</p>
+    <p>· <strong>通信</strong>：initGlobalState（全局状态）/ CustomEvents（事件总线）/ SharedStore（共享存储）。</p>
+    <p><strong>渐进式升级（阿里二面高频追问）</strong>：</p>
+    <p>· Schema 加 version 字段</p>
+    <p>· 运行时组件加载器按 version 动态 import</p>
+    <p>· 配置中心控制灰度比例</p>
+    <p>· 老版本和新版本并行跑一段时间，逐步下线老版本</p>
+    <p><strong>踩坑</strong>：资源路径（用 ucc-public-path 解决）、全局变量污染、沙箱逃逸、首屏白屏（prefetch 预加载）。</p>
+    <p><strong>vs Monorepo vs NPM 包</strong>：业务独立部署选微前端；共享代码选 Monorepo；通用工具选 NPM 包。</p>
+    <p class="hint">阿里二面完全空白。这是必修课。</p>
+  </div>
+</div>
+
+<div class="card" data-c="bagu" data-kw="设计稿 还原 Figma Locofy Builder.io Design Token 组件 Schema 视觉回归">
+  <div class="card-head"><span class="tag bagu">基础</span><div class="card-title">C 端视觉还原（设计稿→代码三层约束）</div></div>
+  <div class="core">Design Token + 组件 Schema + 视觉回归测试，60% → 90% 的路径</div>
+  <div class="card-body">
+    <p><strong>三层约束方案</strong>：</p>
+    <p>· <strong>第一层 Design Token</strong>：基础样式（颜色/字号/间距）抽成 CSS 变量，AI 生成时引用 token 而非硬编码。</p>
+    <p>· <strong>第二层 组件 Schema</strong>：把业务组件（卡片/弹窗/表单组）的结构描述成 JSON Schema，AI 生成时优先组合现有组件而不是从零写 div。</p>
+    <p>· <strong>第三层 视觉回归测试</strong>：截图对比工具（Chromatic / Playwright 截图断言）对比 AI 生成页面和设计稿，自动检测像素级偏差。</p>
+    <p><strong>Figma-to-Code 工具对比</strong>：</p>
+    <p>· <strong>Locofy</strong>：Figma 插件，AI 生成 React/Vue，准确率不错但复杂页面需微调</p>
+    <p>· <strong>Builder.io</strong>：可视化编辑 + AI 生成，集成度高</p>
+    <p>· <strong>Anima</strong>：Figma → React/Vue，强在响应式</p>
+    <p>· <strong>Framer</strong>：设计即代码，强在动画</p>
+    <p><strong>从 60% 到 90% 的路径</strong>：</p>
+    <p>· 60%：纯 AI 生成</p>
+    <p>· 80%：AI + Design Token 约束</p>
+    <p>· 90%：AI + Token + 组件 Schema + 视觉回归</p>
+    <p>· 100%：还要 Layout Token（栅格系统）+ 人工微调</p>
+    <p><strong>Layout Token</strong>：栅格系统 + 常见布局模式（卡片网格、列表、Tab），让 AI 从预定义布局模板中选择。</p>
+    <p class="hint">涂虎养车/起点读书问过。C 端短板必补。</p>
+  </div>
+</div>
+
+<div class="card" data-c="bagu" data-kw="移动端 H5 兼容 1px rem vw 安全区 键盘 iOS Android 300ms">
+  <div class="card-head"><span class="tag bagu">基础</span><div class="card-title">移动端 H5 兼容（蚂蚁 H5 方向必备）</div></div>
+  <div class="core">viewport + 1px + rem/vw + 安全区 + 键盘 + 触摸 300ms</div>
+  <div class="card-body">
+    <p><strong>viewport 配置</strong>：</p>
+    <p><code>&lt;meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"&gt;</code></p>
+    <p><strong>1px 问题</strong>：iOS retina 屏 1px 显示太粗。方案：① transform: scale(0.5) + 伪元素 ② border-image ③ box-shadow 模拟 ④ device-pixel-ratio 媒体查询。</p>
+    <p><strong>rem / vw 适配</strong>：</p>
+    <p>· <strong>rem</strong>：根字体大小按屏幕宽度变化（lib-flexible / postcss-pxtorem）</p>
+    <p>· <strong>vw/vh</strong>：直接用视口单位，1vw = 1% viewport width（更现代，postcss-px-to-viewport）</p>
+    <p><strong>iOS 安全区</strong>：iPhone X+ 顶部刘海 + 底部 home indicator。<code>env(safe-area-inset-top/bottom)</code> + viewport-fit=cover。</p>
+    <p><strong>Android 键盘遮挡</strong>：输入框聚焦时键盘弹起遮挡。方案：① resize 监听 + scrollIntoView ② VisualViewport API（现代）③ 软键盘 height 计算 + translateY。</p>
+    <p><strong>触摸 300ms 延迟</strong>：早期移动浏览器为了区分双击缩放和单击的等待。现代方案：viewport 加 <code>user-scalable=no</code> 自动消除，或用 fastclick 库（已废弃）。</p>
+    <p><strong>其他高频坑</strong>：① iOS 滚动惯性 -webkit-overflow-scrolling: touch ② 固定定位在键盘弹起时漂移 ③ Input 默认样式 reset ④ 中文字体 sans-serif 兜底。</p>
+    <p class="hint">蚂蚁财富 H5 方向必备。能讲清 1px + 安全区 + 键盘显得有实战。</p>
+  </div>
+</div>
+
 <div class="no-result" id="noRes">没找到匹配卡片</div>
 </div>
 
