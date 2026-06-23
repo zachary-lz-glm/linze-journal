@@ -1,2 +1,2 @@
 - [学习知识库](/linze-journal/)
-- [面试速查板](/linze-journal/learning/interview/cheat-sheet.html)
+- [面试速查板](/linze-journal/learning/interview/stealth.html)

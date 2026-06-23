@@ -1358,6 +1358,100 @@ function buildTreeOptimized(list) {
   </div>
 </div>
 
+<!-- ===== 面试防御卡（针对阿里一面/二面真实追问） ===== -->
+<div class="card" data-c="proj" data-kw="知识保鲜 过时 时效性 L7 失效 stale 更新机制 reference 漂移">
+  <div class="card-head"><span class="tag proj">G1</span><div class="card-title">reference 知识过时怎么办？（L7 会员升级问题）</div></div>
+  <div class="core">三层防线：时效性分层 + 触发式失效 + 金标准回归</div>
+  <div class="card-body">
+    <p><strong>面试官追问</strong>（阿里一面27:34）："滴滴L7会员6/1刚升级了规则，你reference里还是老规则，这种过时知识反而误导AI，怎么办？"</p>
+    <p><strong>我当时的回答</strong>：弱——"暂时不可避免的痛点""定时两周更新""用比较新的PRD""半自动化"。这个回答不够结构化。</p>
+    <p><strong>升级版回答三层防线</strong>：</p>
+    <p>· <strong>时效性分层（SLA-based）</strong>：Tier1 永久事实（枚举/API路径/类型定义）走代码 diff 触发失效；Tier2 慢变事实（业务规则/契约/字段语义）30天 reverify；Tier3 快变事实（配置/文案/活动模板）7天 reverify。每条记录带 valid_from / valid_to / last_verified_at。</p>
+    <p>· <strong>触发式更新</strong>：集成 GitNexus 的 detect_changes，代码 diff 涉及到 reference 某条记录自动标 stale，下次蒸馏强制走 source 验证而不是 reference。</p>
+    <p>· <strong>金标准回归</strong>：把 L7 升级、跨端配置变更这种作为 benchmark case，每次 prd-tools 发版回归，确保失效检测生效。</p>
+    <p><strong>具体场景答法</strong>："6/1 升级当天，GitNexus 检测到 membership-level.ts diff，自动把 reference 05-domain 里所有 L7 相关键标为 stale。下次蒸馏会发现这些键过期，强制走源码验证而不是 reference，所以 AI 拿到的就是新规则。"</p>
+    <p class="hint">关键不要说"暂时不可避免"——这是承认短板。要答机制：分层 + 触发 + 回归。</p>
+  </div>
+</div>
+
+<div class="card" data-c="proj" data-kw="Context 预算 token 膨胀 大 PRD 2万字 chunking Map-Reduce 子agent 200K">
+  <div class="card-head"><span class="tag proj">G2</span><div class="card-title">2-3万字 PRD 直接打爆 Context 怎么办？</div></div>
+  <div class="core">显式 Context Budget + PRD Chunking + Map-Reduce 蒸馏</div>
+  <div class="card-body">
+    <p><strong>面试官追问</strong>（阿里一面30:00）："2-3万字的 PRD 基本直接打爆你的 context，这个事情执行不下去，你怎么保证它能跑下去？"</p>
+    <p><strong>我当时的回答</strong>：弱——"暂时还没考虑""主要是流程串联""一个重构级的项目"。真实 gap，必须补。</p>
+    <p><strong>升级版回答三件套</strong>：</p>
+    <p>· <strong>显式 Context Budget 模型</strong>：总预算 200K（Opus 4.x）= reference 索引 30K（15%）+ PRD 相关 chunks 80K（40%）+ code anchors 50K（25%）+ 历史对话 20K（10%）+ 思考空间 20K（10%）。超预算 → quality-gate distill 子命令直接 fail。</p>
+    <p>· <strong>PRD Chunking 策略</strong>：大 PRD 按章节切，每 chunk 5-8K。Step 1 PRD Ingestion 已经产出 document-structure.json，按段落/表格/图片分块。蒸馏时只加载相关 chunk，不全文加载。</p>
+    <p>· <strong>Map-Reduce 蒸馏</strong>（对标 Anthropic 多 Agent 研究系统）：大 PRD 先 sub-agent 按章节并行蒸馏，产出 chapter-summary；main agent 只合并 chapter-summaries，不重新读原文。Token 消耗从 O(n) 降到 O(log n)。</p>
+    <p><strong>边界诚实</strong>：现在 v2.19 已经做了 PRD Ingestion 拆分，但显式 Budget 还在 Sprint 0 规划中，Map-Reduce 在 Sprint 4。所以面试官追问"做了吗"，答"Chunking 已经上线，Budget 显式管理在排期"。</p>
+    <p class="hint">不要说"暂时没考虑"——答"已做哪一层，规划做哪一层"，体现 roadmap 清晰。</p>
+  </div>
+</div>
+
+<div class="card" data-c="proj" data-kw="团队模式 准确率 60% 损耗 跨仓库 contract-delta Pull-based 不读源码 精度天花板">
+  <div class="card-head"><span class="tag proj">G3</span><div class="card-title">团队模式准确率 60% 损耗具体在哪？</div></div>
+  <div class="core">三个根因：Pull-based 设计不读源码 + 11/12 delta 标 pending + 精度天花板 = min(各仓质量)</div>
+  <div class="card-body">
+    <p><strong>面试官追问</strong>（阿里一面23:06）："团队模式 60%，单仓 80%，60% 的损耗在哪里？具体是什么导致准确率下降？"</p>
+    <p><strong>我当时的回答</strong>：含糊——"团队仓脱离源码""BFF 比较准""前端有偏离"。讲稿里有结构化分析但口述时没讲透。</p>
+    <p><strong>升级版回答三个根因</strong>（对应 PPT P18 E=45 三根因）：</p>
+    <p>· <strong>根因1：Pull-based 设计，禁止 rg/glob</strong>。团队仓只读 reference，不能主动搜源码。这是有意的设计取舍——安全优先于自动化，避免跨仓误读。代价是失去了源码验证能力。</p>
+    <p>· <strong>根因2：11/12 contract-delta 标 pending</strong>。跨层契约字段差异，没有源码佐证，全部标"待人工确认"。12 条 delta 里 11 条是 pending，契约对齐维度得分只有 45（vs 单仓 70），拉低整体 readiness。</p>
+    <p>· <strong>根因3：精度天花板 = min(各仓 reference 质量)</strong>。团队模式精度受最弱仓库制约。如果某个仓 reference 没维护好，整个团队蒸馏都受影响。</p>
+    <p><strong>边界诚实</strong>：62 分定位是 needs_owner_confirm，不是 blocked。62 分不是 bug，是有意的设计取舍——团队模式定位是排期和契约对齐（粗粒度），精度由各仓再做单仓蒸馏补齐（细粒度）。两层配合。</p>
+    <p><strong>改进路线</strong>：Sprint 4 引入 A2A 协议，团队 Agent 通过 A2A 向各仓 Agent 问源码，"不读源码"限制解除，预估准确率 60→75+。</p>
+    <p class="hint">不要说"团队仓脱离源码"一句带过——要答根因 + 设计取舍 + 改进路线三层。</p>
+  </div>
+</div>
+
+<div class="card" data-c="proj" data-kw="度量 A/B 60% 提升 OQ 命中率 IMP 执行率 对照实验 分母 度量体系">
+  <div class="card-head"><span class="tag proj">G4</span><div class="card-title">"PRD 转化效率提升 60%" 怎么度量？</div></div>
+  <div class="core">三层指标：L1 产物质量（OQ/IMP 锚点）+ L2 研发效率（端到端 + 返工率）+ L3 业务价值</div>
+  <div class="card-body">
+    <p><strong>面试官追问</strong>（阿里一面34:14）："PRD 转化效率提升 60% 怎么度量？分母是什么？实验组用了 Claude Code，对照组是不是纯手写？"</p>
+    <p><strong>我当时的回答</strong>：弱——"写的比较粗""其实就是开发工时""应该没人不用 v0 coding"。工程化项目最致命的短板。</p>
+    <p><strong>升级版回答三层指标</strong>：</p>
+    <p>· <strong>L1 产物质量</strong>：Code Anchor 准确率（plan.md 里 anchor 真实被改的比例，目标≥85%）；OQ 命中率（Open Questions 真实阻塞率，目标≥60%）；IMP 执行率（Implementation 计划条目真实执行率，目标≥75%）。</p>
+    <p>· <strong>L2 研发效率</strong>：端到端开发耗时（实验组 vs 对照组，都用 Claude Code，目标提升≥40%）；QA 缺陷数（对照组 vs 实验组 bug 数，目标下降≥30%）；开发返工率（开发过程中发现 plan 错了的比例）。</p>
+    <p>· <strong>L3 业务价值</strong>：reference 飞轮增速（每月新增 playbook/术语数）；团队模式契约对齐度提升。</p>
+    <p><strong>严谨的 A/B 设计</strong>：实验组 = `/prd-distill` 全流程 + Claude Code 执行 plan；对照组 = Claude Code init + 直接给 PRD 让它自己分析。样本量 ≥ 30 个真实需求，pair-wise 对照。主指标 = plan 落地后的开发返工率。</p>
+    <p><strong>当前状态诚实</strong>：v2.19 已经有 readiness/final QG 内部评分，但 L2/L3 业务指标在 Sprint 3 排期。"现在没有硬 A/B，这是公认短板，正在补"。</p>
+    <p class="hint">不要说"就是工时提升"——回答必须有指标名 + 数字 + 对照组定义三件套。</p>
+  </div>
+</div>
+
+<div class="card" data-c="proj" data-kw="Claude Code Cursor 区别 差异化 init 证据链 防幻觉 可追溯 标准化">
+  <div class="card-head"><span class="tag proj">G5</span><div class="card-title">和 Claude Code init / Cursor 的区别？</div></div>
+  <div class="core">Claude Code init 缺历史业务上下文 + 缺证据链 + 缺质量门控，prd-tools 补的就是证据层</div>
+  <div class="card-body">
+    <p><strong>面试官追问</strong>（阿里一面36:30）："50个组件全仓库，让Claude Code做一次init理论上也能达到一样效果，你的方案和 Claude Codeit 的区别是什么？"</p>
+    <p><strong>我当时的回答</strong>：好——"证据链、可追溯、防幻觉、标准化"。这是强项，要继续打磨。</p>
+    <p><strong>升级版回答三个本质差异</strong>：</p>
+    <p>· <strong>差异1：业务上下文缺失</strong>。Claude Code init 只分析代码，不知道历史 PRD 业务背景。比如新 PRD 提到"完单油站券"，Claude Code 不知道这词映射到代码哪个 enum，只能猜或 grep "完单" 零结果。prd-tools 有 05-domain 术语表桥接，PRD 词 → enum → 文件三步精准定位。</p>
+    <p>· <strong>差异2：证据链 vs 完成倾向</strong>。AI 有强"完成倾向"——为了完成任务会编造路径。Claude Code 给的 plan 看起来完整但你不知道哪条是猜的。prd-tools 每条结论标注 evidence_id（PRD第几页+代码第几行），搜不到也显式标 negative_code_search，错误发现成本从重做降到抽查。</p>
+    <p>· <strong>差异3：质量门控 vs 自觉</strong>。Claude Code 没有 Step 7 硬停人审、没有 quality-gate final 评分、没有 benchmark 回归。靠 AI 自觉 vs 靠机制约束，是可靠性工程的本质区别。</p>
+    <p><strong>互补定位</strong>：prd-tools 解决"写代码之前"（想清楚改哪里、为什么、有什么风险），Claude Code/Cursor 解决"写代码"（具体怎么写）。prd-tools 的 plan.md 可以直接喂给 Claude Code 执行——我们负责想清楚，Claude Code 负责写。</p>
+    <p class="hint">这道题答得好。继续用"业务上下文+证据链+质量门控"三件套，最后强调"互补不是竞争"。</p>
+  </div>
+</div>
+
+<div class="card" data-c="proj" data-kw="Schema 引擎 性能 量化 基线 SPA 微前端 插槽 损耗 Web Worker Service Worker 包体积">
+  <div class="card-head"><span class="tag proj">G6</span><div class="card-title">Schema 引擎 + 插槽 + 微前端性能损失多少？</div></div>
+  <div class="core">三大瓶颈：包体积膨胀（多版本并存）+ 联动接口重复调用 + 长列表渲染</div>
+  <div class="card-body">
+    <p><strong>面试官追问</strong>（阿里二面13:31）："Schema 引擎加微前端加插槽式加载，跟纯 SPA 相比，性能损失具体多少？这块有没有量化整理？"</p>
+    <p><strong>我当时的回答</strong>：弱——"做的少""凭个人了解""包体积、Web Worker、长列表"。缺性能基线。</p>
+    <p><strong>升级版回答三个瓶颈 + 量化思路</strong>：</p>
+    <p>· <strong>瓶颈1：包体积膨胀</strong>。组件库多版本并存（业务方用 v1.0，营销平台用 v2.0），Webpack 都打进 bundle，体积膨胀 1.5-2x。极端情况触发前端打包内存溢出。<strong>量化指标</strong>：bundle size 基线（主包 < 300KB，按路由 chunk split 后首屏 < 200KB），webpack-bundle-analyzer 周报。</p>
+    <p>· <strong>瓶颈2：联动接口重复调用</strong>。表单 50+ 字段，每个联动触发一次接口，转圈圈体感 1-2 秒。<strong>优化</strong>：Service Worker 缓存相同前置条件的联动结果；Web Worker 把序列化计算挪出主线程；同 key 请求 batch 合并。<strong>量化指标</strong>：联动接口 P95 延迟 < 300ms，缓存命中率 > 60%。</p>
+    <p>· <strong>瓶颈3：长列表渲染</strong>。50+ 字段表单，每次 schema 重渲染触发全量 diff。<strong>优化</strong>：组件按 dot-path 订阅（Redux selector 原理），只通知受影响组件；折叠区懒加载。<strong>量化指标</strong>：FPS > 50（chrome performance panel），字段编辑响应 < 16ms。</p>
+    <p><strong>诚实边界</strong>："这块目前确实缺系统化的性能基线对比，是公认短板。下一步计划用 Lighthouse + Web Vitals 建立 SPA / Schema 引擎 / Schema+微前端 三档性能基线，量化损耗。"</p>
+    <p class="hint">不要装懂——答"三大瓶颈 + 已做的优化 + 待建基线"三层，体现工程化思维。</p>
+  </div>
+</div>
+<!-- ===== 防御卡结束 ===== -->
+
 <div class="card" data-c="ai" data-kw="MCP 协议 Host Client Server Tools Resources Prompts JSON-RPC stdio SSE 开发 Function Calling A2A">
   <div class="card-head"><span class="tag ai">E19</span><div class="card-title">MCP 协议全解</div></div>
   <div class="core">LLM 的 USB 接口——标准化连接外部工具和数据</div>

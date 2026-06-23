@@ -40,7 +40,7 @@
 
 | 场景 | 入口 |
 |------|------|
-| 面试当天速查 | [面试速查板](learning/interview/cheat-sheet.html) |
+| 面试当天速查 | [面试速查板](learning/interview/stealth.html) |
 | 系统性复习 48 题 | [题库详解](learning/interview/题库/题库详解.md) |
 | 面试前急救 | [急救包](learning/interview/题库/急救包.md) |
 | 15 张答案卡 | [答案卡](learning/interview/训练/答案卡.md) |

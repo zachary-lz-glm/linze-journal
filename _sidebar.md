@@ -50,4 +50,4 @@
   - [简历](learning/interview/简历.md)
 
 - **工具**
-  - [面试速查板](learning/interview/cheat-sheet.html)
+  - [面试速查板](learning/interview/stealth.html)
