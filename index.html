@@ -245,60 +245,12 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);font-size:va
 /* ===== NAVIGATION DATA ===== */
 const NAV = [
   {label:'首页',path:'README'},
-  {label:'项目实战复盘',children:[
-    {label:'Schema 渲染引擎',children:[
-      {label:'架构总览',path:'learning/retrospectives/04-27-Schema渲染引擎'},
-      {label:'BFF Schema 生成',path:'learning/retrospectives/04-28-BFF-Schema生成与联动链路'},
-      {label:'benefit SDK',path:'learning/retrospectives/04-29-benefit-SDK权益组件库'},
-    ]},
-    {label:'AI 工程实践',children:[
-      {label:'prd-tools 工作流',path:'learning/retrospectives/05-06-prd-tools-AI工程工作流'},
-      {label:'技术实现精读',path:'learning/retrospectives/05-19-prd-tools-技术实现精读'},
-      {label:'源码深潜',path:'learning/retrospectives/05-19-prd-tools-源码深潜-context-pack与quality-gate'},
-      {label:'蒸馏准确率',path:'learning/retrospectives/05-19-prd-tools-蒸馏准确率定义与复盘'},
-      {label:'技术分享讲稿',path:'learning/retrospectives/05-26-prd-tools-技术分享讲稿'},
-    ]},
-    {label:'工程化与文档',children:[
-      {label:'Reference 标准化',path:'learning/retrospectives/04-22-Reference标准化与PRD蒸馏调研'},
-      {label:'Architecture 重构',path:'learning/retrospectives/04-23-Architecture文档v4重构'},
-      {label:'双 Skill 落地',path:'learning/retrospectives/04-24-双Skill落地与安装脚本'},
-      {label:'题库修正与简历',path:'learning/retrospectives/05-07-题库修正与简历启动'},
-      {label:'项目面试材料',path:'learning/retrospectives/05-15-项目面试材料-脱敏版'},
-    ]},
-  ]},
-  {label:'AI 情报',children:[
-    {label:'情报总览',path:'learning/ai-intelligence/README'},
-    {label:'2026-W22',children:[
-      {label:'全周报',path:'learning/ai-intelligence/2026-W22/周报-企业级AI工程化全周报'},
-      {label:'05-28 日报 · AI前端应用',path:'learning/ai-intelligence/2026-W22/日报-05-28-AI前端应用生态深度分析'},
-      {label:'05-28 日报 · AI评估与治理',path:'learning/ai-intelligence/2026-W22/日报-05-28-AI评估与治理体系深度分析'},
-      {label:'05-26 日报 · Agent编排',path:'learning/ai-intelligence/2026-W22/日报-05-26-Agent编排架构与生产落地'},
-      {label:'05-25 日报 · MCP协议',path:'learning/ai-intelligence/2026-W22/日报-05-25-MCP协议与代码知识图谱'},
-    ]},
-    {label:'2026-W21',children:[
-      {label:'周报',path:'learning/ai-intelligence/2026-W21/周报'},
-    ]},
-    {label:'Prompts',children:[
-      {label:'日报 Prompt',path:'learning/ai-intelligence/prompts/daily-prompt'},
-      {label:'周报 Prompt',path:'learning/ai-intelligence/prompts/weekly-prompt'},
-    ]},
-  ]},
   {label:'面试备战',children:[
-    {label:'规划与投递节奏',path:'learning/interview/规划'},
-    {label:'题库',children:[
-      {label:'基础题（17题）',path:'learning/interview/题库/基础题'},
-      {label:'手写代码（15题）',path:'learning/interview/题库/手写代码'},
-      {label:'项目题（24题）',path:'learning/interview/题库/项目题'},
-      {label:'AI题（12题）',path:'learning/interview/题库/AI题'},
-      {label:'急救包',path:'learning/interview/题库/急救包'},
-    ]},
     {label:'公司定向',children:[
+      {label:'蚂蚁财富AI Lab',path:'learning/interview/定向/蚂蚁财富AI-Lab'},
       {label:'拼多多',path:'learning/interview/定向/拼多多'},
     ]},
-    {label:'面试复盘',children:[
-      {label:'面试记录模板',path:'learning/interview/复盘/面试记录'},
-    ]},
-    {label:'简历',path:'learning/interview/简历'},
+    {label:'简历v3',path:'learning/interview/简历/v3'},
   ]},
   {label:'工具',children:[
     {label:'面试速查板',path:'learning/interview-tools/stealth.html',external:true},
@@ -735,22 +687,7 @@ function changeFont(delta){
 
 /* ===== HOMEPAGE ===== */
 function renderHomepage(){
-  const sections=[
-    {icon:'🏗️',title:'项目实战复盘',desc:'Schema 渲染引擎、BFF、SDK、prd-tools',
-     links:[
-       {label:'Schema 渲染引擎',path:'learning/retrospectives/04-27-Schema渲染引擎'},
-       {label:'BFF Schema 生成',path:'learning/retrospectives/04-28-BFF-Schema生成与联动链路'},
-       {label:'benefit SDK',path:'learning/retrospectives/04-29-benefit-SDK权益组件库'},
-       {label:'prd-tools 工作流',path:'learning/retrospectives/05-06-prd-tools-AI工程工作流'},
-       {label:'更多复盘 →',path:'learning/retrospectives/04-22-Reference标准化与PRD蒸馏调研'},
-     ]},
-    {icon:'🤖',title:'AI 情报',desc:'每日/每周 AI 行业动态追踪',
-     links:[
-       {label:'情报总览',path:'learning/ai-intelligence/README'},
-       {label:'W22 周报',path:'learning/ai-intelligence/2026-W22/周报-企业级AI工程化全周报'},
-       {label:'日报 Prompt',path:'learning/ai-intelligence/prompts/daily-prompt'},
-     ]},
-  ];
+  const sections=[];
   const interview=NAV.find(n=>n.label==='面试备战');
   let html='<div class="home-hero"><h1>邓泽霖 · 学习知识库</h1><div class="subtitle">Schema 架构全栈 + AI 工程差异化</div><div class="tags">4 年经验 · 2 年 A 绩效 · 滴滴国际化事业部</div></div>';
   html+='<div class="home-grid">';
@@ -762,7 +699,7 @@ function renderHomepage(){
     html+='</div></div>';
   }
   // Interview card (full width)
-  html+='<div class="home-card home-full"><div class="home-card-icon">🎯</div><h3>面试备战</h3><div class="card-desc">速查板 · 题库 · 训练 · 简历 · 定向备战</div><div class="home-links" style="display:flex;flex-wrap:wrap;gap:8px 20px">';
+  html+='<div class="home-card home-full"><div class="home-card-icon">🎯</div><h3>面试备战</h3><div class="card-desc">速查板 · 简历 · 定向备战</div><div class="home-links" style="display:flex;flex-wrap:wrap;gap:8px 20px">';
   if(interview&&interview.children){
     for(const sub of interview.children){
       if(sub.path)html+='<a href="#/'+sub.path+'">'+sub.label+'</a>';

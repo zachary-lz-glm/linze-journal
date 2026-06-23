@@ -6,7 +6,7 @@ Personal knowledge base & interview prep site, deployed to GitHub Pages.
 
 - **Tech Stack**: Self-contained HTML/CSS/JS (no build tools, no framework)
 - **Key Files**: `index.html` (main page), `sw.js` (Service Worker offline cache), `_sidebar.md` (navigation)
-- **Content**: `learning/` (ai-intelligence, fundamentals, interview, retrospectives), `archive/` (interactive tools)
+- **Content**: `learning/` (interview, interview-tools), `reviews/` (面试实战记录: qa, transcripts), `archive/` (retrospectives 项目复盘 + interactive tools)
 - **Deploy**: Push to `main` → GitHub Pages auto-deploys
 - **Cache**: 每次部署后必须 bump `sw.js` 的 `CACHE_NAME`（kb-vN → kb-vN+1），否则 Service Worker 会给访客返回旧缓存
 - **Git**: Use personal GitHub account, not company account
