@@ -35,7 +35,6 @@
     - [周报 Prompt](learning/ai-intelligence/prompts/weekly-prompt.md)
 
 - **面试备战**
-  - [面试日程](learning/interview/schedule.html)
   - [规划与投递节奏](learning/interview/规划.md)
   - 题库
     - [基础题（17题）](learning/interview/题库/基础题.md)
@@ -57,4 +56,4 @@
   - [简历](learning/interview/简历.md)
 
 - **工具**
-  - [面试速查板](learning/interview/stealth.html)
+  - [面试速查板](learning/interview-tools/stealth.html)
