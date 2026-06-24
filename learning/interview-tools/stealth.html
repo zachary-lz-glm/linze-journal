@@ -3922,7 +3922,7 @@ const subOrder={
   'React':1,'JS 核心':2,'CSS':3,'网络':4,'浏览器/性能':5,'TypeScript':6,'工程化':7,'框架扩展':8,
   'AI 前端':1,'AI 实践':2,'AI 理论':3,'AI 架构':4,'知识库':5,'追问':6,
   '速查':0,'手写 API':1,'数组/双指针':2,'链表':3,'树/BFS/DFS':4,'回溯':5,'排序/TopK':6,'DP/贪心':7,'栈':8,'二分':9,'综合':10,
-  '项目数据':1,'大麦专属':2,'TikTok专属':3,'软技能':4,'HR面':5,'反问':6,'话术急救':7
+  '项目数据':1,'大麦专属':2,'TikTok专属':3,'蚂蚁专属':4,'软技能':5,'HR面':6,'反问':7,'话术急救':8
 };
 
 function setCat(c){
@@ -3980,6 +3980,7 @@ function getGroup(c){
     if(tag==='速查')return '项目数据';
     if(tag==='大麦')return '大麦专属';
     if(tag==='TikTok')return 'TikTok专属';
+    if(tag==='蚂蚁')return '蚂蚁专属';
     if(tag==='HR')return 'HR面';
     if(tag==='软技能')return '软技能';
     if(tag==='反问')return '反问';
@@ -3987,7 +3988,7 @@ function getGroup(c){
   }
   if(cat==='proj'){
     if(tag==='Schema')return 'Schema项目';
-    if(tag==='AI'||/^(A4|A9|A10)$/.test(tag)||tag==='架构'||tag==='工作流')return 'AI工程化';
+    if(tag==='AI'||/^(A4|A5|A9|A10)$/.test(tag)||tag==='架构'||tag==='工作流'||/^G[1-5]$/.test(tag))return 'AI工程化';
     if(tag==='产品')return '产品思维';
     return 'Schema项目';
   }
@@ -4019,7 +4020,7 @@ function getGroup(c){
     if(/^D/.test(tag))return 'AI 架构';
     if(/^追问/.test(tag))return '追问';
     if(/^(E1|E2|E3|E4)$/.test(tag))return 'AI 前端';
-    if(/^(E5|E6|E7|E8|E9|E10)$/.test(tag))return 'AI 实践';
+    if(/^E([5-9]|[1-9]\d+)$/.test(tag))return 'AI 实践';
     return 'AI 理论';
   }
   return '';
