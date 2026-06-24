@@ -101,10 +101,10 @@ body{overscroll-behavior-y:contain}
   <div class="core">滴滴国际化营销中台前端架构，4年3条核心产品线</div>
   <div class="card-body">
     <p><strong>三句话结构：身份 → 三条线（各带数据）→ 为什么来</strong></p>
-    <p>面试官好，我是邓泽林，滴滴国际化高级前端，4年经验。</p>
-    <p><strong>第一，Schema驱动营销中台。</strong>覆盖20+活动类型，新增活动前端开发成本归零，上线从两周缩到两天。</p>
-    <p><strong>第二，400+权益组件库。</strong>Schema同构渲染 + Register扩展模式，覆盖8个业务，线上两年零事故。</p>
-    <p><strong>第三，AI工程工作流。</strong>我独立设计，PRD→结构化开发计划，双插件SSOT + 证据链 + 多层门控，效率提升60%。</p>
+    <p>面试官好，我是邓泽霖，滴滴国际化高级前端，4年经验，连续2年A绩效。</p>
+    <p><strong>第一，Schema驱动营销中台。</strong>覆盖20+活动类型，新增活动前端零代码，上线周期从2周缩短到3天。</p>
+    <p><strong>第二，400+权益组件库。</strong>Register注册 + Schema同构渲染 + Rollup双模打包，覆盖8个业务项目，18个月+零breaking change。</p>
+    <p><strong>第三，AI工程工作流。</strong>独立设计Claude Code双Skill工作流，PRD→Spec→Plan自动蒸馏，5h/需求降到2h/需求，已在20+人团队推广。</p>
     <p>核心优势是从业务抽取共性做架构抽象，以及对全流程质量把控。来贵司是因为<strong>[填公司方向]</strong>跟我第三条线高度匹配。</p>
     <p class="hint">语速 ~250 字/分钟，约 45 秒。分三点结构说，最后一句连接目标公司。说完停顿等追问。</p>
   </div>
@@ -175,7 +175,7 @@ body{overscroll-behavior-y:contain}
     <p><strong>选 prd-tools</strong>（面试官对 AI 感兴趣）：最大难点是架构选型错误导致瓶颈。</p>
     <p>背景：市面上有Cursor、Windsurf这些从0到1的工具，但针对已有项目（几万行代码、大量历史逻辑），怎么让AI理解需求是空白领域。</p>
     <p>弯路：一开始用MCP做，两周发现不管怎么优化prompt准确率就是上不去。定位到根因——MCP是单次调用模式，需求分析需要多轮上下文和复杂论证，这是架构级瓶颈不是调优能解决的。</p>
-    <p>突破：转向Agent+Skill工作流模式，结合自研Reference六文件SSOT + 多轮搜索 + 证据链验证，PRD转化效率提升60%。</p>
+    <p>突破：转向Agent+Skill工作流模式，结合自研Reference六文件SSOT + 多轮搜索 + 证据链验证，PRD→Plan 从 5h/需求降到 2h/需求。</p>
     <p><strong>选 Schema 引擎</strong>（偏传统前端）：月均10+bug → 自研Schema渲染引擎 → 归零。</p>
     <p class="hint">优先选AI方向，先说背景痛点30秒→弯路30秒→突破方案1分钟，控制在2分钟内。</p>
   </div>
@@ -523,6 +523,238 @@ body{overscroll-behavior-y:contain}
     <p><strong>Record</strong>：构造键为K值为T的类型。type MyRecord&lt;K extends string, T&gt; = { [P in K]: T };</p>
     <p><strong>Partial</strong>：所有属性变可选。type MyPartial&lt;T&gt; = { [P in keyof T]?: T[P] };</p>
     <p><strong>三步法</strong>：① K extends keyof T 约束K必须是T的key子集；② [P in K] 遍历K的每个key；③ T[P] 取原类型对应值类型。</p>
+  </div>
+</div>
+
+<!-- ===== 大麦/通用基础真题补充（2026-06-24）===== -->
+
+<div class="card" data-c="bagu" data-kw="URL 结构 协议 host port path query hash 输入到响应 DNS 解析 渲染 大麦真题">
+  <div class="card-head"><span class="tag bagu">#37</span><div class="card-title">URL 结构 + 从输入到响应全过程（大麦真题）</div></div>
+  <div class="core">URL 七段 + DNS→TCP→TLS→HTTP→渲染管线，大麦两面都考</div>
+  <div class="card-body">
+    <p><strong>URL 七段</strong>：<code>protocol://host:port/path?query#hash</code></p>
+    <p>· <strong>protocol</strong>：http/https/ftp；<strong>host</strong>：域名或 IP；<strong>port</strong>：默认 80/443 可省</p>
+    <p>· <strong>path</strong>：资源路径；<strong>query</strong>：参数（&amp; 分隔）；<strong>hash</strong>：锚点，<strong>不发服务器</strong>，常做路由</p>
+    <p><strong>输入到响应全链路</strong>：</p>
+    <p>① <strong>DNS 解析</strong>：域名→IP（浏览器→系统→路由器→LDNS→根→顶级→权威），递归+迭代</p>
+    <p>② <strong>TCP 三次握手</strong>（HTTPS 还多一次 TLS 握手）</p>
+    <p>③ <strong>HTTP 请求</strong>：发请求报文（请求行+头+体）</p>
+    <p>④ <strong>服务器处理</strong>：路由→控制器→DB→响应</p>
+    <p>⑤ <strong>浏览器渲染管线</strong>：HTML→DOM，CSS→CSSOM，合成 Render Tree→Layout 布局→Paint 绘制→Composite 合成</p>
+    <p class="hint">大麦 2025-06-12 真题连考两题。讲渲染管线时主动说回流触发 Layout+Paint，重绘只触发 Paint，能引到性能优化。</p>
+  </div>
+</div>
+
+<div class="card" data-c="bagu" data-kw="HTTP/2 HTTP2 多路复用 二进制分帧 HPACK 头部压缩 服务端推送 队头阻塞 大麦真题">
+  <div class="card-head"><span class="tag bagu">#38</span><div class="card-title">HTTP/2.0 vs HTTP/1.1（大麦真题）</div></div>
+  <div class="core">二进制分帧+多路复用+HPACK+服务端推送，解决 1.1 队头阻塞</div>
+  <div class="card-body">
+    <p><strong>HTTP/1.1 痛点</strong>：文本协议；连接级队头阻塞（一个请求慢拖累整连接）；header 每次重复发；需开多个 TCP 连接（浏览器限 6 个/域）。</p>
+    <p><strong>HTTP/2 四大改进</strong>：</p>
+    <p>· <strong>二进制分帧</strong>：数据拆成 Frame（1.1 是文本），更紧凑解析更快</p>
+    <p>· <strong>多路复用</strong>：一个 TCP 连接并行多个 Stream，<strong>解决连接级队头阻塞</strong>（但 TCP 层丢包仍会应用级队头阻塞，这是 HTTP/3/QUIC 解决的）</p>
+    <p>· <strong>头部压缩 HPACK</strong>：客户端服务端各维护静态表+动态表，重复 header 只发索引</p>
+    <p>· <strong>服务端推送 Server Push</strong>：请求 HTML 时主动推 CSS/JS（实测收益有限，Chrome 已移除）</p>
+    <p><strong>HTTP/3</strong>：基于 QUIC（UDP），彻底解决 TCP 队头阻塞，0-RTT 握手。</p>
+    <p class="hint">大麦真题。追问"多路复用还有什么问题"→引出 TCP 层队头阻塞 + HTTP/3。</p>
+  </div>
+</div>
+
+<div class="card" data-c="bagu" data-kw="TCP 三次握手 四次挥手 SYN ACK FIN TIME_WAIT 为什么 大麦真题">
+  <div class="card-head"><span class="tag bagu">#39</span><div class="card-title">TCP 三次握手 + 四次挥手（大麦真题）</div></div>
+  <div class="core">三次确认收发能力，四次因服务端收到 FIN 还要发完剩余数据</div>
+  <div class="card-body">
+    <p><strong>三次握手（建连）</strong>：</p>
+    <p>① 客户端发 SYN（seq=x）→ SYN_SENT</p>
+    <p>② 服务端回 SYN+ACK（seq=y, ack=x+1）→ SYN_RCVD</p>
+    <p>③ 客户端发 ACK（ack=y+1）→ ESTABLISHED</p>
+    <p><strong>为什么三次</strong>：两次无法确认客户端的接收能力（防止历史失效连接重启）。三次能确认双方收+发都通。</p>
+    <p><strong>四次挥手（断连）</strong>：</p>
+    <p>① 主动方发 FIN → ② 被动方回 ACK（此时被动方还能发剩余数据）→ ③ 被动方发 FIN → ④ 主动方回 ACK + TIME_WAIT（等 2MSL）</p>
+    <p><strong>为什么四次</strong>：服务端收到客户端 FIN 时，可能还有数据没发完，所以先 ACK，等数据发完再 FIN，多一次。</p>
+    <p><strong>TIME_WAIT 2MSL</strong>：① 保证最后的 ACK 能到达（丢了对方会重发 FIN）② 让本次连接的报文都消失，防止干扰新连接。</p>
+    <p class="hint">大麦真题。HTTPS 卡只讲三次握手，这里补四次挥手+为什么。常追问"为什么不是两次/四次变三次"。</p>
+  </div>
+</div>
+
+<div class="card" data-c="bagu" data-kw="CSS 选择器 优先级 权重 !important 内联 ID 类 标签 大麦真题">
+  <div class="card-head"><span class="tag bagu">#40</span><div class="card-title">CSS 选择器优先级（大麦真题）</div></div>
+  <div class="core">!important > 内联(1000) > ID(100) > 类(10) > 标签(1) > 通配(0)</div>
+  <div class="card-body">
+    <p><strong>权重位级</strong>（从高到低）：</p>
+    <p>· <strong>!important</strong>：最高，覆盖一切（慎用）</p>
+    <p>· <strong>内联 style</strong>：1000</p>
+    <p>· <strong>ID 选择器</strong>（#id）：100</p>
+    <p>· <strong>类/伪类/属性</strong>（.cls / :hover / [type]）：10</p>
+    <p>· <strong>标签/伪元素</strong>（div / ::before）：1</p>
+    <p>· <strong>通配 *</strong>、<strong>组合符</strong>（&gt; + ~）、<strong>继承</strong>：0</p>
+    <p><strong>计算规则</strong>：各级别数量分别累加，<strong>不跨级进位</strong>（10 个 class 仍小于 1 个 ID）。相同权重时后写的覆盖先写的（源码顺序）。</p>
+    <p><strong>易错点</strong>：① 权重是 (a,b,c,d) 四元组不是十进制数 ② :not() 本身不计数，括号里的选择器计 ③ 继承的样式权重最低，任何直接选中的都能覆盖继承值。</p>
+    <p class="hint">大麦真题。举例："div .a #b" 权重 = 1+10+100。问"#id 能被多少个 class 覆盖"答"无限多，ID 永远高于 class"。</p>
+  </div>
+</div>
+
+<div class="card" data-c="bagu" data-kw="水平垂直居中 flex absolute transform grid table-cell 居中 布局 大麦真题">
+  <div class="card-head"><span class="tag bagu">#41</span><div class="card-title">水平垂直居中（大麦真题）</div></div>
+  <div class="core">flex / grid / absolute+transform / table-cell，答 3 种显深度</div>
+  <div class="card-body">
+    <p>① <strong>Flex</strong>（最常用）：父 <code>display:flex; justify-content:center; align-items:center</code></p>
+    <p>② <strong>Grid</strong>：父 <code>display:grid; place-items:center</code>（最简）</p>
+    <p>③ <strong>absolute + transform</strong>（不需知道子元素宽高）：子 <code>position:absolute; top:50%; left:50%; transform:translate(-50%,-50%)</code></p>
+    <p>④ <strong>absolute + margin:auto</strong>（需固定宽高）：子 <code>position:absolute; inset:0; margin:auto</code></p>
+    <p>⑤ <strong>table-cell</strong>（兼容老浏览器）：父 <code>display:table-cell; vertical-align:middle; text-align:center</code>，子 <code>display:inline-block</code></p>
+    <p>⑥ <strong>单行文本</strong>：<code>line-height = height</code> + <code>text-align:center</code></p>
+    <p class="hint">大麦真题。先答 flex（实战），再答 absolute+transform（兼容），最后提 grid/table-cell 显广度。追问"不知道宽高怎么办"→方案③。</p>
+  </div>
+</div>
+
+<div class="card" data-c="bagu" data-kw="defer async script 加载 顺序 阻塞 DOM 大麦真题">
+  <div class="card-head"><span class="tag bagu">#42</span><div class="card-title">defer vs async（大麦真题）</div></div>
+  <div class="core">defer 按 DOM 顺序延迟执行；async 下载完立即执行（无序）</div>
+  <div class="card-body">
+    <p>普通 <code>&lt;script&gt;</code>：下载+执行都阻塞 DOM 解析。</p>
+    <p>· <strong>defer</strong>：下载不阻塞 DOM，<strong>等 DOM 解析完按出现顺序执行</strong>（DOMContentLoaded 前）。适合有依赖关系的脚本（如 jQuery + 业务）。</p>
+    <p>· <strong>async</strong>：下载不阻塞 DOM，<strong>下载完立即执行并阻塞</strong>（执行顺序不确定，谁先下完谁先跑）。适合独立第三方脚本（统计、广告）。</p>
+    <p>· <strong>type="module"</strong>：默认 defer 行为。</p>
+    <p><strong>对比表</strong>：是否阻塞解析（下载都不阻塞）｜执行时机（defer=DOM 后有序 / async=下完即跑无序）｜能否访问 DOM（defer 能 / async 不一定）。</p>
+    <p class="hint">大麦真题。常和"脚本放 body 底部还是 head"一起问——head+defer 是现代最佳实践（尽早下载）。</p>
+  </div>
+</div>
+
+<div class="card" data-c="bagu" data-kw="Promise 状态 pending fulfilled rejected 链式 then catch finally 大麦真题">
+  <div class="card-head"><span class="tag bagu">#43</span><div class="card-title">Promise 三态 + 链式（大麦真题）</div></div>
+  <div class="core">三态不可逆 + then 返回新 Promise 实现链式</div>
+  <div class="card-body">
+    <p><strong>三态</strong>：pending → fulfilled（resolved）/ rejected。<strong>状态一经改变不可逆</strong>（只能从 pending 转一次）。</p>
+    <p><strong>链式调用</strong>：<code>then(onFulfilled, onRejected)</code> 返回一个<strong>新的 Promise</strong>：</p>
+    <p>· 返回普通值 → 新 Promise resolve 该值</p>
+    <p>· 返回 Promise → 新 Promise 跟随它</p>
+    <p>· throw → 新 Promise reject</p>
+    <p><strong>错误穿透</strong>：then 没传 onRejected 时，错误会冒泡到最近的 catch。</p>
+    <p><strong>静态方法</strong>：all（全成功才成功，任一失败立即失败）/ race（第一个完成的决定）/ allSettled（全完成，不管成败）/ any（第一个成功决定，全失败才失败）。</p>
+    <p class="hint">大麦真题。常追问"then 返回的是同一个 Promise 吗"——不是，是新 Promise（这是链式的基础）。</p>
+  </div>
+</div>
+
+<div class="card" data-c="bagu" data-kw="JS 获取 div 父子关系 querySelectorAll getElementsByTagName parentElement parentNode 大麦真题">
+  <div class="card-head"><span class="tag bagu">#44</span><div class="card-title">JS 获取 div + 父子关系（大麦真题）</div></div>
+  <div class="core">querySelectorAll 返回静态 NodeList，父子用 parentElement/parentNode</div>
+  <div class="card-body">
+    <p><strong>获取多个 div</strong>：</p>
+    <p>· <code>document.getElementsByTagName('div')</code>：返回<strong>动态</strong> HTMLCollection（DOM 变化自动同步）</p>
+    <p>· <code>document.querySelectorAll('div')</code>：返回<strong>静态</strong> NodeList（快照，DOM 变了集合不变）</p>
+    <p>· <code>document.getElementsByClassName('x')</code>：动态 HTMLCollection</p>
+    <p><strong>父子关系</strong>：</p>
+    <p>· <strong>由子获父</strong>：<code>child.parentElement</code>（仅 Element）/ <code>child.parentNode</code>（含文本节点、Document 等，更通用）</p>
+    <p>· <strong>由父获子</strong>：<code>parent.children</code>（仅 Element，HTMLCollection 动态）/ <code>parent.childNodes</code>（含文本节点，NodeList）</p>
+    <p>· <strong>直接子元素筛选</strong>：<code>parent.querySelector(':scope &gt; .child')</code></p>
+    <p><strong>动态 vs 静态坑</strong>：循环里删元素时，用动态集合会跳过元素（索引变化），应倒序遍历或用静态快照。</p>
+    <p class="hint">大麦真题，易被忽略的基础题。核心考点：动态/静态返回值差异 + parentElement vs parentNode 边界（document.documentElement.parentElement === null）。</p>
+  </div>
+</div>
+
+<div class="card" data-c="bagu" data-kw="跨端 Hybrid RN Weex Flutter 小程序 Rax mPaaS WebView JSBridge 大麦真题">
+  <div class="card-head"><span class="tag bagu">#45</span><div class="card-title">跨端解决方案四路线（大麦真题）</div></div>
+  <div class="core">Hybrid / 原生渲染 / 小程序 / 自绘，阿里系多用 Rax + mPaaS</div>
+  <div class="card-body">
+    <p><strong>① Hybrid（WebView + JSBridge）</strong>：H5 + 原生桥接调用设备能力。开发快、可热更新；性能弱、体验不及原生。代表：早期 Cordova/Ionic。</p>
+    <p><strong>② 原生渲染（JS 驱动原生组件）</strong>：React Native / Weex / Rax。写 JS，渲染成原生 View，性能接近原生。阿里 Rax = React 语法 + 跨 Web/RN/小程序。RN 用 Yoga 布局引擎 + Bridge（新架构 JSI 直调）。</p>
+    <p><strong>③ 小程序</strong>：双线程模型（渲染层 WebView + 逻辑层 JSCore），通过原生中转通信。微信/支付宝/阿里 mPaaS。mPaaS = 阿里移动开发平台（H5 容器 + 小程序 + 热修复）。</p>
+    <p><strong>④ 自绘引擎</strong>：Flutter（Skia/Impeller）/ Dart。一套代码渲染到所有平台，性能最强但包体积大、生态独立。</p>
+    <p><strong>兜底话术</strong>（候选人无深度实战）：跨端没做过原生容器，但 qiankun 微前端 + 权益组件库三种接入形态（组件/函数/微前端）的抽象思路可迁移；JSBridge 调过客户端能力（定位/支付回调）。</p>
+    <p class="hint">大麦真题。阿里系答 Rax + mPaaS 显对口；候选人这块是薄弱点，背兜底句不硬编。</p>
+  </div>
+</div>
+
+<div class="card" data-c="bagu" data-kw="阿里 mPaaS Rax Weex 小程序 UC内核 Quark 大麦 阿里系 跨端">
+  <div class="card-head"><span class="tag bagu">#46</span><div class="card-title">阿里小程序生态 mPaaS/Rax/Weex（大麦补强）</div></div>
+  <div class="core">Rax(React 语法跨端) + mPaaS(移动平台) + UC/Quark 内核，大麦 C 端运行环境</div>
+  <div class="card-body">
+    <p>· <strong>mPaaS</strong>：阿里移动开发平台，含 H5 容器（ Nebula）、小程序框架、热修复、消息推送、移动网关。大麦/支付宝/淘系共用。</p>
+    <p>· <strong>Rax</strong>：阿里跨端框架，Write Once Run Everywhere，<strong>React 语法</strong>。可编译到 Web/RN/小程序/WebView。新版本基于 Rax 2.x + 自定义 renderer。</p>
+    <p>· <strong>Weex</strong>：阿里早期跨端方案，<strong>Vue 语法</strong>，渲染原生。已逐步被 Rax 替代，但老项目仍多。</p>
+    <p>· <strong>UC 内核 / Quark 内核</strong>：大麦 C 端 H5 主要运行环境（阿里自研浏览器内核），对自家前端框架有针对性优化。</p>
+    <p>· <strong>支付宝小程序 / 淘宝小程序</strong>：基于 mPaaS 小程序框架，多端投放。</p>
+    <p class="hint">大麦属于阿里体系，这些是常识。候选人无深度实战，了解概念+能说"qiankun 微前端思路可迁移"即可，别硬编项目。</p>
+  </div>
+</div>
+
+<div class="card" data-c="bagu" data-kw="React 状态管理 useState useReducer Context Redux Zustand MobX Recoil 全局 大麦真题">
+  <div class="card-head"><span class="tag bagu">#47</span><div class="card-title">React 状态管理全景（大麦真题）</div></div>
+  <div class="core">三层：组件内 useState → 跨组件 Context → 全局 Redux/Zustand/MobX</div>
+  <div class="card-body">
+    <p><strong>① 组件内状态</strong>：<code>useState</code>（独立状态）/ <code>useReducer</code>（关联状态、复杂流转）。</p>
+    <p><strong>② 跨组件共享</strong>：<code>Context</code> + <code>useContext</code>。适合主题、用户信息、i18n 等<strong>低频变更</strong>数据。坑：Provider value 变化会使所有消费者重渲染，不适合高频数据。</p>
+    <p><strong>③ 全局状态库</strong>：</p>
+    <p>· <strong>Redux</strong>：单一 store + action + reducer，纯函数可预测，配合 Redux Toolkit（createSlice）减少样板代码。适合大型应用、需时间旅行调试。</p>
+    <p>· <strong>Zustand</strong>：极简，无 Provider，基于 hook，API 直观。现代项目首选轻量方案。</p>
+    <p>· <strong>MobX</strong>：响应式（observable），自动追踪依赖，写法贴近面向对象。</p>
+    <p>· <strong>Recoil / Jotai</strong>：原子化状态，细粒度订阅，避免 Context 全量重渲染。</p>
+    <p><strong>选型</strong>：小项目 Context/Zustand，大项目 Redux Toolkit，复杂响应式 MobX。Schema 中台联动用发布订阅 + 局部 Context，没上全局库（联动是字段级，全局 store 粒度太粗）。</p>
+    <p class="hint">大麦真题。答出三层 + 各方案适用场景 + 选型理由即可。别只说"我用 Redux"。</p>
+  </div>
+</div>
+
+<div class="card" data-c="bagu" data-kw="useState Hooks 规则 if 条件 顺序 链表 大麦真题">
+  <div class="card-head"><span class="tag bagu">#48</span><div class="card-title">useState 放 if 分支会怎样？（大麦真题）</div></div>
+  <div class="core">Hook 顺序错乱导致 state 对应错位，React 用调用顺序索引 Hook</div>
+  <div class="card-body">
+    <p><strong>现象</strong>：把 useState 放进 if/for，第二次渲染时 Hook 调用顺序变了，<strong>state 会对应错位</strong>，出现莫名其妙的 bug（A 的值跑到 B 上）甚至崩溃。</p>
+    <p><strong>Hooks 规则</strong>：必须在组件顶层调用，不能在条件/循环/嵌套函数里。</p>
+    <p><strong>底层原理</strong>：React 用<strong>链表</strong> + <strong>调用顺序索引</strong>记录 Hook。首次渲染按调用顺序建链表 [state1, state2, state3]；后续渲染按相同顺序读链表对应位置。如果某次渲染条件分支跳过了第 2 个 Hook，第 3 个 Hook 就会读到第 2 个的位置 → 错位。</p>
+    <p><strong>正确做法</strong>：条件逻辑放在 Hook 内部，而不是包裹 Hook。</p>
+    <p class="code-blk">// ❌ 错误：Hook 放进条件
+if (flag) {
+  const [x, setX] = useState(0);
+}
+
+// ✅ 正确：条件放进 Hook 内
+const [x, setX] = useState(0);
+// 用 x 时再判断 flag</p>
+    <p><strong>useEffect 同理</strong>：依赖数组是"调用顺序"匹配的，条件包裹会破坏对应关系。</p>
+    <p class="hint">大麦真题，考对 Hooks 原理的理解。底层"链表+顺序索引"是加分点，能说清就比 90% 候选人强。</p>
+  </div>
+</div>
+
+<div class="card" data-c="bagu" data-kw="React Diff 虚拟DOM 同层比较 Key 列表 Fiber 字节真题 复用">
+  <div class="card-head"><span class="tag bagu">#49</span><div class="card-title">React Diff 三策略 + Key 原理（字节真题）</div></div>
+  <div class="core">Tree 同层比较 + Component 同类型递归 + Element 靠 Key 复用</div>
+  <div class="card-body">
+    <p>虚拟 DOM Diff 把树对比从 O(n³) 降到 <strong>O(n)</strong>，靠三个假设：</p>
+    <p>① <strong>Tree 层</strong>：只同层比较，不跨层移动（跨层直接删旧建新）。所以移动元素到另一层 = 销毁+重建。</p>
+    <p>② <strong>Component 层</strong>：同类型组件继续递归 diff 子树；不同类型直接<strong>整个替换</strong>（卸载旧的+挂载新的，状态丢失）。所以 <code>{type ? 'div' : 'span'}</code> 会触发重建。</p>
+    <p>③ <strong>Element 层</strong>：列表靠 <strong>key</strong> 标识同一位置的元素，复用而非重建。</p>
+    <p><strong>Key 原理</strong>：React 在 fiber 链表里用 key 建立位置映射。列表更新时，按 key 匹配旧 fiber：key 相同 → 复用+更新 props；key 不同 → 标记删除/新建。</p>
+    <p><strong>为什么不用 index 做 key</strong>：列表顺序变化（插入/删除/排序）时，index 不变但实际数据错位，React 会复用错误的 fiber → 状态串台 + 不必要更新。用稳定唯一 id 才对。</p>
+    <p><strong>Key 的代价</strong>：key 变化 = 触发卸载重挂（状态清空、重新触发 effect）。频繁变 key 有性能成本。</p>
+    <p class="hint">字节亲历真题（千问也考过）。能讲到"fiber 链表位置映射"是加分点。追问"key 用随机数会怎样"→每次渲染都重建，性能灾难。</p>
+  </div>
+</div>
+
+<div class="card" data-c="bagu" data-kw="TypeScript Partial Required infer 工具类型 映射 修饰符 字节高频">
+  <div class="card-head"><span class="tag bagu">#50</span><div class="card-title">TypeScript Partial/Required/infer 实现（字节高频）</div></div>
+  <div class="core">映射类型加减 ? 修饰符 + infer 在条件类型里推断类型变量</div>
+  <div class="card-body">
+    <p><strong>Partial（全可选）</strong>：给每个属性加 <code>?</code></p>
+    <div class="code-blk">type Partial&lt;T&gt; = {
+  [P in keyof T]?: T[P];
+};</div>
+    <p><strong>Required（全必填）</strong>：去掉 <code>?</code>，用 <code>-?</code> 修饰符</p>
+    <div class="code-blk">type Required&lt;T&gt; = {
+  [P in keyof T]-?: T[P];
+};</div>
+    <p><strong>映射类型修饰符</strong>：<code>+</code> 加（默认可省）、<code>-</code> 去。<code>-?</code> 去可选，<code>-readonly</code> 去只读。</p>
+    <p><strong>infer（条件类型里推断）</strong>：在 <code>extends</code> 子句中用 <code>infer U</code> 声明类型变量，TS 自动推断。</p>
+    <div class="code-blk">// 提取函数返回值类型
+type ReturnT&lt;T&gt; = T extends (...args: any[]) =&gt; infer R ? R : never;
+
+// 提取 Promise 的值类型
+type Unpacked&lt;T&gt; = T extends Promise&lt;infer U&gt; ? U : T;
+
+// 提取数组元素类型
+type Item&lt;T&gt; = T extends (infer I)[] ? I : never;</div>
+    <p><strong>兄弟题</strong>：Pick&lt;T,K&gt;（选子集）、Omit&lt;T,K&gt;（排除子集）、Record&lt;K,V&gt;（构造）、ReturnType（函数返回值，基于 infer）。</p>
+    <p class="hint">字节/拼多多高频，Pick/Omit 见 #35 卡。infer 是递归类型推断的核心，能写出 ReturnType 通用版是加分。</p>
   </div>
 </div>
 
@@ -1210,6 +1442,139 @@ function buildTreeOptimized(list) {
 // → {'a.b.c': 1, 'a.d': 2}</div>
 </div>
 
+<!-- ===== 手撕真题补充：大麦正则题 + 字节真题（2026-06-24）===== -->
+
+<div class="card" data-c="code" data-kw="正则 千分位 逗号 格式化 大麦真题 replace">
+  <div class="card-head"><span class="tag code">真题</span><div class="card-title">正则手撕：千分位逗号（大麦真题）</div></div>
+  <div class="core">正则 /\B(?=(\d{3})+(?!\d))/g 一次性替换，或循环从右切 3 位</div>
+  <div class="card-body">
+    <p><strong>方法 1：正则（面试官期望，秒杀）</strong></p>
+    <div class="code-blk">function format(num) {
+  return String(num).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+}
+// 1234567 → "1,234,567" / 123 → "123" / 1234 → "1,234"</div>
+    <p><strong>正则拆解</strong>：</p>
+    <p>· <code>\B</code>：非单词边界（不在开头/结尾插逗号）</p>
+    <p>· <code>(?=(\d{3})+)</code>：正向预查，后面是 3 的倍数连续数字</p>
+    <p>· <code>(?!\d)</code>：负向预查，后面不再是数字（锁定到末尾）</p>
+    <p><strong>方法 2：循环（容易讲清楚）</strong></p>
+    <div class="code-blk">function format(num) {
+  let s = String(num), r = '';
+  while (s.length &gt; 3) {
+    r = ',' + s.slice(-3) + r;
+    s = s.slice(0, -3);
+  }
+  return s + r;
+}</div>
+    <p><strong>扩展</strong>：处理小数（先 split('.') 只处理整数部分）、负数（先取符号）。</p>
+    <p class="hint">大麦 2025-06-12 真题。正则法是期望解，循环法是保底。能讲清 \B 和预查是加分。</p>
+  </div>
+</div>
+
+<div class="card" data-c="code" data-kw="正则 提取括号 栈 嵌套 大麦真题 match">
+  <div class="card-head"><span class="tag code">真题</span><div class="card-title">正则手撕：提取括号里的内容（大麦真题）</div></div>
+  <div class="core">正则 match 秒杀非嵌套；栈遍历处理嵌套</div>
+  <div class="card-body">
+    <p><strong>方法 1：正则（非嵌套，面试官期望）</strong></p>
+    <div class="code-blk">function extract(str) {
+  const m = str.match(/\(([^)]*)\)/g);
+  return m ? m.map(s =&gt; s.slice(1, -1)) : [];
+}
+// 'a(b)c(d(e)f)g' → ['b', 'e']（不匹配嵌套 d(e)f）</div>
+    <p><strong>正则拆解</strong>：<code>\(</code> 左括号 → <code>([^)]*)</code> 捕获组（任意非右括号字符）→ <code>\)</code> 右括号。match 带 g 返回完整匹配，再 slice 去掉首尾括号。</p>
+    <p><strong>方法 2：栈遍历（处理嵌套）</strong></p>
+    <div class="code-blk">function extract(str) {
+  const stack = [], res = [];
+  for (const ch of str) {
+    if (ch === '(') stack.push({i: stack.length, buf: ''});
+    else if (ch === ')' &amp;&amp; stack.length) {
+      const top = stack.pop();
+      res.push(top.buf);
+    } else if (stack.length) stack[stack.length-1].buf += ch;
+  }
+  return res;
+}</div>
+    <p><strong>嵌套取舍</strong>：正则法取最内层（遇到第一个 ) 就闭合）；栈法可控制取哪层。面试先问"括号是否嵌套"再选方案。</p>
+    <p class="hint">大麦 2025-06-12 真题。正则秒杀显熟练，栈法显算法功底。两题（千分位+括号）都是正则考点。</p>
+  </div>
+</div>
+
+<div class="card" data-c="code" data-kw="最大数组和 贪心 K次取反 LC1005 字节真题 排序 负数">
+  <div class="card-head"><span class="tag code">真题</span><div class="card-title">贪心：最大数组和（字节一面真题 LC1005）</div></div>
+  <div class="core">排序→先翻负数→剩余奇数次翻最小值</div>
+  <div class="card-body">
+    <p><strong>题意</strong>：给整数数组和 k，可对任意元素取反 k 次，求最大数组和。</p>
+    <p><strong>贪心三步</strong>：</p>
+    <p>① <strong>排序</strong>：从小到大，优先处理负数</p>
+    <p>② <strong>翻负数</strong>：遍历，遇到负数且 k&gt;0 就取反，k--</p>
+    <p>③ <strong>处理剩余 k</strong>：若 k 为奇数，翻当前最小值（此时全正，翻最小损失最小）；偶数则抵消不影响</p>
+    <div class="code-blk">function maxSumAfterNegations(arr, k) {
+  arr.sort((a, b) =&gt; a - b);
+  for (let i = 0; i &lt; arr.length &amp;&amp; k &gt; 0 &amp;&amp; arr[i] &lt; 0; i++, k--) {
+    arr[i] = -arr[i];
+  }
+  if (k % 2 === 1) {
+    const idx = arr.indexOf(Math.min(...arr));
+    arr[idx] = -arr[idx];
+  }
+  return arr.reduce((a, b) =&gt; a + b, 0);
+}</div>
+    <p><strong>复杂度</strong>：O(n log n) 排序主导；空间 O(1)（或排序 O(log n)）。</p>
+    <p><strong>易错</strong>：剩余 k 奇偶判断（偶数次取反同一元素互相抵消）；翻最小值用 indexOf 避免改错位置。</p>
+    <p class="hint">字节 2026 年初亲历真题。字节喜欢贪心+DP，手撕时先 90 秒讲思路再写，写完主动跑用例。</p>
+  </div>
+</div>
+
+<div class="card" data-c="code" data-kw="请求终止 AbortController RequestManager 取消请求 fetch 字节真题 单例">
+  <div class="card-head"><span class="tag code">真题</span><div class="card-title">手写：请求终止 AbortController（字节真题）</div></div>
+  <div class="core">AbortController + Map 管理重复请求，RequestManager 单例</div>
+  <div class="card-body">
+    <p><strong>核心 API</strong>：<code>AbortController.signal</code> 传给 fetch，调 <code>controller.abort()</code> 取消。</p>
+    <p><strong>单例 RequestManager</strong>：管理多个请求，重复请求自动取消前一个。</p>
+    <div class="code-blk">class RequestManager {
+  constructor() { this.controllers = new Map(); }
+  request(url, options = {}) {
+    this.cancel(url);              // 取消重复请求
+    const ctrl = new AbortController();
+    this.controllers.set(url, ctrl);
+    return fetch(url, { ...options, signal: ctrl.signal })
+      .then(r =&gt; r.json())
+      .finally(() =&gt; this.controllers.delete(url));
+  }
+  cancel(url) {
+    this.controllers.get(url)?.abort();
+    this.controllers.delete(url);
+  }
+  cancelAll() {
+    this.controllers.forEach(c =&gt; c.abort());
+    this.controllers.clear();
+  }
+}</div>
+    <p><strong>应用场景</strong>：① 搜索框防抖+取消旧请求 ② 页面跳转取消未完成请求 ③ 重复提交只保留最后一个。</p>
+    <p><strong>原理</strong>：fetch 内部监听 signal 的 abort 事件，触发后 reject 并断开连接。abort 后 fetch 抛 AbortError，需 try/catch 或 .catch 兜底。</p>
+    <p class="hint">字节亲历真题。能写到单例 + Map 管理比只写 AbortController 高一档。追问"axios 怎么取消"→ axios CancelToken（已废弃）/ 新版也支持 signal。</p>
+  </div>
+</div>
+
+<div class="card" data-c="code" data-kw="Promise.race 手写 并发 第一个 字节 首屏竞速">
+  <div class="card-head"><span class="tag code">真题</span><div class="card-title">手写 Promise.race（字节高频）</div></div>
+  <div class="core">第一个完成的（成功或失败）决定结果，立即 resolve/reject 外层</div>
+  <div class="card-body">
+    <div class="code-blk">function race(promises) {
+  return new Promise((resolve, reject) =&gt; {
+    promises.forEach(p =&gt; {
+      Promise.resolve(p).then(resolve, reject);
+    });
+  });
+}</div>
+    <p><strong>关键点</strong>：① 用 <code>Promise.resolve(p)</code> 包一层兼容非 Promise 值 ② 每个都直接调外层 resolve/reject，<strong>第一个触发后就定了</strong>（Promise 状态不可逆，后续调用无效）。</p>
+    <p><strong>vs Promise.all</strong>：all 全成功才成功（计数器+结果数组按索引存）；race 第一个定胜负。</p>
+    <p><strong>vs allSettled / any</strong>：allSettled 全完成不管成败；any 第一个<strong>成功</strong>决定，全失败才失败。</p>
+    <p><strong>实战场景</strong>：① 首屏竞速（主接口 + 兜底接口，谁先回用谁）② 超时控制 <code>race([fetch(url), timeout(3000)])</code> ③ 取消旧请求。</p>
+    <p class="hint">字节高频，Promise.all 已练熟的话 race 是姊妹题。追问"race 里某个抛错会怎样"→第一个 reject 立即决定整个 race 为 rejected。</p>
+  </div>
+</div>
+
 <!-- ==================== AI 工程 ==================== -->
 <div class="card" data-c="proj" data-kw="AI 理解项目 Reference SSOT Evidence Index 知识库">
   <div class="card-head"><span class="tag proj">架构</span><div class="card-title">AI 怎么理解陌生项目？</div></div>
@@ -1405,11 +1770,12 @@ function buildTreeOptimized(list) {
   </div>
 </div>
 
-<div class="card" data-c="proj" data-kw="度量 A/B 60% 提升 OQ 命中率 IMP 执行率 对照实验 分母 度量体系">
-  <div class="card-head"><span class="tag proj">G4</span><div class="card-title">"PRD 转化效率提升 60%" 怎么度量？</div></div>
+<div class="card" data-c="proj" data-kw="度量 A/B 5h 2h 提升 OQ 命中率 IMP 执行率 对照实验 分母 度量体系">
+  <div class="card-head"><span class="tag proj">G4</span><div class="card-title">"5h→2h" 怎么度量？（早期简历曾用 60% 提效表述）</div></div>
   <div class="core">三层指标：L1 产物质量（OQ/IMP 锚点）+ L2 研发效率（端到端 + 返工率）+ L3 业务价值</div>
   <div class="card-body">
     <p><strong>面试官追问</strong>（阿里一面34:14）："PRD 转化效率提升 60% 怎么度量？分母是什么？实验组用了 Claude Code，对照组是不是纯手写？"</p>
+    <p>⚠️ <strong>口径已收敛</strong>：现简历用 5h→2h（5 需求对照），60% 是当时表述。下方度量方法不变，被问"提效怎么算"时主指标答 5h→2h 即可。</p>
     <p><strong>我当时的回答</strong>：弱——"写的比较粗""其实就是开发工时""应该没人不用 v0 coding"。工程化项目最致命的短板。</p>
     <p><strong>升级版回答三层指标</strong>：</p>
     <p>· <strong>L1 产物质量</strong>：Code Anchor 准确率（plan.md 里 anchor 真实被改的比例，目标≥85%）；OQ 命中率（Open Questions 真实阻塞率，目标≥60%）；IMP 执行率（Implementation 计划条目真实执行率，目标≥75%）。</p>
@@ -1593,7 +1959,7 @@ function buildTreeOptimized(list) {
   <div class="core">基线对比 + 文件覆盖率，分三个维度答</div>
   <div class="card-body">
     <p><strong>答题模板（分三步答）</strong>：</p>
-    <p>① <strong>转化效率</strong>：人工基线 vs 工具自动化。人工读 PRD + 开会确认平均 2-3 小时，工具自动化 5 分钟，效率提升 60%。</p>
+    <p>① <strong>转化效率</strong>：人工基线 vs 工具自动化。人工读 PRD + 评审 + 三方对齐 + 出方案平均 5h/需求，工具自动蒸馏出 Spec+Plan 平均 2h/需求（5 需求对照）。</p>
     <p>② <strong>准确率</strong>：实际开发分支修改的文件集合 vs plan 产出文件集合做匹配，命中率 80%。20% gap 来自 PRD 本身不完整——AI 主动标记让人确认。</p>
     <p>③ <strong>稳定性</strong>：质量门控在计划阶段拦截低质量输出，Readiness Score 低于阈值自动降级。</p>
     <p><strong>口径原则</strong>：不说"效率提升 10 倍"这种虚数，说可衡量的中间指标——文件覆盖率、门控拦截率、人工确认项数量。</p>
@@ -1697,7 +2063,7 @@ function buildTreeOptimized(list) {
     <p>· <strong>SSOT</strong>：Reference插件把项目知识蒸馏成6个领域知识文件，每个事实只存在一处，避免AI冗余编造。</p>
     <p>· <strong>证据链</strong>：定义8种证据类型（PRD/源码/文档等），AI每条结论必须引用Evidence ID，可追溯到原始出处。</p>
     <p>· <strong>多层门控</strong>：贯穿11步流水线——摄入门控检查PRD读取质量，Spec Review Gate要求人工确认后才允许生成Plan，Readiness Score做五维度综合评分，Final Quality Gate做5项确定性检查。</p>
-    <p><strong>效果</strong>：效率提升60%（人工3.5天→工具1.5天），文件覆盖率80%，已推广到几十人团队。</p>
+    <p><strong>效果</strong>：PRD→Plan 从 5h/需求降到 2h/需求（5 需求对照），文件级准确率 80%，同一 PRD 跑 10 次一致性 40%→85%+，已推广到 20+ 人团队。</p>
     <p><strong>产品边界</strong>：只做PRD到任务拆解。下游对接任意AI Coding工具（Cursor/Windsurf/Claude Code），不重复造轮子。</p>
     <p><strong>vs现有工具</strong>：Graphify做了知识图谱但没有蒸馏流程；OpenSpec有工作流规范但缺PRD到需求拆解闭环；Cursor/Windsurf不解决已有项目（几万行代码+历史逻辑）的需求理解问题。</p>
   </div>
@@ -2161,12 +2527,14 @@ function buildTreeOptimized(list) {
 </div>
 
 <!-- ==================== 项目数据速查 ==================== -->
-<div class="card" data-c="emer" data-kw="数据 口径 指标 简历 400 60% 追问 计算">
+<div class="card" data-c="emer" data-kw="数据 口径 指标 简历 400 5h 2h 追问 计算 简历口径">
   <div class="card-head"><span class="tag emer">速查</span><div class="card-title">项目关键数据 + 口径（被问怎么算的）</div></div>
   <div class="core">每个数字都要能脱口而出，面试官随时追问怎么算的</div>
   <div class="card-body">
-    <p><strong>PRD 转化效率 +60%</strong>：基线是人工读 PRD+开会确认出计划平均 5h/需求，蒸馏后自动出结构化计划 2h/需求，取 3 个月均值对比。</p>
-    <p><strong>返工减少 50%+</strong>：需求评审到提测前，因需求理解偏差导致的返工工单，前 3 个月 12 单→后 3 个月 5 单。</p>
+    <p><strong>PRD→Plan 5h→2h/需求</strong>【简历口径·必背】：5 个中等复杂度需求做对照，人工读 PRD+评审+三方对齐+出方案平均 5h，工具自动蒸馏出 Spec+Plan 平均 2h。注意是 PRD→Plan 单环节，全链路（含联调/环境/协同）提效约 20-30%。</p>
+    <p><strong>一致性 40%→85%+</strong>【简历口径·必背】：同一 PRD 跑 10 次，文件列表完全一致的占比，从早期 40% 提升到 85%+（加门控后应更高，未再量化）。</p>
+    <p><strong>文件级准确率 80%</strong>【简历口径·必背】：实际开发分支改动文件集合 vs Plan 产出文件集合做匹配。20% gap 来自 PRD 本身不完整，AI 主动标记让人确认。</p>
+    <p><strong>返工减少</strong>【补充口径·别主动说，简历未列】：需求理解偏差返工工单，前 3 个月 12 单→后 3 个月 5 单。样本量小、未严格 AB，仅在面试官深挖"质量改善怎么衡量"时作为佐证。</p>
     <p><strong>上线周期 2 周→3 天</strong>：缩短在开发阶段——PRD 蒸馏自动出计划→BFF 配模板+联动半天→前端零代码→测试 1-2 天。</p>
     <p><strong>联动复用率 80%+</strong>：23 种活动类型中 19 种可复用已有 linkageSchema，仅 4 种需新增。</p>
     <p><strong>新权益接入 2 天→2 小时</strong>：2 小时是后端在 MIS 配 Schema 的时间，前端零代码。</p>
@@ -2421,7 +2789,7 @@ function buildTreeOptimized(list) {
   <div class="core">三句话：从业务抽共性做抽象、全流程质量把控不漏环节、新技术从0到1落地闭环</div>
   <div class="card-body">
     <p><strong>第一，从业务抽共性做抽象</strong>。20+活动类型的if-else我抽象成Schema驱动，30-40个权益组件我统一成Register注册模式。不是需求来了就写代码，而是先看有没有共性可以做抽象。这个能力让我每次接新业务都不是从零开始。</p>
-    <p><strong>第二，全流程质量把控</strong>。不只是写代码——预防层有Schema静态校验，校验层有联动引用检测，监控层有reason tag分类报警，生产层有灰度发布和自动化回归。400+组件两年零事故不是运气，是每个环节都有防控。</p>
+    <p><strong>第二，全流程质量把控</strong>。不只是写代码——预防层有Schema静态校验，校验层有联动引用检测，监控层有reason tag分类报警，生产层有灰度发布和自动化回归。400+权益 18 个月+零 breaking change 不是运气，是每个环节都有防控。</p>
     <p><strong>第三，新技术从0到1落地闭环</strong>。AI工作流不是玩玩工具，是从知识库设计到质量门控到团队推广的完整闭环。5个团队在用，有量化的投入产出数据。</p>
     <p class="hint">不要说"我学习能力强"或者"我技术全面"。说具体的、可验证的能力，每句都跟产出挂钩。</p>
   </div>
@@ -2491,9 +2859,10 @@ function buildTreeOptimized(list) {
   <div class="card-head"><span class="tag proj">AI</span><div class="card-title">怎么证明AI方案真的提升了效率？</div></div>
   <div class="core">不是AB实验，是工时前后对比+定性反馈双维度验证，坦诚承认不是严格实验设计</div>
   <div class="card-body">
-    <p><strong>量化维度</strong>：Jira工时对比法。对照组：取过去20个需求的人工流程耗时（读PRD+需求评审+技术评审+写计划），均值2-3天。实验组：同样复杂度的需求用工具流程，从PRD到产出Spec+Plan平均1-2小时。前后端各取5个需求做对照样本，PRD→Plan环节提效60%。但坦诚说这不是严格AB实验——没有随机分组、没有控制变量，是同一团队前后流程的工时对比。</p>
+    <p>⚠️ <strong>口径锚点</strong>：简历主口径 5h→2h/需求（5 需求对照，纯工作时间）。下方"2-3天 vs 1-2小时"是 20 需求 Jira 日历时间（含跨天协作等待）。被问先用 5h→2h 答主指标，深挖样本再给日历口径。</p>
+    <p><strong>量化维度</strong>：Jira工时对比法。对照组：取过去20个需求的人工流程耗时（读PRD+需求评审+技术评审+写计划），均值2-3天（日历时间）。实验组：同样复杂度的需求用工具流程，从PRD到产出Spec+Plan纯工作1-2小时。前后端各取5个需求做对照样本，PRD→Plan环节约 60% 提效（即 5h→2h 的换算）。但坦诚说这不是严格AB实验——没有随机分组、没有控制变量，是同一团队前后流程的工时对比。</p>
     <p><strong>定性维度</strong>：三个信号证明方案有效。第一，Plan质量——5个验证需求中，AI产出的Plan和资深工程师手写的Plan对比，改动点覆盖率在85%以上，差异主要在灰度策略和回滚方案（这些本来就需要人工补充）。第二，使用意愿——从"陪着跑"到"独立使用"，同事自发使用说明产出确实有价值。第三，问题发现——有一次AI通过跨层契约分析发现了前端调用了一个已经下线的BFF接口，这个是人工评审没发现的。</p>
-    <p><strong>诚实边界</strong>：单环节提效60%，全链路（含联调/环境/协同）提效20-30%。AI提效不了的部分是合作方依赖和环境搭建这些人际协同环节。主动给出这个务实口径比夸大效果好得多。</p>
+    <p><strong>诚实边界</strong>：单环节 5h→2h（约60%提效），全链路（含联调/环境/协同）提效20-30%。AI提效不了的部分是合作方依赖和环境搭建这些人际协同环节。主动给出这个务实口径比夸大效果好得多。</p>
     <p><strong>面试策略（实战教训）</strong>：主动说"我分两个口径给你"，先给环节数据再说全链路，比被动纠正好得多。另外面试官会明确追问"方案评审也要拉大家过一下吧，AI给的方案不一定是对的"——正确表述是"AI做80%基础工作，人工focus验证和决策"。与其自建PM工作流替产品写PRD，更落地的方案是AI反推PRD缺项给产品补全建议——赋能而非替代。</p>
     <p class="hint">面试官问"怎么证明"时，不要回避。最好的策略是先说方法论（工时对比），再说局限性（不是严格实验），然后说定性佐证（质量/意愿/意外发现）。诚实比包装有说服力。</p>
   </div>
@@ -2510,9 +2879,9 @@ function buildTreeOptimized(list) {
   </div>
 </div>
 
-<div class="card" data-c="proj" data-kw="PRD转化率 60% 实验组 对照组 AB实验 统计口径 样本 逐字稿">
-  <div class="card-head"><span class="tag proj">AI</span><div class="card-title">PRD转化率60%的实验组和对照组是什么？</div></div>
-  <div class="core">不是AB实验，是同一团队前后流程的工时对比，取20个需求样本做均值比较</div>
+<div class="card" data-c="proj" data-kw="5h 2h PRD转化率 实验组 对照组 AB实验 统计口径 样本 逐字稿">
+  <div class="card-head"><span class="tag proj">AI</span><div class="card-title">5h→2h 的实验组和对照组是什么？（≈60%提效）</div></div>
+  <div class="core">不是AB实验，是同一团队前后流程的工时对比。主口径 5h→2h（纯工作），20 需求日历口径 2-3天→1-2小时</div>
   <div class="card-body">
     <p><strong>研究设计</strong>：坦诚说这不是严格意义上的AB实验——没有随机分组，没有控制组。是同一个团队、同一类需求、前后流程改变的工时对比。</p>
     <p><strong>对照组（人工流程）</strong>：取过去20个需求的Jira工时记录，统计从PRD接入到产出技术方案的耗时。包括：读PRD（2-4小时）+ 需求评审会（1-2小时）+ 技术评审会（1-2小时）+ 写技术方案文档（4-8小时）。均值2-3天（含跨天协作等待时间）。</p>
@@ -3005,6 +3374,195 @@ function buildTreeOptimized(list) {
   </div>
 </div>
 
+<!-- ==================== 补充卡片 · 大麦/虎鲸文娱专属（2026-06-29 一面）==================== -->
+
+<div class="card" data-c="emer" data-kw="大麦 虎鲸文娱 组织变更 阿里影业 淘票票 业务画像 抢票 主办方">
+  <div class="card-head"><span class="tag emer">大麦</span><div class="card-title">虎鲸文娱组织变更 + 大麦业务画像（面试必备常识）</div></div>
+  <div class="core">2025 阿里大文娱→虎鲸文娱；阿里影业→大麦娱乐；大麦+淘票票双票务整合</div>
+  <div class="card-body">
+    <p><strong>组织变更（2025）</strong>：</p>
+    <p>· <strong>阿里大文娱集团 → 虎鲸文娱集团</strong>（2025/5 正式更名）</p>
+    <p>· <strong>阿里影业 → 大麦娱乐</strong>（上市公司 01060.HK 更名）</p>
+    <p>· <strong>大麦 + 淘票票 双票务整合</strong>：大麦 = 演出/体育/展览，淘票票 = 电影</p>
+    <p>· 核心引擎：<strong>优酷 + 大麦娱乐</strong></p>
+    <p><strong>大麦业务画像（前端视角）</strong>：</p>
+    <p>· <strong>C 端购票/抢票</strong>：高并发、热点票务、库存防超、选座渲染 → 营销中台高并发 + SW 缓存可桥接</p>
+    <p>· <strong>C 端演出详情页</strong>：富媒体、SEO、首屏性能 → SSR/性能优化</p>
+    <p>· <strong>B 端主办方/运营平台</strong>：动态表单、配置化、活动规则引擎 → <strong>Schema 中台直接对口</strong></p>
+    <p>· <strong>小程序/H5/跨端</strong>：阿里 mPaaS/小程序矩阵（薄弱点，备兜底话术）</p>
+    <p>· <strong>票务选座图</strong>：Canvas/SVG 渲染、交互复杂 → 类比权益组件库复杂场景</p>
+    <p><strong>应对策略</strong>：① 自我介绍/反问主动用"虎鲸文娱"显信息更新 ② 反问问"大麦淘票票整合后前端分工边界"展示认知。</p>
+    <p class="hint">大麦面试必备。开场用"虎鲸文娱"不用"阿里大文娱"，立刻显信息更新。</p>
+  </div>
+</div>
+
+<div class="card" data-c="emer" data-kw="大麦 自我介绍 30秒 定制 Schema 权益 AI 虎鲸文娱 开场">
+  <div class="card-head"><span class="tag emer">大麦</span><div class="card-title">大麦定制自我介绍（30 秒）</div></div>
+  <div class="core">三条线 + 一条兜底，对齐大麦 B 端配置 + C 端上新 + AI</div>
+  <div class="card-body">
+    <p><strong>核心句（15 秒）</strong>：面试官好，我是邓泽霖，滴滴国际化高级前端 4 年，连续 2 年 A 绩效。在滴滴做了三件事：<strong>Schema 驱动营销中台 + 400+ 权益组件库 + AI 工程工作流</strong>，这三块和大麦业务高度对口。</p>
+    <p><strong>展开（按大麦业务锚点）</strong>：</p>
+    <p>① <strong>Schema 中台</strong>：覆盖 20+ 活动类型，新增活动前端零代码，上线 2 周→3 天。这套配置化思路直接迁移到大麦<strong>主办方平台</strong>的演出/票务活动 SKU 配置。</p>
+    <p>② <strong>400+ 权益组件库</strong>：Register + Schema 渲染 + Rollup 双模，覆盖 8 业务，18 个月+零 breaking change。可迁移到大麦<strong>演出/体育/展览多业务线</strong>票务组件抽象。</p>
+    <p>③ <strong>AI 工作流 prd-tools</strong>：Claude Code 双 Skill，PRD→Spec→Plan 蒸馏，5h→2h/需求。跟阿里淘天工业级 AI 研发对标，跟<strong>虎鲸文娱 C 端大量上新</strong>场景非常契合。</p>
+    <p><strong>收尾</strong>：核心优势是从业务抽共性做架构抽象 + 全流程质量把控，想在虎鲸文娱 AI 工程化方向深入。</p>
+    <p class="hint">大麦定制版。三条线分别锚定 B 端配置/多业务线组件/C 端上新。控制在 45 秒内。</p>
+  </div>
+</div>
+
+<div class="card" data-c="emer" data-kw="大麦 抢票 高并发 排队 WebSocket 库存 防超卖 场景设计 前端架构">
+  <div class="card-head"><span class="tag emer">大麦</span><div class="card-title">抢票页面前端架构（大麦场景设计）</div></div>
+  <div class="core">四层：排队(WS长连) → 库存(节流推送) → 下单(防抖+二次确认) → 降级(兜底)</div>
+  <div class="card-body">
+    <p><strong>① 排队层</strong>：进入页面先排队（WebSocket 长连 + 队列位置实时推送），避免瞬时打爆后端。</p>
+    <p><strong>② 库存层</strong>：前端展示剩余票数（WS 推送 + 节流更新，避免数字抖动）。</p>
+    <p><strong>③ 下单层</strong>：点购买 → 防抖（500ms，防连点）→ 二次确认 → 提交订单。</p>
+    <p><strong>④ 降级层</strong>：网络异常 → loading 优化 → 重试引导 → 兜底静态页。</p>
+    <p><strong>关键防措</strong>：</p>
+    <p>· <strong>防 URL 直刷</strong>：进页校验 token + 时间窗口</p>
+    <p>· <strong>防超卖</strong>：前端只展示，<strong>下单结果以服务端为准</strong>（不做乐观更新，避免前端显示成功但后端没库存）</p>
+    <p>· <strong>防机器人</strong>：行为埋点 + 风控 SDK + 验证码</p>
+    <p><strong>兜底话术</strong>（无 1:1 经验）：抢票场景没直接做过，但营销联动 SW 缓存（按入参 hash 做缓存键）思路可迁移；真正的高并发防超卖主要靠后端 Redis+MQ，前端做排队引导/loading/降级。</p>
+    <p class="hint">大麦高频场景题。四层框架 + 防超卖"以服务端为准"是核心。主动给兜底句显诚实。</p>
+  </div>
+</div>
+
+<div class="card" data-c="emer" data-kw="大麦 反问 面试官 团队 AI 研发 抢票架构 分工 千问教训">
+  <div class="card-head"><span class="tag emer">大麦</span><div class="card-title">大麦反问 3 件套（避免千问翻车）</div></div>
+  <div class="core">个人强相关 + 技术深度 + 团队情况，避免宏大战略</div>
+  <div class="card-body">
+    <p>⚠️ <strong>千问教训</strong>：Q43 问"近半年最重要 1-2 件事"被当面批评"跟你关系不大"。反问必须个人强相关。</p>
+    <p><strong>第 1 问（个人强相关·必问）</strong>：这岗位具体哪个团队？我看大麦有 C 端购票、B 端主办方、营销增长几条线，前端在不同团队分工边界？进来后预期重点参与哪个方向？</p>
+    <p><strong>第 2 问（技术深度·二选一）</strong>：</p>
+    <p>· 问 AI：阿里淘天已有工业级 AI 研发体系，虎鲸文娱前端团队在 AI 研发提效的现状和规划？在用 Claude Code/Cursor 吗？</p>
+    <p>· 问业务：大麦抢票是典型高并发场景，前端在排队引导/库存展示/防超卖兜底主要做了哪些架构优化？</p>
+    <p><strong>第 3 问（团队·看气氛问）</strong>：团队目前前端同学大概多少位？协作模式和技术分享机制？</p>
+    <p><strong>❌ 避免问</strong>：大麦整体战略/阿里集团规划（跟个人无关）、加班福利（HR 面再问）、"我有什么需要改进的"。</p>
+    <p class="hint">大麦反问模板。第 1 问必问团队边界（显做过功课），第 2 问选 AI 或高并发看面试官偏好。</p>
+  </div>
+</div>
+
+<div class="card" data-c="emer" data-kw="大麦 为什么看机会 为什么选大麦 淘天 蚂蚁 离职 跳槽 虎鲸文娱">
+  <div class="card-head"><span class="tag emer">大麦</span><div class="card-title">为什么看机会 + 为什么选大麦</div></div>
+  <div class="core">成长到顶+想深入AI工程化+虎鲸文娱C端上新场景对口</div>
+  <div class="card-body">
+    <p><strong>核心句</strong>：成长空间到顶 + 想深入 AI 工程化 + 大麦业务场景对口。</p>
+    <p><strong>四段式</strong>：</p>
+    <p>· <strong>感恩过去</strong>：滴滴国际化 4 年，从 0 到 1 做了 Schema 架构 + 权益组件库 + AI 工作流，连续 2 年 A 绩效</p>
+    <p>· <strong>明确诉求</strong>：今年想完成 AI 应用方向深度转化。滴滴 AI 落地节奏偏慢，希望去走得更快的环境</p>
+    <p>· <strong>匹配大麦</strong>：虎鲸文娱 C 端大量上新场景 + 阿里体系内工业级 AI 研发实践，跟 prd-tools 经验非常对口</p>
+    <p>· <strong>个人定位</strong>：希望在中后台 + AI 复合方向深入</p>
+    <p><strong>Q：为什么选大麦不选淘天/蚂蚁？</strong></p>
+    <p>· <strong>行业方向</strong>：内容/票务/文娱是我感兴趣的方向，离 C 端真实用户近</p>
+    <p>· <strong>业务场景</strong>：大麦有强季节性热点（演唱会抢票），技术挑战独特</p>
+    <p>· <strong>组织红利</strong>：虎鲸文娱刚整合，前端团队边界在重塑，进来有发挥空间</p>
+    <p class="hint">高频必问。感恩过去→明确诉求→匹配大麦，别说滴滴坏话，说"节奏/方向"差异。</p>
+  </div>
+</div>
+
+<!-- ==================== 补充卡片 · TikTok/字节 SEP 专属（3-2 朋友直推）==================== -->
+
+<div class="card" data-c="emer" data-kw="TikTok SEP 字节 背景 约面 3-2 朋友直推 客服体验平台 HC 级别 性质">
+  <div class="card-head"><span class="tag emer">TikTok</span><div class="card-title">TikTok SEP 背景情报 + 约面性质</div></div>
+  <div class="core">3-2 朋友直推 TL，不走系统；客服体验平台；业务对口度 9.5/10</div>
+  <div class="card-body">
+    <p><strong>机会含金量</strong>：字节 3-2（资深专家，年包 350-500 万）朋友用信誉背书直推 TL，单独约面不走系统。</p>
+    <p><strong>部门</strong>：TikTok - Service Experience Platform（客服体验平台）。</p>
+    <p><strong>业务画像 + 对口度</strong>：</p>
+    <p>· <strong>客服工作台</strong>：多渠道接入/工单流转/坐席管理 → Schema 中台⭐⭐⭐⭐⭐</p>
+    <p>· <strong>智能客服/AI 客服</strong>：意图识别/自动回复/多大模型/10 万 QPS → prd-tools + AI 工程⭐⭐⭐⭐⭐</p>
+    <p>· <strong>工单系统</strong>：复杂状态机/SLA/分配引擎 → 营销联动 DSL⭐⭐⭐⭐</p>
+    <p>· <strong>全球多区域</strong>：多语言/多时区/GDPR/CCPA → 滴滴 10+ 国家⭐⭐⭐⭐⭐</p>
+    <p><strong>⚠️ 立刻向朋友确认 3 件事</strong>（3-2 不会介意）：</p>
+    <p>① HC 级别：L3 高级 / L4 资深 / L5 专家？② 这次约面性质：技术评估 / 走过场发 offer / 正式一面？③ 后续流程：通过后几轮？TikTok 标准 3 技 + HR？</p>
+    <p><strong>约面性质解读</strong>：TL 非正式约面 = 试面（技术对齐），合适才补正式流程。等于直达决策者，节奏快。</p>
+    <p class="hint">别让朋友丢脸，准备要扎实。约面前务必问清性质——是技术对齐还是正式面试，决定准备深度。</p>
+  </div>
+</div>
+
+<div class="card" data-c="emer" data-kw="TikTok 字节 文化 价值观 Always Day 1 坦诚清晰 追求极致 HR面 事例">
+  <div class="card-head"><span class="tag emer">TikTok</span><div class="card-title">字节文化关键词（HR 面必考，每条配事例）</div></div>
+  <div class="core">Always Day 1 / 坦诚清晰 / 开放谦逊 / 追求极致 / 多元兼容</div>
+  <div class="card-body">
+    <p><strong>① Always Day 1（始终创业）</strong>：像创业公司一样保持敏锐。→ <strong>事例</strong>：prd-tools 是我自发做的，没有任务安排，主动发现问题+推动解决。</p>
+    <p><strong>② 坦诚清晰</strong>：直接表达，不绕弯。→ <strong>事例</strong>：主导《中台开发规范》《BFF 接口规范》落地，把隐性知识显性化。</p>
+    <p><strong>③ 开放谦逊</strong>：对标行业最佳。→ <strong>事例</strong>：主动向阿里淘天学习工业级 AI 研发体系，对标自己的工作流。</p>
+    <p><strong>④ 追求极致</strong>：不满足于"能用"。→ <strong>事例</strong>：400+ 权益组件库 18 个月零 breaking change，2 年仅 2-3 bug。</p>
+    <p><strong>⑤ 多元兼容</strong>：尊重差异。→ <strong>事例</strong>：滴滴国际化 10+ 国家，处理过文化/语言/合规复杂适配。</p>
+    <p><strong>vs 阿里文化</strong>：字节重"why 技术原理"，阿里重"how much 业务效果"；字节节奏快（40-60min/轮），阿里慢（60-90min/轮）。</p>
+    <p class="hint">字节 HR 面必考价值观。每条价值观准备一个具体事例（带数据），不要空谈。背熟 5 个关键词 + 5 个事例。</p>
+  </div>
+</div>
+
+<div class="card" data-c="emer" data-kw="TikTok 自我介绍 定制 客服工作台 智能客服 全球化 Schema AI 国际化">
+  <div class="card-head"><span class="tag emer">TikTok</span><div class="card-title">TikTok SEP 定制自我介绍（30 秒）</div></div>
+  <div class="core">四条线对齐：Schema→工作台配置 / 组件库→多业务 / AI→智能客服 / 国际化→全球化</div>
+  <div class="card-body">
+    <p><strong>核心句（15 秒）</strong>：面试官好，我是邓泽霖，滴滴国际化高级前端 4 年，连续 2 年 A 绩效。在滴滴做了三件事：<strong>Schema 营销中台 + 400+ 权益组件库 + AI 工程工作流</strong>，外加<strong>10+ 国家国际化实战</strong>，这四块和 TikTok 客服平台的中后台 + AI + 全球化方向高度对口。</p>
+    <p><strong>展开（按 TikTok 业务锚点）</strong>：</p>
+    <p>① <strong>Schema 中台</strong>：20+ 活动类型，新增活动前端零代码，2 周→3 天。→ 直接迁移到<strong>客服工作台</strong>工单类型/服务模板配置，让运营自助配置不用开发介入。</p>
+    <p>② <strong>AI 工作流 prd-tools</strong>：PRD→Spec→Plan 蒸馏，5h→2h。→ 本质和<strong>智能客服</strong>"意图识别→回复生成"是同一个模式：都是让 AI 基于业务知识库产出可信结论。差别是客服的多语言、实时性要求更高。</p>
+    <p>③ <strong>滴滴国际化 10+ 国家</strong>：拉美西语/葡语、中东 RTL、跨时区。→ TikTok 全球化挑战更复杂（支付方式/文化禁忌/GDPR/CCPA），我能直接上手。</p>
+    <p><strong>收尾</strong>：核心优势是从业务抽共性 + 全流程质量把控，特别想在 TikTok 这种中后台 + AI 双线深度的场景深入。</p>
+    <p class="hint">TikTok 定制版，比大麦版多一条"国际化"。4 条线分别锚定工作台/智能客服/全球化。控制 50 秒。</p>
+  </div>
+</div>
+
+<div class="card" data-c="emer" data-kw="TikTok 客服工作台 设计 实时消息 WebSocket 状态机 RBAC 场景 四段式 系统设计">
+  <div class="card-head"><span class="tag emer">TikTok</span><div class="card-title">客服工作台设计（TikTok 必考场景）</div></div>
+  <div class="core">需求拆解→架构分层(接入/业务/数据/AI)→关键决策→扩展性</div>
+  <div class="card-body">
+    <p><strong>【需求拆解】</strong>客服工作台三件事：工单管理 + 实时消息 + 坐席效率。</p>
+    <p><strong>【架构分层】</strong>：</p>
+    <p>· <strong>接入层</strong>：多渠道（IM/邮件/电话）统一接入，WebSocket 长连</p>
+    <p>· <strong>业务层</strong>：工单状态机（created→assigned→in_progress→resolved→closed）+ 分配引擎 + RBAC 权限</p>
+    <p>· <strong>数据层</strong>：工单存储（MySQL）+ 搜索（ES）+ 实时数据（Redis）</p>
+    <p>· <strong>AI 层</strong>：意图识别 + 自动回复 + 知识库检索</p>
+    <p><strong>【关键决策】</strong>：</p>
+    <p>· <strong>WebSocket 而非轮询</strong>：实时性 + 节省带宽</p>
+    <p>· <strong>实时消息子系统</strong>：心跳保活 + 断线重连 + ACK 可靠投递 + 消息去重 + 离线消息；渲染层节流 + 虚拟滚动（工单池可能 1 万+）</p>
+    <p>· <strong>权限 RBAC + 字段级</strong>：不同区域看不同字段（GDPR 合规）</p>
+    <p>· <strong>降级</strong>：WS 不可用降级轮询</p>
+    <p><strong>【扩展性】</strong>：① 插件化——新渠道接入走适配器模式 ② 多区域——按 region 分部署，数据合规隔离 ③ 监控——全链路 TraceID + Sentry。</p>
+    <p><strong>项目桥接</strong>：工单状态机可复用我的营销联动 DSL（声明式描述依赖关系，避免 if-else 硬编码）；工单配置化直接复用 Schema 中台思路。</p>
+    <p class="hint">TikTok 必考。四段式答全（需求→分层→决策→扩展）。实时消息作为子系统讲，别单独被带跑。</p>
+  </div>
+</div>
+
+<div class="card" data-c="emer" data-kw="TikTok 多语言 意图识别 智能客服 幻觉 RAG 兜底 转人工 证据链 AI工程">
+  <div class="card-head"><span class="tag emer">TikTok</span><div class="card-title">多语言意图识别 + 智能客服幻觉控制（TikTok AI 深挖）</div></div>
+  <div class="core">三条多语言路线 + 四层幻觉控制（证据链+兜底+评测+人工）</div>
+  <div class="card-body">
+    <p><strong>多语言意图识别三条路线</strong>：</p>
+    <p>· <strong>路线 A</strong>：先翻译成英文统一处理（成本低，但翻译误差传递放大）</p>
+    <p>· <strong>路线 B</strong>：多语言模型直接处理（Doubao / 多语言 LLM，无翻译损失但成本高）</p>
+    <p>· <strong>路线 C（推荐）</strong>：混合——检测语言，小语种翻译成主语言，再用主模型处理（成本与质量平衡）</p>
+    <p><strong>智能客服幻觉控制四层</strong>：</p>
+    <p>· <strong>证据链</strong>：每条 AI 回复必须标注知识库来源（我的 prd-tools 8 种证据类型同款思路）</p>
+    <p>· <strong>兜底机制</strong>：低置信度自动转人工（设阈值，如置信度 &lt; 0.7 转人工坐席）</p>
+    <p>· <strong>离线评测</strong>：golden sample 回归测试，模型更新后必跑（防退化，我的 reference 回流机制同款）</p>
+    <p>· <strong>人工 review</strong>：重要场景（投诉/退款/资损）必须人工介入</p>
+    <p><strong>成本优化</strong>：多大模型混合——强模型做意图识别，小模型做生成回复；高频问题缓存（客服 FAQ 重复率高）。</p>
+    <p><strong>项目桥接</strong>：我的 prd-tools 防污染三层（人工 check 回流 + golden sample 回归 + 前后评分对比）直接迁移到客服幻觉控制。</p>
+    <p class="hint">TikTok SEP 强相关。多语言 + 幻觉是客服 AI 的两个核心难题。能把 prd-tools 的证据链/防污染桥接过来显深度。</p>
+  </div>
+</div>
+
+<div class="card" data-c="emer" data-kw="TikTok 反问 面试官 智能客服 高并发 团队 Agent RAG 约面">
+  <div class="card-head"><span class="tag emer">TikTok</span><div class="card-title">TikTok 反问 3 件套</div></div>
+  <div class="core">岗位团队边界 + AI 研发现状/高并发架构 + 团队协作</div>
+  <div class="card-body">
+    <p><strong>第 1 问（个人强相关·必问）</strong>：TikTok SEP 这岗位具体在哪个团队？客服平台下有工作台/工单/智能客服几条线，前端在不同团队分工边界？进来后预期重点参与哪个方向？</p>
+    <p><strong>第 2 问（技术深度·二选一）</strong>：</p>
+    <p>· 问 AI：TikTok 客服平台在做 AI 智能客服，团队目前在 Agent / RAG / 多语言的现状和规划？前端在 AI 工程化能发挥多大作用？</p>
+    <p>· 问高并发：TikTok 全球化高并发场景（10 万 QPS+），前端在实时消息/工单这块主要做了哪些架构优化？</p>
+    <p><strong>第 3 问（团队·看气氛问）</strong>：团队目前前端同学大概多少位？协作模式和技术分享机制？</p>
+    <p><strong>❌ 避免问</strong>：TikTok 整体战略/字节集团规划（宏大无关）、加班福利（HR 面再问）、"我有什么需要改进的"。</p>
+    <p><strong>约面性质专属问</strong>（仅 TL 非正式约面合适）：如果这次对齐顺利，后续正式流程大概几轮？我这边可以做哪些准备配合？</p>
+    <p class="hint">TikTok 反问模板。第 2 问选 AI 显对口（你有 prd-tools 经验），选高并发显工程深度。</p>
+  </div>
+</div>
+
 <!-- ==================== 补充卡片 v2 · 蚂蚁专属（2 张） ==================== -->
 
 <div class="card" data-c="emer" data-kw="金融场景 资损防控 合规审核 Spec Review Gate 灰度 回滚">
@@ -3308,7 +3866,7 @@ const subOrder={
   'React':1,'JS 核心':2,'CSS':3,'网络':4,'浏览器/性能':5,'TypeScript':6,'工程化':7,'框架扩展':8,
   'AI 前端':1,'AI 实践':2,'AI 理论':3,'AI 架构':4,'知识库':5,'追问':6,
   '速查':0,'手写 API':1,'数组/双指针':2,'链表':3,'树/BFS/DFS':4,'回溯':5,'排序/TopK':6,'DP/贪心':7,'栈':8,'二分':9,'综合':10,
-  '项目数据':1,'软技能':2,'HR面':3,'反问':4,'话术急救':5
+  '项目数据':1,'大麦专属':2,'TikTok专属':3,'软技能':4,'HR面':5,'反问':6,'话术急救':7
 };
 
 function setCat(c){
@@ -3362,6 +3920,8 @@ function getGroup(c){
   if(cat==='open')return '';
   if(cat==='emer'){
     if(tag==='速查')return '项目数据';
+    if(tag==='大麦')return '大麦专属';
+    if(tag==='TikTok')return 'TikTok专属';
     if(tag==='HR')return 'HR面';
     if(tag==='软技能')return '软技能';
     if(tag==='反问')return '反问';
@@ -3378,14 +3938,14 @@ function getGroup(c){
     if(/SSR|Next|React Native|Expo/.test(t))return '框架扩展';
     if(/Webpack|Vite|Vue/.test(t))return '工程化';
     if(/CSS|居中|盒模型|溢出|布局/.test(t))return 'CSS';
-    if(/HTTP|HTTPS|跨域|Token|存储/.test(t))return '网络';
+    if(/HTTP|HTTPS|TCP|UDP|URL|URI|跨域|Token|存储|握手|协议|缓存策略/.test(t))return '网络';
     if(/浏览|渲染|事件|懒加载|首屏|监控|Service Worker|性能优化|XSS|CSRF|安全/.test(t))return '浏览器/性能';
     if(/React|useEffect|Fiber|并发|虚拟\s*DOM/.test(t))return 'React';
     return 'JS 核心';
   }
   if(cat==='code'){
     if(tag==='速查')return '速查';
-    if(/Promise|EventEmitter|call|apply|bind|深拷贝|防抖|节流|instanceOf|class|模板/.test(t))return '手写 API';
+    if(/Promise|EventEmitter|call|apply|bind|深拷贝|防抖|节流|instanceOf|class|模板|正则|AbortController|请求终止|RequestManager/.test(t))return '手写 API';
     if(/链表/.test(t))return '链表';
     if(/树|层序|LCA|祖先|岛屿/.test(t))return '树/BFS/DFS';
     if(/排列|组合/.test(t))return '回溯';
