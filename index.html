@@ -37,7 +37,7 @@
 /* ===== BODY + LAYOUT ===== */
 html{scroll-behavior:smooth}
 body{font-family:var(--font);background:var(--bg);color:var(--text);font-size:var(--fs);line-height:1.7;transition:background .25s,color .25s}
-.sidebar{position:fixed;top:0;left:0;bottom:0;width:var(--sidebar-w);background:var(--sidebar-bg);border-right:1px solid var(--border);overflow-y:auto;overflow-x:hidden;z-index:100;transition:transform .3s ease,background .25s}
+.sidebar{position:fixed;top:0;left:0;bottom:0;width:var(--sidebar-w);background:var(--sidebar-bg);border-right:1px solid var(--border);overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;z-index:100;transition:transform .3s ease,background .25s}
 .topbar{position:fixed;top:0;left:var(--sidebar-w);right:0;height:var(--topbar-h);background:var(--bg);border-bottom:1px solid var(--border);z-index:90;display:flex;align-items:center;gap:8px;padding:0 16px;transition:left .3s ease,background .25s}
 .content{margin-left:var(--sidebar-w);margin-top:var(--topbar-h);padding:24px 32px 60px;max-width:900px;min-height:calc(100vh - var(--topbar-h));transition:margin-left .3s ease}
 .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:150}
@@ -247,6 +247,8 @@ const NAV = [
   {label:'首页',path:'README'},
   {label:'面试备战',children:[
     {label:'公司定向',children:[
+      {label:'大麦',path:'learning/interview/定向/大麦'},
+      {label:'TikTok SEP',path:'learning/interview/定向/TikTok-SEP'},
       {label:'蚂蚁财富AI Lab',path:'learning/interview/定向/蚂蚁财富AI-Lab'},
       {label:'拼多多',path:'learning/interview/定向/拼多多'},
     ]},

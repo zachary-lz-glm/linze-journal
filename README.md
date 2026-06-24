@@ -11,6 +11,8 @@
 |------|------|
 | 面试当天速查 | [面试速查板](learning/interview-tools/stealth.html) |
 | 简历 | [简历 v3](learning/interview/简历/v3.md) |
+| 大麦定向 | [大麦](learning/interview/定向/大麦.md) |
+| TikTok SEP 定向 | [TikTok SEP](learning/interview/定向/TikTok-SEP.md) |
 | 蚂蚁财富 AI Lab 定向 | [蚂蚁财富AI Lab](learning/interview/定向/蚂蚁财富AI-Lab.md) |
 | 拼多多定向 | [拼多多](learning/interview/定向/拼多多.md) |
 
