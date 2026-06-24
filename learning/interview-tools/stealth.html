@@ -10,7 +10,7 @@
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 :root{--bg:#000;--card:#111;--text:#ccc;--core:#FFD700;--core-bg:#1a1500;--border:#222;--fs:16px;--pad:6px;--radius:8px;--tab-h:44px}
-body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","PingFang SC",sans-serif;background:var(--bg);color:var(--text);font-size:var(--fs);line-height:1.45;padding:calc(var(--tab-h)*2 + 14px) 0 env(safe-area-inset-bottom, 0);-webkit-text-size-adjust:100%}
+body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","PingFang SC",sans-serif;background:var(--bg);color:var(--text);font-size:var(--fs);line-height:1.45;padding:calc(var(--tab-h)*2 + 6px) 0 env(safe-area-inset-bottom, 0);-webkit-text-size-adjust:100%}
 
 /* TABS */
 .tabs{position:fixed;top:0;left:0;right:0;z-index:100;background:#111;display:flex;gap:3px;padding:4px 40px 4px 6px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;border-bottom:1px solid #222;height:var(--tab-h);align-items:center}
@@ -35,7 +35,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","PingFang SC",sa
 .tag.proj{background:#3B82F6}.tag.bagu{background:#10B981}.tag.ai{background:#EF4444}
 .tag.code{background:#F97316}.tag.open{background:#EC4899}.tag.emer{background:#F59E0B}
 .card-title{font-size:14px;font-weight:700;color:#eee;flex:1}
-.core{margin:4px 10px 6px;padding:8px 10px;border-radius:6px;font-size:15px;font-weight:800;color:var(--core);background:var(--core-bg);line-height:1.35}
+.core{margin:4px 10px 6px;padding:8px 10px;border-radius:6px;font-size:15px;font-weight:800;color:var(--core);background:var(--core-bg);line-height:1.35;cursor:pointer}
 
 /* BODY — 默认折叠，点击 card-head 展开 */
 .card-body{padding:0 10px;display:none}
@@ -44,7 +44,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","PingFang SC",sa
 .card.open .card-head::after{content:'▾'}
 
 /* QUICKBAR — 高频主题快捷条（sticky，一点跳分区）*/
-.quickbar{display:flex;gap:4px;padding:5px 6px;overflow-x:auto;scrollbar-width:none;border-bottom:1px solid #222;background:#0d0d0d;position:sticky;top:var(--tab-h);z-index:99}
+.quickbar{display:flex;gap:4px;padding:5px 6px;overflow-x:auto;scrollbar-width:none;border-bottom:1px solid #222;background:#0d0d0d;position:fixed;top:var(--tab-h);left:0;right:0;z-index:99}
 .quickbar::-webkit-scrollbar{display:none}
 .quickbar button{padding:5px 11px;border-radius:5px;font-size:12px;font-weight:700;white-space:nowrap;background:#1a1a1a;color:#aaa;border:1px solid #333;cursor:pointer;-webkit-user-select:none;user-select:none}
 .quickbar button:active{background:#333;color:#fff}
@@ -3867,10 +3867,11 @@ document.getElementById('quickbar').addEventListener('click',e=>{
   },80));
 });
 
-// CARD 折叠 — 点 card-head 展开/收起（排除 code-blk 横滚误触）
+// CARD 折叠 — 点 card-head 或 core（金色一句话，最醒目点击区）展开/收起
 document.getElementById('cards').addEventListener('click',e=>{
-  const head=e.target.closest('.card-head');
-  if(head&&!e.target.closest('.code-blk'))head.parentElement.classList.toggle('open');
+  if(e.target.closest('.code-blk'))return;
+  const hit=e.target.closest('.card-head, .core');
+  if(hit)hit.closest('.card').classList.toggle('open');
 });
 const drawer=document.getElementById('drawer'),dMask=document.getElementById('dMask'),dList=document.getElementById('dList'),dHead=document.getElementById('dHead');
 const catNames={all:'全部',open:'开场',proj:'项目',bagu:'基础',code:'手撕',ai:'AI',emer:'应急'};
