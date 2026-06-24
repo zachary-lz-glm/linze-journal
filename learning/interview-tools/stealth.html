@@ -9,8 +9,9 @@
 <title>面试速查</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-:root{--bg:#000;--card:#111;--text:#ccc;--core:#FFD700;--core-bg:#1a1500;--border:#222;--fs:16px;--pad:6px;--radius:8px;--tab-h:44px}
-body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","PingFang SC",sans-serif;background:var(--bg);color:var(--text);font-size:var(--fs);line-height:1.45;padding:calc(var(--tab-h)*2 + 6px) 0 env(safe-area-inset-bottom, 0);-webkit-text-size-adjust:100%}
+:root{--bg:#000;--card:#111;--text:#ccc;--core:#FFD700;--core-bg:#1a1500;--border:#222;--fs:16px;--pad:6px;--radius:8px;--tab-h:44px;--quickbar-h:40px;--fixed-h:calc(var(--tab-h) + var(--quickbar-h))}
+body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","PingFang SC",sans-serif;background:var(--bg);color:var(--text);font-size:var(--fs);line-height:1.45;padding:calc(var(--tab-h) + 6px) 0 env(safe-area-inset-bottom, 0);-webkit-text-size-adjust:100%}
+body.qb-on{padding-top:calc(var(--fixed-h) + 6px)}
 
 /* TABS */
 .tabs{position:fixed;top:0;left:0;right:0;z-index:100;background:#111;display:flex;gap:3px;padding:4px 40px 4px 6px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;border-bottom:1px solid #222;height:var(--tab-h);align-items:center}
@@ -27,8 +28,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","PingFang SC",sa
 
 /* CARDS */
 .container{display:flex;flex-direction:column;padding:4px 6px;max-width:900px;margin:0 auto}
-.sec-hd{padding:12px 10px 4px;font-size:12px;font-weight:700;color:#666;letter-spacing:1px;margin-top:4px}
-.card{background:var(--card);border-radius:var(--radius);margin-bottom:5px;border:1px solid var(--border);overflow:hidden}
+.sec-hd{padding:12px 10px 4px;font-size:12px;font-weight:700;color:#666;letter-spacing:1px;margin-top:4px;scroll-margin-top:calc(var(--fixed-h) + 2px)}
+.card{background:var(--card);border-radius:var(--radius);margin-bottom:5px;border:1px solid var(--border);overflow:hidden;scroll-margin-top:calc(var(--fixed-h) + 6px)}
 .card.hide{display:none}
 .card-head{padding:8px 10px 2px;display:flex;align-items:flex-start;gap:6px;cursor:pointer}
 .tag{display:inline-block;padding:2px 7px;border-radius:4px;font-size:11px;font-weight:800;color:#fff;flex-shrink:0}
@@ -46,7 +47,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","PingFang SC",sa
 /* QUICKBAR — 高频主题快捷条（sticky，一点跳分区）*/
 .quickbar{display:flex;gap:4px;padding:5px 6px;overflow-x:auto;scrollbar-width:none;border-bottom:1px solid #222;background:#0d0d0d;position:fixed;top:var(--tab-h);left:0;right:0;z-index:99}
 .quickbar::-webkit-scrollbar{display:none}
-.quickbar button{padding:5px 11px;border-radius:5px;font-size:12px;font-weight:700;white-space:nowrap;background:#1a1a1a;color:#aaa;border:1px solid #333;cursor:pointer;-webkit-user-select:none;user-select:none}
+.quickbar button{padding:5px 11px;border-radius:5px;font-size:12px;font-weight:700;white-space:nowrap;background:#1a1a1a;color:#aaa;border:1px solid #333;cursor:pointer;-webkit-user-select:none;user-select:none;transition:background .12s,color .12s,border-color .12s}
+.quickbar button.on{background:var(--core);color:#000;border-color:var(--core)}
 .quickbar button:active{background:#333;color:#fff}
 .card-body p{margin-bottom:4px;font-size:13px;color:#aaa;line-height:1.5}
 .card-body .hint{color:#888;font-size:11px;font-style:italic;margin-top:3px}
@@ -3848,10 +3850,14 @@ function buildTreeOptimized(list) {
 <script>
 let curCat='all';
 
-// QUICKBAR — 二级子分类栏：随一级 tab 变化，点子组滚到该组第一张卡并展开
+// QUICKBAR — 二级子分类栏：随一级 tab 变化，点子组滚到该组小标题（sec-hd）并高亮
+const FIXED_H=((cs)=>(parseInt(cs.getPropertyValue('--tab-h'))||44)+(parseInt(cs.getPropertyValue('--quickbar-h'))||40))(getComputedStyle(document.documentElement));
+let scrollLock=false,scrollLockT,spyT;
 function renderQuickbar(){
   const qb=document.getElementById('quickbar');
-  if(curCat==='all'||curCat==='open'){qb.style.display='none';return}
+  const show=curCat!=='all'&&curCat!=='open';
+  document.body.classList.toggle('qb-on',show);     // 同步修正 body 顶部 padding
+  if(!show){qb.style.display='none';qb.innerHTML='';return}
   const cards=[...document.querySelectorAll('.card')].filter(c=>c.dataset.c===curCat);
   const seen={},groups=[];
   cards.forEach(c=>{const g=getGroup(c);if(g&&!seen[g]){seen[g]=1;groups.push(g)}});
@@ -3859,13 +3865,49 @@ function renderQuickbar(){
   qb.style.display='flex';
   qb.innerHTML=groups.map(g=>`<button data-g="${g}">${g}</button>`).join('');
 }
+function setActiveSub(g){
+  let hitBtn=null;
+  document.querySelectorAll('.quickbar button').forEach(b=>{
+    const on=b.dataset.g===g;
+    b.classList.toggle('on',on);
+    if(on)hitBtn=b;
+  });
+  if(hitBtn)hitBtn.scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'}); // 激活按钮滚进 quickbar 视野
+}
+// scroll-spy：手动滑动时，按当前顶部位置高亮对应分组按钮（持续反馈）
+function updateSpy(){
+  if(curCat==='all'||curCat==='open')return;
+  const headers=[...document.querySelectorAll('.sec-hd')];
+  if(!headers.length)return;
+  let active='';
+  for(const h of headers){if(h.getBoundingClientRect().top<=FIXED_H+8)active=h.textContent}
+  if((window.innerHeight+window.scrollY)>=document.body.offsetHeight-4&&headers.length){
+    active=headers[headers.length-1].textContent;    // 滑到底部时锁定最后一个分组
+  }
+  if(active)setActiveSub(active);
+}
 document.getElementById('quickbar').addEventListener('click',e=>{
   const btn=e.target.closest('button');if(!btn)return;
   const g=btn.dataset.g;
+  setActiveSub(g);                                   // 立即金色选中，明确反馈
   const cards=[...document.querySelectorAll('.card:not(.hide)')];
-  const target=cards.find(c=>getGroup(c)===g);
-  if(target){target.classList.add('open');target.scrollIntoView({behavior:'smooth',block:'start'})}
+  const first=cards.find(c=>getGroup(c)===g);
+  if(first)first.classList.add('open');              // 顺手展开该组第一张卡
+  const headers=[...document.querySelectorAll('.sec-hd')];
+  const hd=headers.find(h=>h.textContent===g);       // 目标落点：分组小标题，让它在固定栏正下方
+  const dest=hd||first;
+  if(dest){
+    scrollLock=true;                                 // 程序滚动期间暂停 spy，避免中间分组抢高亮
+    dest.scrollIntoView({behavior:'smooth',block:'start'});
+    clearTimeout(scrollLockT);
+    scrollLockT=setTimeout(()=>{scrollLock=false;updateSpy()},650);
+  }
 });
+window.addEventListener('scroll',()=>{
+  if(scrollLock)return;
+  clearTimeout(spyT);
+  spyT=setTimeout(updateSpy,80);
+},{passive:true});
 
 // CARD 折叠 — 点 card-head 或 core（金色一句话，最醒目点击区）展开/收起
 document.getElementById('cards').addEventListener('click',e=>{
@@ -3890,6 +3932,7 @@ function setCat(c){
   renderQuickbar();
   closeDrawer();
   window.scrollTo({top:0,behavior:'smooth'});
+  setTimeout(updateSpy,300);                         // 切 tab 后点亮首个分组按钮
 }
 function apply(){
   const container=document.getElementById('cards');
