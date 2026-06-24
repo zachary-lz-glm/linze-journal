@@ -10,7 +10,7 @@
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 :root{--bg:#000;--card:#111;--text:#ccc;--core:#FFD700;--core-bg:#1a1500;--border:#222;--fs:16px;--pad:6px;--radius:8px;--tab-h:44px}
-body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","PingFang SC",sans-serif;background:var(--bg);color:var(--text);font-size:var(--fs);line-height:1.45;padding:calc(var(--tab-h) + 6px) 0 env(safe-area-inset-bottom, 0);-webkit-text-size-adjust:100%}
+body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","PingFang SC",sans-serif;background:var(--bg);color:var(--text);font-size:var(--fs);line-height:1.45;padding:calc(var(--tab-h)*2 + 14px) 0 env(safe-area-inset-bottom, 0);-webkit-text-size-adjust:100%}
 
 /* TABS */
 .tabs{position:fixed;top:0;left:0;right:0;z-index:100;background:#111;display:flex;gap:3px;padding:4px 40px 4px 6px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;border-bottom:1px solid #222;height:var(--tab-h);align-items:center}
@@ -30,15 +30,24 @@ body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","PingFang SC",sa
 .sec-hd{padding:12px 10px 4px;font-size:12px;font-weight:700;color:#666;letter-spacing:1px;margin-top:4px}
 .card{background:var(--card);border-radius:var(--radius);margin-bottom:5px;border:1px solid var(--border);overflow:hidden}
 .card.hide{display:none}
-.card-head{padding:8px 10px 2px;display:flex;align-items:flex-start;gap:6px}
+.card-head{padding:8px 10px 2px;display:flex;align-items:flex-start;gap:6px;cursor:pointer}
 .tag{display:inline-block;padding:2px 7px;border-radius:4px;font-size:11px;font-weight:800;color:#fff;flex-shrink:0}
 .tag.proj{background:#3B82F6}.tag.bagu{background:#10B981}.tag.ai{background:#EF4444}
 .tag.code{background:#F97316}.tag.open{background:#EC4899}.tag.emer{background:#F59E0B}
 .card-title{font-size:14px;font-weight:700;color:#eee;flex:1}
 .core{margin:4px 10px 6px;padding:8px 10px;border-radius:6px;font-size:15px;font-weight:800;color:var(--core);background:var(--core-bg);line-height:1.35}
 
-/* BODY — 全展开 */
-.card-body{padding:0 10px 10px}
+/* BODY — 默认折叠，点击 card-head 展开 */
+.card-body{padding:0 10px;display:none}
+.card.open .card-body{display:block;padding-bottom:10px}
+.card-head::after{content:'▸';margin:2px 2px 0 auto;color:#555;font-size:11px;align-self:center}
+.card.open .card-head::after{content:'▾'}
+
+/* QUICKBAR — 高频主题快捷条（sticky，一点跳分区）*/
+.quickbar{display:flex;gap:4px;padding:5px 6px;overflow-x:auto;scrollbar-width:none;border-bottom:1px solid #222;background:#0d0d0d;position:sticky;top:var(--tab-h);z-index:99}
+.quickbar::-webkit-scrollbar{display:none}
+.quickbar button{padding:5px 11px;border-radius:5px;font-size:12px;font-weight:700;white-space:nowrap;background:#1a1a1a;color:#aaa;border:1px solid #333;cursor:pointer;-webkit-user-select:none;user-select:none}
+.quickbar button:active{background:#333;color:#fff}
 .card-body p{margin-bottom:4px;font-size:13px;color:#aaa;line-height:1.5}
 .card-body .hint{color:#888;font-size:11px;font-style:italic;margin-top:3px}
 .card-body strong{color:#ddd}
@@ -84,6 +93,16 @@ body{overscroll-behavior-y:contain}
   <button class="tab" data-c="emer" onclick="setCat('emer')">综合</button>
 </div>
 
+<!-- QUICKBAR — 高频主题快捷条，一点跳分区，不打字 -->
+<div class="quickbar" id="quickbar">
+  <button data-tgt="proj" data-find="Schema 驱动架构">Schema</button>
+  <button data-tgt="proj" data-find="联动引擎">联动</button>
+  <button data-tgt="proj" data-find="AI工作流完整介绍">AI证据</button>
+  <button data-tgt="bagu" data-find="前端监控体系">监控</button>
+  <button data-tgt="bagu" data-find="React 18 并发">React</button>
+  <button data-tgt="code" data-find="">手撕</button>
+</div>
+
 <!-- INDEX BTN -->
 <button class="idx-btn" onclick="toggleDrawer()">☰</button>
 <!-- DRAWER -->
@@ -96,7 +115,7 @@ body{overscroll-behavior-y:contain}
 <div class="container" id="cards">
 
 <!-- ==================== 开场 ==================== -->
-<div class="card" data-c="open" data-kw="自我介绍 介绍 背景 经验">
+<div class="card open" data-c="open" data-kw="自我介绍 介绍 背景 经验">
   <div class="card-head"><span class="tag open">自我介绍</span><div class="card-title">1 分钟自我介绍</div></div>
   <div class="core">滴滴国际化营销中台前端架构，4年3条核心产品线</div>
   <div class="card-body">
@@ -110,7 +129,7 @@ body{overscroll-behavior-y:contain}
   </div>
 </div>
 
-<div class="card" data-c="open" data-kw="开场白 自我介绍 30秒 精简">
+<div class="card open" data-c="open" data-kw="开场白 自我介绍 30秒 精简">
   <div class="card-head"><span class="tag open">开场</span><div class="card-title">30 秒项目开场白</div></div>
   <div class="core">Schema驱动营销中台 + AI工程工作流，4年做了两套中台</div>
   <div class="card-body">
@@ -233,25 +252,18 @@ body{overscroll-behavior-y:contain}
 </div>
 
 <!-- ==================== 项目追问 ==================== -->
-<div class="card" data-c="proj" data-kw="大表单 性能 200字段 虚拟滚动">
-  <div class="card-head"><span class="tag proj">追问</span><div class="card-title">大表单 200+ 字段性能？</div></div>
-  <div class="core">分步渲染 + 字段级更新 + 虚拟滚动 + 联动接口SW缓存</div>
+<div class="card" data-c="proj" data-kw="大表单 性能 200字段 虚拟滚动 精确订阅 重渲染 依赖收集 dot path 字段改动">
+  <div class="card-head"><span class="tag proj">追问</span><div class="card-title">大表单 200+ 字段性能 + 字段改动重渲染</div></div>
+  <div class="core">分步渲染+精确订阅+虚拟滚动+SW缓存；字段改动不会全表单重渲染</div>
   <div class="card-body">
     <p><strong>渲染层</strong>：按步骤分组，当前步全渲染，前后步只渲染摘要。实测首屏从 1.2s 降到 300ms。</p>
-    <p><strong>更新层</strong>：Listener 按依赖图触发，只重渲染受影响组件，不触发全表单重渲染。</p>
+    <p><strong>更新层（字段改动不会全表单重渲染）</strong>：原理类似 Redux selector——每个组件按 dot path（如 <code>page1.form2.field3</code>）精确订阅，不是监听整棵 Schema 树。字段变了，引擎通过依赖映射表找到受影响联动目标，只通知这些组件更新，其余不渲染。</p>
     <p><strong>组件层</strong>：长列表用虚拟滚动。</p>
     <p><strong>联动接口层</strong>：性能瓶颈不在渲染在接口——用户改一个配置项可能触发1-2个联动接口调用。用Service Worker做network-first缓存，详见SW缓存专项卡片。</p>
+    <p class="hint">追问"一个字段改动会全表单重渲染吗"→ 不会，按 dot path 精确订阅。真正瓶颈是 API 型联动接口（2-3s），用 SW 缓存。</p>
   </div>
 </div>
 
-<div class="card" data-c="proj" data-kw="精确订阅 粒度 发布订阅 重渲染 渲染机制 依赖收集">
-  <div class="card-head"><span class="tag proj">追问</span><div class="card-title">一个字段改动会全表单重渲染吗？</div></div>
-  <div class="core">不会，按 dot path 精确订阅，只更新受影响组件</div>
-  <div class="card-body">
-    <p>和 Redux selector 原理类似——每个组件只订阅自己那个 dot path 的值（如 <code>page1.form2.field3</code>），不是监听整棵 Schema 树。某字段变了，引擎通过依赖映射表找到受影响的联动目标，只通知这些组件更新，其余组件不触发渲染。</p>
-    <p><strong>面试要点</strong>：先回答"不会 + 精确订阅"，再补充 API 型联动才是真正的性能瓶颈（接口耗时 2-3s），计划用 Service Worker 缓存优化。</p>
-  </div>
-</div>
 
 <div class="card" data-c="proj" data-kw="循环依赖 死循环 联动 循环 拓扑 max depth">
   <div class="card-head"><span class="tag proj">追问</span><div class="card-title">联动会不会循环依赖导致死循环？</div></div>
@@ -2380,16 +2392,6 @@ function buildTreeOptimized(list) {
   </div>
 </div>
 
-<div class="card" data-c="ai" data-kw="对话压缩 context 压缩 Token 优化 LLMLingua 自研 星河觉醒 拼多多 中间件">
-  <div class="card-head"><span class="tag ai">AI</span><div class="card-title">对话压缩：AI应用的核心基建</div></div>
-  <div class="core">每轮对话都把上下文扔给模型积分很快超，对话压缩是AI应用公司自研的核心中间件</div>
-  <div class="card-body">
-    <p><strong>为什么必须做</strong>：多轮对话场景下，每轮都把完整上下文发送给模型，Token消耗指数级增长。不做压缩，积分和成本很快失控。星河觉醒和拼多多两个AI应用公司都提到这是必选项。</p>
-    <p><strong>为什么自研不用开源</strong>：对话压缩直接影响用户体验（压缩过度丢失关键信息、压缩不足浪费Token），是核心竞争力。AI应用公司倾向自研而非直接用开源方案，因为需要针对自己的业务场景做定制优化。</p>
-    <p><strong>相关技术</strong>：LLMLingua（微软的Token级压缩）、递归摘要（把旧对话压缩成摘要块）、MemWalker（结构化记忆遍历）。拼多多明确做了自己的对话压缩作为三层架构中RAG能力层的核心组件。</p>
-    <p><strong>面试用法</strong>：被问"AI应用怎么控制成本"时，先说对话压缩是第一优先级，再展开技术方案选择。</p>
-  </div>
-</div>
 
 <div class="card" data-c="ai" data-kw="AI产品 对比 豆包 千问 可灵 Kimi 用户体验 产品思维 审美 感知力 竞品">
   <div class="card-head"><span class="tag ai">AI</span><div class="card-title">主流AI产品体验对比（产品感知力考察）</div></div>
@@ -2527,7 +2529,7 @@ function buildTreeOptimized(list) {
 </div>
 
 <!-- ==================== 项目数据速查 ==================== -->
-<div class="card" data-c="emer" data-kw="数据 口径 指标 简历 400 5h 2h 追问 计算 简历口径">
+<div class="card open" data-c="emer" data-kw="数据 口径 指标 简历 400 5h 2h 追问 计算 简历口径">
   <div class="card-head"><span class="tag emer">速查</span><div class="card-title">项目关键数据 + 口径（被问怎么算的）</div></div>
   <div class="core">每个数字都要能脱口而出，面试官随时追问怎么算的</div>
   <div class="card-body">
@@ -3048,16 +3050,6 @@ function buildTreeOptimized(list) {
   </div>
 </div>
 
-<div class="card" data-c="emer" data-kw="landing 融入 新团队 入职 onboarding 30天 60天 90天 快速上手">
-  <div class="card-head"><span class="tag emer">软技能</span><div class="card-title">加入新团队后如何快速landing？</div></div>
-  <div class="core">30天吃透业务和代码，60天产出第一个可见成果，90天开始主导子方向</div>
-  <div class="card-body">
-    <p><strong>前30天：听和学</strong>。做四件事：吃透业务架构（面向什么用户、有什么核心能力、怎么支持业务的）；过一遍核心源码，摸清技术栈选型背景和编码习惯；跟上下游合作方都聊一遍，了解对接场景；找到团队当前最大的一个痛点作为后续切入点。</p>
-    <p><strong>30到60天：贡献和验证</strong>。用过往经验快速解决一个实际问题，让团队看到价值。比如Schema驱动配置化的经验可以直接迁移到聚合打车的多城市多运力场景。这个阶段的目标不是做大项目，而是做一个小的但可见的改进。Harvard Business School的onboarding研究也强调：前60天一定要有一个可见的产出，这是建立信任的关键。</p>
-    <p><strong>60到90天：建立影响力</strong>。开始参与技术规划讨论，提出有数据支撑的改进建议。同时建立团队的沟通节奏，比如定期技术分享、code review机制。</p>
-    <p class="hint">landing的本质不是"学业务"而是"建立信任"。信任是靠一件件小事做出来的。30/60/90框架来自业界标准的Listen-Diagnose-Execute模型（LinkedIn/Indeed等都有推荐），核心是先观察再行动。</p>
-  </div>
-</div>
 
 <div class="card" data-c="emer" data-kw="技术规划 年度规划 方向负责人 规划方法论 子方向 优先级">
   <div class="card-head"><span class="tag emer">软技能</span><div class="card-title">子方向负责人如何做技术规划？</div></div>
@@ -3315,6 +3307,8 @@ function buildTreeOptimized(list) {
     <p><strong>自建方案（星河觉醒实践）</strong>：自己实现对话压缩层，把多轮历史压缩成精简表示。核心：① 短期记忆（当前对话）② 中期记忆（session 摘要）③ 长期记忆（向量库）。</p>
     <p><strong>渐进式摘要算法</strong>：把最老的消息递归压缩成摘要块放 prompt 开头，上下文保持固定大小但会丢失细节。结合关键信息提取（重要实体/决策持久化）效果好。</p>
     <p><strong>项目桥接</strong>：prd-tools 的 Reference 6 文件本质就是"项目知识压缩层"——不是全量源码，是精简的领域知识。</p>
+    <p><strong>为什么自研不用开源</strong>：压缩直接影响体验（过度丢信息/不足浪费 Token），AI 应用公司倾向自研做业务定制。</p>
+    <p><strong>面试用法</strong>：被问"AI 应用怎么控制成本"时，先说对话压缩是第一优先级，再展开技术方案。</p>
     <p class="hint">星河觉醒二面失分点。能讲清 LLMLingua + MemGPT 两套方案就显得专业。</p>
   </div>
 </div>
@@ -3601,6 +3595,7 @@ function buildTreeOptimized(list) {
     <p>· 建立团队沟通节奏（定期技术分享 + Code Review 习惯）</p>
     <p>· 开始带新同学，传递沉淀的方法论</p>
     <p><strong>蚂蚁定制</strong>：30 天补一句"金融业务的特殊性（合规、资损、稳定性）会重点吃透"，90 天加"主导一个 AI 体验功能落地（如 Agent 工作流在财富场景的应用）"。</p>
+    <p><strong>落地例子</strong>：Schema 驱动配置化经验可直接迁移（如聚合打车多城市多运力场景）。Harvard Business School onboarding 研究强调前 60 天必须有可见产出来建立信任。</p>
     <p class="hint">三面/主管面高频。准备一个通用版 + 公司定制版。</p>
   </div>
 </div>
@@ -3859,6 +3854,24 @@ function buildTreeOptimized(list) {
 
 <script>
 let curCat='all';
+
+// QUICKBAR — 点高频主题按钮：切 tab + 滚到目标卡 + 自动展开（不打字）
+document.getElementById('quickbar').addEventListener('click',e=>{
+  const btn=e.target.closest('button');if(!btn)return;
+  const tgt=btn.dataset.tgt, find=btn.dataset.find;
+  setCat(tgt);
+  requestAnimationFrame(()=>setTimeout(()=>{
+    const cards=[...document.querySelectorAll('.card:not(.hide)')];
+    const target=find?cards.find(c=>c.querySelector('.card-title').textContent.includes(find)):cards[0];
+    if(target){target.classList.add('open');target.scrollIntoView({behavior:'smooth',block:'start'})}
+  },80));
+});
+
+// CARD 折叠 — 点 card-head 展开/收起（排除 code-blk 横滚误触）
+document.getElementById('cards').addEventListener('click',e=>{
+  const head=e.target.closest('.card-head');
+  if(head&&!e.target.closest('.code-blk'))head.parentElement.classList.toggle('open');
+});
 const drawer=document.getElementById('drawer'),dMask=document.getElementById('dMask'),dList=document.getElementById('dList'),dHead=document.getElementById('dHead');
 const catNames={all:'全部',open:'开场',proj:'项目',bagu:'基础',code:'手撕',ai:'AI',emer:'应急'};
 const subOrder={
@@ -3984,7 +3997,7 @@ function buildIndex(){
     }
     const item=document.createElement('div');item.className='drawer-item';
     item.innerHTML='<span class="tag '+c.dataset.c+'">'+tag.textContent+'</span><span>'+title.textContent+'</span>';
-    item.onclick=()=>{closeDrawer();setTimeout(()=>c.scrollIntoView({behavior:'smooth',block:'start'}),200)};
+    item.onclick=()=>{closeDrawer();setTimeout(()=>{c.classList.add('open');c.scrollIntoView({behavior:'smooth',block:'start'})},200)};
     dList.appendChild(item);
   });
 }
