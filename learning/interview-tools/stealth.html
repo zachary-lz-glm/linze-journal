@@ -3378,10 +3378,56 @@ function buildTreeOptimized(list) {
     <p>· <strong>C 端购票/抢票</strong>：高并发、热点票务、库存防超、选座渲染 → 营销中台高并发 + SW 缓存可桥接</p>
     <p>· <strong>C 端演出详情页</strong>：富媒体、SEO、首屏性能 → SSR/性能优化</p>
     <p>· <strong>B 端主办方/运营平台</strong>：动态表单、配置化、活动规则引擎 → <strong>Schema 中台直接对口</strong></p>
-    <p>· <strong>小程序/H5/跨端</strong>：阿里 mPaaS/小程序矩阵（薄弱点，备兜底话术）</p>
+    <p>· <strong>小程序（微信/支付宝/抖音）/跨端</strong>：JD 要求精通至少一种（薄弱点，见小程序兜底卡）</p>
     <p>· <strong>票务选座图</strong>：Canvas/SVG 渲染、交互复杂 → 类比权益组件库复杂场景</p>
     <p><strong>应对策略</strong>：① 自我介绍/反问主动用"虎鲸文娱"显信息更新 ② 反问问"大麦淘票票整合后前端分工边界"展示认知。</p>
     <p class="hint">大麦面试必备。开场用"虎鲸文娱"不用"阿里大文娱"，立刻显信息更新。</p>
+  </div>
+</div>
+
+<div class="card" data-c="emer" data-kw="大麦 国际票务 国际化 多语言 多币种 时区 合规 对口 王牌 JD RTL">
+  <div class="card-head"><span class="tag emer">大麦</span><div class="card-title">国际票务 = 核心王牌（真 JD 认知纠偏）</div></div>
+  <div class="core">JD 第一条就是"大麦国际票务核心系统"，滴滴国际化 10+ 国家是 1:1 对口，升级为主打不是弱项</div>
+  <div class="card-body">
+    <p>⚠️ <strong>真 JD 修正</strong>：JD 第一条"参与<strong>大麦国际票务核心系统</strong>" + 要求"英语可作为工作语言"。不是纯国内演出，是国际化业务——<strong>你滴滴国际化是最直接对口，不是弱项</strong>。</p>
+    <p><strong>国际票务挑战 ↔ 你的实战</strong>：</p>
+    <p>· <strong>多语言</strong>：演出/场馆/票务信息多语言 → 滴滴 10+ 国家多语言</p>
+    <p>· <strong>多币种</strong>：不同地区支付币种/汇率 → 国际化支付场景</p>
+    <p>· <strong>时区</strong>：演出时间跨时区展示 → 跨时区活动配置</p>
+    <p>· <strong>跨境合规</strong>：GDPR/CCPA/PIPL、实名/退换票规则 → 合规适配</p>
+    <p>· <strong>RTL 布局</strong>：中东地区 → 滴滴中东 RTL 实战</p>
+    <p><strong>行动</strong>：自我介绍把"滴滴国际化 ↔ 国际票务"作为<strong>第一锚点</strong>，排在 Schema 中台之前。开场主动提国际票务对口。</p>
+    <p class="hint">最大认知纠偏。之前把国际化当弱项，真 JD 出来是核心王牌。务必主打。</p>
+  </div>
+</div>
+
+<div class="card" data-c="emer" data-kw="大麦 小程序 微信 支付宝 抖音 双线程 setData 跨端 Taro 迁移 兜底 生命周期 分包">
+  <div class="card-head"><span class="tag emer">大麦</span><div class="card-title">小程序没经验怎么办（最大风险兜底）</div></div>
+  <div class="core">JD 要求精通至少一种，你没实战 → 诚实+迁移(组件化/跨端/配置化/性能同构)+突击双线程原理</div>
+  <div class="card-body">
+    <p>⚠️ <strong>最大风险</strong>：JD"精通至少一种小程序（微信/支付宝/抖音）"，你基本没做过。<strong>方向纠正：是主流小程序，不是阿里 mPaaS/Rax</strong>。</p>
+    <p><strong>必背原理（突击到能聊）</strong>：</p>
+    <p>· <strong>双线程模型</strong>：渲染层 WebView + 逻辑层 JsCore 分离，setData 跨线程序列化通信。为什么：安全+性能+多端一致。</p>
+    <p>· <strong>setData 性能</strong>：频繁/大数据/全量传都卡。优化：传变化字段、合并、列表 key、recycle-view。</p>
+    <p>· <strong>生命周期</strong>：App/Page(load/show/ready/hide/unload)/Component(created/attached/ready/detached)。</p>
+    <p>· <strong>分包</strong>：主包≤2MB 总≤20MB，懒加载减首屏。</p>
+    <p>· <strong>跨端</strong>：Taro(React 语法)/uni-app(Vue 语法) 编译到微信/支付宝/抖音。</p>
+    <p><strong>迁移话术（把弱项变"可评估的 gap"）</strong>：</p>
+    <p>"小程序我没完整做过，但底层高度可迁移：①组件化——400+ 权益库 Register+Schema 渲染，小程序 Component 也是注册模式；②跨端——做过 qiankun+三种接入形态；③配置驱动——Schema 中台配置化生成页面；④性能——setData 优化和 React 重渲染优化同一思路。gap 是 API 生态和双线程细节，我突击了原理，上手成本能评估。"</p>
+    <p><strong>被深追实战</strong>：别编项目。诚实"没上线项目"→ 转到"拆解过大麦购票流程=表单+状态机，和 Schema 联动引擎同构"→ 反问"团队用原生还是 Taro/uni-app？"。</p>
+    <p class="hint">大麦最大风险。诚实+迁移是唯一正解，别装懂。双线程模型必考。</p>
+  </div>
+</div>
+
+<div class="card" data-c="emer" data-kw="大麦 英语 英文 工作语言 国际票务 英文自我介绍 口语 应对">
+  <div class="card-head"><span class="tag emer">大麦</span><div class="card-title">英语工作语言怎么应对（国际票务）</div></div>
+  <div class="core">读写OK口语在练→日常靠文档+异步沟通够用，背1分钟英文自我介绍兜底，诚实给可行路径</div>
+  <div class="card-body">
+    <p><strong>定位</strong>：JD"英语可作为工作语言"（国际票务）。你读写 OK、口语一般。</p>
+    <p><strong>诚实话术</strong>："读写没问题，看英文文档、写英文注释、跟海外团队异步协作都胜任。口语流利度在练，国际票务主要靠文档+异步沟通，同步会议我会提前准备。"</p>
+    <p><strong>必做</strong>：背 1 分钟英文自我介绍（见大麦.md 第十章），覆盖：身份+国际化对口+三件事(Schema/组件库/AI)+英语现状。</p>
+    <p><strong>别慌</strong>：国际票务日常是读英文需求/异步沟通，读写 OK 够用；真要英文面，自我介绍背熟+关键技术名词能说就行。</p>
+    <p class="hint">国际票务硬要求。诚实+可行路径 &gt; 装流利。英文逐字稿见大麦.md。</p>
   </div>
 </div>
 
