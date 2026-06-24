@@ -93,15 +93,8 @@ body{overscroll-behavior-y:contain}
   <button class="tab" data-c="emer" onclick="setCat('emer')">综合</button>
 </div>
 
-<!-- QUICKBAR — 高频主题快捷条，一点跳分区，不打字 -->
-<div class="quickbar" id="quickbar">
-  <button data-tgt="proj" data-find="Schema 驱动架构">Schema</button>
-  <button data-tgt="proj" data-find="联动引擎">联动</button>
-  <button data-tgt="proj" data-find="AI工作流完整介绍">AI证据</button>
-  <button data-tgt="bagu" data-find="前端监控体系">监控</button>
-  <button data-tgt="bagu" data-find="React 18 并发">React</button>
-  <button data-tgt="code" data-find="">手撕</button>
-</div>
+<!-- QUICKBAR — 二级子分类栏，随 tab 动态生成 -->
+<div class="quickbar" id="quickbar"></div>
 
 <!-- INDEX BTN -->
 <button class="idx-btn" onclick="toggleDrawer()">☰</button>
@@ -3855,16 +3848,23 @@ function buildTreeOptimized(list) {
 <script>
 let curCat='all';
 
-// QUICKBAR — 点高频主题按钮：切 tab + 滚到目标卡 + 自动展开（不打字）
+// QUICKBAR — 二级子分类栏：随一级 tab 变化，点子组滚到该组第一张卡并展开
+function renderQuickbar(){
+  const qb=document.getElementById('quickbar');
+  if(curCat==='all'||curCat==='open'){qb.style.display='none';return}
+  const cards=[...document.querySelectorAll('.card')].filter(c=>c.dataset.c===curCat);
+  const seen={},groups=[];
+  cards.forEach(c=>{const g=getGroup(c);if(g&&!seen[g]){seen[g]=1;groups.push(g)}});
+  groups.sort((a,b)=>(subOrder[a]??99)-(subOrder[b]??99));
+  qb.style.display='flex';
+  qb.innerHTML=groups.map(g=>`<button data-g="${g}">${g}</button>`).join('');
+}
 document.getElementById('quickbar').addEventListener('click',e=>{
   const btn=e.target.closest('button');if(!btn)return;
-  const tgt=btn.dataset.tgt, find=btn.dataset.find;
-  setCat(tgt);
-  requestAnimationFrame(()=>setTimeout(()=>{
-    const cards=[...document.querySelectorAll('.card:not(.hide)')];
-    const target=find?cards.find(c=>c.querySelector('.card-title').textContent.includes(find)):cards[0];
-    if(target){target.classList.add('open');target.scrollIntoView({behavior:'smooth',block:'start'})}
-  },80));
+  const g=btn.dataset.g;
+  const cards=[...document.querySelectorAll('.card:not(.hide)')];
+  const target=cards.find(c=>getGroup(c)===g);
+  if(target){target.classList.add('open');target.scrollIntoView({behavior:'smooth',block:'start'})}
 });
 
 // CARD 折叠 — 点 card-head 或 core（金色一句话，最醒目点击区）展开/收起
@@ -3887,6 +3887,7 @@ function setCat(c){
   curCat=c;
   document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('on',t.dataset.c===c));
   apply();
+  renderQuickbar();
   closeDrawer();
   window.scrollTo({top:0,behavior:'smooth'});
 }
@@ -4002,6 +4003,9 @@ function buildIndex(){
     dList.appendChild(item);
   });
 }
+
+// 初始渲染二级子分类栏（all tab 下隐藏，切 tab 后显示对应子组）
+renderQuickbar();
 </script>
 </body>
 </html>
