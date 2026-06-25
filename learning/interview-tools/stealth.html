@@ -2387,6 +2387,55 @@ function buildTreeOptimized(list) {
   </div>
 </div>
 
+<div class="card" data-c="ai" data-kw="AI工程化 主线 90秒 总纲 SDD SSOT 证据链 门控 自我介绍 第一答 差异化">
+  <div class="card-head"><span class="tag ai">E26</span><div class="card-title">我的AI工程化主线（90秒总纲·面试第一答）</div></div>
+  <div class="core">我把PRD自动蒸馏成有证据的开发计划，三大支柱是SSOT知识库、证据链、多层门控</div>
+  <div class="card-body">
+    <p><strong>定位（10秒）</strong>：不是让AI写代码，是把PRD从自然语言蒸馏成有证据支撑的开发计划，是Spec-Driven Development的工程化实践，解决AI强完成倾向导致的返工风险。</p>
+    <p><strong>三大支柱（各一句）</strong>：①SSOT六文件，每个事实只存在一处，避免知识污染；②证据链八种类型含负向搜索，每条结论可溯源到PRD页或代码行；③多层门控贯穿十一部流水线，Spec写完硬停止等人审。</p>
+    <p><strong>收口数据（20秒）</strong>：单环节PRD到Plan从5h降到2h，5个需求对照，全链路约20-30%；三个验证需求蒸馏时整体Readiness——BFF单仓82、前端单仓83、团队三仓62，跨仓契约E维45拖累；已在B端20+人团队推广。</p>
+    <p><strong>一句话差异化</strong>：别人讲工具链，我讲怎么把AI不可避免的偏差，转成可拦截的工程信号。</p>
+    <p class="hint">架构细节见「AI工作流技术架构全景」卡；数据攻防见综合·项目关键数据卡。</p>
+  </div>
+</div>
+
+<div class="card" data-c="ai" data-kw="幻觉 防御 编造 完成倾向 证据链 负向搜索 Spec Review Readiness 四层防线 拦截">
+  <div class="card-head"><span class="tag ai">E27</span><div class="card-title">幻觉怎么答（四层防线·聚合卡）</div></div>
+  <div class="core">防幻觉靠四层防线——证据链溯源、负向搜索显式标记、Spec Review硬停止、Readiness五维兜底</div>
+  <div class="card-body">
+    <p><strong>先定根因</strong>：大模型有强完成倾向，给任务就给答案，没把握也编，这是特性不是bug。所以防幻觉不是让模型更准，是把偏差转成可拦截的工程信号。</p>
+    <p><strong>第一层·证据链</strong>：每条非显然结论必须挂Evidence ID，可追溯到PRD第几页或代码第几行，八种证据类型（PRD、源码、git_diff、negative_search、api_doc等）。</p>
+    <p><strong>第二层·负向搜索（亮点）</strong>：搜不到也是证据。AI说改某个文件第142行，一搜不存在直接拦截，把编路径从隐蔽错误变成显性可拦截信号。</p>
+    <p><strong>第三层·Spec Review Gate</strong>：Spec生成后硬停止等人工确认才往下出Plan，挡住完成倾向把错误从Spec放大到Plan。</p>
+    <p><strong>第四层·Readiness五维</strong>：跑完流水线五维加权评分，低于阈值必须修；消融实验证明去掉IR层Readiness从82掉到54。</p>
+    <p class="hint">细节见证据链机制卡、质量门控卡。注意别把倒排索引加BM25说成RAG，那是检索工程不是RAG。</p>
+  </div>
+</div>
+
+<div class="card" data-c="ai" data-kw="Agent 死循环 循环 编排层 运行时 状态机 max_iterations RecursionLimit 熔断 Tool Use 桥接">
+  <div class="card-head"><span class="tag ai">E28</span><div class="card-title">Agent死循环怎么防（编排层+运行时层·bridge）</div></div>
+  <div class="core">Agent死循环防两处——编排层用状态机和最大迭代设终止条件，运行时层用递归上限和工具失败熔断</div>
+  <div class="card-body">
+    <p><strong>先纠概念（对应被追穿的硬伤）</strong>：Tool Use底层是循环直到不再调用工具，死循环风险真实存在，不是会不会而是怎么防。</p>
+    <p><strong>编排层（我有实战）</strong>：LangGraph用状态机显式定义Node和Edge，加max_iterations上限和终止条件；裸Agent Loop加循环计数器。我的prd-tools用十一部固定顺序流水线，本质是用确定性编排规避开放式Agent Loop的死循环风险。</p>
+    <p><strong>运行时层（设计认知）</strong>：RecursionLimit限制递归深度，单个工具失败超过阈值就熔断返回错误而不是无限重试；再加重复检测，相邻几步tool call相同就中断。</p>
+    <p><strong>诚实桥接</strong>：prd-tools是单Agent加脚本门控的可靠性工程，多Agent我评估过ROI成本十到十五倍选择不做；运行时循环控制设计过还没落地，思路是max_iter加重复检测加成本熔断加人审介入。</p>
+    <p class="hint">确定性vs非确定性分工见成本优化卡。注意别和Schema联动死循环混淆，那是表单联动不是Agent循环。</p>
+  </div>
+</div>
+
+<div class="card" data-c="ai" data-kw="王牌 素材 准确率 五维 负向搜索 消融 确定性分工 独门 亮点 别人讲不出">
+  <div class="card-head"><span class="tag ai">E29</span><div class="card-title">prd-tools 4个王牌素材（每个30秒讲法）</div></div>
+  <div class="core">我有四个别人讲不出的素材——准确率五维定义、负向搜索、消融实验、确定性分工</div>
+  <div class="card-body">
+    <p><strong>①准确率五维定义（最稀缺）</strong>：多数AI项目只报一个总分，我分五维A到E（PRD保真、范围边界、代码锚点、方案可执行、跨仓契约），单仓公式零点二五A加零点一五B加零点二五C加零点三五D，多仓把E权重拉到零点三。三案例Readiness 82、83、62，口诀单仓看D多仓看E。</p>
+    <p><strong>②负向搜索（金句）</strong>：搜不到也是证据，反直觉好记，把AI编造路径变成可拦截信号。</p>
+    <p><strong>③消融实验（单点杀伤）</strong>：去掉IR层重跑，Readiness从82掉到54，错误率翻倍，证明这步不多余，堵住是否过度设计的质疑。</p>
+    <p><strong>④确定性vs非确定性分工</strong>：三个Python脚本（build-index、context-pack、quality-gate）跑一万次结果一样，把有没有漏读PRD、plan有没有路径变成CI可检查项；智能靠Agent推理，可靠靠脚本确定性计算。</p>
+    <p class="hint">每场面试至少抛一个王牌，别全堆上去。数据口径见综合·项目关键数据卡。</p>
+  </div>
+</div>
+
 
 <div class="card" data-c="ai" data-kw="AI产品 对比 豆包 千问 可灵 Kimi 用户体验 产品思维 审美 感知力 竞品">
   <div class="card-head"><span class="tag ai">AI</span><div class="card-title">主流AI产品体验对比（产品感知力考察）</div></div>
@@ -2537,6 +2586,7 @@ function buildTreeOptimized(list) {
     <p><strong>新权益接入 2 天→2 小时</strong>：2 小时是后端在 MIS 配 Schema 的时间，前端零代码。</p>
     <p><strong>零 breaking change 18 月+</strong>：SemVer + peerDependencies 隔离 react + deprecated 不删除 + Changesets 追踪。</p>
     <p><strong>权益 400+/组件 35+/联动 16 个</strong>：400 是 SKU 数不是组件数，35 是 24 内置+11 运行时扩展，16 是 12 重渲染+4 Placeholder 重置。</p>
+    <p><strong>攻防话术（被追穿怎么救）</strong>：①问准确率怎么算→文件集合匹配法，20% gap来自PRD本身不完整且AI主动标记让人确认，不是AI算错；②问5h到2h分母→5个中等复杂度需求对照，主动补一句"单环节提效，全链路20-30%"；③问85%一致性→先承认是文件列表重跑一致性（产物稳定性）不是产物质量，再引Readiness评单次质量，两个指标互补不互替；④问Readiness 82/83/62→三案例蒸馏时整体质量分，团队62因跨仓契约E维45拖累，口诀单仓看D多仓看E。</p>
   </div>
 </div>
 
@@ -3322,6 +3372,17 @@ function buildTreeOptimized(list) {
 </div>
 
 <!-- ==================== 补充卡片 v2 · 表达方法论（3 张） ==================== -->
+
+<div class="card" data-c="emer" data-kw="3不要 自检 硬伤 正则倒排 RAG 图片传参 Function Calling 数据口径 概念混淆 原理">
+  <div class="card-head"><span class="tag emer">自检</span><div class="card-title">AI面试3不要（临场自检·13场血泪）</div></div>
+  <div class="core">AI面试三个不要——别把工程手段说成算法原理、别把搜索说成RAG、别只说效果不说口径</div>
+  <div class="card-body">
+    <p><strong>①不要概念混淆</strong>：倒排索引加BM25是检索工程不是RAG，RAG特指检索结果拼进LLM上下文再做生成。京东一面把正则倒排说成"RAG的一种"被当场打断。</p>
+    <p><strong>②不要原理说不清</strong>：图片传参是Base64塞进content的image类型不是URL也不是file对象；Function Calling是模型输出tool_call JSON由运行时执行不是模型自己调；Skills触发是描述拼接送一遍AI判断按需读不是全跑一遍。booster被问图片格式和Skills原理都答"没太关注"，被定性"一直在学没做过"。</p>
+    <p><strong>③不要数据裸奔</strong>：每个数字必须带口径。85%先承认是文件列表重跑一致性是产物稳定性指标，Readiness评单次质量是82/83/62，两个指标分开说互补不互替。花小猪二面从80%崩到全链路20-30%就是没分层。</p>
+    <p class="hint">这三条是13场面经归纳的系统性失分，面试前默念一遍。</p>
+  </div>
+</div>
 
 <div class="card" data-c="emer" data-kw="四段式 表达 角色 做事 难点 效果 STAR 千问 失分">
   <div class="card-head"><span class="tag emer">表达</span><div class="card-title">四段式表达公式（千问血泪）</div></div>
