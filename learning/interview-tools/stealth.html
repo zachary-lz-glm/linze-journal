@@ -1809,6 +1809,20 @@ function buildTreeOptimized(list) {
   </div>
 </div>
 
+<div class="card" data-c="ai" data-kw="Claude Code context 上下文 prompt caching KV cache auto-compaction CLAUDE.md 超窗 缓存 单次请求 滑动窗口">
+  <div class="card-head"><span class="tag ai">G6</span><div class="card-title">Claude Code 怎么管 context？prompt 缓存在哪？（蚂蚁三连问）</div></div>
+  <div class="core">缓存是服务端的 KV cache 不是本地文件；context 靠 auto-compaction 自动压缩 + CLAUDE.md 长期记忆</div>
+  <div class="card-body">
+    <p><strong>面试官三连问</strong>（蚂蚁一面）：① Claude Code 怎么管 context？② memory 每轮带着不会越来越长吗？③ 单次请求除了 query 还带什么、缓存在哪？</p>
+    <p><strong>缓存在哪（最易答错）</strong>：prompt caching 缓存在<strong>Anthropic 服务端</strong>，存的是 Transformer 前向传播算出的 KV cache（attention 的 key/value 张量），<strong>不是 prompt 文本、不是 hash、不是本地文件</strong>。相同前缀的下次请求直接复用这些张量，跳过重复计算，成本降约 90%、延迟降约 85%。本地 <code>.claude</code> 文件夹存的是会话历史 transcript，那是持久化存储，和 prompt cache 是两回事——别混。</p>
+    <p><strong>单次请求带什么</strong>：系统 prompt + tools 的 schema 定义 + 对话历史（messages）+ 可能的附加文件内容。其中公共前缀（系统 prompt + tools）稳定不变，会被 prompt caching 复用，所以多轮对话只有新增部分真正计费。</p>
+    <p><strong>memory 不会无限长</strong>：分三层——持久记忆（CLAUDE.md，项目指令，内容稳定不涨）、短期记忆（对话历史，靠滑动窗口只留最近几轮 + compaction 压缩）、按需检索（要更多上下文时 agent 读文件、@引用，不是全量塞）。所以每轮不会把整个记忆库都带上。</p>
+    <p><strong>auto-compaction</strong>：上下文接近容量极限（约 90%，剩 10%）时自动把旧对话总结成摘要，一次释放 60-70% 窗口，用户几乎无感。CLAUDE.md 在压缩后会重新加载，保证项目指令不丢。手动可 /compact 主动压缩、/clear 硬重置。</p>
+    <p><strong>通用超窗策略</strong>：别把所有内容塞短期记忆——输入侧渐进式披露按需加载 + RAG 语义检索压缩；输出侧文件分流不塞聊天回复；中间推理过程（agent 自我反思）外置到 MD/memory 文件。</p>
+    <p class="hint">答错点复盘：当时把"会话历史本地存储"当成 prompt cache，被"缓存在哪"追穿。记住三件事分开：本地 transcript（历史）/ 服务端 KV cache（prompt caching）/ 内存滑动窗口（短期对话）。</p>
+  </div>
+</div>
+
 <div class="card" data-c="proj" data-kw="Schema 引擎 性能 量化 基线 SPA 微前端 插槽 损耗 Web Worker Service Worker 包体积">
   <div class="card-head"><span class="tag proj">G6</span><div class="card-title">Schema 引擎 + 插槽 + 微前端性能损失多少？</div></div>
   <div class="core">三大瓶颈：包体积膨胀（多版本并存）+ 联动接口重复调用 + 长列表渲染</div>
@@ -3271,6 +3285,7 @@ function buildTreeOptimized(list) {
     <p><strong>7 步流程</strong>：① proposal 提案（业务价值）② design 架构 ③ specs 规范 SSOT（接口/字段/约束）④ tasks 原子任务拆分 ⑤ apply AI 执行 ⑥ verify 测试 + 回归 + Review ⑦ archive 沉淀回流。</p>
     <p><strong>项目桥接</strong>：prd-tools 是 SDD 工程化落地。proposal=PRD摄入，design=能力面适配器，specs=Reference 6 文件 SSOT，tasks=Spec/Plan 11 步，apply=下游 Cursor/Claude Code，verify=quality-gate.py 5 项检查，archive=反馈回流。</p>
     <p><strong>追问点</strong>：EARS 需求规格化、Spec Kit 工具链（GitHub/OpenAI）、企业内 SDD 落地难点（团队接受度 + Spec 维护）。</p>
+    <p><strong>vs 代码即文档（蚂蚁一面追问）</strong>：面试官问"spec 驱动开发和代码即文档比优势是什么"。一句话——spec 是唯一真理源（source of truth）+ 可执行契约（executable contract），代码即文档只是给人看的事后记录。三个差异：① 文档性质——代码即文档是被动记录，spec 是约束 AI 生成的可执行契约；② 风险控制——前者后置修补，spec 前置；③ 质量一致性——spec 系统化、不依赖个人。别答"26 年大家一致认同的协议"太绝对，说"GitHub 2025 开源 Spec Kit 后的行业共识"更有据。</p>
     <p class="hint">蚂蚁财富 AI Lab 必考。讲完主动加一句"金融场景会在 verify 加资损风险评估"。</p>
   </div>
 </div>
