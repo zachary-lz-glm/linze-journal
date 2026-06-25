@@ -1,6 +1,6 @@
 ---
 name: interview-review
-description: "面试后复盘分析。输入录音转写文本，自动诊断失分点、提取面试官洞察，并回流知识点到stealth.html。Trigger: /面试复盘"
+description: "面试后复盘分析。输入录音转写文本，自动诊断失分点、提取面试官洞察，并回流知识点到learning/interview-tools/stealth.html。Trigger: /面试复盘"
 trigger: /面试复盘
 ---
 
@@ -65,7 +65,7 @@ trigger: /面试复盘
 - 优先参考权威来源（官方文档、学术论文、行业头部博客）
 - 将搜索结果中的关键数据/结论融入改进答案，并标注来源
 
-**保存复盘产物**：逐题分析完成后，**立即**将所有改进版答案写入 `interview-experience/Q&A-list/[公司名].md`，不要延迟到后续步骤。格式：
+**保存复盘产物**：逐题分析完成后，**立即**将所有改进版答案写入 `reviews/qa/[公司名].md`，不要延迟到后续步骤。格式：
 
 ```markdown
 # [公司名] [轮次] — 面试优化答案
@@ -81,7 +81,7 @@ trigger: /面试复盘
 ## Q2: ...
 ```
 
-如果 `interview-experience/Q&A-list/` 目录不存在就创建。
+如果 `reviews/qa/` 目录不存在就创建。
 
 ### 第三步：面试官洞察提取
 
@@ -100,7 +100,7 @@ trigger: /面试复盘
 - 面试官说"这块你没做过吧"→ 暴露短板的同时也给了方向
 - 面试官介绍团队工作方式（80-90%代码AI生成）→ 行业前沿实践
 
-**保存面试官洞察**：分析完成后，将面试官洞察作为独立板块追加到 `interview-experience/Q&A-list/[公司名].md` 末尾，格式：
+**保存面试官洞察**：分析完成后，将面试官洞察作为独立板块追加到 `reviews/qa/[公司名].md` 末尾，格式：
 
 ```markdown
 ---
@@ -147,7 +147,7 @@ trigger: /面试复盘
 
 ### 第五步：知识回流
 
-**这是最重要的一步。** 分析面试中暴露但现有知识库没覆盖的知识点，生成 stealth.html 卡片。
+**这是最重要的一步。** 分析面试中暴露但现有知识库没覆盖的知识点，生成 learning/interview-tools/stealth.html 卡片。
 
 **回流来源有三类（按优先级排序）**：
 1. **面试官洞察**：面试官分享的行业实践、技术纠正、前瞻判断——这些是面试中获取的最珍贵信息，值得沉淀为卡片
@@ -163,7 +163,7 @@ trigger: /面试复盘
 - 涉及自己项目但讲不清楚 → 必须读源码后再回流
 - 现有卡片已覆盖且无新信息 → **跳过**
 
-先读取 stealth.html 确认当前卡片状况。对每个回流点判断是"新增"还是"更新现有"：
+先读取 learning/interview-tools/stealth.html 确认当前卡片状况。对每个回流点判断是"新增"还是"更新现有"：
 
 **新增卡片**——为每个回流点生成卡片HTML：
 
@@ -192,7 +192,7 @@ trigger: /面试复盘
 1. 先列出所有待回流的知识点，标注"新增"或"更新现有：[卡片标题]"
 2. 等用户确认
 3. 确认后输出完整卡片HTML（新增）或更新内容（更新现有）
-4. 告诉用户应该插入/修改 stealth.html 的哪个位置（行号范围）
+4. 告诉用户应该插入/修改 learning/interview-tools/stealth.html 的哪个位置（行号范围）
 5. 用户确认后执行插入/编辑，然后 bump sw.js 的 CACHE_NAME
 
 **更新现有卡片**：在现有卡片的 card-body 末尾追加新段落，补充面试官的额外信息或纠正。格式：
@@ -210,7 +210,7 @@ trigger: /面试复盘
 
 复盘流程结束后，自动执行以下操作，**不需要等用户说"提交"**：
 
-1. `git add` 所有变更文件（录音转写、Q&A答案、stealth.html、sw.js）
+1. `git add` 所有变更文件（录音转写、Q&A答案、learning/interview-tools/stealth.html、sw.js）
 2. `git commit`，消息格式：`feat: [公司名][轮次]复盘 — [新增/更新卡片摘要] + Q&A答案`
 3. `git push` 到远程 main 分支
 4. 输出 commit hash 和推送结果
@@ -219,7 +219,7 @@ trigger: /面试复盘
 
 如果用户要求对历史Q&A文件做批量Review（如"review一下之前的Q&A"），执行以下流程：
 
-1. **扫描文件**：列出 `interview-experience/Q&A-list/` 和 `interview-experience/recording-file/` 中所有文件，匹配录音和Q&A对
+1. **扫描文件**：列出 `reviews/qa/` 和 `reviews/transcripts/` 中所有文件，匹配录音和Q&A对
 2. **并行Review**：对每个Q&A文件，启动独立的sub-agent并行处理：
    - 读取录音和Q&A，对比找出遗漏的面试官洞察
    - 识别需要改进的答案，用 WebSearch 搜索补充
@@ -243,7 +243,7 @@ trigger: /面试复盘
 - 面试官分享的行业实践和技术判断是比求职者短板更珍贵的回流素材
 - 每张卡片的核心答案必须能在手机上3秒内读完
 - 改进动作具体到"今天花30分钟做xxx"，不要笼统说"加强练习"
-- 插入 stealth.html 后必须 bump sw.js 的 CACHE_NAME（kb-vN → kb-vN+1）
+- 插入 learning/interview-tools/stealth.html 后必须 bump sw.js 的 CACHE_NAME（kb-vN → kb-vN+1）
 
 ## 卡片内容质量规则（防止"写得好但面试念不出来"）
 
