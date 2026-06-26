@@ -145,6 +145,7 @@ body{overscroll-behavior-y:contain}
     <p><strong>目录结构</strong>：app目录放15个业务模块，每个独立版本独立部署；packages放共享组件（Schema渲染引擎、权益SDK、工具库）。Yarn workspace做symlink引用，业务模块直接import共享包不需要npm link。</p>
     <p><strong>为什么Lerna+Nx组合</strong>：Lerna做独立版本管理（independent version），每个模块发版互不影响。Nx做构建缓存和增量构建——只构建有变更的模块及其依赖链，全量构建从5分钟缩到30秒以内。</p>
     <p><strong>踩过的坑</strong>：yarn解析器从rc.31自动升到rc.48不兼容Node 16，整个构建全挂。复盘后三件事：yarn.lock加入git保护禁止自动升级、CI加lockfile diff检测、依赖升级必须staging验证。这个事故让我对所有自动更新都保持警惕。</p>
+    <p><strong>如果今天重新选（网易真题）</strong>：会选 pnpm workspace + Turborepo。pnpm 的 hard link 装包快磁盘省，Turborepo 配置简单缓存机制更现代。Lerna 进入维护模式后被 Nx 接管了，新项目没必要再上 Lerna。诚实交代"项目是 2022 年搭的"反而加分，体现批判性思考。</p>
   </div>
 </div>
 
@@ -533,6 +534,41 @@ body{overscroll-behavior-y:contain}
     <p><strong>Record</strong>：构造键为K值为T的类型。type MyRecord&lt;K extends string, T&gt; = { [P in K]: T };</p>
     <p><strong>Partial</strong>：所有属性变可选。type MyPartial&lt;T&gt; = { [P in keyof T]?: T[P] };</p>
     <p><strong>三步法</strong>：① K extends keyof T 约束K必须是T的key子集；② [P in K] 遍历K的每个key；③ T[P] 取原类型对应值类型。</p>
+  </div>
+</div>
+
+<!-- ===== 网易基础真题补充（2026-06-26）===== -->
+
+<div class="card" data-c="bagu" data-kw="TypeScript interface type 区别 声明合并 联合类型 元组 映射类型 网易真题">
+  <div class="card-head"><span class="tag bagu">#39</span><div class="card-title">TS interface 和 type 区别（网易真题）</div></div>
+  <div class="core">两者 90% 场景可互换，差别在两点：声明合并 vs 联合类型</div>
+  <div class="card-body">
+    <p><strong>第一点：interface 支持声明合并</strong>。同名 interface 自动合并字段，第三方库类型增强（比如给 Window 加属性）必须用 interface。type 重复定义会报"Duplicate identifier"。</p>
+    <p><strong>第二点：type 能表达 interface 表达不了的</strong>。联合类型（A | B）、交叉类型（A & B）、元组、映射类型、条件类型、Partial/Pick/Readonly 这些工具类型的底层都是 type。</p>
+    <p><strong>判断准则</strong>：对象形状用 interface（错误提示更友好+可合并），需要联合/工具类型/元组用 type。React 组件 props 用 interface，TS 内置工具类型用 type。</p>
+    <p class="hint">网易大数据 2026-06-26 一面真题。回答要分两层：能力差异 + 何时用哪个。来源：TypeScript 官方 Declaration Merging 文档。</p>
+  </div>
+</div>
+
+<div class="card" data-c="bagu" data-kw="TypeScript 泛型 作用 容器 工具函数 类型推导 Array Promise useState 网易硬伤题">
+  <div class="card-head"><span class="tag bagu">#40</span><div class="card-title">TS 泛型是干什么用的（网易硬伤题）</div></div>
+  <div class="core">泛型是类型的"参数"，让一份代码复用多种类型同时不丢类型信息</div>
+  <div class="card-body">
+    <p><strong>本质</strong>：泛型是类型层面的参数化——就像函数参数化值一样，泛型参数化类型。写一次类型定义，多种类型复用，同时保持类型信息不丢。</p>
+    <p><strong>三个典型场景</strong>：① 容器类型——Array&lt;T&gt;、Map&lt;K,V&gt;、Promise&lt;T&gt;，你知道里面装的是什么，调 map/then 时类型不丢。② 工具函数——useState&lt;T&gt;(initial: T): [T, (v: T) =&gt; void]，返回值类型跟入参绑定，不写泛型就只能用 any。③ 类型工具——Partial&lt;T&gt;、Pick&lt;T,K&gt;、Readonly&lt;T&gt;，T 是入参输出新类型。</p>
+    <p><strong>关键</strong>：大多数时候不用显式写 &lt;T&gt;，TS 会从入参推导，但泛型让这种推导成为可能。约束用 extends，比如 &lt;T extends string&gt; 限制 T 必须是字符串子类型。</p>
+    <p class="hint">网易大数据 2026-06-26 一面硬伤题——场上挤了 30 秒只挤出 Partial（且 Partial 是映射类型不是泛型本身）。下次必须把"Array/Map/Promise/useState"四类例子刻进肌肉记忆。</p>
+  </div>
+</div>
+
+<div class="card" data-c="bagu" data-kw="Map 插入顺序 迭代器 ES2015 规范 keys next LRU 底层 HashMap 双向链表 网易追问">
+  <div class="card-head"><span class="tag bagu">#41</span><div class="card-title">Map.keys().next() 为什么能取到最老的？（网易追问）</div></div>
+  <div class="core">ES2015 规范规定 Map 迭代顺序等于插入顺序，delete+set 会把 key 挪到末尾</div>
+  <div class="card-body">
+    <p><strong>底层事实</strong>：ES2015 规范明确规定 Map 的迭代顺序 = 插入顺序。delete 之后 set 会把这个 key 当成新插入的，挪到末尾。所以 keys().next() 永远返回最早插入的那个。这是 LRU 用 Map 能简化到 30 行的关键。</p>
+    <p><strong>对比经典实现</strong>：HashMap + 双向链表。HashMap 做 O(1) 查找，双向链表维护访问顺序——每次 get/put 把节点挪到头部，淘汰时摘尾部。复杂度也是 O(1)，但代码量是 Map 方案的 3 倍。</p>
+    <p><strong>选型权衡</strong>：日常前端场景 Map 方案完全够用，V8 内部已经优化。高频 LRU（比如 React fiber 缓存）才需要 typed array 池化节点。Map 方案代价是空间效率略低（内部类似 HashMap+链表实现）。</p>
+    <p class="hint">网易大数据 2026-06-26 一面追问。答到迭代器表面容易，要讲透"Map 规范维护插入序"这一底层才算过。来源：MDN Map + Stack Overflow LRU 实现。</p>
   </div>
 </div>
 
@@ -1256,6 +1292,10 @@ class LRUCache {
       this.cache.delete(this.cache.keys().next().value); // 删最老的
   }
 }</div>
+<div class="card-body">
+  <p><strong>追问防御（网易真题）</strong>：① get 里为啥 delete+set？Map 按插入序遍历，delete+set 等于把这条挪末尾更新新鲜度。② Map.keys().next() 为啥能取最老的？ES2015 规范规定 Map 迭代序=插入序。③ 不用 Map 怎么实现？HashMap+双向链表，代码量 3 倍但更底层可控。高频场景才上 typed array 池化。</p>
+  <p class="hint">网易大数据 2026-06-26 一面追问到 Map 迭代器底层。代码能跑通只是 60 分，讲透 Map 维护插入序这一底层事实才算过。</p>
+</div>
 </div>
 
 <div class="card" data-c="code" data-kw="K个一组翻转链表 reverseKGroup 分组 翻转 递归 字节 LC25 hard">
@@ -4028,6 +4068,19 @@ function buildTreeOptimized(list) {
     <p><strong>❌ 避免问</strong>：TikTok 整体战略/字节集团规划（宏大无关）、加班福利（HR 面再问）、"我有什么需要改进的"。</p>
     <p><strong>约面性质专属问</strong>（仅 TL 非正式约面合适）：如果这次对齐顺利，后续正式流程大概几轮？我这边可以做哪些准备配合？</p>
     <p class="hint">TikTok 反问模板。第 2 问选 AI 显对口（你有 prd-tools 经验），选高并发显工程深度。</p>
+  </div>
+</div>
+
+<!-- ==================== 补充卡片 v2 · 网易专属反问洞察（1 张） ==================== -->
+
+<div class="card" data-c="emer" data-kw="反问 同方向交流 spec-driven OpenSpec 面试官用同类工具 网易洞察">
+  <div class="card-head"><span class="tag emer">反问</span><div class="card-title">反问环节听到面试官用同类工具要立即深挖</div></div>
+  <div class="core">听到面试官说他们也在用 spec-driven，立即追问落地痛点，同方向交流比单方面推销有用</div>
+  <div class="card-body">
+    <p><strong>场景识别</strong>：反问环节面试官主动说"我们也在用 XX"，说明他做的是同方向工作。这是面试中获取同方向交流机会的稀缺点。</p>
+    <p><strong>正确动作</strong>：立即接住——"你们用 OpenSpec 跑下来感觉最大的痛点是什么？" 或 "你们的 code review skill 是用 LLM 跑还是规则引擎跑？" 这种具体技术问题。同方向交流会让面试官把你当自己人，比单方面推销自己的方案有效得多。</p>
+    <p><strong>错误动作</strong>：听到面试官说完不接住，跳到下一个无关问题。比如网易这场面试官说"我们也用 spec-driven"，应该深挖但他们跳到了 Code Review 问题——这是失分。</p>
+    <p class="hint">网易大数据 2026-06-26 一面洞察：面试官明确说"我们应该就是采用 spec-driven 开发方式"，候选人没接住。下次反问环节先听完面试官回答，识别同方向信号再追问。</p>
   </div>
 </div>
 
