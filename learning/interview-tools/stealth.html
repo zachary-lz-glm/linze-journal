@@ -244,7 +244,8 @@ body{overscroll-behavior-y:contain}
     <p><strong>团队推广版 · 第二阶段：PRD 蒸馏 11 步</strong>。能力面适配器 → PRD 摄入 → 证据账本 → 需求 AR 标注 → Reference 路由 → 源码精读 → 契约差异 → 生成 Spec（硬停止人工确认） → 生成 Plan → AI 五项自评 → 门禁脚本。每步产出是下一步输入，链条断任何一处都能定位。</p>
     <p><strong>团队推广版 · 第三阶段：人工确认后开发</strong>。Spec 确认后 AI 生成 Execution Plan，人工 Review 后各用各的开发工具（Copilot/Cursor/Windsurf），开发完新知识回流更新 Reference。</p>
     <p><strong>端到端原型 prd2code-gen · 6 步完整闭环</strong>：① PRD 蒸馏 → ② 项目分析 → ③ 变更计划（人工确认）→ ④ <strong>双路径代码生成</strong>（Handlebars 模板优先 0 token + 无模板走 LLM 兜底）→ ⑤ <strong>自验证 + 自修复循环</strong>（4 类校验：语法/字段双向/规则/集成 + 3 次重试 + 震荡检测 A→B→A 切整段重写）→ ⑥ 输出报告（人工评分）+ eval/auto-tune 反哺。</p>
-    <p class="hint">被追问"然后呢 / 出码后怎么保证质量 / 端到端闭环" → 翻这张卡，端到端 6 步是核心防御。被问"既然完整为啥不推广" → "PRD→Plan 是 ROI 最高风险最低环节，代码生成涉及质量责任和 CI 对齐，先用原型验证设计可行性再决定工程化投入"。</p>
+    <p><strong>双轨协同逻辑（被问为啥不推广必答）</strong>：① 团队推广版要<strong>稳</strong>——执行段成熟工具多（Cursor/Copilot），各人偏好不一，强行推广代码生成涉及质量责任划分；② 端到端原型要<strong>快</strong>——验证可行性、积累工程化经验、等模型成本下降。前者追求落地稳定（20+ 人日活），后者探索链路完整性（R01/R02 对照）。详见"端到端原型→生产路径"卡片。</p>
+    <p class="hint">被追问"然后呢 / 出码后怎么保证质量 / 端到端闭环" → 翻这张卡，端到端 6 步是核心防御。被问"既然完整为啥不推广" → 用上面的"双轨协同逻辑"段落回答，指向"端到端原型→生产路径"卡片。</p>
   </div>
 </div>
 
@@ -1669,6 +1670,33 @@ function buildTreeOptimized(list) {
   </div>
 </div>
 
+<div class="card" data-c="ai" data-kw="Agent Workflow 区别 Anthropic 权威定义 预定义代码路径 动态自主控制 决策控制权 编排 LLM Building effective agents">
+  <div class="card-head"><span class="tag ai">AI</span><div class="card-title">Agent vs Workflow 权威定义（Anthropic）</div></div>
+  <div class="core">Workflow 是"人编排 LLM"（预定义代码路径），Agent 是"LLM 编排自己"（动态自主控制）—— 决策控制权的归属是核心区别</div>
+  <div class="card-body">
+    <p>基于 Anthropic《Building Effective Agents》权威定义，被问"Agent 和 Workflow 啥区别"必答。这也是大厂面试官最爱挖的"概念清晰度"考点。</p>
+    <p><strong>Anthropic 原文定义</strong>：① <strong>Workflow</strong>——LLM 和工具通过<em>预定义的代码路径</em>进行编排，开发者主导控制权，执行确定、可预测、易调试；② <strong>Agent</strong>——LLM <em>动态指导自身的流程和工具使用</em>，模型自主掌控完成任务的方式，灵活但可预测性低。</p>
+    <p><strong>一句话记忆</strong>：Workflow 是"人编排 LLM"，Agent 是"LLM 编排自己"。本质区别是<strong>决策控制权归属</strong>——开发者 vs 模型。</p>
+    <p><strong>Anthropic 选型建议</strong>：① 任务明确步骤固定 → Workflow；② 任务目标明确但路径不确定 → Agent；③ <strong>"从 Workflow 起步，确认不够用再升级 Agent"</strong>——这是 Anthropic 自己的官方建议。</p>
+    <p><strong>项目定位校准（重要，避免被问爆）</strong>：prd-tools 团队推广版（11 步蒸馏）<strong>本质是 Workflow + Skills 编排</strong>——步骤、依赖、门禁都是预定义的；prd2code-gen 端到端原型也是 Workflow 框架，但<strong>自验证+自修复循环里有 Agent Loop</strong>——LLM 在 fail 时自主决定修复策略。诚实表述："Workflow 为主，关键节点引入 Agent Loop"。</p>
+    <p><strong>核心公式（Lilian Weng / OpenAI）</strong>：<strong>Agent = LLM（大脑）+ Planning（规划）+ Memory（记忆）+ Tool Use（工具）</strong>——四组件缺一不可。Workflow 不要求四组件完整，所以更轻。</p>
+    <p class="hint">被问"你这算 Agent 吗" → 主动承认是 Workflow + Skills，自修复环节有 Agent Loop。被问"为啥不用纯 Agent" → "Anthropic 建议 Workflow 优先，prd-tools 任务步骤明确，Workflow 更可预测可调试"。被问"Agent 本质是什么" → 翻核心公式。</p>
+  </div>
+</div>
+
+<div class="card" data-c="ai" data-kw="Memory 记忆 短期 长期 Context Window 向量数据库 RAG Embedding 工作记忆 情景记忆 语义记忆 Lilian Weng">
+  <div class="card-head"><span class="tag ai">AI</span><div class="card-title">Agent Memory 机制：短期 vs 长期</div></div>
+  <div class="core">短期靠 Context Window（Chat History），长期靠 RAG + 向量数据库；进阶三层：工作/情景/语义记忆</div>
+  <div class="card-body">
+    <p>应对"Agent 记忆怎么设计"的高频追问。Agent 核心公式：<strong>Agent = LLM + Planning + Memory + Tool Use</strong>，Memory 是四大组件之一。</p>
+    <p><strong>短期记忆（Short-Term）</strong>：① 载体——Context Window；② 内容——当前会话 Chat History、工具调用中间结果、当前任务即时状态；③ 限制——受 Token 上限约束，会话结束即丢失；④ 管理——滑动窗口截断、摘要压缩（Summarization）。</p>
+    <p><strong>长期记忆（Long-Term）</strong>：① 核心——RAG（检索增强生成）；② 流程——历史经验/知识编码为 Embedding 存入向量数据库（Chroma/Pinecone/Milvus），执行任务前用 query 做相似度检索，召回相关记忆注入 Prompt；③ <strong>写入策略</strong>——不是所有对话都值得存，需要设计<strong>重要性评分</strong>决定哪些记忆长期保留。</p>
+    <p><strong>进阶三层（类人记忆）</strong>：① <strong>工作记忆</strong>（Working）≈ 短期记忆；② <strong>情景记忆</strong>（Episodic）= 具体事件经历（如"上次用户让我写报告失败了"）；③ <strong>语义记忆</strong>（Semantic）= 抽象知识/事实。</p>
+    <p><strong>项目桥接</strong>：prd-tools 的<strong>Reference 六文件 SSOT</strong> 本质是<strong>长期语义记忆</strong>——把项目知识蒸馏成可检索的事实库；每次蒸馏的产物（Spec/Plan）是<strong>情景记忆</strong>——具体需求的执行历史。eval/auto-tune 反哺就是<strong>写入策略</strong>——只把高评分的执行模式沉淀回知识库。</p>
+    <p class="hint">被问"Agent 记忆怎么设计" → 翻这张卡。被问"你的工作流有记忆吗" → "Reference 六文件是长期语义记忆，蒸馏产物是情景记忆，eval 反哺是写入策略——三层都有"。被问"上下文窗口炸了怎么办" → 滑动窗口+摘要压缩+长期记忆外置到 RAG。</p>
+  </div>
+</div>
+
 <div class="card" data-c="ai" data-kw="单Agent Multi-Agent 多Agent 区别 对比 使用场景 协作 分工 AutoGen CrewAI 编排">
   <div class="card-head"><span class="tag ai">AI</span><div class="card-title">单Agent vs Multi-Agent：区别、对比、使用场景</div></div>
   <div class="core">单Agent是一把瑞士军刀，Multi-Agent是一个团队——任务异构且需要专精时才值得拆</div>
@@ -1682,6 +1710,8 @@ function buildTreeOptimized(list) {
     <p><strong>什么时候用Multi-Agent</strong>：①任务有明显异构子任务——一个分析代码、一个分析文档、一个做Review，各需要不同的知识背景和推理方式。②单Agent的prompt已经膨胀到互相干扰——指令太多模型分不清优先级。③需要并行加速——多个Agent同时处理不同子任务，最后汇总。</p>
     <p><strong>什么时候不该用</strong>：①任务本身是线性单链路——A→B→C顺序执行，拆开反而增加通信开销。②团队没有Multi-Agent编排经验——AutoGen/CrewAI的学习曲线不低，强行上Multi-Agent容易翻车。③调试成本不可接受——生产环境问题要快速定位，Multi-Agent的排查链路太长。</p>
     <p><strong>项目桥接</strong>：prd-tools用双Skill（Reference + PRD蒸馏）但共享同一个Agent上下文——本质是"单Agent+多Skill"模式。如果未来PRD分析需要同时做代码理解+竞品分析+用户研究，可能值得拆成Multi-Agent。目前单Agent+Skill编排够用。</p>
+    <p><strong>Anthropic 工程化金句（面试加分点）</strong>："拆分的本质是<strong>用通信成本换取单点负载</strong>——当单个 Agent 的上下文管理成本超过了多 Agent 间协调的通信成本，就该拆分。"这比"团队类比"更工程化、更有理论依据，被追问深度时拿出来。</p>
+    <p><strong>Multi-Agent 4 种协作模式（被问架构时答）</strong>：① Supervisor-Worker（主 Agent 拆任务派子 Agent）；② Pipeline（流水线串联）；③ Debate（多 Agent 辩论）；④ Hierarchical（树状层级）。引入的新复杂度：通信协议设计 / 冲突解决 / 错误传播 / 终止条件。</p>
     <p><strong>面试一句话</strong>："Multi-Agent不是银弹——用团队类比：一个人能干好的活没必要拉一个团队。只有任务异构到需要不同的专业知识、或者需要并行加速时，Multi-Agent才值得付出编排复杂度的代价。"</p>
   </div>
 </div>
@@ -2137,6 +2167,50 @@ function buildTreeOptimized(list) {
     <p><strong>verified_by 审计链</strong>：reference 文件里每条事实附 <code>verified_by: ["file.ts:line"]</code>，强制源码 Read 后写入，禁止推断。Phase 2 强制验证 + Phase 3 致命类检查（枚举完备性、分支计数、方法签名、字段路径 100% 匹配）。</p>
     <p><strong>漂移检测 drift-report.json</strong>：每次验证后对比 reference 与实际代码——reference 有但代码找不到的实体 → stale 漂移；代码有但 reference 未记录 → missing 漂移；reference 引用的文件路径不存在 → broken_path。warning 级别不阻塞流程，提示知识库需要更新。</p>
     <p class="hint">被问"AI 成本怎么控" / "reference 怎么保鲜" / "知识库过时怎么办" → 翻这张卡。verified_by + drift-report 是工程化核心防御。</p>
+  </div>
+</div>
+
+<div class="card" data-c="proj" data-kw="端到端 vs Cursor Agent Mode Cline Aider Devin 对比 重造轮子 差异化 PRD起步 入口 约束 自进化 集成">
+  <div class="card-head"><span class="tag proj">架构</span><div class="card-title">端到端原型 vs Cursor/Cline/Aider/Devin</div></div>
+  <div class="core">三层差异：入口（PRD起步 vs 代码起步）+ 约束（verified_by审计 vs 模型+人工review）+ 自进化（eval/auto-tune vs 人工feedback）</div>
+  <div class="card-body">
+    <p>应对"重造轮子"质疑。核心立场：差异化在 PRD→Plan + 自进化闭环，执行段未来可能集成 Cursor 而不是重造。</p>
+    <p><strong>差异 1：入口不同</strong>。Cursor/Cline/Aider 从<em>代码</em>起步（已有代码 + 自然语言指令）；prd2code-gen 从<em>PRD</em>起步（业务需求 → 结构化开发计划 → 代码）。前者解决"怎么改代码"，后者解决"该改什么 + 为什么这么改"。</p>
+    <p><strong>差异 2：约束机制不同</strong>。Cursor Agent Mode 靠模型能力 + 人工 review；prd2code-gen 有 <strong>verified_by 审计链</strong>（每条事实带 file:line 溯源）+ 证据链强制 + drift-report 漂移检测。后者在金融/合规场景更有价值。</p>
+    <p><strong>差异 3：自进化机制不同</strong>。Cursor 靠人工 feedback（用户 thumbs up/down）；prd2code-gen 有 <strong>eval/auto-tune 五模块</strong>（case-loader/llm-judge/scorer/gap-analyzer/pattern-detector）自动提炼规则反哺 prompt。"错误即规则"的 ratchet 自动化。</p>
+    <p><strong>诚实收口</strong>："Cursor/Cline 在执行段确实成熟，我的差异化在 PRD→Plan + 自进化闭环。<strong>执行段未来可能直接集成 Cursor Agent Mode 而不是重造</strong>——这是更合理的工程选择。"</p>
+    <p class="hint">被问"为啥重造轮子" → 三层差异 + 诚实收口。被问"那 Cursor 也能做 PRD 起步为啥你做" → "Cursor 默认假设单文件/小项目起步，对几万行代码+历史 PRD 的存量项目需求理解是空白"。</p>
+  </div>
+</div>
+
+<div class="card" data-c="proj" data-kw="端到端 原型 生产 推广 三步路径 CI 责任 模板库 过渡 prd2code-gen 协同 既然完整为啥不推广">
+  <div class="card-head"><span class="tag proj">架构</span><div class="card-title">端到端原型 → 生产的三步过渡路径</div></div>
+  <div class="core">双轨协同：团队推广版稳态运营，端到端原型探索三步过渡——模板库扩展 + CI对齐 + 责任归属</div>
+  <div class="card-body">
+    <p>应对"既然完整为啥不推广"和"原型怎么过渡到生产"两个高频追问。</p>
+    <p><strong>双轨定位（先讲清楚）</strong>：① 团队推广版 = 稳态（人工确认后才开发、风险低、ROI 高），20+ 人团队在用；② 端到端原型 = 探索（验证可行性、积累工程化经验、等模型成本下降），用 R01/R02 对照实验做技术储备。</p>
+    <p><strong>三步过渡路径</strong>：</p>
+    <p>· <strong>Step 1：模板库扩展到 80% 场景</strong>。原型阶段模板命中率约 40%（剩余走 LLM 兜底），目标 80%。每命中一次 LLM 兜底且评分>阈值，抽取为候选模板，Golden Sample 回归通过后入库。</p>
+    <p>· <strong>Step 2：CI/CD 对齐</strong>。原型是独立 pipeline，生产化要：① 产物格式对齐团队 lint/tsc/test 流水线；② 接入 code review 工具（SonarQube 等）；③ 灰度发布机制（先 10% 需求走 AI 生成，逐步放量）。</p>
+    <p>· <strong>Step 3：责任归属明确</strong>。AI 生成代码必须有 owner review 才能 merge，bug 责任归 owner 不归 AI。建立"AI 生成标签"机制，QA 阶段重点 review。</p>
+    <p><strong>四大 gap（诚实承认）</strong>：① CI 对齐（独立 pipeline vs 团队流水线）；② 质量责任（AI 生成必须有 owner）；③ 规模化（50 文件 → 5000 文件，溯源/检索/校验都要重写）；④ 模型成本（原型用强模型不计成本，生产要分层模型）。</p>
+    <p class="hint">被问"既然完整为啥不推广" → "团队推广版稳态在用，原型是探索储备，过渡至少 6-12 个月+团队投入"。被问"原型和生产差什么" → 翻这张卡的四 gap。</p>
+  </div>
+</div>
+
+<div class="card" data-c="proj" data-kw="端到端 失败 case 边界 局限 R01 54分 未生产 复杂跨文件 运行时 性能 诚实 规模化">
+  <div class="card-head"><span class="tag proj">架构</span><div class="card-title">端到端原型失败 case 与边界</div></div>
+  <div class="core">诚实承认：R01 54分说明未达生产可用，三类场景仍需人工——复杂跨文件联动 / 运行时行为 / 性能敏感路径</div>
+  <div class="card-body">
+    <p>这是端到端原型最易被打穿的点，必须主动讲边界而不是被追着承认。</p>
+    <p><strong>核心数据诚实</strong>：R01（无 reference）54 分 → R02（加 reference）68 分。68 分说明"基本能跑通但有 gap"，不是"生产可用"。R03 目标 75 分，需要补 eval 体系 + 模板库扩展。</p>
+    <p><strong>三类失败场景（必须人工兜底）</strong>：</p>
+    <p>· <strong>① 复杂跨文件联动</strong>：改 A 文件触发 B/C/D 联动修改，且联动规则在多个文件分散定义。LLM 容易漏掉深层联动，4 类校验也兜不住（校验是单文件粒度）。</p>
+    <p>· <strong>② 运行时行为逻辑</strong>：异步竞态、内存泄漏、用户交互细节、动画时序——靠静态分析 + 4 类校验发现不了，必须人工 review 或 runtime 测试。</p>
+    <p>· <strong>③ 性能敏感路径</strong>：高频渲染、大列表虚拟化、首屏关键路径——AI 倾向给"正确但非最优"的解，这类场景人工写更可靠。</p>
+    <p><strong>规模局限</strong>：原型在单仓 BFF + 前端 ~50 文件 / ~5000 行代码规模验证过。5000+ 文件规模化未验证，预计需要 graph-based 溯源替代 line-based。</p>
+    <p><strong>诚实收口</strong>："端到端原型是验证可行性 + 工程化深度的探索，不是生产方案。68 分说明能跑通，剩余 32 分需要规模化验证 + eval 体系完善 + 模板库沉淀——这是后续 6-12 个月的工程化投入。"</p>
+    <p class="hint">被问"原型失败过吗" / "什么场景搞不定" → 翻这张卡。关键：主动讲边界，不要被追着承认。被问"54 分为什么这么低" → "R01 是无 reference 基线，目的是量化 reference 知识库的价值——这是对照实验设计，不是生产评分"。</p>
   </div>
 </div>
 
@@ -2641,6 +2715,11 @@ function buildTreeOptimized(list) {
     <p><strong>零 breaking change 18 月+</strong>：SemVer + peerDependencies 隔离 react + deprecated 不删除 + Changesets 追踪。</p>
     <p><strong>权益 400+/组件 35+/联动 16 个</strong>：400 是 SKU 数不是组件数，35 是 24 内置+11 运行时扩展，16 是 12 重渲染+4 Placeholder 重置。</p>
     <p><strong>攻防话术（被追穿怎么救）</strong>：①问准确率怎么算→文件集合匹配法，20% gap来自PRD本身不完整且AI主动标记让人确认，不是AI算错；②问5h到2h分母→5个中等复杂度需求对照，主动补一句"单环节提效，全链路20-30%"；③问85%一致性→先承认是文件列表重跑一致性（产物稳定性）不是产物质量，再引Readiness评单次质量，两个指标互补不互替；④问Readiness 82/83/62→三案例蒸馏时整体质量分，团队62因跨仓契约E维45拖累，口诀单仓看D多仓看E。</p>
+    <p><strong>端到端原型三套数据口径对照（简历升级后必背，防数据冲突追穿）</strong>：现在简历有<strong>三套独立数据</strong>，必须分清维度否则被追穿"你这数据怎么对不上"：</p>
+    <p>· <strong>① 团队推广版 · 文件级 80%</strong>：实际开发分支文件集合 vs Plan 产出文件集合做匹配——这是<strong>Plan 阶段产物准确度</strong>，不涉及代码。</p>
+    <p>· <strong>② 团队推广版 · Readiness 五维 82/83/62</strong>：三个验证需求蒸馏时整体质量分（PRD 摄入/证据覆盖/代码搜索/契约对齐/计划完整性 5 维加权）——这是<strong>蒸馏过程质量</strong>，单仓 80+ 多仓 60+。</p>
+    <p>· <strong>③ 端到端原型 · llm-judge 五维 R01 54→R02 68</strong>：prd2code-gen 端到端跑出来的代码，用另一个大模型做 5 维独立评分——这是<strong>端到端产物质量</strong>，跟①②完全不同维度。</p>
+    <p>· <strong>口诀</strong>：①是"文件级 Plan 准确度"，②是"过程质量 Readiness"，③是"端到端产物 llm-judge"。三个数字互补不互替，被问"为啥 80% 和 68 分不一致" → "80% 是 Plan 文件级，68 分是端到端代码 llm-judge 评分，维度不同——前者只到 Plan，后者跑完 6 步出代码"。</p>
   </div>
 </div>
 
