@@ -143,7 +143,7 @@ trigger: /面试复盘
 **AI 工程化 3 硬伤专项扫描**（13 场面经归纳的系统性失分，必检）：
 - ① 数据被追穿：是否出现量化数据（提效/准确率/一致性）但说不清口径或被追问崩盘？每个数字必须备"怎么算的"话术
 - ② 原理卡壳：是否被问到 AI 底层原理（图片传参/Function Calling/Skills 触发/LangGraph/RAG 机制）答不出或讲错？标注具体概念
-- ③ 闭环回避：是否被问端到端闭环（执行/Review/自修复）而用"老板让先做前两步"回避？
+- ③ 闭环回避：是否被问端到端闭环（执行 / Review / 自修复 / eval 反哺 / CI 对齐）而只用"老板让先做前两步"回避？**必须答出端到端原型 prd2code-gen 完整 6 步**（蒸馏 → 分析 → Plan → 双路径生成 → 自验证自修复 → eval/auto-tune 反哺），并讲清**双轨定位**——团队推广版聚焦 PRD→Plan 是 ROI 选择（人工确认后才开发、风险低、提效明显），端到端原型已设计跑通作为下一代探索。每一层都能讲出具体工程化难点（断点续传 progress.yaml / 震荡检测 A→B→A / verified_by 审计链 file:line 溯源 / drift-report 漂移检测 / Handlebars 模板 0 token 优先 + LLM 兜底）才算过。被问"既然完整为啥不推广" → "PRD→Plan 是 ROI 最高风险最低环节，代码生成涉及质量责任和 CI 对齐，先用原型验证设计可行性再决定工程化投入"。
 
 ### 第五步：知识回流
 
@@ -232,7 +232,8 @@ trigger: /面试复盘
 - 邓泽林，滴滴国际化高级前端，4年经验，2年A绩效
 - Schema驱动营销中台（BFF模板引擎 + 前端渲染引擎 + 联动系统）
 - benefit SDK 权益组件库（24内置组件 + Register模式 + Rollup双模打包）
-- prd-tools AI工程工作流（Reference六文件SSOT + 证据链 + 三级门控）
+- prd-tools AI工程工作流（团队推广版，Reference六文件SSOT + 证据链 + 三级门控，20+人团队在用）
+- prd2code-gen 端到端PRD→Code原型（个人独立项目，6步闭环：蒸馏→分析→Plan→双路径生成→自验证自修复→eval/auto-tune反哺；含断点续传progress.yaml / 震荡检测A→B→A / verified_by审计链file:line溯源 / drift-report漂移检测；未在团队大规模推广，定位为下一代探索）
 
 ## 硬性原则
 

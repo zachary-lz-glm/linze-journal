@@ -118,7 +118,7 @@ body{overscroll-behavior-y:contain}
     <p>面试官好，我是邓泽霖，滴滴国际化高级前端，4年经验，连续2年A绩效。</p>
     <p><strong>第一，Schema驱动营销中台。</strong>覆盖20+活动类型，新增活动前端零代码，上线周期从2周缩短到3天。</p>
     <p><strong>第二，400+权益组件库。</strong>Register注册 + Schema同构渲染 + Rollup双模打包，覆盖8个业务项目，18个月+零breaking change。</p>
-    <p><strong>第三，AI工程工作流。</strong>独立设计Claude Code双Skill工作流，PRD→Spec→Plan自动蒸馏，5h/需求降到2h/需求，已在20+人团队推广。</p>
+    <p><strong>第三，AI工程工作流。</strong>独立设计Claude Code三Skill工作流，团队推广版PRD→Spec→Plan蒸馏（5h→2h/需求，20+人团队），个人另独立设计跑通端到端PRD→Code完整6步闭环原型prd2code-gen。</p>
     <p>核心优势是从业务抽取共性做架构抽象，以及对全流程质量把控。来贵司是因为<strong>[填公司方向]</strong>跟我第三条线高度匹配。</p>
     <p class="hint">语速 ~250 字/分钟，约 45 秒。分三点结构说，最后一句连接目标公司。说完停顿等追问。</p>
   </div>
@@ -131,7 +131,7 @@ body{overscroll-behavior-y:contain}
     <p>我在滴滴国际化做了四年营销中台前端，核心做的是一套 Schema 驱动的全栈架构。</p>
     <p>简单说就是：BFF 层用模板引擎生成 Schema，前端通过渲染引擎动态消费。中间最核心的设计叫 injectDActions，是一次声明、双重求值——BFF 端先算一次保证初始状态正确，序列化给前端运行时再算一次做联动。联动分两种，需要后端数据的走 fetchApi 回调 BFF 重生成，纯前端的走本地 eval。这样新增活动类型，前端基本不用写新代码。</p>
     <p>这套 Schema 架构后来也复用到了权益组件库 benefit SDK，支持 400 多种权益的组件化接入。</p>
-    <p>在这个基础上我又做了 prd-tools，用 AI 把 PRD 转成有证据、可执行、可回流的结构化开发计划。</p>
+    <p>在这个基础上我又做了 prd-tools，用 AI 把 PRD 转成有证据、可执行、可回流的结构化开发计划——团队推广版做 PRD→Plan 蒸馏（20+ 人团队在用），个人另独立设计端到端原型 prd2code-gen 跑通了 PRD→Code 完整 6 步闭环（双路径生成 + 自验证自修复 + eval 反哺）。</p>
     <p class="hint">语速 250 字/分钟，约 45 秒。追问时顺势展开。</p>
   </div>
 </div>
@@ -235,14 +235,16 @@ body{overscroll-behavior-y:contain}
   </div>
 </div>
 
-<div class="card" data-c="proj" data-kw="PRD 上线 链路 蒸馏 回流 完整流程">
+<div class="card" data-c="proj" data-kw="PRD 上线 链路 蒸馏 回流 完整流程 端到端 闭环 双轨 prd2code-gen 6步">
   <div class="card-head"><span class="tag proj">A10</span><div class="card-title">从 PRD 到上线的完整链路？</div></div>
-  <div class="core">三阶段：建知识库→11步蒸馏PRD→人工确认后开发，全程有证据链和质量门控</div>
+  <div class="core">双轨：团队推广版三阶段 PRD→Spec→Plan（20+ 人在用），端到端原型 prd2code-gen 6 步 PRD→Code 已跑通</div>
   <div class="card-body">
-    <p><strong>第一阶段：Reference构建知识库</strong>。跑一遍项目代码，把几万行代码蒸馏成6个领域知识文件——代码结构、编码规则、跨层契约、PRD路由映射、业务领域Map、代码实体索引。这步是一次性的，后续新需求会自动回流更新，不需要重新建库。</p>
-    <p><strong>第二阶段：PRD蒸馏11步</strong>。能力面适配器约束AI思考维度→PRD摄入（支持MD/Doc/TXT）→证据账本建立→需求AR标注→Reference路由定位候选文件→源码精读打包上下文→契约差异分析→生成Spec（这里硬终止必须人工确认）→生成Plan→AI五项自评→门禁脚本确定性检查。每一步的产出都是下一步的输入，链条断任何一处都能定位到具体步骤。</p>
-    <p><strong>第三阶段：人工确认后开发</strong>。Spec确认后AI生成Execution Plan，人工Review Plan确认改动点。然后各用各的开发工具（Copilot/Cursor/Windsurf），开发完新知识回流更新Reference知识库。</p>
-    <p><strong>核心定位</strong>：不碰代码生成，专注在"拿到PRD后该改哪些文件、改什么、上下游怎么对齐"这个环节。代码环节交给成熟的Vibe Coding工具。</p>
+    <p><strong>双轨定位（先说清楚再展开）</strong>：① 团队推广版聚焦 ROI 最高的 PRD→Plan 环节（人工确认后才开发、风险低、提效明显），20+ 人团队在用；② 端到端原型 prd2code-gen（个人独立设计）跑通 PRD→Code 完整 6 步，作为下一代探索。</p>
+    <p><strong>团队推广版 · 第一阶段：Reference 构建知识库</strong>。跑一遍项目代码，把几万行代码蒸馏成 6 个领域知识文件——代码结构、编码规则、跨层契约、PRD 路由、业务领域 Map、代码实体索引。一次性构建，后续新需求自动回流更新。</p>
+    <p><strong>团队推广版 · 第二阶段：PRD 蒸馏 11 步</strong>。能力面适配器 → PRD 摄入 → 证据账本 → 需求 AR 标注 → Reference 路由 → 源码精读 → 契约差异 → 生成 Spec（硬停止人工确认） → 生成 Plan → AI 五项自评 → 门禁脚本。每步产出是下一步输入，链条断任何一处都能定位。</p>
+    <p><strong>团队推广版 · 第三阶段：人工确认后开发</strong>。Spec 确认后 AI 生成 Execution Plan，人工 Review 后各用各的开发工具（Copilot/Cursor/Windsurf），开发完新知识回流更新 Reference。</p>
+    <p><strong>端到端原型 prd2code-gen · 6 步完整闭环</strong>：① PRD 蒸馏 → ② 项目分析 → ③ 变更计划（人工确认）→ ④ <strong>双路径代码生成</strong>（Handlebars 模板优先 0 token + 无模板走 LLM 兜底）→ ⑤ <strong>自验证 + 自修复循环</strong>（4 类校验：语法/字段双向/规则/集成 + 3 次重试 + 震荡检测 A→B→A 切整段重写）→ ⑥ 输出报告（人工评分）+ eval/auto-tune 反哺。</p>
+    <p class="hint">被追问"然后呢 / 出码后怎么保证质量 / 端到端闭环" → 翻这张卡，端到端 6 步是核心防御。被问"既然完整为啥不推广" → "PRD→Plan 是 ROI 最高风险最低环节，代码生成涉及质量责任和 CI 对齐，先用原型验证设计可行性再决定工程化投入"。</p>
   </div>
 </div>
 
@@ -2085,7 +2087,7 @@ function buildTreeOptimized(list) {
     <p>· <strong>证据链</strong>：定义8种证据类型（PRD/源码/文档等），AI每条结论必须引用Evidence ID，可追溯到原始出处。</p>
     <p>· <strong>多层门控</strong>：贯穿11步流水线——摄入门控检查PRD读取质量，Spec Review Gate要求人工确认后才允许生成Plan，Readiness Score做五维度综合评分，Final Quality Gate做5项确定性检查。</p>
     <p><strong>效果</strong>：PRD→Plan 从 5h/需求降到 2h/需求（5 需求对照），文件级准确率 80%，同一 PRD 跑 10 次一致性 40%→85%+，已推广到 20+ 人团队。</p>
-    <p><strong>产品边界</strong>：只做PRD到任务拆解。下游对接任意AI Coding工具（Cursor/Windsurf/Claude Code），不重复造轮子。</p>
+    <p><strong>产品边界（双轨）</strong>：① 团队推广版只做 PRD→Plan——ROI 最高环节，下游对接任意 AI Coding 工具（Cursor/Windsurf/Claude Code），不重复造轮子；② 个人独立设计端到端原型 prd2code-gen 跑通完整 PRD→Code 6 步闭环（双路径生成 + 自验证自修复 + eval 反哺），作为下一代探索。前者追求落地稳定，后者探索链路完整性。</p>
     <p><strong>vs现有工具</strong>：Graphify做了知识图谱但没有蒸馏流程；OpenSpec有工作流规范但缺PRD到需求拆解闭环；Cursor/Windsurf不解决已有项目（几万行代码+历史逻辑）的需求理解问题。</p>
   </div>
 </div>
@@ -2100,13 +2102,51 @@ function buildTreeOptimized(list) {
   </div>
 </div>
 
-<div class="card" data-c="proj" data-kw="优化 迭代 Benchmark 黄金Case 回归 LLM-as-Judge A/B">
+<div class="card" data-c="proj" data-kw="端到端 自验证 自修复 震荡检测 校验 重试 Harness 闭环 A→B→A validation history prd2code-gen 工程化深度">
+  <div class="card-head"><span class="tag proj">架构</span><div class="card-title">端到端原型：自验证+自修复循环怎么实现？</div></div>
+  <div class="core">4 类校验 + 3 次重试 + 震荡检测（A→B→A 切整段重写），修正历史全程可追溯</div>
+  <div class="card-body">
+    <p>这是端到端原型 prd2code-gen 的核心工程化难点，应对"AI 生成代码出错了怎么办 / Harness 怎么落地"的追问。</p>
+    <p><strong>4 类校验（按顺序跑）</strong>：① 语法——TypeScript 编译 tsc --noEmit + AST 完整性 + 残留 <code>{{</code> 占位符检查；② 字段双向——蒸馏字段 ⊆ 生成字段（不遗漏）+ 生成字段 ⊆ 蒸馏字段（不幻觉）；③ 规则——i18n key 格式、enum 白名单、命名规范、反模式逐条检查；④ 集成——import 路径、类型兼容、不破坏已有代码（diff 检查）。</p>
+    <p><strong>自修复循环</strong>：验证 fail → 差异修正（只改报错字段/行，非全量重写）→ 全量重验（不只验修复项）→ 最多 3 次重试 → 仍 fail 暂停交人工。</p>
+    <p><strong>震荡检测（核心创新）</strong>：识别 history 里 A→B→A 模式（第一次改成 B，第二次又改回 A）→ 切换为整段重写策略，避免无限循环。修正历史全程记录到 validation.json 的 history 数组（attempt / strategy / errors_fixed / new_errors / changes）。</p>
+    <p class="hint">被问"出码后怎么保证质量" / "Harness 怎么落地" / "Agent 自修复怎么实现" → 翻这张卡。震荡检测是亮点，能讲出来直接体现工程深度。</p>
+  </div>
+</div>
+
+<div class="card" data-c="proj" data-kw="断点续传 状态机 progress.yaml 幂等 步骤间 文件通信 中途挂了 失败恢复 prd2code-gen Harness Agent">
+  <div class="card-head"><span class="tag proj">架构</span><div class="card-title">端到端原型：Agent 中途挂了怎么续跑？</div></div>
+  <div class="core">progress.yaml 状态机 + 步骤间只通过文件通信 + 步骤本身幂等，可从任意失败点恢复</div>
+  <div class="card-body">
+    <p>应对"Agent 跑一半挂了 / 网络断了怎么办"的工程化追问。</p>
+    <p><strong>状态机设计</strong>：progress.yaml 记录 6 步每步的 status（not_started / in_progress / completed / failed）+ started_at / completed_at / error。current_step 字段指向当前步骤。</p>
+    <p><strong>断点续传逻辑</strong>：恢复时读 progress.yaml → 找 current_step → 判断 status：completed 从下一步开始；in_progress / failed 重新执行当前步骤（步骤本身设计为幂等）；not_started 从该步骤开始。</p>
+    <p><strong>步骤间只通过文件通信</strong>：所有中间产物（distilled.json / analysis.json / plan.json / validation.json）都落盘到 session/ 目录，不在内存里传。这样任何步骤崩溃都不丢状态，重启后接着跑。</p>
+    <p><strong>幂等设计</strong>：每个 step 文件设计为可重复执行——比如 step-04 重新生成会覆盖上次产物，不会产生脏数据。</p>
+    <p class="hint">被问"Agent 工程化难点" / "大模型调用挂了怎么办" / "Agent 状态管理" → 翻这张卡。核心是"无状态 Agent + 有状态文件系统"组合。</p>
+  </div>
+</div>
+
+<div class="card" data-c="proj" data-kw="模板 LLM 双路径 Handlebars 0token 兜底 成本 control token verified_by 审计 漂移 drift-report 知识保鲜 prd2code-gen">
+  <div class="card-head"><span class="tag proj">架构</span><div class="card-title">端到端原型：模板/LLM 双路径 + verified_by 审计</div></div>
+  <div class="core">Handlebars 模板优先（0 token）+ LLM 兜底；每条事实带 file:line 溯源 + drift-report 自动发现 reference 漂移</div>
+  <div class="card-body">
+    <p>应对"成本怎么控 / token 怎么省 / 知识库怎么保鲜"的工程化追问。</p>
+    <p><strong>双路径代码生成</strong>：① 模板路径——读取 templates/{campaign_type}/ 下的 Handlebars 模板（.hbs），渲染蒸馏 JSON 数据，0 token 消耗、确定性输出；② LLM 路径——无匹配模板时 LLM 参照 reference 规则生成。LLM 结果可经人工确认后保存为新模板，形成"模板库越用越大"的学习闭环。</p>
+    <p><strong>四级回退策略（LLM 路径写入文件时）</strong>：Level 1 精确 SEARCH/REPLACE → Level 2 模糊匹配（容忍空格/换行）→ Level 3 行号定位 → Level 4 全文件重写。从最安全到最激进逐级回退。</p>
+    <p><strong>verified_by 审计链</strong>：reference 文件里每条事实附 <code>verified_by: ["file.ts:line"]</code>，强制源码 Read 后写入，禁止推断。Phase 2 强制验证 + Phase 3 致命类检查（枚举完备性、分支计数、方法签名、字段路径 100% 匹配）。</p>
+    <p><strong>漂移检测 drift-report.json</strong>：每次验证后对比 reference 与实际代码——reference 有但代码找不到的实体 → stale 漂移；代码有但 reference 未记录 → missing 漂移；reference 引用的文件路径不存在 → broken_path。warning 级别不阻塞流程，提示知识库需要更新。</p>
+    <p class="hint">被问"AI 成本怎么控" / "reference 怎么保鲜" / "知识库过时怎么办" → 翻这张卡。verified_by + drift-report 是工程化核心防御。</p>
+  </div>
+</div>
+
+<div class="card" data-c="proj" data-kw="优化 迭代 Benchmark 黄金Case 回归 LLM-as-Judge A/B eval auto-tune 反哺 gap-analyzer pattern-detector case-loader llm-judge">
   <div class="card-head"><span class="tag proj">工作流</span><div class="card-title">AI工作流怎么优化和迭代</div></div>
-  <div class="core">维护已验证的需求案例集，每次优化后重跑对比评分，防退化</div>
+  <div class="core">维护黄金Case集 + Benchmark回归 + LLM-as-Judge自动评分；端到端原型已落地完整 eval/auto-tune 五模块闭环</div>
   <div class="card-body">
     <p><strong>黄金Case集</strong>：维护一套已人工验证的完整需求案例（5-10个中等复杂度需求），覆盖典型场景。每次变更后用这套Case重跑，对比前后评分。</p>
     <p><strong>Benchmark回归</strong>：用已跑完的case当用例评分集，优化Prompt或配置后重跑，对比五维评分和文件覆盖率的变化——进步还是退步。相当于A/B测试。</p>
-    <p><strong>LLM-as-Judge（规划中）</strong>：用另一个大模型对产物做独立五维质量评分，建立可复现的自动化评估Pipeline。评分差值作为执行一致性的代理指标。</p>
+    <p><strong>LLM-as-Judge（端到端原型已实现）</strong>：prd2code-gen 里完整跑通了 eval/auto-tune 五模块闭环——case-loader 加载黄金集 → llm-judge 用另一个大模型对产物做五维独立评分 → scorer 计算分值 → gap-analyzer 定位失分点 → pattern-detector 跨 case 提炼共性 pattern 反哺 prompt。已做 R01/R02 对照实验（54→68 分，量化 reference 知识库价值 +14 分）。</p>
     <p><strong>迭代节奏</strong>：每次只改一个变量（Prompt/门禁阈值/能力面配置），跑黄金Case看效果，确认无退化后再合入。</p>
   </div>
 </div>

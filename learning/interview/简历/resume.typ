@@ -39,11 +39,11 @@
 
 == 个人优势
 
-#hl[AI 工程化方向独立落地者] —— 独立设计并落地 SDD（Spec-Driven Development）体系，PRD→开发计划耗时从 5h 降到 2h/需求，已在 B 端 20+ 人团队推广，清晰区分 Vibe Coding 与标准化 AI 研发的边界。
+#hl[AI 工程化方向独立落地者] —— 独立设计并落地 SDD（Spec-Driven Development）体系，PRD→开发计划耗时从 5h 降到 2h/需求，已在 B 端 20+ 人团队推广；同步独立设计端到端 PRD→Code 完整原型 prd2code-gen（6 步闭环：蒸馏 → Plan → 双路径生成 → 自验证自修复 → eval 反哺），清晰区分 Vibe Coding 与标准化 AI 研发的边界。
 
 #set list(marker: text(fill: accent)[•], indent: 2pt, body-indent: 5pt, spacing: 4pt)
 
-- #hl[Agent / Agentic Workflow 工程实践]：独立搭建 Claude Code 双 Skill 工作流，跑通 PRD→Spec→Plan→人工 Review→反馈回流闭环；深度实践 Prompt / Context Engineering、Tool Use、MCP 协议、RAG（BM25 + 语义混合检索 + RRF）。
+- #hl[Agent / Agentic Workflow 工程实践]：独立搭建 Claude Code 三 Skill 体系（build-reference + prd-distill + prd2code-gen），#hl[双轨落地]：① 团队推广版跑通 PRD→Spec→Plan→人工 Review→反馈回流闭环（20+ 人在用）；② 端到端原型 prd2code-gen 跑通 PRD→可部署代码 6 步闭环（含断点续传、震荡检测、自修复循环、eval/auto-tune 反哺）；深度实践 Prompt / Context Engineering、Tool Use、MCP 协议、RAG（BM25 + 语义混合检索 + RRF）。
 - #hl[前端架构 + BFF 全栈能力]：主导 Schema 驱动营销中台（BFF 模板引擎 + 前端动态渲染 + 双重求值联动引擎）与 400+ 营销权益组件库，支撑 20+ 种活动类型、8 个业务项目。
 
 == 专业技能
@@ -69,11 +69,13 @@
 #text(weight: "bold")[背景]：B 端 PRD 到代码缺少可追溯的中间产物（Spec），导致 AI Coding 产出不可控、需求理解偏差返工频发。基于 Claude Code + MCP 实现 Spec 自动蒸馏，用 Cursor Agent Mode 按 Spec 驱动编码。
 
 #text(weight: "bold")[行动]：
-- #hl[双 Skill 知识底座]：知识库构建 6 模式 + Spec 蒸馏 11 步工作流，反馈回流闭环让 Spec 越用越准；Skill 零依赖设计（不依赖 Node / LLM Key），团队拿到即用。
+- #hl[三 Skill 知识底座]：知识库构建 6 模式 + Spec 蒸馏 11 步工作流 + prd2code-gen 端到端代码生成，反馈回流闭环让 Spec 越用越准；Skill 零依赖设计（不依赖 Node / LLM Key），团队拿到即用。
 - #hl[SSOT 规范体系]：6 文件按关注点分离（代码结构 / 编码规则 / 跨层契约 / PRD 路由 / 业务领域 / 实体索引），5 条边界规则避免 AI 编码知识污染。
 - #hl[AI Coding 质量管控]：8 种证据类型（含负向搜索 negative_code_search）+ PRD 入口三级门禁，降低返工率。
 
 #text(weight: "bold")[结果]：PRD 到开发计划耗时从 #hl[5h/需求 降到 2h/需求]（5 需求对照）；文件级准确率 #hl[80%]；同一 PRD 跑 10 次一致性从 #hl[40% 提升到 85%+]；已在 B 端 #hl[20+ 人团队推广]，后端基于此迭代。
+
+#text(weight: "bold")[端到端原型 prd2code-gen（个人项目，下一代探索）]：团队推广版聚焦 ROI 最高的 PRD→Plan 环节，同时独立设计跑通端到端 PRD→Code 完整 6 步闭环：蒸馏 → 分析 → Plan → #hl[Handlebars 模板/LLM 双路径生成] → #hl[4 类校验自修复循环（震荡检测 A→B→A 切整段重写）] → eval/auto-tune 反哺；含 verified_by 审计链（file:line 溯源）、断点续传（progress.yaml）；R01/R02 实验对照（54→68 分，量化 reference 价值）。
 
 ]
 
