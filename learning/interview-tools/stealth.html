@@ -3429,6 +3429,23 @@ function buildTreeOptimized(list) {
   </div>
 </div>
 
+<div class="card" data-c="ai" data-kw="向量数据库 选型 Milvus Pinecone Chroma pgvector Qdrant ANN HNSW IVF RAG 检索">
+  <div class="card-head"><span class="tag ai">AI</span><div class="card-title">RAG 向量数据库怎么选？</div></div>
+  <div class="core">小规模 Chroma/pgvector，大规模 Milvus，托管图省事 Pinecone——核心是 ANN 索引</div>
+  <div class="card-body">
+    <p><strong>核心能力：ANN 近似最近邻</strong>。不精确找最近的（O(N) 太慢），用索引结构快速找"足够近"的。主流两类索引：① <strong>HNSW</strong>（分层小世界图）——查询快、召回高，但内存占用大，是当前默认选择。② <strong>IVF</strong>（倒排聚类）——先聚类再在类内搜，内存省但查询稍慢，适合超大规模。</p>
+    <p><strong>选型对比（按场景）</strong>：</p>
+    <p>· <strong>Milvus</strong>：分布式、可水平扩展、支持十亿级向量。大规模生产首选，但部署运维重（依赖 etcd/MinIO）。</p>
+    <p>· <strong>Pinecone</strong>：全托管 SaaS，零运维，贵。适合不想养 DBA 的团队。</p>
+    <p>· <strong>Chroma</strong>：轻量本地、Python 友好。原型验证和中小规模首选。</p>
+    <p>· <strong>pgvector</strong>：PostgreSQL 插件，复用现有 PG 的运维/事务/SQL 生态。已有 PG 栈的团队首选，向量+结构化混合查询方便。</p>
+    <p>· <strong>Qdrant</strong>：Rust 写、过滤能力强（先按 metadata 过滤再向量检索）。元数据过滤密集的场景首选。</p>
+    <p><strong>选型三问</strong>：① 数据规模（百万级 Chroma/pgvector 够，亿级上 Milvus）；② 要不要自己运维（省事选 Pinecone，已有 PG 用 pgvector）；③ 过滤多不多（多就 Qdrant）。</p>
+    <p><strong>项目桥接</strong>：prd-tools 没用向量库——用倒排索引 + BM25 替代。代码实体是离散符号（函数名/字段名/路径），倒排精确命中比向量语义近似更快更准，还能 grep 调试。只有换成自然语言知识库（PRD 文档/用户问答）时，向量库才有价值。</p>
+    <p class="hint">补盲卡。被问"向量库怎么选"答规模（Milvus 大/Chroma 小）+ 运维（Pinecone 托管/pgvector 复用）+ 过滤（Qdrant）三维度。</p>
+  </div>
+</div>
+
 <div class="card" data-c="ai" data-kw="RAG 多路召回 Query Rewrite BM25 向量 RRF 融合">
   <div class="card-head"><span class="tag ai">AI</span><div class="card-title">RAG 多路召回 + Query Rewrite</div></div>
   <div class="core">单路向量召回准确率 60%，BM25+向量+字段三路融合能到 85%+</div>
@@ -3590,6 +3607,19 @@ function buildTreeOptimized(list) {
     <p><strong>项目桥接</strong>：prd-tools 是单 Agent + MCP（工具调用），但如果未来要拆"PRD 分析 Agent + 代码生成 Agent + 验证 Agent"多 Agent 协作，A2A 比 AutoGen 更标准化（跨框架兼容）。</p>
     <p><strong>面试金句</strong>："MCP 解决 Agent 调工具，A2A 解决 Agent 调 Agent。两者互补——一个 Agent 通常同时用 MCP 接工具生态、用 A2A 接其他 Agent。2026 年这两个协议是 Agent 互联的基础设施。"</p>
     <p class="hint">2025-2026 新协议，被问"Agent 之间怎么通信" / "MCP 能解决多 Agent 协作吗" → 翻这张卡。</p>
+  </div>
+</div>
+
+<div class="card" data-c="ai" data-kw="推理模型 不支持 MCP o1 R1 DeepSeek 思维链 think tool_call 结构化 延迟 Function Calling 工具调用">
+  <div class="card-head"><span class="tag ai">AI</span><div class="card-title">为什么有些推理模型不支持 MCP？</div></div>
+  <div class="core">推理模型为长链思考优化，思维链会打断结构化 tool_call；且推理延迟高，放大 MCP 多轮往返</div>
+  <div class="card-body">
+    <p><strong>推理模型 vs 指令模型</strong>：指令模型（GPT-4o/Claude Sonnet）直接输出答案 token；推理模型（o1/o3/DeepSeek-R1）先吐一大段思维链（&lt;think&gt;...&lt;/think&gt;）再给答案，为复杂数学/代码/逻辑优化。</p>
+    <p><strong>根因一：思维链打断结构化输出</strong>。MCP/Function Calling 要求模型在特定位置吐出严格 JSON-RPC 的 tool_call。推理模型的思维链"吞掉"了结构化输出能力——中途思考打断了格式约定，tool_call 的位置/格式不稳定。这是推理模型早期完全不支持 FC 的根本原因。</p>
+    <p><strong>根因二：延迟放大</strong>。推理模型单次响应几十秒（长思维链），而 MCP/Agent 是多轮往返（调工具→看结果→再调），每轮几十秒累加，体验崩塌。</p>
+    <p><strong>现状</strong>：OpenAI o1 早期完全不支持 FC，后续版本才逐步支持（要额外适配，把 tool_call 嵌进思维链结尾）。DeepSeek-R1 用"混合模式"——ReAct 风格里思维链和 tool_call 交错。</p>
+    <p><strong>工程启示</strong>：生产 Agent 通常用<strong>指令模型做编排</strong>（FC/MCP 稳定、延迟低），<strong>推理模型只在"需要深度思考的某一步"单独调用</strong>（如复杂规划/代码审查），不承担多轮工具调用。</p>
+    <p class="hint">补盲卡，有意思的追问题。答出"思维链打断结构化输出 + 延迟放大"两个根因，再补"指令模型编排 + 推理模型单点"的工程解法，显得懂底层。</p>
   </div>
 </div>
 
