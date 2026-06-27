@@ -1772,12 +1772,14 @@ function buildTreeOptimized(list) {
 
 <div class="card" data-c="ai" data-kw="RAG 检索增强 向量 Embedding Chunking 分块 向量数据库 Agentic">
   <div class="card-head"><span class="tag ai">E17</span><div class="card-title">RAG 深度解析</div></div>
-  <div class="core">先查再答——解决知识过时和幻觉</div>
+  <div class="core">RAG = 先检索再生成，用外挂知识库解决大模型知识过时和幻觉——不微调，改库即生效</div>
   <div class="card-body">
-    <p><strong>流程</strong>：用户问题 → 向量检索相关文档 → 拼入 Prompt → LLM 生成回答。</p>
-    <p><strong>Chunking 策略</strong>：固定大小（简单但粗糙）/ 按语义分段（效果好）/ 按文档结构（段落/章节）。块大小一般 256-1024 token。</p>
-    <p><strong>传统 RAG vs Agentic RAG</strong>：传统是检索→生成两步；Agentic 加入多轮检索、工具调用、自我评估，能判断"检索结果够不够"。</p>
-    <p class="hint">项目桥接：prd-tools evidence = RAG 工程化变体，BM25 替代向量检索，代码锚定替代 chunking。</p>
+    <p><strong>一句话</strong>：RAG（检索增强生成）就是回答前先去知识库检索相关资料，拼进 prompt 再让模型生成——相当于"开卷考试"，模型不用把所有知识背进权重。</p>
+    <p><strong>为什么用 RAG</strong>：大模型两个天生短板——① 知识有截止日期、不知道私有或最新信息；② 会幻觉（编造）。RAG 用外挂知识库补这俩：检索真实文档喂给模型，既新又准、还能溯源。</p>
+    <p><strong>标准流程</strong>：用户提问 → 把问题向量化、去向量库检索最相关的文档片段 → 把检索结果拼进 prompt → 模型基于这些片段生成回答。</p>
+    <p><strong>两个拉开差距的关键环节</strong>：① <strong>检索前</strong>——文档怎么切（Chunking，一般 256-1024 token，按语义或结构切比固定大小好）；② <strong>检索后</strong>——单路向量召回不够，要 BM25+向量多路召回 + Reranker 精排。再进一步是 Agentic RAG，让模型自己判断"检索结果够不够、要不要重检"。</p>
+    <p><strong>落到我的项目</strong>：prd-tools 的 evidence 机制就是 RAG 的工程化变体——不过我用 BM25+正则倒排替代向量检索（代码场景符号精确匹配更准），用代码锚定替代 chunking（函数/类天然边界）。本质都是"先检索真实依据，再让 AI 基于依据生成"。</p>
+    <p class="hint">[loop·已优化·待复核] 念法：开卷考试类比 → 为什么用（知识过时+幻觉）→ 流程 → 两个关键（切片/多路召回）→ 落 prd-tools。细节见 RAG 多路召回/Embedding/Chunking 卡。</p>
   </div>
 </div>
 
