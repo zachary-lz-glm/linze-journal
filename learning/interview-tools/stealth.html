@@ -1695,11 +1695,15 @@ function buildTreeOptimized(list) {
   <div class="card-head"><span class="tag ai">AI</span><div class="card-title">用什么工具写自己的Agent？框架选型</div></div>
   <div class="core">从轻到重四个层级：裸API→官方SDK→编排框架→多Agent框架</div>
   <div class="card-body">
-    <p><strong>第一层：裸API + 自研编排</strong>。直接调OpenAI/Claude API，自己写循环+状态管理+Tool调用逻辑。优点是最大灵活度、最轻依赖；缺点是状态管理和错误处理全靠自己。适合简单Agent或深度定制场景。项目桥接：prd-tools最初就是这层起家的。</p>
-    <p><strong>第二层：官方Agent SDK</strong>。Claude Agent SDK（Anthropic官方）和OpenAI Agents SDK——封装了Tool Use循环、对话管理、多轮编排，开箱即用。适合快速落地，不想造轮子的团队。Claude Agent SDK还支持MCP协议直接接入工具生态。</p>
-    <p><strong>第三层：LangGraph</strong>。图状态机模式——定义Node（处理步骤）和Edge（流转条件），支持循环、分支、Checkpoint持久化、人工介入。适合复杂编排、需要精确控制流程的场景。学习曲线较陡但控制力最强。</p>
-    <p><strong>第四层：多Agent框架</strong>。AutoGen（微软，Agent间对话协作）、CrewAI（角色分工+任务委派）。适合多个Agent各司其职的场景——比如一个Agent写代码、一个Agent做测试、一个Agent做Review。</p>
-    <p><strong>选型原则</strong>：从轻开始。裸API能搞定就不用SDK，SDK能搞定就不用LangGraph，单Agent能搞定就不上多Agent。每多一层抽象就多一层黑盒，排查问题更难。面试时说"我倾向从轻到重按需升级"比说"我上来就用LangGraph"更成熟。</p>
+    <p><strong>这道题我有个选型原则先甩出来：从轻开始，按需升级。别上来就 LangGraph——每多一层抽象就多一层黑盒，排查更难。</strong></p>
+    <p><strong>四层从轻到重</strong>：</p>
+    <p>① <strong>裸 API + 自研编排</strong>——直接调 OpenAI/Claude API，自己写循环、状态管理、Tool 调用。最大灵活、最轻依赖，但状态管理和错误处理全靠自己。适合简单 Agent 或深度定制。</p>
+    <p>② <strong>官方 Agent SDK</strong>（Claude Agent SDK / OpenAI Agents SDK）——封装了 Tool Use 循环、对话管理、多轮编排，开箱即用。不想造轮子就用它，Claude Agent SDK 还支持 MCP 接工具生态。</p>
+    <p>③ <strong>LangGraph</strong>——图状态机，定义 Node 和 Edge，支持循环、分支、Checkpoint、人工介入。复杂编排、要精确控流程用它，学习曲线陡但控制力最强。</p>
+    <p>④ <strong>多 Agent 框架</strong>（AutoGen 对话协作、CrewAI 角色分工）——多个 Agent 各司其职（一个写代码、一个测试、一个 Review）。</p>
+    <p><strong>选型决策（落到我的项目）</strong>：prd-tools 就是按"从轻到重"选的——最初裸 API 起家（最大灵活），后来抽象成 Skill + 脚本（相当于自研轻量编排），<strong>没直接上 LangGraph</strong>，因为我的流程是固定 11 步、不需要运行时动态分支，上 LangGraph 是过度设计。如果未来要做多 Agent 协作（PRD 分析+代码生成+验证拆开），才会考虑 AutoGen/A2A。</p>
+    <p><strong>面试金句</strong>："我倾向从轻到重按需升级——裸 API 能搞定就不上 SDK，单 Agent 能搞定就不上多 Agent。"这比"我上来就用 LangGraph"显得成熟得多。</p>
+    <p class="hint">[loop·已优化·待复核] 念法：先甩原则（从轻开始）→ 四层快速过 → 选型决策落 prd-tools（为何没上 LangGraph）→ 金句收口。</p>
   </div>
 </div>
 
