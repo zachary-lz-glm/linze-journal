@@ -179,11 +179,14 @@ body{overscroll-behavior-y:contain}
   <div class="card-head"><span class="tag proj">A4</span><div class="card-title">AI 工程怎么保证可靠性？</div></div>
   <div class="core">不押宝模型聪明不聪明，靠流程约束它</div>
   <div class="card-body">
-    <p>三个核心机制贯穿11步蒸馏流水线：</p>
-    <p>① <strong>证据链</strong>：定义8种证据来源（PRD原文、源码、技术文档等），AI每条结论必须引用证据ID，可追溯到原始出处。</p>
-    <p>② <strong>代码锚定</strong>：通过静态分析和精准匹配定位代码位置，涉及修改或删除的操作必须有源码级别的锚点，不能凭空推断。</p>
-    <p>③ <strong>多层门控</strong>：摄入阶段检查PRD读取质量，Spec阶段要求人工确认后才允许生成Plan，最终做五维度综合评分和五项确定性检查。</p>
-    <p>另外还有反馈回流——每次蒸馏的新知识会更新知识库，配合已验证案例集做回归防退化。</p>
+    <p><strong>这道题先亮一个观点：AI 工程的可靠性，不能押宝模型聪明不聪明，得靠流程约束它。</strong>大模型有强的"完成倾向"——给任务就给答案，没把握也编。所以 prd-tools 的思路是：把 AI 不可避免的偏差，转成可拦截的工程信号。</p>
+    <p><strong>业务背景</strong>：prd-tools 把 PRD 自动蒸馏成开发计划，给 20+ 人团队用。如果 AI 编了个错的方案误导开发，返工成本比纯人工还高。所以可靠性是生命线。</p>
+    <p><strong>三个核心机制贯穿 11 步流水线</strong>：</p>
+    <p>① <strong>证据链</strong>——定义 8 种证据来源（PRD 原文、源码、技术文档等），AI 每条结论必须挂证据 ID，能追溯到 PRD 第几页或代码第几行。搜不到也得显式标 negative_search（"我搜了但没有"），不能闷头编。</p>
+    <p>② <strong>代码锚定</strong>——涉及修改/删除的操作，必须有源码级锚点（具体文件+行），不能凭空推断"应该改某个文件"。静态分析+精准匹配定位，没锚点就拦。</p>
+    <p>③ <strong>多层门控</strong>——摄入阶段检查 PRD 读取质量，Spec 阶段硬停止等人确认才允许生成 Plan，最终用 quality-gate.py 做五维评分（PRD 摄入/证据覆盖/代码搜索/契约对齐/计划完整）+ 五项确定性检查。低于阈值直接 fail。</p>
+    <p><strong>再加反馈回流（防退化）</strong>：每次蒸馏的新知识更新 reference 知识库（Mode E），配合已验证的 golden case 集做回归——改了知识库要重跑基准案例，确保不劣化才上线（消融实验证明去掉证据链层 Readiness 从 82 掉到 54）。</p>
+    <p class="hint">[loop·已优化·待复核] 念法：先亮观点（靠流程不靠模型）→ 业务背景（20+人团队、返工成本）→ 三机制（证据链/代码锚定/多层门控，带 negative_search 和 quality-gate 五维）→ 反馈回流防退化（消融 82→54）。prd-tools 主线必讲。</p>
   </div>
 </div>
 
