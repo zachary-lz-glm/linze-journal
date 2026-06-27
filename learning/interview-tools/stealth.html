@@ -2364,13 +2364,14 @@ function buildTreeOptimized(list) {
 
 <div class="card" data-c="ai" data-kw="长期记忆 短期记忆 记忆方案 设计 向量存储 知识库 摘要 Claude Code Memory 文件 持久化">
   <div class="card-head"><span class="tag ai">AI</span><div class="card-title">长期记忆vs短期记忆分别怎么做？</div></div>
-  <div class="core">短期靠上下文窗口管理+压缩，长期靠外部存储+检索注入，两者通过Memory文件桥接</div>
+  <div class="core">短期靠上下文窗口+压缩，长期靠外部存储+检索注入，两者靠 Memory 文件桥接</div>
   <div class="card-body">
-    <p><strong>短期记忆（Short-term）</strong>：就是当前对话的上下文窗口。容量有限（Claude 200K tokens但实际有效利用更小），对话越长越满。管理策略：①Progressive Summarization递归压缩旧消息；②Observation Masking用占位符替换；③设上下文预算，超过就触发压缩。核心矛盾是信息保留vs Token成本。</p>
-    <p><strong>长期记忆（Long-term）</strong>：对话结束就消失的信息需要持久化到外部。三种实现：①向量存储（Chroma/Pinecone），语义检索适合大文档场景；②结构化文件（Markdown/JSON），精确可读适合规则和决策记录；③知识图谱（Neo4j），关系推理适合实体间有复杂关联的场景。</p>
-    <p><strong>两者怎么桥接</strong>：长期记忆不会自动出现在短期记忆里，需要"检索→注入"机制。每次对话开始时：①用当前任务描述检索长期记忆中的相关内容；②把检索结果注入system prompt作为背景知识；③对话结束时把本轮关键决策和约束写回长期记忆。Claude Code的Memory文件就是这个桥接——Markdown格式既可读又可注入。</p>
-    <p><strong>选型建议</strong>：规则类知识用结构化文件（确定性高、可审计）；文档类知识用向量存储（量大、检索灵活）；实体关系类用知识图谱（有推理需求）。大多数场景结构化文件+向量存储就够了，知识图谱只在实体密集的场景才值得投入。</p>
-    <p><strong>面试一句话</strong>："短期记忆管当前对话的上下文窗口，长期记忆管跨对话的知识持久化。核心挑战不是存储而是桥接——怎么在有限的窗口里注入最相关的长期知识，这决定了Agent是'每次从零开始'还是'越用越懂你'。"</p>
+    <p><strong>这道题抓住一个核心：短期记忆管"当前对话"，长期记忆管"跨对话的知识"，两者之间靠"检索-注入"桥接——这个桥接做得好不好，决定了 Agent 是"每次从零开始"还是"越用越懂你"。</strong></p>
+    <p><strong>短期记忆</strong>：就是当前对话的上下文窗口。容量有限（Claude 200K，但有效利用更小），对话越长越满。管理核心是压缩——怎么在有限窗口里保留最多有效信息（具体方案见「上下文压缩 & Token 预算总表」卡）。核心矛盾：信息保留 vs Token 成本。</p>
+    <p><strong>长期记忆</strong>：对话结束就消失的信息，得持久化到外部。三种载体按场景选：① <strong>向量存储</strong>（Chroma/Pinecone）——语义检索，适合大文档；② <strong>结构化文件</strong>（Markdown/JSON）——精确可读，适合规则和决策；③ <strong>知识图谱</strong>（Neo4j）——关系推理，适合实体密集场景。大多数场景前两种就够，知识图谱只在实体密集时才值得投入。</p>
+    <p><strong>关键是桥接（检索-注入）</strong>：长期记忆不会自动出现在短期记忆里。每次对话开始：① 用当前任务检索长期记忆里的相关内容；② 注入到 system prompt 当背景；③ 对话结束时把本轮关键决策写回长期记忆。Claude Code 的 CLAUDE.md/Memory 文件就是这个桥接——Markdown 既能让人读，又能注入模型。</p>
+    <p><strong>落到我的项目</strong>：prd-tools 的 reference 6 文件（01-codebase 到 05-domain）就是长期记忆的结构化文件实现——把项目知识沉淀成可检索的 YAML，每次蒸馏前按需检索注入（context-pack 做这件事），产出后再把新知识回流（reference 的 Mode E 反馈回流）。我选结构化文件而非向量，因为代码场景的事实要精确可审计，不能靠语义近似。</p>
+    <p class="hint">[loop·已优化·待复核] 念法：核心一句（短期vs长期+桥接）→ 短期压缩 → 长期三载体 → 桥接检索注入 → 落 prd-tools（reference 6 文件+Mode E 回流，为何选结构化不用向量）。</p>
   </div>
 </div>
 
