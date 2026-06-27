@@ -153,10 +153,12 @@ body{overscroll-behavior-y:contain}
   <div class="card-head"><span class="tag proj">A2</span><div class="card-title">Schema 驱动架构怎么设计？</div></div>
   <div class="core">BFF 生成 Schema，前端消费 Schema，新增活动零代码</div>
   <div class="card-body">
-    <p>三层：后端 API 给原始数据，BFF 用模板引擎生成 Schema，前端按 Schema 渲染。</p>
-    <p>最核心是 injectDActions，一次声明、双重求值：BFF 先 safeEval 算初始状态，序列化给前端运行时再算。联动分 fetchApi 型和 state 型，16 个联动模板。</p>
-    <p>前端通过路径拍平处理嵌套字段名，用发布订阅模式执行联动。组件分两种：基础组件用switch-case匹配，业务组件用Register模式动态注册，目前有35个动态渲染组件。</p>
-    <p>新增活动类型前端基本零代码。</p>
+    <p><strong>先讲业务背景</strong>：我做的营销中台，运营要在后台配各种活动（拉新、促活、转化），活动类型 20+，每个活动字段多、联动复杂（选了城市才显示产品线、选了券类型才显示面额）。原来的痛点是——每新增一种活动，前端就得写代码、走发版，慢的话两周。所以我设计了 Schema 驱动架构，目标是<strong>运营配 Schema 就能上新活动，前端零代码、不发版</strong>。</p>
+    <p><strong>架构三层（顺数据流讲）</strong>：① 后端 API 给原始数据；② BFF 用模板引擎生成 Schema（活动配置的结构化描述）；③ 前端按 Schema 渲染页面。Schema 是前后端共享的唯一真相源。</p>
+    <p><strong>最核心是 injectDActions（联动声明+双重求值）</strong>：联动关系在 Schema 里声明一次，但求值两次——BFF 先 safeEval 算初始状态（决定首屏展示什么），序列化给前端；前端运行时再求值（响应用户操作）。联动分两类：fetchApi 型（依赖字段变化调接口拿新数据，如选城市拉产品线）、state 型（纯前端本地算，如显隐/禁用）。沉淀了 16 个联动模板覆盖常见场景。</p>
+    <p><strong>前端两个关键机制（源码细节）</strong>：① <strong>路径拍平</strong>——嵌套表单（step→card→row→field）拍成 dot 路径，联动能精确定位任意字段；② <strong>发布订阅</strong>——字段变化时通知依赖方，只更新受影响组件，不重渲染整棵树。组件两种匹配：基础组件 switch-case、业务组件 Register 动态注册，目前 35 个动态渲染组件。</p>
+    <p><strong>业务成果（收口）</strong>：新增活动类型前端基本零代码，上线从 2 周→几小时；同一套引擎服务活动表单和权益 SDK 两个业务，维护成本降一半。从"读代码理解业务"变成"看 Schema 理解业务"。</p>
+    <p class="hint">[loop·已优化·待复核] 念法：先业务背景（营销活动痛点+目标）→ 三层架构 → injectDActions 核心（双重求值+两类联动）→ 前端两机制（路径拍平+发布订阅）→ 业务成果收口。</p>
   </div>
 </div>
 
