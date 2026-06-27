@@ -1644,16 +1644,13 @@ function buildTreeOptimized(list) {
 
 <div class="card" data-c="ai" data-kw="Agent 架构 ReAct Plan-and-Execute Reflection Tool Use Function Calling Memory 状态机 循环 推理行动">
   <div class="card-head"><span class="tag ai">E16</span><div class="card-title">Agent 架构全解（面试必考）</div></div>
-  <div class="core">Agent = LLM + Tool Use + Memory 的循环决策系统</div>
+  <div class="core">Agent 不是单次调模型，是"感知→思考→行动"的循环——LLM 决策 + 工具执行 + 记忆持续，三者缺一不可</div>
   <div class="card-body">
-    <p><strong>定义</strong>：让 LLM 自主决策"下一步做什么"。普通 Chat 是单轮问答，Agent 是多轮循环——感知（接收输入+工具结果）→ 思考（LLM 推理）→ 行动（调用工具），不断迭代到任务完成。</p>
-    <p><strong>三大模式</strong>：</p>
-    <p>· <strong>ReAct</strong>：Reasoning + Acting 交替，每步先想再干。GPT/Claude 默认模式，适合工具调用场景。</p>
-    <p>· <strong>Plan-and-Execute</strong>：先做完整计划再逐步执行，适合多步骤复杂任务，可中途重规划。项目桥接：prd-tools 11步工作流。</p>
-    <p>· <strong>Reflection</strong>：执行后自我评估，发现错误修正再执行。提升质量但成本翻倍。项目桥接：Evidence Index。</p>
-    <p><strong>Tool Use 底层链路</strong>：① 开发者定义 function schema（名称+参数+描述）→ ② LLM 根据语义判断是否调用工具 → ③ 输出 tool_call JSON → ④ 运行时执行工具获得结果 → ⑤ 结果注入上下文继续推理。循环直到不再调用工具。</p>
-    <p><strong>Memory 三层</strong>：短期记忆（当前对话窗口）、长期记忆（摘要压缩/向量存储）、工作记忆（当前任务中间状态）。prd-tools reference = 长期记忆工程化。</p>
-    <p><strong>面试答题句式</strong>："Agent 核心是 ReAct 循环——感知→思考→行动不断迭代。扩展靠 Tool Use，通过 function schema 定义工具接口，LLM 语义选择调用。框架层面 LangGraph 适合复杂编排。我的 prd-to-code 用双 Skill + 证据链约束 Agent 行为。"</p>
+    <p><strong>这道题我从三层答。</strong></p>
+    <p><strong>第一层·本质</strong>：Agent 和普通 LLM 对话的区别，在于它不是问一句答一句的单轮调用，而是会自己决定"下一步做什么"的循环——<strong>感知</strong>（接收输入和工具返回）→ <strong>思考</strong>（LLM 推理下一步）→ <strong>行动</strong>（调工具），不断迭代到任务完成。普通 Chat 停在"思考完输出"，Agent 多了"行动 + 再感知"的闭环。</p>
+    <p><strong>第二层·三个核心组件</strong>：① <strong>Tool Use</strong> 让它能调外部工具——底层 Function Calling，开发者定义 schema，LLM 语义判断调不调、调哪个，输出 tool_call JSON 由运行时执行，结果回灌上下文继续推理；② <strong>Memory</strong> 让它记住上下文——短期是对话窗口、长期是摘要或向量库、工作是任务中间状态；③ <strong>编排模式</strong> 决定怎么决策，主流 <strong>ReAct</strong>（边想边干，GPT/Claude 默认），复杂任务 <strong>Plan-and-Execute</strong>（先规划再执行），要自我纠错加 <strong>Reflection</strong>（成本翻倍慎用）。</p>
+    <p><strong>第三层·落到我的项目</strong>：prd-tools 就是 Plan-and-Execute 模式——双 Skill + 11 步固定流水线，用证据链和 Readiness 门控约束行为，规避开放式 Agent Loop 的死循环。框架上 LangGraph 适合需要循环分支和人工介入的复杂编排。</p>
+    <p class="hint">[loop·待复核] 念法：先甩"循环决策系统"定义 → 三组件（Tool/Memory/编排）→ 落 prd-tools。被追问 ReAct 细节见 Agent Loop 卡。</p>
   </div>
 </div>
 
@@ -1759,22 +1756,15 @@ function buildTreeOptimized(list) {
 
 <div class="card" data-c="ai" data-kw="LangChain LangGraph 框架 Chain Agent Tool Memory StateGraph Node Edge Checkpoint HITL 状态机 工作流">
   <div class="card-head"><span class="tag ai">E20</span><div class="card-title">LangChain + LangGraph 详解</div></div>
-  <div class="core">LangChain 链式编排，LangGraph 图状态机精确控制 Agent</div>
+  <div class="core">LangChain 线性串链子，LangGraph 画图做状态机——简单流程用前者，要循环/分支/人工介入用后者</div>
   <div class="card-body">
-    <p><strong>LangChain 六大核心</strong>：</p>
-    <p>· <strong>Chain</strong>：链式调用，把多个 LLM 调用和工具串起来。LCEL（LangChain Expression Language）声明式编排。</p>
-    <p>· <strong>Agent</strong>：自动选择工具和决策的执行器，核心是 ReAct 循环。</p>
-    <p>· <strong>Tool</strong>：工具定义和注册。支持自定义函数、API 调用、代码执行。</p>
-    <p>· <strong>Memory</strong>：对话历史管理。Buffer（全保留）/ Summary（摘要压缩）/ Window（滑动窗口）。</p>
-    <p>· <strong>Retriever</strong>：RAG 检索器。对接向量数据库、BM25、混合检索。</p>
-    <p>· <strong>Callback</strong>：全链路观测。日志、trace、token 计数、流式输出。</p>
-    <p><strong>LangGraph 核心概念</strong>：LangChain 团队出的独立框架，解决复杂 Agent 编排。</p>
-    <p>· <strong>StateGraph</strong>：有向图状态机。节点是处理步骤（LLM/工具/条件判断），边是跳转规则。</p>
-    <p>· <strong>Node + Edge</strong>：节点是函数，边是跳转规则。Conditional Edge 支持分支。</p>
-    <p>· <strong>Checkpoint</strong>：状态持久化。每步自动保存，支持暂停恢复、崩溃恢复。</p>
-    <p>· <strong>Human-in-the-loop</strong>：任意节点插入人工审核点，Agent 暂停等人确认后继续。项目桥接：prd-tools Review Gate。</p>
-    <p><strong>LangChain vs LangGraph</strong>：LangChain 适合线性链式（A→B→C），上手快但复杂场景难控。LangGraph 适合循环、分支、人工介入的工作流，控制力更强。项目桥接：prd-tools 双 Skill 11步 = LangGraph 模式——明确步骤、条件分支、Review Gate。</p>
-    <p><strong>其他</strong>：CrewAI（多 Agent 协作）适合团队分工模拟；LlamaIndex（RAG 专精）适合数据问答。</p>
+    <p><strong>这俩是同一家（LangChain 公司）出的，定位不同。</strong></p>
+    <p><strong>LangChain</strong> 是"链式编排"——把多个 LLM 调用和工具像链条一样串起来（A→B→C），用 LCEL 声明式写。它把 Agent 开发常用的几块都封装好了：Chain 串链、Agent 做 ReAct 执行、Tool 工具、Memory 对话历史（分 Buffer 全留 / Summary 摘要 / Window 滑动窗口）、Retriever 做 RAG 检索、Callback 做观测日志。<strong>适合线性流程，上手快，但流程一复杂就难控</strong>。</p>
+    <p><strong>LangGraph</strong> 是为复杂 Agent 单独搞的，核心是<strong>图状态机</strong>——定义 Node（处理步骤）和 Edge（跳转规则），支持循环、条件分支。两个杀手锏：① <strong>Checkpoint</strong> 每步自动存状态，能暂停恢复、崩溃恢复；② <strong>Human-in-the-loop</strong> 任意节点插人工审核点，Agent 暂停等人确认再继续。<strong>需要循环、分支、中途让人确认的复杂工作流用它</strong>。</p>
+    <p><strong>怎么选</strong>：线性简单流程用 LangChain；一旦要循环 / 分支 / 中途让人确认，上 LangGraph。</p>
+    <p><strong>落到我的项目</strong>：prd-tools 的双 Skill 11 步流水线本质就是 LangGraph 模式——固定步骤 + 条件分支 + Review Gate 人工硬停止。我没直接用 LangGraph 框架（用 Skill + 脚本自研），但思想一致。</p>
+    <p><strong>顺带</strong>：多 Agent 分工看 CrewAI，纯 RAG 看 LlamaIndex。</p>
+    <p class="hint">[loop·待复核] 念法：先分两家定位 → LangChain 链式/六模块 → LangGraph 状态机+Checkpoint+HITL → 选型 → prd-tools 是 LangGraph 思想。</p>
   </div>
 </div>
 
@@ -1913,16 +1903,14 @@ function buildTreeOptimized(list) {
 
 <div class="card" data-c="ai" data-kw="MCP 协议 Host Client Server Tools Resources Prompts JSON-RPC stdio SSE 开发 Function Calling A2A">
   <div class="card-head"><span class="tag ai">E19</span><div class="card-title">MCP 协议全解</div></div>
-  <div class="core">LLM 的 USB 接口——标准化连接外部工具和数据</div>
+  <div class="core">MCP 是 LLM 的 USB-C——标准化连工具，一次开发到处用，不绑模型厂商</div>
   <div class="card-body">
-    <p><strong>架构</strong>：Host（Claude Desktop/Cursor/VS Code）→ Client（协议客户端）→ Server（工具提供方）。一对多：一个 Host 可连多个 MCP Server。</p>
-    <p><strong>通信</strong>：JSON-RPC 2.0。两种传输——stdio（本地进程通信，Server 作为子进程）和 SSE（远程 HTTP 长连接）。</p>
-    <p><strong>三大能力</strong>：</p>
-    <p>· <strong>Tools</strong>：可调用函数。定义 name + inputSchema(JSON Schema) + description，LLM 根据语义选择调用。类似 Function Calling 但跨平台。</p>
-    <p>· <strong>Resources</strong>：可读数据源。文件、数据库记录、API 响应，用 URI 标识，Agent 按需读取。</p>
-    <p>· <strong>Prompts</strong>：预置提示词模板。参数化 prompt，Agent 调用时传参。</p>
-    <p><strong>开发实战</strong>：TypeScript SDK（@modelcontextprotocol/sdk），定义 Server → 注册 Tools/Resources → 启动 stdio 监听，Host 自动发现。我开发过内部 MCP Server——从飞书文档提取 PRD 转 Markdown，Claude Code 和 Cursor 都能用。</p>
-    <p><strong>MCP vs Function Calling vs A2A</strong>：MCP 解决 Agent ↔ 工具（纵向），不绑定模型厂商，一次开发到处用。Function Calling 是 OpenAI 模型内置能力，绑定模型，单次调用。A2A 是 Google Agent 间通信协议（横向），解决 Agent ↔ Agent 协作。三者互补。</p>
+    <p><strong>一句话定位</strong>：MCP（Model Context Protocol）是 Anthropic 推的开放协议，把"AI 怎么连外部工具"标准化了——以前每家模型工具调用各搞各的，MCP 让你写一次工具，任何支持它的客户端（Claude Desktop/Cursor/VS Code）都能用。<strong>类比就是 LLM 界的 USB-C</strong>。</p>
+    <p><strong>架构三层</strong>：Host（宿主，如 Claude Desktop）里跑 Client（协议客户端），去连一个个 Server（工具提供方）。一个 Host 能同时连多个 Server。通信走 JSON-RPC 2.0，本地用 stdio（Server 当子进程），远程用 SSE。</p>
+    <p><strong>一个 Server 能暴露三种东西</strong>：① <strong>Tools</strong>——可调用函数（name + 入参 schema + 描述，LLM 按语义选）；② <strong>Resources</strong>——可读数据源（文件/DB/API，URI 标识）；③ <strong>Prompts</strong>——预置提示词模板。</p>
+    <p><strong>我做过</strong>：用 TS SDK 写过内部 MCP Server——从飞书文档抓 PRD 转 Markdown，Claude Code 和 Cursor 接上就能用，一次开发两个客户端复用。</p>
+    <p><strong>和 FC、A2A 的关系（高频追问）</strong>：Function Calling 是模型内置能力、绑厂商（OpenAI）、单次调用；MCP 是协议层、不绑模型、管"工具怎么标准化连"；A2A 是 Google 的 Agent 间通信、管"Agent 之间怎么协作"。三者不冲突——Agent 用 MCP 接工具、用 A2A 接别的 Agent、用 FC 做模型侧决策。</p>
+    <p class="hint">[loop·待复核] 念法：USB-C 类比 → 三层架构 → 三种能力 → 我做过的 Server → 和 FC/A2A 区分。</p>
   </div>
 </div>
 
