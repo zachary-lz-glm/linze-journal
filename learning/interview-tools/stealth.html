@@ -208,9 +208,14 @@ body{overscroll-behavior-y:contain}
   <div class="card-head"><span class="tag proj">A6</span><div class="card-title">Monorepo 包依赖管理？</div></div>
   <div class="core">Yarn workspace做引用 + yarn.lock锁版本 + resolutions强制统一，踩过解析器事故后形成三道防线</div>
   <div class="card-body">
-    <p><strong>Yarn workspace</strong>：packages目录下的共享包通过workspace协议自动symlink到业务模块，不需要手动npm link或发布到私有源。改了共享包代码，业务模块立即生效。</p>
-    <p><strong>版本锁死</strong>：yarn.lock必须锁死第三方版本。踩过解析器从rc.31自动升到rc.48导致Node 16构建全挂的事故——从此yarn.lock加入git保护，CI加lockfile diff检测，依赖升级走staging验证流程。</p>
-    <p><strong>统一公共依赖</strong>：resolutions字段强制统一React、TypeScript等公共依赖版本。否则不同模块可能安装不同版本的React，导致Hooks调用报错。Monorepo里版本碎片化是最常见的隐性问题。</p>
+    <p><strong>这道题我有三道防线，是踩过一次线上事故后逐步形成的——Monorepo 15+ 模块，依赖管不好就是定时炸弹。</strong></p>
+    <p><strong>工程背景</strong>：营销中台是 Monorepo，15+ 模块共享一套组件库和工具。如果依赖各装各的，版本碎片化会导致"Hooks 调用报错"这类隐性问题（不同模块 React 版本不一致）。</p>
+    <p><strong>三道防线</strong>：</p>
+    <p>① <strong>Yarn workspace 做引用</strong>——packages 下的共享包通过 workspace 协议自动 symlink 到业务模块，不用手动 npm link 或发私有源。改了共享包代码，业务模块立即生效。</p>
+    <p>② <strong>yarn.lock 锁死第三方版本</strong>（事故逼出来的）——踩过一次：解析器从 rc.31 自动升到 rc.48，Node 16 构建全挂。从此 yarn.lock 加 git 保护，CI 加 lockfile diff 检测，依赖升级走 staging 验证。</p>
+    <p>③ <strong>resolutions 强制统一公共依赖</strong>——React、TypeScript 这些公共依赖强制同版本，避免不同模块装不同版本导致 Hooks 报错。</p>
+    <p><strong>收口</strong>：Monorepo 依赖管理的核心就一句话——<strong>版本碎片化是最常见的隐性 bug 源</strong>，三道防线（workspace 引用 + lock 锁版本 + resolutions 统一）缺一不可。</p>
+    <p class="hint">[loop·已优化·待复核] 念法：三道防线开场（事故逼出来的）→ 背景（15+模块版本碎片化）→ 逐条（workspace/lock事故/resolutions）→ 收口（版本碎片化是隐性bug源）。被问"踩过什么坑"甩解析器 rc.31→rc.48 事故。</p>
   </div>
 </div>
 
