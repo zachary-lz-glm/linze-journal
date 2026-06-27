@@ -1674,12 +1674,14 @@ function buildTreeOptimized(list) {
   <div class="card-head"><span class="tag ai">AI</span><div class="card-title">怎么设计一个Agent？设计方法论</div></div>
   <div class="core">五步法：定边界→选模式→定义Tool→设计记忆→加保障</div>
   <div class="card-body">
-    <p><strong>第一步：明确任务边界</strong>。哪些步骤Agent自主完成，哪些必须人介入。原则：低风险高确定性让Agent自主，高风险低确定性必须HITL。不清这个后面全白做。</p>
-    <p><strong>第二步：选编排模式</strong>。ReAct灵活探索适合开放性任务（调研、搜索）；Plan-and-Execute结构化适合多步骤有依赖的任务（prd-tools 11步）；多Agent分工适合异构子任务（一个分析代码一个分析文档）。</p>
-    <p><strong>第三步：定义Tool</strong>。Agent需要哪些能力？每个Tool的schema（名称+参数+描述）、输入输出格式、错误处理策略。Tool数量控制在15个以内，超过要分层路由。</p>
-    <p><strong>第四步：设计记忆</strong>。短期记忆控制上下文窗口大小（对话压缩）；长期记忆用向量存储+结构化索引；工作记忆用中间文件传递任务状态。prd-tools的Reference六文件就是工作记忆工程化。</p>
-    <p><strong>第五步：质量保障</strong>。每步设门控条件（must_produce/allowed_inputs约束），产出做Evidence Index可追溯，异常设恢复策略（重试/降级/转人工）。</p>
-    <p><strong>项目桥接</strong>：prd-tools就是按这五步设计的——边界是PRD到Plan不含编码，模式是Plan-and-Execute，Tool是MCP+Skill，记忆是Reference六文件+中间文件，保障是XML约束+Readiness Score。</p>
+    <p><strong>这道题我有一套五步法，是工业级 Agent 的设计骨架——别上来就写代码，先把这五步想清楚。</strong></p>
+    <p><strong>第一步·定任务边界（最关键，不清这步后面全白做）</strong>：哪些步骤让 Agent 自主、哪些必须人介入。原则是"低风险高确定性让 Agent 自主，高风险低确定性必须 HITL（人介入）"。比如生成代码可以自主，但发布上线必须人审。</p>
+    <p><strong>第二步·选编排模式</strong>：① ReAct 适合开放探索（调研、搜索，边想边干）；② Plan-and-Execute 适合多步骤有依赖的结构化任务（先规划再执行）；③ 多 Agent 适合异构子任务分工（一个分析代码、一个分析文档）。</p>
+    <p><strong>第三步·定义 Tool</strong>：每个工具的 schema（名称+参数+描述）、输入输出、错误处理。关键经验：Tool 数量控制在 15 个以内，超过就要分层路由（先分类再选），否则模型选择准确率暴跌。</p>
+    <p><strong>第四步·设计记忆</strong>：短期记忆管上下文窗口（对话压缩），长期记忆用向量库+结构化索引，工作记忆用中间文件传任务状态。</p>
+    <p><strong>第五步·质量保障（工业级 Agent 和玩具的分水岭）</strong>：每步设门控条件，产出做证据链可追溯，异常设恢复策略（重试/降级/转人工）。</p>
+    <p><strong>落到我的项目</strong>：prd-tools 就是严格按这五步设计的——边界是"PRD 到 Plan 不含编码"（生成自主、发布人审）；模式是 Plan-and-Execute（11 步蒸馏流水线）；工具是两个 Skill（/reference、/prd-distill）；记忆是 reference 6 文件（01-codebase 到 05-domain）+ 中间 YAML；保障是 quality-gate.py 五维评分 + Spec Review 硬停止。这套设计让我能讲清每个决策的 why，不是堆概念。</p>
+    <p class="hint">[loop·已优化·待复核] 念法：五步骨架开场 → 每步一句（边界/模式/Tool/记忆/保障）→ 落 prd-tools 五步对应。被问"怎么设计 Agent"直接用这套。</p>
   </div>
 </div>
 
