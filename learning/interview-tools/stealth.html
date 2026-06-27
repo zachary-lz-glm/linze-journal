@@ -237,9 +237,12 @@ body{overscroll-behavior-y:contain}
   <div class="card-head"><span class="tag proj">追问</span><div class="card-title">异步组件（地址选择器）Schema怎么描述？</div></div>
   <div class="core">不是不支持，是远程数据组件通过自定义组件+异步属性声明来处理</div>
   <div class="card-body">
-    <p>地址选择器这种需要按级联请求远程数据的组件，确实不是Schema声明能闭环的，因为数据不在本地。处理方式是注册为自定义组件，组件内部自己管理异步数据请求和级联逻辑。</p>
-    <p>Schema层只声明组件类型和必要的配置（比如接口地址、级联层级），具体的异步请求逻辑封装在组件代码里。这和Formily处理远程数据组件的方式本质一样——复杂异步组件都需要代码层介入，纯配置搞不定。</p>
-    <p>我们的原则是：Schema管结构和联动，代码管复杂交互。98%的表单场景Schema直接覆盖，剩下2%的自定义组件兜底。</p>
+    <p><strong>这道题是个追问陷阱——面试官问"Schema 能不能描述地址选择器"，其实想听你说清"Schema 的边界在哪"。</strong></p>
+    <p><strong>先给结论</strong>：不是不支持，是地址选择器这类远程数据组件，纯 Schema 声明闭环不了——因为数据不在本地，要按级联请求（选省→拉市→拉区）。</p>
+    <p><strong>怎么处理</strong>：注册为<strong>自定义组件</strong>，组件内部自己管异步数据请求和级联逻辑。Schema 层只声明组件类型 + 必要配置（接口地址、级联层级），具体异步逻辑封装在组件代码里。</p>
+    <p><strong>这和 Formily 处理远程数据组件本质一样</strong>——复杂异步组件都需要代码层介入，纯配置搞不定。这不是我的设计缺陷，是业界共识。</p>
+    <p><strong>收口原则</strong>：<strong>Schema 管结构和联动，代码管复杂交互</strong>。98% 的表单场景 Schema 直接覆盖，剩下 2% 自定义组件兜底。诚实讲清边界，比硬说"Schema 万能"可信得多。</p>
+    <p class="hint">[loop·已优化·待复核] 念法：先识别追问陷阱（问边界）→ 结论（纯Schema闭环不了）→ 方案（自定义组件+Schema声明配置）→ 对标Formily（业界共识）→ 收口原则（Schema管结构/代码管交互，98%+2%）。</p>
   </div>
 </div>
 
