@@ -3408,11 +3408,12 @@ function buildTreeOptimized(list) {
   <div class="card-head"><span class="tag ai">AI</span><div class="card-title">Embedding 是什么？模型怎么选？</div></div>
   <div class="core">把文本编码成向量让机器算语义相似度，选型看 MTEB 排行+维度+语言+成本</div>
   <div class="card-body">
-    <p><strong>本质</strong>：Embedding 是把文本/图片映射到高维向量空间（典型 768-1536 维），让"语义相近"的文本向量距离也近。底层是对比学习（Contrastive Learning）——训练时拉近相似对、推远不相似对。</p>
-    <p><strong>主流模型</strong>：① <strong>BGE 系列</strong>（智源）——中文最强，bge-large-zh-v1.5 是开源 SOTA，1024 维，支持 512 token。② <strong>E5/mE5</strong>（微软）——多语言均衡。③ <strong>OpenAI text-embedding-3</strong>——闭源 SOTA，支持动态维度（可降维省存储）。④ <strong>Cohere embed-v3</strong>——企业场景优化。⑤ <strong>jina-embeddings-v3</strong>——长文本支持好（8192 token）。</p>
-    <p><strong>选型四维度</strong>：① <strong>MTEB 排行</strong>——标准基准，看 retrieval 任务得分。② <strong>语言</strong>——中文选 BGE，英文选 E5，多语言选 mE5。③ <strong>维度</strong>——768 够用、1024 主流、1536+ 高精但贵。④ <strong>部署成本</strong>——开源本地部署 vs API 调用（OpenAI $0.13/M token）。</p>
-    <p><strong>常见坑</strong>：① 用英文模型检索中文——分数惨不忍睹。② 不做 query/article 区分——同义不同任务的文本（"什么是 RAG" vs "RAG 是一种检索增强技术"）应该用不同编码方式（asymmetric）。③ 不评估就上线——必须用业务数据集做 Recall@K 评测。</p>
-    <p><strong>面试一句话</strong>："Embedding 选型先用 MTEB 筛短名单，再用业务数据集做 Recall@10 评估，最后看部署成本。中文场景我会优先 BGE，闭源选 OpenAI v3。"</p>
+    <p><strong>一句话</strong>：Embedding 就是把文本（或图片）映射成高维向量（典型 768-1536 维），让"语义相近"的文本在向量空间里距离也近，这样机器就能算"相似度"。底层是对比学习——训练时拉近相似对、推远不相似对。</p>
+    <p><strong>主流模型按场景选</strong>：① <strong>BGE 系列</strong>（智源）——中文最强，bge-large-zh-v1.5 是开源 SOTA；② <strong>E5/mE5</strong>（微软）——多语言均衡；③ <strong>OpenAI text-embedding-3</strong>——闭源 SOTA，支持动态维度可降维省存储；④ <strong>jina-embeddings-v3</strong>——长文本好（8192 token）。</p>
+    <p><strong>选型四个维度</strong>：① <strong>MTEB 排行</strong>（标准基准，看 retrieval 任务得分）；② <strong>语言匹配</strong>（中文 BGE、英文 E5、多语言 mE5）；③ <strong>维度</strong>（768 够用、1024 主流、1536+ 高精但贵）；④ <strong>部署成本</strong>（开源本地 vs API，OpenAI $0.13/百万 token）。</p>
+    <p><strong>三个常见坑</strong>：① 用英文模型检索中文——分数惨不忍睹；② 不做 query/document 区分——查询和文档要用不同编码方式（asymmetric）；③ 不评估就上线——必须用业务数据集跑 Recall@K，不能只看榜单。</p>
+    <p><strong>落到我的项目（诚实）</strong>：prd-tools <strong>没用 embedding</strong>——我用 BM25+正则倒排索引替代。原因是代码场景的检索对象是离散符号（函数名、字段名、路径），精确匹配比语义近似更准更快（搜 getMembershipLevel 要精确命中，不要"语义相近"的 getLevel），还能 grep 调试。如果换成自然语言知识库（PRD 文档、用户问答），我才会考虑上 embedding，中文首选 BGE。</p>
+    <p class="hint">[loop·已优化·待复核] 念法：一句话本质 → 主流模型 → 四维度选型 → 三坑 → 落 prd-tools（为何不用 embedding，用 BM25 替代的真实决策）。</p>
   </div>
 </div>
 
