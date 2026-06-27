@@ -1941,18 +1941,14 @@ function buildTreeOptimized(list) {
 
 <div class="card" data-c="ai" data-kw="Harness Engineering Agent 模型 基础设施 约束 评估 六层">
   <div class="card-head"><span class="tag ai">E12</span><div class="card-title">Harness Engineering 是什么？</div></div>
-  <div class="core">Agent = Model + Harness，Harness 是围绕模型构建的基础设施</div>
+  <div class="core">Agent = Model + Harness——模型是发动机，Harness 是方向盘刹车仪表盘的总和，六层基础设施让 Agent 可控可靠</div>
   <div class="card-body">
-    <p>模型是发动机，Harness 是方向盘+刹车+仪表盘的总和。六层：</p>
-    <p><strong>L1 信息边界</strong>：模型能看到什么（CLAUDE.md、context 预算）。</p>
-    <p><strong>L2 工具系统</strong>：模型能用什么工具（MCP、Function Calling）。</p>
-    <p><strong>L3 执行编排</strong>：多步骤流程控制（Agent Loop、状态机）。</p>
-    <p><strong>L4 记忆状态</strong>：对话历史、长期记忆（摘要压缩、向量存储）。</p>
-    <p><strong>L5 评估观测</strong>：输出质量检查（质量门控、日志 trace）。</p>
-    <p><strong>L6 约束恢复</strong>：安全边界、失败恢复、人工兜底。</p>
-    <p><strong>小红书面试官补充：KSG自进化</strong>：传统agent三段式（接收→规划→执行）是无状态的，每个窗口独立。Harness的核心突破是KSG（Knowledge-Skill-Growth）——把短期记忆抽象提取成长期记忆、知识库、技能手册，这是agent自我迭代的引擎。三类核心引擎：合并引擎（整合多agent输出）、通信引擎（agent间状态传递）、反思引擎（从失败中提炼规则）。落地时就是几个Python模块——日志聚合、状态传递、规则提炼。</p>
-    <p><strong>Ratchet机制（错误即规则）</strong>：Harness工程最重要的习惯——每次agent犯错都提炼成永久约束，不是一笑而过。agent提交了注释掉的测试？AGENTS.md加一条"永远不要注释测试"。执行了破坏性命令？加hook拦截。核心原则：每一行规则都应该能追溯到一次具体的失败。（来源：Addy Osmani）</p>
-    <p class="hint">项目桥接：prd-tools 整个架构就是 Harness——reference=L1, MCP+Skill=L2, 11步工作流=L3, Evidence Index=L4, quality-gate=L5, 置信度+questions.md=L6。但缺少KSG自进化闭环，这是后续方向。</p>
+    <p><strong>这道题我从一个比喻开场。</strong>Agent = Model + Harness。模型是发动机，Harness 是围绕模型构建的所有基础设施——方向盘、刹车、仪表盘的总和。光有发动机（模型）车开不稳，得靠 Harness 控制它。</p>
+    <p><strong>Harness 分六层（每层解决一个问题）</strong>：① <strong>L1 信息边界</strong>——模型能看到什么（CLAUDE.md、上下文预算，别啥都塞）；② <strong>L2 工具系统</strong>——能用什么工具（MCP、Function Calling）；③ <strong>L3 执行编排</strong>——多步骤怎么串（Agent Loop、状态机）；④ <strong>L4 记忆状态</strong>——记什么、怎么压缩（摘要、向量存储）；⑤ <strong>L5 评估观测</strong>——产出质量怎么查（质量门控、trace 日志）；⑥ <strong>L6 约束恢复</strong>——出错了怎么办（安全边界、失败恢复、人工兜底）。</p>
+    <p><strong>核心突破是自进化（KSG，小红书面试官补充）</strong>：传统 Agent 三段式（接收→规划→执行）是无状态的，每个上下文窗口独立、不积累。Harness 的突破是 KSG（Knowledge-Skill-Growth）——把短期记忆抽象成长期记忆、知识库、技能手册，让 Agent 能自我迭代。靠三类引擎：合并引擎整合多 Agent 输出、通信引擎传状态、<strong>反思引擎从失败提炼规则</strong>。</p>
+    <p><strong>最重要的习惯：Ratchet 机制（错误即规则）</strong>——每次 Agent 犯错，提炼成一条永久约束，不让它犯第二次。比如 Agent 注释了测试，就在 AGENTS.md 加"永远不要注释测试"；执行了破坏命令，就加 hook 拦截。每一行规则都要能追溯到一次具体失败。</p>
+    <p><strong>落到我的项目</strong>：prd-tools 整个架构就是 Harness——reference=L1、MCP+Skill=L2、11 步流水线=L3、Evidence Index=L4、quality-gate=L5、置信度+questions.md=L6。诚实说，我缺 KSG 自进化闭环（现在靠人工回流，没自动化反思引擎），这是后续方向。</p>
+    <p class="hint">[loop·已优化·待复核] 念法：发动机比喻 → 六层 → KSG 自进化（反思引擎）→ Ratchet 错误即规则 → 落 prd-tools（诚实说缺自进化闭环）。小红书失分点。</p>
   </div>
 </div>
 
