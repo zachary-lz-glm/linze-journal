@@ -194,12 +194,13 @@ body{overscroll-behavior-y:contain}
   <div class="card-head"><span class="tag proj">A5</span><div class="card-title">最有技术挑战的项目？</div></div>
   <div class="core">AI工作流走过架构弯路：MCP单次调用是瓶颈，转向Agent+Skill模式才突破</div>
   <div class="card-body">
-    <p><strong>选 prd-tools</strong>（面试官对 AI 感兴趣）：最大难点是架构选型错误导致瓶颈。</p>
-    <p>背景：市面上有Cursor、Windsurf这些从0到1的工具，但针对已有项目（几万行代码、大量历史逻辑），怎么让AI理解需求是空白领域。</p>
-    <p>弯路：一开始用MCP做，两周发现不管怎么优化prompt准确率就是上不去。定位到根因——MCP是单次调用模式，需求分析需要多轮上下文和复杂论证，这是架构级瓶颈不是调优能解决的。</p>
-    <p>突破：转向Agent+Skill工作流模式，结合自研Reference六文件SSOT + 多轮搜索 + 证据链验证，PRD→Plan 从 5h/需求降到 2h/需求。</p>
-    <p><strong>选 Schema 引擎</strong>（偏传统前端）：月均10+bug → 自研Schema渲染引擎 → 归零。</p>
-    <p class="hint">优先选AI方向，先说背景痛点30秒→弯路30秒→突破方案1分钟，控制在2分钟内。</p>
+    <p><strong>这道题我选 prd-tools（面试官对 AI 感兴趣就讲这个），用"弯路→突破"的结构讲，最有故事性。</strong></p>
+    <p><strong>业务背景（先讲为什么做）</strong>：市面上的 AI 编码工具（Cursor、Windsurf）都是解决"从 0 到 1"写新代码。但真实项目是几万行代码、大量历史逻辑，<strong>怎么让 AI 理解已有项目的需求</strong>是空白领域。prd-tools 就填这个空——把 PRD 自动蒸馏成有证据支撑的开发计划。</p>
+    <p><strong>弯路（30秒，体现踩过坑）</strong>：一开始我用 MCP 做，两周发现不管怎么优化 prompt，准确率就是上不去。定位到根因——<strong>MCP 是单次调用模式，但需求分析需要多轮上下文和复杂论证</strong>，这是架构级瓶颈，不是调优能解决的。关键认知：选错架构，再多优化都白费。</p>
+    <p><strong>突破方案（1分钟，亮架构）</strong>：转向 Agent + Skill 工作流模式——自研 Reference 六文件 SSOT（项目知识结构化）+ 多轮搜索（Agent Loop 不是单次）+ 证据链验证（每条结论可追溯）。这套让 PRD→Plan 从 5h/需求降到 2h/需求，已推广到 20+ 人团队。</p>
+    <p><strong>核心收获（收口）</strong>：AI 工程的难点不在调 prompt，在架构选型——单次调用 vs 多轮 Agent，决定了能力上限。我走过的弯路，让我对"什么场景该用 Agent 而不是简单工具调用"有体感。</p>
+    <p><strong>备选（偏传统前端时）</strong>：选 Schema 引擎——营销中台月均 10+ bug，自研 Schema 渲染引擎后归零。</p>
+    <p class="hint">[loop·已优化·待复核] 念法：选prd-tools → 背景30秒（已有项目AI理解空白）→ 弯路30秒（MCP单次瓶颈）→ 突破1分钟（Agent+Skill+证据链，5h→2h）→ 收口（架构选型决定上限）。控制2分钟内。</p>
   </div>
 </div>
 
