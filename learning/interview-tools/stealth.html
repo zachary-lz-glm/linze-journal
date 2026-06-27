@@ -3432,12 +3432,13 @@ function buildTreeOptimized(list) {
   <div class="card-head"><span class="tag ai">AI</span><div class="card-title">RAG 多路召回 + Query Rewrite</div></div>
   <div class="core">单路向量召回准确率 60%，BM25+向量+字段三路融合能到 85%+</div>
   <div class="card-body">
-    <p><strong>为什么要 Query Rewrite</strong>：用户原始 query 通常口语化、信息不全。比如问"怎么用"——检索系统根本不知道在问什么。Rewrite 把原始 query 改写成更适合检索的形式。5 种策略：① <strong>HyDE</strong>——让 LLM 先生成假设答案，再用答案做检索（用答案找答案）。② <strong>Step-back</strong>——把具体问题抽象成大类问题。③ <strong>Sub-query</strong>——拆成多个子问题分别检索。④ <strong>Query Expansion</strong>——加同义词扩展。⑤ <strong>Multi-query</strong>——生成多个改写版本并行检索。</p>
-    <p><strong>多路召回设计</strong>：① <strong>向量召回</strong>（语义相近）——处理同义词、跨语言。② <strong>BM25 召回</strong>（关键词命中）——处理专有名词、代码符号。③ <strong>字段召回</strong>（结构化过滤）——按文档类型、时间、tag 缩小范围。三路各召回 Top-20，融合后取 Top-5。</p>
-    <p><strong>融合算法 RRF</strong>（Reciprocal Rank Fusion）——不依赖各路分数绝对值，只看排名。公式：score = Σ 1/(k+rank_i)，k 通常取 60。简单稳定，是工业默认选择。</p>
-    <p><strong>进阶范式</strong>：① <strong>Self-RAG</strong>——模型自决定是否检索、检索几次。② <strong>Corrective RAG (CRAG)</strong>——检索后评估结果质量，差的重新检索。③ <strong>GraphRAG</strong>——用知识图谱增强检索，适合实体密集场景（医疗、金融）。</p>
-    <p><strong>项目桥接</strong>：prd-tools 的 reference 路由 = 字段召回（先按业务模块过滤）；BM25 = 关键词召回（按文件名/路径匹配）；context-pack = Query Rewrite 工程化（把 PRD 改写锚定到具体文件）。三路融合就是"先定位→再精筛→最后改写锚定"。</p>
-    <p class="hint">被问"RAG 怎么提升准确率" → 先说 Query Rewrite，再说多路召回，最后说 Self-RAG/CRAG 进阶范式。</p>
+    <p><strong>这道题答好了能拉开差距——RAG 怎么提升准确率，关键就在检索优化，分三招：先改写 query，再多路召回，最后进阶用自纠正。</strong></p>
+    <p><strong>第一招·Query Rewrite（检索前改写）</strong>：用户原话通常口语化、信息不全，比如问"怎么用"，检索系统根本不知道在问什么。要先改写成适合检索的形式。最有效的是 <strong>HyDE</strong>——让 LLM 先生成一个假设答案，再用答案去检索（假设答案和真实文档语义分布更接近）。还有 Step-back（具体问题抽象成大类先查背景）、Sub-query（拆子问题分别查）、Multi-query（生成多个改写并行查）。</p>
+    <p><strong>第二招·多路召回（核心）</strong>：单路向量召回只有 60% 准确率，因为它只懂语义、漏精确词。要三路并行：① <strong>向量召回</strong>（管同义词、跨语言）；② <strong>BM25 召回</strong>（管专有名词、代码符号这类精确匹配）；③ <strong>字段召回</strong>（按文档类型/时间/tag 结构化过滤缩小范围）。三路各召回 Top-20，融合取 Top-5。</p>
+    <p><strong>融合用 RRF</strong>（Reciprocal Rank Fusion）：不看各路分数绝对值，只看排名，公式 score = Σ 1/(k+排名)，k 通常 60。简单稳定，是工业默认。</p>
+    <p><strong>第三招·进阶范式</strong>：Self-RAG（模型自己决定要不要检索、检索几次）、Corrective RAG/CRAG（检索后评估结果质量，差的重新检索）、GraphRAG（用知识图谱增强，适合实体密集场景如医疗金融）。</p>
+    <p><strong>落到我的项目</strong>：prd-tools 的检索就是多路召回的工程化——reference 的路由 playbook 做字段召回（先按业务模块过滤），Evidence Index 用 BM25 做关键词召回（按代码实体/路径匹配），context-pack 做 Query Rewrite（把 PRD 改写锚定到具体文件）。我没上向量检索，因为代码场景符号精确匹配比语义近似更准——这是一种主动的召回策略选择，不是不懂向量。</p>
+    <p class="hint">[loop·已优化·待复核] 念法：三招框架（改写→多路→自纠正）→ HyDE 亮点 → 三路召回+RRF → 落 prd-tools（路由+BM25+context-pack，为何不上向量）。</p>
   </div>
 </div>
 
