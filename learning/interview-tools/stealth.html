@@ -223,9 +223,13 @@ body{overscroll-behavior-y:contain}
   <div class="card-head"><span class="tag proj">A7</span><div class="card-title">联动引擎怎么设计？</div></div>
   <div class="core">injectDActions一次声明双重求值——BFF端先算初始状态，前端运行时再算联动，16个联动模板覆盖95%场景</div>
   <div class="card-body">
-    <p><strong>核心机制：一次声明、双重求值</strong>。开发者在Schema中用dAction DSL声明联动规则（比如"当城市=北京时，显示产品线A和C"）。BFF端injectDActions先用safeEval求值一次，计算出当前用户的初始状态——哪些字段可见、哪些禁用、默认值是什么。这样SSR出来的页面初始状态就是对的，不需要等前端JS加载完再联动。然后把联动规则序列化给前端，前端运行时再算一次处理用户交互触发的联动。</p>
-    <p><strong>两种联动类型</strong>。State型：纯前端联动，用户改了一个字段，本地eval联动表达式直接更新其他字段。比如选了城市A，产品线下拉选项立即更新。FetchApi型：需要后端数据，用户改字段后回调BFF重新生成Schema片段——比如城市变化需要从后端拿新的价格策略配置。前端通过listener.on监听字段变化，支持链式联动（A变→B变→C变）。</p>
-    <p><strong>16个联动模板</strong>：visible（显隐）、disable（禁用）、setValue（赋值）、setEnum（更新选项）、required（必填）等。覆盖95%的表单联动场景，剩下5%走自定义组件。</p>
+    <p><strong>这道题的核心是八个字：一次声明、双重求值。这是整个联动引擎的灵魂。</strong></p>
+    <p><strong>业务背景</strong>：营销活动表单字段多、联动复杂——选了城市才显示产品线，选了券类型才显示面额，而且每个活动联动规则都不一样。如果靠写代码处理，每新增活动都得改代码。所以设计联动引擎，让运营在 Schema 里声明联动规则，不用写代码。</p>
+    <p><strong>核心机制：一次声明、双重求值</strong>：开发者在 Schema 里用 dAction DSL 声明联动规则（比如"城市=北京时显示产品线 A 和 C"）。<strong>第一遍求值在 BFF</strong>——injectDActions 用 safeEval 算出当前用户的初始状态（哪些字段可见/禁用/默认值），这样 SSR 出来的页面初始状态就是对的，不用等前端 JS 加载完再联动（避免首屏闪烁）。<strong>第二遍求值在前端运行时</strong>——处理用户交互触发的联动。</p>
+    <p><strong>两种联动类型</strong>：① <strong>State 型</strong>（纯前端）——用户改字段，本地 eval 联动表达式直接更新其他字段（如选城市 A，产品线下拉立即更新）；② <strong>FetchApi 型</strong>（要后端数据）——用户改字段后回调 BFF 重新生成 Schema 片段（如城市变化要从后端拿新价格策略）。靠 listener.on 监听字段变化，支持链式联动（A 变→B 变→C 变）。</p>
+    <p><strong>16 个联动模板覆盖 95%</strong>：visible（显隐）、disable（禁用）、setValue（赋值）、setEnum（更新选项）、required（必填）等。剩下 5% 走自定义组件兜底。</p>
+    <p><strong>收口</strong>：联动从"写代码"变成"配 DSL"，运营自助、前端零代码，这是 Schema 驱动能成立的关键基础设施。</p>
+    <p class="hint">[loop·已优化·待复核] 念法：八字核心（一次声明双重求值）→ 业务背景（活动联动复杂）→ 双重求值（BFF算初始+前端运行时）→ 两种类型（State/FetchApi）→ 16模板覆盖95% → 收口（联动从写代码变配DSL）。被追问链式联动甩 listener.on。</p>
   </div>
 </div>
 
