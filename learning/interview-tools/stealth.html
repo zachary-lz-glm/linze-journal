@@ -1658,15 +1658,17 @@ function buildTreeOptimized(list) {
   <div class="card-head"><span class="tag ai">AI</span><div class="card-title">标准Agent应该具备哪些能力？</div></div>
   <div class="core">感知→推理→行动→记忆→自我评估→人机协作，六层递进</div>
   <div class="card-body">
-    <p><strong>基础四层（缺一个都不叫Agent）</strong>：</p>
-    <p>· <strong>感知</strong>：理解用户输入、解析工具返回结果、感知环境变化（比如文件改了、接口超时了）。没有感知就是瞎子，无法根据实际情况调整。</p>
-    <p>· <strong>推理</strong>：LLM的核心价值——判断下一步做什么、选择哪个工具、分析工具结果是否满足条件。这是Agent和普通脚本的分水岭。</p>
-    <p>· <strong>行动</strong>：调用工具（API、数据库、文件系统）、生成输出。通过Function Calling/Tool Use协议实现，每次调用都有明确的schema定义。</p>
-    <p>· <strong>记忆</strong>：短期（当前对话上下文）、长期（向量存储/知识库）、工作（当前任务中间状态）。没有记忆每次都从零开始，做多步任务必然断链。</p>
-    <p><strong>进阶两层（工业级Agent必须要有）</strong>：</p>
-    <p>· <strong>自我评估（Reflection）</strong>：执行完一步能判断"结果对不对、够不够"，不对就自我修正。没有这层就是"蒙着眼往前冲"。</p>
-    <p>· <strong>人机协作（HITL）</strong>：关键决策点暂停等人确认、超出能力边界时主动求助。纯自主Agent在复杂业务场景中风险太高，必须有人工兜底。</p>
-    <p><strong>面试一句话</strong>："Agent的能力模型是六层递进——感知推理行动记忆是基座，自我评估和人机协作是工业级必需。少一层要么是瞎子要么是莽夫。"</p>
+    <p><strong>这道题我答六层递进——前四层是 Agent 的基座（缺一层都不叫 Agent），后两层是工业级 Agent 的必需（没有就是玩具）。</strong></p>
+    <p><strong>基座四层</strong>：</p>
+    <p>① <strong>感知</strong>——能理解用户输入、解析工具返回、感知环境变化（文件改了、接口超时）。没感知就是瞎子，没法根据实际调整。</p>
+    <p>② <strong>推理</strong>——LLM 的核心价值，判断下一步做什么、选哪个工具、结果满不满足条件。这是 Agent 和普通脚本的分水岭。</p>
+    <p>③ <strong>行动</strong>——调用工具（API、数据库、文件系统）、生成输出。靠 Function Calling/Tool Use 实现。</p>
+    <p>④ <strong>记忆</strong>——短期（当前对话）、长期（向量库/知识库）、工作（任务中间状态）。没记忆每次从零开始，多步任务必然断链。</p>
+    <p><strong>进阶两层（工业级 Agent 才有，也是面试加分点）</strong>：</p>
+    <p>⑤ <strong>自我评估（Reflection）</strong>——执行完能判断"结果对不对、够不够"，不对就自我修正。没这层就是蒙着眼往前冲。</p>
+    <p>⑥ <strong>人机协作（HITL）</strong>——关键决策点暂停等人确认、超出能力边界主动求助。纯自主 Agent 在复杂业务里风险太高，必须有人工兜底。</p>
+    <p><strong>落到我的项目</strong>：prd-tools 六层都齐——感知靠 PRD 摄入解析、推理靠 Claude、行动靠两个 Skill 调脚本、记忆靠 reference 6 文件、自我评估靠 quality-gate.py 五维评分、人机协作靠 Spec Review Gate 硬停止。每层都有具体落地，不是背概念。</p>
+    <p class="hint">[loop·已优化·待复核] 念法：六层递进（基座四层+进阶两层）→ 每层一句 → 落 prd-tools 六层对应。金句："少一层要么是瞎子要么是莽夫"。</p>
   </div>
 </div>
 
