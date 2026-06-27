@@ -3300,12 +3300,14 @@ function buildTreeOptimized(list) {
   <div class="card-head"><span class="tag ai">AI</span><div class="card-title">大模型流式输出前端实现（5 层 · 蚂蚁必考）</div></div>
   <div class="core">连接 → 解析 → 渲染 → 可靠性 → 中断，五层缺一不可，背到脱口而出</div>
   <div class="card-body">
-    <p><strong>① 连接层</strong>：两种方式。EventSource 简单（自动重连，但只支持 GET、不能自定义 header）；复杂场景用 <strong>fetch + ReadableStream</strong>（支持 POST + header + 手动控制）。协议是 SSE（text/event-stream），每条消息 data: 前缀、双换行分隔。</p>
-    <p><strong>② 解析层</strong>：流是 chunk 到达，一个 chunk 可能不完整（半个 JSON / 半个汉字）。维护 buffer 累积，按双换行切成完整 event，再按 data: 取 payload。中文注意 UTF-8 边界——用 TextDecoder 的 stream:true 避免截断。</p>
-    <p><strong>③ 渲染层</strong>：逐 token 不能每次全量 re-render（万级 token 卡死）。rAF 节流合并多次更新 + 增量 Markdown（代码块/表格未闭合时暂存 buffer，闭合再渲染）+ 大列表虚拟列表 + React 18 useDeferredValue 不阻塞输入。细节见「流式 Markdown 增量解析」卡。</p>
-    <p><strong>④ 可靠性</strong>：断线重连用 Last-Event-ID（最后一条 event 的 id）告诉服务端从哪续传，服务端去重；客户端 buffer 累积已收内容防重复。加心跳保活（一般 15-30s）。</p>
-    <p><strong>⑤ 中断层</strong>：用户点"停止生成"用 AbortController + fetch(signal) 中断，服务端配合取消推理；前端状态机 streaming → aborted，已生成内容保留。</p>
-    <p class="hint">蚂蚁 JD 明确点名"流式输出 / 异步响应 / 长会话"。被问先甩五层框架再展开。代码块未闭合 + 断线去重是追问杀手锏。</p>
+    <p><strong>这道题蚂蚁必考，我背了一个五层框架，甩出来再展开。</strong>流式输出不是简单调个接口，前端要管五层：连接、解析、渲染、可靠性、中断，缺一层都跑不稳。</p>
+    <p><strong>① 连接层</strong>——怎么和服务端建流。简单场景用 EventSource（自带重连，但只能 GET、不能加 header）；生产场景用 fetch + ReadableStream（能 POST、能加 header、能手动控）。底层协议是 SSE，每条消息 data: 开头、双换行分隔。</p>
+    <p><strong>② 解析层</strong>——流是一块块 chunk 到的，一个 chunk 可能是半个 JSON 或半个汉字。要维护一个 buffer 累积，按双换行切成完整事件，再取 data 里的 payload。中文有个坑：UTF-8 边界截断，要用 TextDecoder 的 stream:true 模式避免半个汉字乱码。</p>
+    <p><strong>③ 渲染层</strong>——逐 token 到达，不能每来一个就全量 re-render（万级 token 卡死）。四个优化：rAF 节流合并多次更新、增量渲染 Markdown（代码块/表格没闭合先暂存）、大列表用虚拟列表、React 18 的 useDeferredValue 不阻塞用户输入。</p>
+    <p><strong>④ 可靠性</strong>——断线了怎么办。用 Last-Event-ID 告诉服务端"最后收到第几条"，让它从这续传并去重；客户端自己也 buffer 累积防重复；再加个 15-30 秒心跳保活。</p>
+    <p><strong>⑤ 中断层</strong>——用户点"停止生成"，用 AbortController + fetch(signal) 中断请求，服务端配合取消推理；前端状态机从 streaming 切到 aborted，但已经生成的内容要保留，不能丢。</p>
+    <p><strong>追问杀手锏</strong>：代码块未闭合怎么办（暂存 buffer 等闭合再渲染）+ 断线去重（Last-Event-ID + 客户端 buffer）。这两个细节能答出来，面试官就知道你真做过。</p>
+    <p class="hint">[loop·已优化·待复核] 念法：先甩五层框架 → 每层一句话说清（连接/解析/渲染/可靠性/中断）→ 追问杀手锏（代码块未闭合+断线去重）。蚂蚁 JD 明确点名。</p>
   </div>
 </div>
 
