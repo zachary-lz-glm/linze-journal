@@ -2894,14 +2894,15 @@ function buildTreeOptimized(list) {
 
 <div class="card" data-c="proj" data-kw="Schema架构 BFF 动态生成 前端动态渲染 协同 联动 dAction 双端解析 鸿湖 逐字稿">
   <div class="card-head"><span class="tag proj">Schema</span><div class="card-title">Schema+BFF/前端协同链路（技术深挖）</div></div>
-  <div class="core">Schema是中间协议，BFF模板引擎生成配置接口，前端渲染引擎解析生成页面，联动DSL桥接两端</div>
+  <div class="core">Schema是中间协议，BFF模板引擎生成配置，前端渲染引擎解析生成页面，联动DSL桥接两端</div>
   <div class="card-body">
-    <p><strong>Schema是什么</strong>：基于JSON Schema Draft-07扩展的中间协议。在标准JSON Schema上加了三个扩展——dAction联动描述（组件间依赖关系）、componentMap组件映射（Schema字段到UI组件的对应关系）、fetchConfig跨接口联动配置（城市/产品线变化时调哪个接口拿新配置）。Schema是前后端共享的唯一真相源。</p>
-    <p><strong>BFF动态生成</strong>：BFF层有一套模板引擎（Template Engine），接收运营在后台配置的Schema + 业务数据（城市列表、产品线枚举、价格策略等），模板引擎根据Schema中的条件表达式动态裁剪配置。比如巴西用户看到的字段和墨西哥不同，不是两套代码，是同一份Schema根据条件生成不同产物。BFF输出的是经过裁剪的"运行时Schema"——包含当前用户应该看到的所有字段、联动规则、初始值。</p>
-    <p><strong>前端动态渲染</strong>：前端渲染引擎拿到BFF输出的运行时Schema后，三步处理。第一步解析Schema构建组件树——根据componentMap映射到具体的React组件。第二步注入联动——injectDActions先扫描整个Schema收集所有dAction声明，构建组件间依赖图，然后为每个联动注入运行时求值函数。第三步渲染——按依赖图顺序渲染组件，联动触发时只更新受影响的组件，不重渲染整棵树。</p>
-    <p><strong>协同工作流程</strong>：运营在后台配Schema → BFF模板引擎根据用户条件裁剪 → 输出运行时Schema给前端 → 前端渲染引擎解析+注入联动+渲染 → 用户操作触发联动 → State型联动前端本地计算 → Fetch型联动调BFF拿新配置 → 新配置进入渲染引擎重新处理。整个链路是配置驱动的闭环，新增活动类型只需要配一份Schema，不需要写代码。</p>
-    <p><strong>最有成就感的点</strong>：联动从命令式变成声明式。以前新人看到一段if-else不知道在处理什么场景，现在打开Schema，联动关系、条件表达式、影响范围一眼可见。从"读代码才能理解业务"变成了"看配置就能理解业务"。</p>
-    <p class="hint">这道题是纯技术深挖，面试官想听完整链路。从Schema定义→BFF处理→前端渲染→联动触发，每段30秒，画一条线讲下来。不要只讲概念，要讲数据怎么流的。</p>
+    <p><strong>这道题我顺着数据流讲一条完整链路，从 Schema 定义到联动触发，每段 30 秒。</strong></p>
+    <p><strong>第一段·Schema 是什么</strong>：它是前后端共享的"中间协议"，基于 JSON Schema 扩展，加了三样东西——dAction（联动描述，组件间依赖关系）、componentMap（字段到 UI 组件的映射）、fetchConfig（跨接口联动配置）。一句话：Schema 是唯一真相源，前后端都认它。</p>
+    <p><strong>第二段·BFF 动态生成</strong>：BFF 有套模板引擎，接收运营配的 Schema + 业务数据（城市列表、产品线枚举、价格策略），按 Schema 里的条件表达式动态裁剪。比如巴西用户看到的字段和墨西哥不同——不是两套代码，是同一份 Schema 根据条件生成不同产物。BFF 输出的是裁剪后的"运行时 Schema"。</p>
+    <p><strong>第三段·前端动态渲染（这里甩源码细节）</strong>：前端拿到运行时 Schema，渲染引擎三步走——① 解析建组件树（componentMap 映射到 React 组件，StepForm 遍历 schemaList，每个字段用 FieldWrapper 包裹）；② 注入联动（injectDActions 扫全表收集 dAction 建依赖图）；③ 按依赖图渲染。两个关键机制：<strong>formatName 路径拍平</strong>——把 step→card→Form.List row→field 的层级拍成 dot 路径（如 rules.reward.0.method），让联动能精确定位嵌套表单里的任意字段；<strong>Listener 发布订阅</strong>——FieldWrapper mount 时注册、字段值变化时 emit 触发，只更新受影响的组件，不重渲染整棵树。</p>
+    <p><strong>第四段·协同闭环</strong>：运营配 Schema → BFF 按用户条件裁剪 → 前端渲染引擎解析+注入联动+渲染 → 用户操作触发联动（State 型本地算、Fetch 型调 BFF 拿新配置）→ 新配置进渲染引擎重处理。新增活动类型只配一份 Schema，不写代码。</p>
+    <p><strong>收口金句</strong>：联动从命令式变成声明式。以前新人看 if-else 不知道处理啥场景，现在打开 Schema，联动关系、条件、影响范围一眼可见——从"读代码理解业务"变成"看配置理解业务"。</p>
+    <p class="hint">[loop·已优化·待复核] 念法：顺数据流四段（Schema定义→BFF生成→前端渲染→协同闭环），每段30秒画一条线。前端渲染段甩源码细节（formatName拍平+Listener发布订阅）显深度。收口用"命令式→声明式"金句。鸿湖逐字稿。</p>
   </div>
 </div>
 
