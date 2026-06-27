@@ -2347,22 +2347,14 @@ function buildTreeOptimized(list) {
 
 <div class="card" data-c="ai" data-kw="Function Calling 详解 Tools 区别 Tool Use 机制 协议 schema 运行时 安全 模型不执行">
   <div class="card-head"><span class="tag ai">AI</span><div class="card-title">Function Calling详解 + Tools vs Function Calling区别</div></div>
-  <div class="core">Function Calling是机制，Tools是新名字——本质一样：模型输出调用意图，运行时负责执行</div>
+  <div class="core">FC 是机制（模型输出调用意图，运行时执行）——Tools/Tool Use 是新名字，三者一回事</div>
   <div class="card-body">
-    <p><strong>术语澄清</strong>：Function Calling是OpenAI最初的叫法（GPT-4时代），后来改名叫Tools。Anthropic一直叫Tool Use。三者是同一套机制的不同名字，面试中混用不影响，但能说清演变说明你跟过这个领域。</p>
-    <p><strong>完整链路（五步循环）</strong>：</p>
-    <p>· ① <strong>定义schema</strong>：开发者声明每个工具的name、parameters（JSON Schema）、description。description写得好不好直接影响模型能不能选对工具。</p>
-    <p>· ② <strong>模型判断</strong>：用户输入+工具定义一起发给模型，模型根据语义判断要不要调工具、调哪个。这是模型能力的核心——不是关键词匹配，是语义理解。</p>
-    <p>· ③ <strong>输出tool_call</strong>：模型输出结构化JSON（工具名+参数），<strong>不是直接执行</strong>。这是关键安全设计——模型只表达意图，不动真格。</p>
-    <p>· ④ <strong>运行时执行</strong>：客户端代码拿到tool_call，执行真正的函数调用（API请求、数据库查询等），拿到真实结果。</p>
-    <p>· ⑤ <strong>结果注入</strong>：工具执行结果作为新消息注入上下文，模型看到结果后继续推理——输出最终回答或继续调工具。循环到不再调工具为止。</p>
-    <p><strong>关键认知</strong>：模型本身不执行任何代码，它只是"决定调什么+传什么参数"。真正执行的是你的运行时代码。这个分离是安全性的基础——你可以加白名单、限流、审计，因为执行权在你手里。</p>
-    <p><strong>MCP vs Function Calling深度对比</strong>：</p>
-    <p>· <strong>运行位置</strong>：Function Calling在服务端（LLM provider侧），MCP在客户端（本地/外部MCP server）。</p>
-    <p>· <strong>协议层</strong>：FC是模型内置能力，输出结构化调用意图。MCP是开放协议，定义了工具发现、调用、结果返回的标准格式——解决的是工具的标准化连接问题。</p>
-    <p>· <strong>跨模型复用</strong>：FC绑定具体厂商（OpenAI），一次开发的工具只能在该模型用。MCP不绑定模型，一次开发的MCP server可以被任何支持MCP的agent使用。</p>
-    <p>· <strong>选型</strong>：只用一家模型且工具少→FC够用；要跨模型复用工具或团队共建工具生态→MCP更合适。实际中两者经常配合——MCP负责工具的标准化暴露，FC负责模型的工具选择决策。</p>
-    <p><strong>面试一句话</strong>："Function Calling是模型决定调什么，MCP是标准化的工具怎么连——一个管决策，一个管连接。FC绑定厂商，MCP跨模型复用。两者经常配合使用。"</p>
+    <p><strong>先澄清一个名字坑</strong>：Function Calling、Tools、Tool Use 是同一个机制的不同叫法——OpenAI 最早叫 Function Calling（GPT-4 时代），后改名 Tools；Anthropic 一直叫 Tool Use。面试混用没事，能说清演变说明你跟过这领域。</p>
+    <p><strong>核心是一句话：模型只决定"调什么、传什么参数"，真正执行的是你的运行时代码。</strong>这是关键的安全设计——模型不直接跑代码，它只输出一个结构化的 tool_call（工具名+参数的 JSON），你的代码拿到后才真正执行（发 API、查数据库）。执行权在你手里，所以你能加白名单、限流、审计。</p>
+    <p><strong>完整链路是个五步循环</strong>：① 开发者定义工具 schema（name + 参数 JSON Schema + description，description 写得好不好直接决定模型选不选得对）→ ② 模型拿到用户输入+工具定义，靠语义判断要不要调、调哪个（不是关键词匹配）→ ③ 输出 tool_call JSON（只表达意图，不执行）→ ④ 运行时执行真正的函数拿结果 → ⑤ 结果作为新消息注入上下文，模型看到后继续推理。循环到不再调工具为止。</p>
+    <p><strong>MCP vs Function Calling（高频追问）</strong>：两者不是替代是配合。FC 是模型侧内置能力（绑厂商，如 OpenAI），管"决策"；MCP 是协议层（不绑模型），管"工具怎么标准化连接、跨模型复用"。实际架构：MCP 负责把工具标准化暴露，FC 负责模型选哪个工具。</p>
+    <p><strong>落到我的项目</strong>：prd-tools 跑在 Claude Code 里，用的就是这套机制——两个 Skill（/reference 构建知识库、/prd-distill 蒸馏 PRD）本质是封装好的 Tool Use 工作流：模型按 Skill 指令决策（读哪些 PRD、查哪些代码），真正的确定性计算交给 .prd-tools/scripts/ 里的运行时脚本（build-index、context-pack、quality-gate）。正好体现"模型决策 + 运行时执行"的分离——智能靠模型，可靠靠脚本。</p>
+    <p class="hint">[loop·已优化·待复核] 念法：先澄清名字（FC/Tools/Tool Use）→ 核心一句（模型决策、运行时执行）→ 五步循环 → MCP vs FC（决策 vs 连接）→ 落 prd-tools（Skill+scripts 分离）。</p>
   </div>
 </div>
 
