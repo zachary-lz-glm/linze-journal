@@ -166,10 +166,12 @@ body{overscroll-behavior-y:contain}
   <div class="card-head"><span class="tag proj">A3</span><div class="card-title">400+ 权益组件库怎么设计？</div></div>
   <div class="core">Register注册模式——内置24个通用组件，业务运行时注册定制组件，两个消费者共享Schema渲染架构</div>
   <div class="card-body">
-    <p><strong>400+不是组件数量，是配置组合数</strong>。基础组件24个覆盖通用场景（文本、图片、按钮、倒计时等），每个业务有几个定制组件（比如券码输入、会员等级选择），总共30-40个组件。400+是国际化多国家×业务线×产品线×城市的组合爆炸，组件本身通过配置化覆盖。</p>
-    <p><strong>核心设计是Register注册模式</strong>：SDK内置24个通用组件，业务方运行时通过register方法注册自己的权益组件。通用组件注册一次所有业务复用，业务定制组件只注册到自己的命名空间。这样不会出现"通用组件满足不了就fork一份改"的问题，也不会互相污染。</p>
-    <p><strong>和活动表单共享渲染引擎</strong>：权益SDK和营销活动表单是两个消费者，共享同一套Schema渲染架构。维护一套引擎，两个业务场景都能用，维护成本降一半。</p>
-    <p><strong>工程化细节</strong>：Rollup输出ESM+CJS+d.ts三份产物，peerDependencies声明React避免重复打包。Changesets管理版本，alpha环境联调，yalc本地验证替代npm link（symlink在Monorepo里有依赖解析问题）。</p>
+    <p><strong>先破一个误区（面试官常追问的点）</strong>：400+ 不是我写了 400 个组件，是<strong>配置组合数</strong>。基础组件 24 个（文本、图片、按钮、倒计时这些通用的），每个业务再加几个定制组件（券码输入、会员等级选择），实际组件 30-40 个。400+ 是国际化多国家 × 业务线 × 产品线 × 城市 的组合爆炸——组件靠配置化覆盖不同组合，不是堆组件数量。</p>
+    <p><strong>业务背景</strong>：权益系统要支持多国家（滴滴 10+ 国家）、多业务线，每个组合的权益展示不一样。如果每个组合写一套组件，维护不动。所以设计了 Register 注册模式。</p>
+    <p><strong>核心是 Register 注册模式</strong>：SDK 内置 24 个通用组件，业务方运行时用 register 方法注册自己的权益组件。通用组件注册一次所有业务复用，业务定制组件只注册到自己的命名空间。好处是——通用组件满足不了时，业务自己注册定制组件，<strong>不用 fork 一份改</strong>（避免分叉），也不会互相污染。</p>
+    <p><strong>架构复用（业务价值）</strong>：权益 SDK 和营销活动表单是两个消费者，共享同一套 Schema 渲染架构。维护一套引擎，两个业务都能用，<strong>维护成本降一半</strong>。</p>
+    <p><strong>工程化细节（被追问再甩）</strong>：Rollup 输出 ESM+CJS+d.ts 三份产物，peerDependencies 声明 React 避免重复打包；Changesets 管版本，alpha 环境联调，yalc 本地验证替代 npm link（symlink 在 Monorepo 有依赖解析问题）。</p>
+    <p class="hint">[loop·已优化·待复核] 念法：先破误区（400+是组合数不是组件数）→ 业务背景（多国家多业务线）→ Register 模式（通用+定制不 fork）→ 共享引擎维护降半 → 工程化细节被追问再甩。</p>
   </div>
 </div>
 
