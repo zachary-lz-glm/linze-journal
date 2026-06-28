@@ -1762,7 +1762,7 @@ function buildTreeOptimized(list) {
     <p><strong>第二层·长期记忆，核心是 RAG</strong>：流程是历史经验或知识先编码成 Embedding 存进向量数据库（Chroma、Pinecone、Milvus 这些），执行任务前用 query 做相似度检索，把召回的相关记忆拼进 Prompt。这里有个容易被追问的点——<strong>写入策略</strong>：不是所有对话都值得存，得设计重要性评分决定哪些长期保留，否则向量库会被垃圾记忆污染。</p>
     <p><strong>第三层·进阶，类比人的三种记忆，这是加分项</strong>：① <strong>工作记忆</strong>≈ 短期记忆；② <strong>情景记忆</strong>（Episodic）= 具体事件经历，比如"上次这个需求让我写报告失败了"；③ <strong>语义记忆</strong>（Semantic）= 抽象知识或事实。能讲出这三层，面试官就知道你不是背的。</p>
     <p><strong>收口落到我的项目</strong>：prd-tools 这套三层我都做了——<strong>Reference 六文件 SSOT 是长期语义记忆</strong>，把项目知识蒸馏成可检索的事实库；每次蒸馏产出的 Spec/Plan 是<strong>情景记忆</strong>，记录具体需求的执行历史；eval/auto-tune 的反哺就是<strong>写入策略</strong>，只把高评分的执行模式沉淀回知识库。金句："Reference 是语义记忆、蒸馏是情景记忆、eval 反哺是写入策略——三层一个不落。"</p>
-    <p class="hint">[loop·已优化·待复核] 念法：先甩定调金句（记忆不是单一的是分层的）→ 立框架（Memory 是核心公式四组件之一）→ 短期（Context Window+滑动窗口/摘要）→ 长期（RAG+向量库+写入策略亮点）→ 进阶三层（工作/情景/语义，加分项）→ 收口 prd-tools（Reference=语义/蒸馏=情景/eval=写入策略，三层都做了）。被问"上下文窗口炸了怎么办" → 滑动窗口+摘要压缩+长期记忆外置到 RAG。</p>
+    <p class="hint">[loop·已优化·已复核] 念法：先甩定调金句（记忆不是单一的是分层的）→ 立框架（Memory 是核心公式四组件之一）→ 短期（Context Window+滑动窗口/摘要）→ 长期（RAG+向量库+写入策略亮点）→ 进阶三层（工作/情景/语义，加分项）→ 收口 prd-tools（Reference=语义/蒸馏=情景/eval=写入策略，三层都做了）。被问"上下文窗口炸了怎么办" → 滑动窗口+摘要压缩+长期记忆外置到 RAG。</p>
   </div>
 </div>
 
@@ -1806,7 +1806,7 @@ function buildTreeOptimized(list) {
     <p><strong>标准流程</strong>：用户提问 → 把问题向量化、去向量库检索最相关的文档片段 → 把检索结果拼进 prompt → 模型基于这些片段生成回答。</p>
     <p><strong>两个拉开差距的关键环节</strong>：① <strong>检索前</strong>——文档怎么切（Chunking，一般 256-1024 token，按语义或结构切比固定大小好）；② <strong>检索后</strong>——单路向量召回不够，要 BM25+向量多路召回 + Reranker 精排。再进一步是 Agentic RAG，让模型自己判断"检索结果够不够、要不要重检"。</p>
     <p><strong>落到我的项目</strong>：prd-tools 的 evidence 机制就是 RAG 的工程化变体——不过我用 BM25+正则倒排替代向量检索（代码场景符号精确匹配更准），用代码锚定替代 chunking（函数/类天然边界）。本质都是"先检索真实依据，再让 AI 基于依据生成"。</p>
-    <p class="hint">[loop·已优化·待复核] 念法：开卷考试类比 → 为什么用（知识过时+幻觉）→ 流程 → 两个关键（切片/多路召回）→ 落 prd-tools。细节见 RAG 多路召回/Embedding/Chunking 卡。</p>
+    <p class="hint">[loop·已优化·已复核] 念法：开卷考试类比 → 为什么用（知识过时+幻觉）→ 流程 → 两个关键（切片/多路召回）→ 落 prd-tools。细节见 RAG 多路召回/Embedding/Chunking 卡。</p>
   </div>
 </div>
 
@@ -1955,7 +1955,7 @@ function buildTreeOptimized(list) {
     <p><strong>落地拼接（这是工程实现）</strong>：一次请求喂给模型的内容 = <strong>系统消息（摘要 + 提取的关键信息）+ 最近 N 轮原对话</strong>。系统消息稳定不涨（存的是压缩结果），原对话靠滑动窗口控制长度，两者拼接既不全丢也不爆窗。</p>
     <p><strong>前端三件套（被追问就甩，显你不是只懂调 API）</strong>：① <strong>消息状态机</strong>——发送中/已发/失败/重试，失败要能重发且不重复计费；② <strong>token 消耗可视化</strong>——让用户看到剩余预算，逼近上限主动提示"开新会话"；③ <strong>编辑历史消息重提</strong>——从某条消息分叉重发，要正确处理后续分支的丢弃。</p>
     <p><strong>落到我的项目</strong>：prd-tools 的 reference 6 文件就是"关键信息提取"的工程化变体——不是把整段开发对话都存下来，而是把几万行代码蒸馏成 6 个领域知识文件（结构/规则/契约/路由/领域 Map/实体索引），每次请求按需检索相关片段拼进上下文。本质和我上面说的机制二一样：信息从"全量"压缩成"结构化精选"，既省 token 又不丢关键事实。</p>
-    <p class="hint">[loop·已优化·待复核] 念法：核心矛盾钩子（窗口有限对话越长）→ 为啥必考（越长越贵+Lost in Middle）→ 三机制逐条（滑动窗口/关键信息提取/自动摘要，关键信息提取是亮点）→ 落地拼接公式 → 前端三件套 → 落 prd-tools（reference=关键信息提取工程化）。被问"Claude Code 具体怎么管/缓存在哪" → 翻 G6 卡（服务端 KV cache + auto-compaction + CLAUDE.md 三层）。</p>
+    <p class="hint">[loop·已优化·已复核] 念法：核心矛盾钩子（窗口有限对话越长）→ 为啥必考（越长越贵+Lost in Middle）→ 三机制逐条（滑动窗口/关键信息提取/自动摘要，关键信息提取是亮点）→ 落地拼接公式 → 前端三件套 → 落 prd-tools（reference=关键信息提取工程化）。被问"Claude Code 具体怎么管/缓存在哪" → 翻 G6 卡（服务端 KV cache + auto-compaction + CLAUDE.md 三层）。</p>
   </div>
 </div>
 
@@ -1969,7 +1969,7 @@ function buildTreeOptimized(list) {
     <p>② <strong>上下文预算管理</strong>——窗口要分配。经验是 <strong>0-40% 是 Smart Zone</strong>（质量最高），超 40% 进 Dumb Zone（质量下降），超 80% 明显幻觉。系统提示、工具定义、检索文档、对话历史各占多少要规划好。</p>
     <p>③ <strong>渐进式披露</strong>——不一次把所有信息灌进去，按需加载。类似前端懒加载，用到才取。</p>
     <p><strong>落到我的项目</strong>：prd-tools 就是 Context Engineering 的落地——reference 6 文件 SSOT 做"信息选择"（只存精选领域知识），context-pack 分层注入做"预算管理"（按 must/should/optional 分配），按需匹配做"渐进披露"（只加载涉及的层）。Cursor 的 @file、CLAUDE.md 都是 Context Eng 的产品形态。</p>
-    <p class="hint">[loop·已优化·待复核] 念法：先区分 Prompt vs Context Eng → 三维度（选择/预算/披露）→ Lost in the Middle 坑 → 落 prd-tools。小红书失分点。</p>
+    <p class="hint">[loop·已优化·已复核] 念法：先区分 Prompt vs Context Eng → 三维度（选择/预算/披露）→ Lost in the Middle 坑 → 落 prd-tools。小红书失分点。</p>
   </div>
 </div>
 
