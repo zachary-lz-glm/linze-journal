@@ -3572,12 +3572,15 @@ function buildTreeOptimized(list) {
   <div class="card-head"><span class="tag ai">AI</span><div class="card-title">LLM 解码策略：贪心 / Beam Search / 采样</div></div>
   <div class="core">LLM 不用 Beam Search（成本高+多样性差），用 Top-P 采样是行业共识</div>
   <div class="card-body">
-    <p><strong>三种核心策略</strong>：① <strong>贪心解码</strong>（Greedy）——每步取 logits 最大 token。简单稳定，但容易陷入局部最优，输出重复。② <strong>Beam Search</strong>——维护 B 个候选序列，每步扩展 B×V 个候选（V 是词表大小），保留 top-B。机器翻译主流。③ <strong>采样</strong>（Sampling）——按 logits 概率分布采样下一个 token。配合 Top-P/Top-K/温度。</p>
-    <p><strong>为什么 LLM 不用 Beam Search</strong>：① <strong>成本爆炸</strong>——B=4 意味着每步 4x 计算量，长文本生成成本不可接受。② <strong>多样性差</strong>——Beam Search 倾向选择"高概率"路径，输出"中庸"无个性，开放生成场景（对话、创意）效果差。③ <strong>开放生成不适用</strong>——Beam Search 适合有"正确答案"的任务（翻译、摘要），LLM 主要做开放生成。④ <strong>研究支持</strong>——Google 2022 论文《Beam Search is not Sufficient for Open-Ended Generation》系统论证。</p>
-    <p><strong>现代 LLM 主流方案</strong>：① <strong>Top-P 采样</strong>（nucleus）——ChatGPT/Claude 默认。② <strong>Top-K 采样</strong>——LLaMA 系列默认。③ <strong>Temperature + Top-P</strong>——可控性最好。④ <strong>Contrastive Search</strong>——新方案，结合贪心和采样的优点。</p>
-    <p><strong>特殊场景</strong>：① <strong>函数调用</strong>——T=0 贪心（结构化输出要稳定）。② <strong>评测/复现</strong>——T=0 + 固定 seed。③ <strong>多轮对话</strong>——Top-P=0.9 + T=0.7。</p>
-    <p><strong>面试金句</strong>："Beam Search 在翻译时代是标配，但 LLM 时代被淘汰——成本高、多样性差、对开放生成不友好。现代 LLM 都用 Top-P 采样，关键参数是温度和 Top-P。"</p>
-    <p class="hint">被追问"Beam Search 为什么被淘汰" → 三句话：成本、多样性、开放性。</p>
+    <p><strong>这道题先甩一句定调：解码策略就是"模型生成下一个 token 时怎么选"。三种主流选法——贪心、Beam Search、采样，核心区别是"敢不敢赌概率"。然后我会重点讲为什么 LLM 时代 Beam Search 被淘汰了。</strong></p>
+    <p><strong>业务背景</strong>：大模型生成是逐 token 的——每一步先算出整个词表的概率分布（logits），再决定选哪个 token。选法直接决定三件事：输出稳定性、多样性、成本。调错要么重复啰嗦、要么发散跑题，还可能烧 token。所以这是 LLM 工程化的基础题。</p>
+    <p><strong>三种策略（从最确定到最自由）</strong>：① <strong>贪心解码</strong>（Greedy）——每步无脑取概率最大的 token。最简单最稳定，但容易陷进局部最优，输出爱重复（"我很开心我很开心"）。② <strong>Beam Search</strong>——同时维护 B 条候选路径，每步都把 B 条全展开、再砍回 top-B。本质是"保留多个备胎，最后选整体最优"。机器翻译时代是标配。③ <strong>采样</strong>（Sampling）——按概率分布随机抽，概率大的更可能被选中，但小的也有机会。配合 Top-P/Top-K/温度控制发散程度。</p>
+    <p><strong>核心问题：为什么 LLM 不用 Beam Search（这是面试真正考点）</strong>：① <strong>成本爆炸</strong>——B=4 意味着每步要算 4 倍计算量，长文本生成成本根本扛不住。② <strong>多样性差</strong>——它偏爱"高概率"路径，输出又稳又"中庸"、没个性，开放场景（对话、创意）效果反而差。③ <strong>场景不匹配</strong>——Beam Search 适合有"标准答案"的任务（翻译、摘要有参考译文），而 LLM 主要做开放生成，没有唯一正确解。④ <strong>有研究背书</strong>——Google 2022 论文《Beam Search is not Sufficient for Open-Ended Generation》系统论证了它在开放生成上的缺陷。</p>
+    <p><strong>现代 LLM 的主流方案（被问"那现在用什么"甩这套）</strong>：① <strong>Top-P 采样</strong>（nucleus sampling）——只从累计概率达到 P 的高概率 token 里抽，ChatGPT/Claude 默认；② <strong>Top-K 采样</strong>——只从 top K 个里抽，LLaMA 系列默认；③ <strong>Temperature + Top-P 组合</strong>——温度控发散、Top-P 控范围，可控性最好；④ <strong>Contrastive Search</strong>——新方案，结合贪心的稳定和采样的多样。</p>
+    <p><strong>特殊场景（被追问再甩）</strong>：① 函数调用/JSON 输出——T=0 贪心，结构化要稳；② 评测/复现实验——T=0 + 固定 seed，保证可复现；③ 多轮对话——Top-P=0.9 + T=0.7，平衡一致和生动。</p>
+    <p><strong>落到我的项目（桥接）</strong>：prd-tools 里 evals 评分模块用 T=0 贪心——同一 PRD 跑 10 次要拿到一致结果才能做 A/B 对照（一致性 40→85%）；蒸馏生成用 Top-P + 低温度，既稳定又能处理 PRD 用词差异。</p>
+    <p><strong>收口金句</strong>："Beam Search 在翻译时代是标配，但 LLM 时代被淘汰——成本高、多样性差、对开放生成不友好。现代 LLM 都用 Top-P 采样，关键参数是温度和 Top-P。"</p>
+    <p class="hint">[loop·已优化·待复核] 念法：定调钩子（解码=生成下个token怎么选，敢不敢赌概率）→ 业务背景（选法决定稳定性/多样性/成本）→ 三策略（贪心最确定/Beam备胎/采样按概率）→ 核心考点（LLM 为啥弃用 Beam：成本/多样性/场景/研究）→ 现代主流（Top-P默认）→ 特殊场景（追问甩）→ 落 prd-tools（evals T=0复现+蒸馏Top-P）→ 金句。</p>
   </div>
 </div>
 
