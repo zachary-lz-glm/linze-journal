@@ -1896,14 +1896,13 @@ function buildTreeOptimized(list) {
   <div class="card-head"><span class="tag proj">G5</span><div class="card-title">和 Claude Code init / Cursor 的区别？</div></div>
   <div class="core">Claude Code init 缺历史业务上下文 + 缺证据链 + 缺质量门控，prd-tools 补的就是证据层</div>
   <div class="card-body">
-    <p><strong>面试官追问</strong>（阿里一面36:30）："50个组件全仓库，让Claude Code做一次init理论上也能达到一样效果，你的方案和 Claude Codeit 的区别是什么？"</p>
-    <p><strong>我当时的回答</strong>：好——"证据链、可追溯、防幻觉、标准化"。这是强项，要继续打磨。</p>
-    <p><strong>升级版回答三个本质差异</strong>：</p>
-    <p>· <strong>差异1：业务上下文缺失</strong>。Claude Code init 只分析代码，不知道历史 PRD 业务背景。比如新 PRD 提到"完单油站券"，Claude Code 不知道这词映射到代码哪个 enum，只能猜或 grep "完单" 零结果。prd-tools 有 05-domain 术语表桥接，PRD 词 → enum → 文件三步精准定位。</p>
-    <p>· <strong>差异2：证据链 vs 完成倾向</strong>。AI 有强"完成倾向"——为了完成任务会编造路径。Claude Code 给的 plan 看起来完整但你不知道哪条是猜的。prd-tools 每条结论标注 evidence_id（PRD第几页+代码第几行），搜不到也显式标 negative_code_search，错误发现成本从重做降到抽查。</p>
-    <p>· <strong>差异3：质量门控 vs 自觉</strong>。Claude Code 没有 Step 7 硬停人审、没有 quality-gate final 评分、没有 benchmark 回归。靠 AI 自觉 vs 靠机制约束，是可靠性工程的本质区别。</p>
-    <p><strong>互补定位</strong>：prd-tools 解决"写代码之前"（想清楚改哪里、为什么、有什么风险），Claude Code/Cursor 解决"写代码"（具体怎么写）。prd-tools 的 plan.md 可以直接喂给 Claude Code 执行——我们负责想清楚，Claude Code 负责写。</p>
-    <p class="hint">这道题答得好。继续用"业务上下文+证据链+质量门控"三件套，最后强调"互补不是竞争"。</p>
+    <p><strong>先甩个钩子</strong>：阿里一面 36:30 这道追问特别刁——"50 个组件全仓库，让 Claude Code 跑一次 init，理论上也能达到一样的效果，你的方案跟它区别在哪？"我场上答的是"证据链、可追溯、防幻觉、标准化"，方向对了但太散。复盘下来这题要往三层本质差异上收：业务上下文、证据链、质量门控——一句话叫"我补的是它 init 之后缺的那层"。</p>
+    <p><strong>先讲业务背景</strong>：我做的 prd-tools 喂的是 20+ 人团队真在用，最怕的不是 AI 写不出 plan，是写出的 plan 看着完整、其实是猜的——同事照错计划开工就是返工，信任一塌就废了。所以这题比的不是"谁更能干"，是"谁的结论更敢信"。Claude Code init 强在代码侧的通扫，弱在历史业务上下文和可验证性，这正是我要补的。</p>
+    <p><strong>差异一·业务上下文缺失</strong>：Claude Code init 只分析代码，不知道历史 PRD 的业务背景。举个真实场景——新 PRD 提到"完单油站券"，Claude Code 不知道这词映射到代码哪个 enum，只能猜，或者 grep "完单" 零结果就放弃。prd-tools 有 05-domain 术语表桥接，PRD 词 → enum → 文件三步精准定位，不是猜是查表。</p>
+    <p><strong>差异二·证据链 vs 完成倾向</strong>：AI 有很强的"完成倾向"——为了交差会编造路径。Claude Code 给的 plan 看着完整，但你分不出哪条是真的、哪条是它编的。prd-tools 给每条结论标 evidence_id，就是 PRD 第几页 + 代码第几行；搜不到的也显式标 negative_code_search，告诉你是"没找到"不是"不存在"。错误发现成本从"重做"降到"抽查"，这是可靠性工程最关键的一跳。</p>
+    <p><strong>差异三·质量门控 vs 自觉</strong>：Claude Code 没有 Step 7 硬停人审、没有 quality-gate 的 final 评分、没有 benchmark 回归。一句话——它靠 AI 自觉，我靠机制约束。靠自觉的方案规模一上去必然漂移，靠机制约束才能扛住 20+ 人天天用。</p>
+    <p><strong>收口互补定位</strong>：prd-tools 解决的是"写代码之前"——想清楚改哪里、为什么、有什么风险；Claude Code / Cursor 解决的是"写代码"——具体怎么写。prd-tools 产出的 plan.md 可以直接喂给 Claude Code 执行——我们负责想清楚，它负责写。所以这题最后一句一定要落到"互补不是竞争"，把对立的追问收成协作的定位。</p>
+    <p class="hint">[loop·已优化·待复核] 念法：钩子先甩（阿里一面36:30追问，刁在"init 也能达到一样效果"）→ 业务背景（20+人真用，怕的是 plan 看着完整实为猜的）→ 三层差异逐条（业务上下文缺失/证据链 vs 完成倾向/质量门控 vs 自觉）→ 收口互补定位（prd-tools 想清楚，Claude Code 写）。最后一句必落"互补不是竞争"。</p>
   </div>
 </div>
 
