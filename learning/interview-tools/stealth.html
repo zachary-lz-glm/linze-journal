@@ -3333,12 +3333,12 @@ function buildTreeOptimized(list) {
   <div class="card-head"><span class="tag proj">AI</span><div class="card-title">SDD 完整流程（Spec-Driven Development）</div></div>
   <div class="core">编码前先创建 AI 能直接理解的 Spec，7 步：proposal → design → specs → tasks → apply → verify → archive</div>
   <div class="card-body">
-    <p><strong>和 Vibe Coding / Harness Engineering 的演进</strong>：Prompt Engineering → Context Engineering → Harness Engineering。Vibe（速度探索）→ SDD（结构化规范）→ Harness（工业级可控）。</p>
-    <p><strong>7 步流程</strong>：① proposal 提案（业务价值）② design 架构 ③ specs 规范 SSOT（接口/字段/约束）④ tasks 原子任务拆分 ⑤ apply AI 执行 ⑥ verify 测试 + 回归 + Review ⑦ archive 沉淀回流。</p>
-    <p><strong>项目桥接</strong>：prd-tools 是 SDD 工程化落地。proposal=PRD摄入，design=能力面适配器，specs=Reference 6 文件 SSOT，tasks=Spec/Plan 11 步，apply=下游 Cursor/Claude Code，verify=quality-gate.py 5 项检查，archive=反馈回流。</p>
-    <p><strong>追问点</strong>：EARS 需求规格化、Spec Kit 工具链（GitHub/OpenAI）、企业内 SDD 落地难点（团队接受度 + Spec 维护）。</p>
-    <p><strong>vs 代码即文档（蚂蚁一面追问）</strong>：面试官问"spec 驱动开发和代码即文档比优势是什么"。一句话——spec 是唯一真理源（source of truth）+ 可执行契约（executable contract），代码即文档只是给人看的事后记录。三个差异：① 文档性质——代码即文档是被动记录，spec 是约束 AI 生成的可执行契约；② 风险控制——前者后置修补，spec 前置；③ 质量一致性——spec 系统化、不依赖个人。别答"26 年大家一致认同的协议"太绝对，说"GitHub 2025 开源 Spec Kit 后的行业共识"更有据。</p>
-    <p class="hint">蚂蚁财富 AI Lab 必考。讲完主动加一句"金融场景会在 verify 加资损风险评估"。</p>
+    <p><strong>这道题我从一个定位开场——SDD 不是又一种写代码的方法，是把"先想清楚再动手"这件事工程化、让 AI 能照着做。</strong>它的全称是 Spec-Driven Development，核心一句话：编码前先创建一份 AI 能直接理解的 Spec（规范），代码是在这份规范约束下"生成"出来的，不是人手一行行敲的。</p>
+    <p><strong>先把它放进演进链里（一句话定位，显你不是背的）</strong>：Prompt Engineering → Context Engineering → Harness Engineering。Vibe Coding 是速度探索（让 AI 猛写、跑通就行），SDD 是结构化规范（先把需求固化成契约再生成），Harness Engineering 是工业级可控（包裹模型的全套基础设施）。我做的 prd-tools 就是 SDD 的工程化落地，往 Harness 雏形走。</p>
+    <p><strong>7 步流程我背得脱口而出（顺着一个需求的 lifecycle 念）</strong>：① proposal 提案——说清业务价值、值不值得做；② design 架构——整体怎么设计；③ specs 规范——这是 SSOT（唯一真理源），把接口、字段、约束全部写死；④ tasks 把规范拆成原子任务；⑤ apply 让 AI 执行生成；⑥ verify 测试 + 回归 + 人工 review；⑦ archive 把这次经验沉淀回流。其中 specs 和 verify 是两条命门——specs 决定 AI 能不能照着做对，verify 决定生成出来能不能信。</p>
+    <p><strong>落到我的项目（桥接，最关键的一段）</strong>：prd-tools 就是这 7 步的工程化实现。proposal 对应 PRD 摄入，design 对应能力面适配器（按需求类型分发），specs 就是我的 Reference 6 文件 SSOT，tasks 是 Spec/Plan 两阶段拆出来的 11 步，apply 是下游 Cursor/Claude Code 出码，verify 是 quality-gate.py 5 项检查（语法/字段双向/规则/集成 + 一致性），archive 是 Mode E 反馈回流。一句话——我不是在背概念，我是这 7 步每一步都亲手实现过。</p>
+    <p><strong>面试官最爱追的两类追问（提前备好）</strong>：一是工具链——EARS 需求规格化语法、GitHub 2025 开源的 Spec Kit（这是行业共识的依据，别说"26 年大家都认同"太绝对）；二是落地难点——团队接受度 + Spec 长期维护成本，诚实说这两点是企业里最大的拦路虎。<strong>蚂蚁一面真追过"和代码即文档比优势是什么"</strong>——一句话定调：spec 是<strong>唯一真理源 + 可执行契约</strong>，代码即文档只是给人看的事后记录。三个差异：① 文档性质——一个是被动记录、一个是约束生成的契约；② 风险控制——前者后置修补、spec 前置卡住；③ 质量一致性——spec 系统化不依赖个人。<strong>金融场景主动加一句收口：在 verify 步骤我会额外加一道资损风险评估</strong>，这正中蚂蚁稳定性文化的下怀。</p>
+    <p class="hint">[loop·已优化·待复核] 念法：定位钩子（不是新方法，是把"先想清楚"工程化）→ 演进链一句（Prompt→Context→Harness，Vibe/SDD/Harness 三档）→ 7 步顺着 lifecycle 念（specs+verify 是命门）→ 落 prd-tools 7 步对应（Reference6文件=specs、11步=tasks、quality-gate5项=verify、Mode E=archive）→ 两类追问（EARS/Spec Kit + 落地难点）→ 蚂蚁真题收口（唯一真理源+可执行契约三差异 + 金融加资损评估）。蚂蚁财富 AI Lab 必考。</p>
   </div>
 </div>
 
