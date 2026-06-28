@@ -1843,7 +1843,7 @@ function buildTreeOptimized(list) {
     <p><strong>第三层·金标准回归兜底</strong>：把 L7 升级、跨端配置变更这种高风险变更做成 benchmark case，每次 prd-tools 发版都回归一遍，确保失效检测真生效——不是纸上机制，是有回归守护的机制。</p>
     <p><strong>落到具体场景念给面试官</strong>："6/1 升级当天，GitNexus 检测到 membership-level.ts 的 diff，自动把 reference 05-domain 里所有 L7 相关键标为 stale。下次蒸馏发现这些键过期，强制走源码验证，所以 AI 拿到的就是新规则。"</p>
     <p><strong>收个口</strong>：这道题的关键不是知识会不会过时——一定会；是有没有机制兜住过时。分层管"多久查一次"、触发管"变了立刻知道"、回归管"机制别失效"。三件套缺一不可。</p>
-    <p class="hint">[loop·已优化·待复核] 念法：钩子（不是忍不忍是有没有机制兜）→ 业务背景（喂20+人、过期即返工塌信任）→ 三层逐条（时效性分层Tier1/2/3+三时间戳/触发式更新GitNexus检测/金标准回归）→ 具体场景念L7升级（GitNexus检测membership-level.ts→05-domain标stale→强制走source）→ 收口（分层管频率/触发管感知/回归管机制本身）。核心：别再说"暂时不可避免"，那是认输，要答机制。</p>
+    <p class="hint">[loop·已优化·已复核] 念法：钩子（不是忍不忍是有没有机制兜）→ 业务背景（喂20+人、过期即返工塌信任）→ 三层逐条（时效性分层Tier1/2/3+三时间戳/触发式更新GitNexus检测/金标准回归）→ 具体场景念L7升级（GitNexus检测membership-level.ts→05-domain标stale→强制走source）→ 收口（分层管频率/触发管感知/回归管机制本身）。核心：别再说"暂时不可避免"，那是认输，要答机制。</p>
   </div>
 </div>
 
@@ -1856,7 +1856,7 @@ function buildTreeOptimized(list) {
     <p><strong>第二招·PRD Chunking（按章节切，不全文加载）</strong>：大 PRD 按章节切，每 chunk 控在 5-8K。这里有个现成的抓手——Step 1 PRD Ingestion 已经产出了 document-structure.json，按段落/表格/图片把 PRD 结构化了。蒸馏时只加载和当前任务相关的 chunk，不用把整份 PRD 灌进去。这是已经上线的能力。</p>
     <p><strong>第三招·Map-Reduce 蒸馏（对标 Anthropic 多 Agent 研究系统）</strong>：超大 PRD 先派 sub-agent 按章节并行蒸馏，每个产出一份 chapter-summary，main agent 只合并这些摘要、不回头读原文。这样 token 消耗从 O(n) 降到 O(log n)。这是进阶招，复杂场景才上。</p>
     <p><strong>收口·诚实交代进度（这道题的杀手锏是 roadmap 清晰）</strong>：现在 v2.19 已经做了 PRD Ingestion 拆分（Chunking 落地），但显式 Budget 还在 Sprint 0 规划中、Map-Reduce 在 Sprint 4。所以面试官追问"做了吗"，答"Chunking 已经上线，Budget 显式管理和 Map-Reduce 在排期"——已经做的、正在做的、计划做的三层讲清，比说"暂时没考虑"强一百倍。</p>
-    <p class="hint">[loop·已优化·待复核] 念法：钩子（阿里一面被问住，真 gap）→ 三招递进（显式 Budget 切五块硬拦 / Chunking 按章节已上线 / Map-Reduce 进阶降阶）→ 收口（已做+在排期两层 roadmap）。被问"超窗怎么办"先甩 Budget 切五块，被问"PRD 太长"甩 Chunking 已上线。</p>
+    <p class="hint">[loop·已优化·已复核] 念法：钩子（阿里一面被问住，真 gap）→ 三招递进（显式 Budget 切五块硬拦 / Chunking 按章节已上线 / Map-Reduce 进阶降阶）→ 收口（已做+在排期两层 roadmap）。被问"超窗怎么办"先甩 Budget 切五块，被问"PRD 太长"甩 Chunking 已上线。</p>
   </div>
 </div>
 
@@ -2934,7 +2934,7 @@ function buildTreeOptimized(list) {
     <p><strong>两地部署都在华南 A/B 合理吗（高频追问）</strong>：不合理。两地部署的目的是容灾——地震、机房断电、光缆被挖断这类区域性故障。两个机房在同一城市甚至同一区域，面对区域性灾难会同时挂掉，失去容灾意义。<strong>真正容灾是异地双活</strong>——北京+广州、华东+华南，物理距离保证不同时受灾。</p>
     <p><strong>短期补偿措施（如果无法异地）</strong>：① 完善降级策略（核心链路有兜底页）；② 多级监控（机房级→服务级→接口级）；③ 预案演练（定期模拟机房级故障验证切换速度）；④ 客户端容错（服务端挂了客户端展示缓存数据不白屏）。</p>
     <p><strong>收口</strong>：事故反思的核心不是"这次怎么修"，是"机制怎么补"——把每次事故变成流程改进，让同样的错不犯第二次（这正好是 Ratchet 思想）。</p>
-    <p class="hint">[loop·已优化·待复核] 念法：基础设施意识钩子（只写代码天花板低）→ 事故三步（止血/根因/改进，yarn.lock+CI diff是改进）→ 两地同区域不合理（容灾=异地双活）→ 补偿四措施（降级/监控/演练/客户端容错）→ 收口（机制补漏，Ratchet思想）。</p>
+    <p class="hint">[loop·已优化·已复核] 念法：基础设施意识钩子（只写代码天花板低）→ 事故三步（止血/根因/改进，yarn.lock+CI diff是改进）→ 两地同区域不合理（容灾=异地双活）→ 补偿四措施（降级/监控/演练/客户端容错）→ 收口（机制补漏，Ratchet思想）。</p>
   </div>
 </div>
 
@@ -2947,7 +2947,7 @@ function buildTreeOptimized(list) {
     <p><strong>第二，全流程质量把控（不只是写代码）</strong>。预防层有 Schema 静态校验，校验层有联动引用检测，监控层有 reason tag 分类报警，生产层有灰度发布和自动化回归。<strong>400+ 权益 18 个月+零 breaking change 不是运气，是每个环节都有防控</strong>。</p>
     <p><strong>第三，新技术从 0 到 1 落地闭环</strong>。AI 工作流不是玩玩工具，是从知识库设计到质量门控到团队推广的完整闭环。20+ 人团队在用，有量化的投入产出数据（5h→2h、Readiness 82/83/62）。</p>
     <p><strong>收口</strong>：这三点都跟具体产出挂钩——抽象能力（Schema/Register）、质量能力（零 breaking change）、落地能力（团队推广+数据）。可验证，不空谈。</p>
-    <p class="hint">[loop·已优化·待复核] 念法：钩子（别答虚的，要可验证）→ 三点（业务抽共性Schema/Register + 全流程质量零breaking + 新技术0到1团队推广数据）→ 收口（都跟产出挂钩，不空谈）。被问"核心竞争力/优势/不可替代"都用这套。</p>
+    <p class="hint">[loop·已优化·已复核] 念法：钩子（别答虚的，要可验证）→ 三点（业务抽共性Schema/Register + 全流程质量零breaking + 新技术0到1团队推广数据）→ 收口（都跟产出挂钩，不空谈）。被问"核心竞争力/优势/不可替代"都用这套。</p>
   </div>
 </div>
 
