@@ -2058,7 +2058,7 @@ function buildTreeOptimized(list) {
     <p><strong>三种评测方法（组合用）</strong>：① <strong>LLM-as-Judge</strong>（强模型评 Agent 输出，可扩展但有误差，需先跟人工校准）；② <strong>Win Rate</strong>（两 Agent 做同任务比谁好，适合对比配置/模型，HelloAgents 等框架支持）；③ <strong>人工验证</strong>（金标准但不可扩展，抽样 LLM Judge 做交叉验证）。</p>
     <p><strong>落到我的项目（桥接）</strong>：prd-tools 的 Evidence Index 是 Agent 评测简化版——每步产出有溯源证据，能事后审计"结论从哪来"；Readiness Score 是自动化评分。端到端原型 prd2code-gen 的 eval 闭环更进一步——llm-judge 五维独立评分 + R01/R02 对照量化迭代效果。完整 Agent 评测的下一步是构造标准 PRD 测试集做版本间 Win Rate。</p>
     <p><strong>收口金句</strong>："Agent 评测比 LLM 评测复杂一个量级——不是评一次输出，是评整个执行轨迹：规划、工具选择、错误恢复。跟自动驾驶评测一个道理，不只看终点到没到，看全程开得安不安全。"</p>
-    <p class="hint">[loop·已优化·待复核] 念法：核心区分钩子（轨迹评测非单次）→ 业务背景（Agent工作流评全程）→ 三维度（规划/工具/恢复）→ 三方法（Judge/WinRate/人工）→ 落 prd-tools（Evidence+Readiness+prd2code-gen eval）→ 自动驾驶金句收口。</p>
+    <p class="hint">[loop·已优化·已复核] 念法：核心区分钩子（轨迹评测非单次）→ 业务背景（Agent工作流评全程）→ 三维度（规划/工具/恢复）→ 三方法（Judge/WinRate/人工）→ 落 prd-tools（Evidence+Readiness+prd2code-gen eval）→ 自动驾驶金句收口。</p>
   </div>
 </div>
 
@@ -2074,7 +2074,7 @@ function buildTreeOptimized(list) {
     <p>③ <strong>稳定性</strong>：质量门控在计划阶段拦截低质量输出，Readiness Score 低于阈值自动降级。还有一致性指标——同一 PRD 跑 10 次文件列表一致率从 40% 提到 85%+。</p>
     <p><strong>口径原则（关键，体现数据素养）</strong>：不说"效率提升 10 倍"这种虚数，说可衡量的中间指标——文件覆盖率、门控拦截率、人工确认项数量、一致性。<strong>主动说局限</strong>（不是严格 AB 实验、样本量小）比"包装完美"得分高。</p>
     <p><strong>收口</strong>：端到端原型 prd2code-gen 还有更硬的数据——llm-judge 五维 R01 54→R02 68 分（量化 reference 知识库 +14 分），这是端到端产物质量的客观评测。</p>
-    <p class="hint">[loop·已优化·待复核] 念法：三维度模板开场 → 业务背景（必答+要口径）→ 三维度（转化效率5h→2h/准确率80%/稳定性门控+一致性40→85%）→ 口径原则（不堆虚数+主动说局限）→ 收口 prd2code-gen 54→68。</p>
+    <p class="hint">[loop·已优化·已复核] 念法：三维度模板开场 → 业务背景（必答+要口径）→ 三维度（转化效率5h→2h/准确率80%/稳定性门控+一致性40→85%）→ 口径原则（不堆虚数+主动说局限）→ 收口 prd2code-gen 54→68。</p>
   </div>
 </div>
 
@@ -2088,7 +2088,7 @@ function buildTreeOptimized(list) {
     <p><strong>向量检索（Embedding）</strong>：文本切 chunk → embedding 向量化 → 存向量库 → 余弦相似度检索。<strong>特点</strong>：能理解语义相似但字面不同的内容（如"汽车"匹配"轿车"）。<strong>适合</strong>：自然语言文档、FAQ、非结构化知识库。</p>
     <p><strong>混合检索（生产主流）</strong>：两者结合——BM25 关键词保精准，向量补语义，再接 Reranker 重排序。</p>
     <p><strong>落到我的项目（关键决策）</strong>：prd-tools <strong>只用倒排+BM25，没上向量</strong>。原因是检索对象是代码——函数名、字段名、路径都是离散符号，精确匹配比语义近似更准更快（搜 getMembershipLevel 要精确命中，不要"语义相近"的 getLevel）。还能 grep 调试、零模型依赖。这是主动选型，不是不懂向量——换成自然语言知识库（PRD 文档/用户问答）我会上向量。</p>
-    <p class="hint">[loop·已优化·待复核] 念法：选型口诀（互补非替代）→ 业务背景（选错召回不准/维护重）→ 两种方案对比（结构化精确 vs 向量语义）→ 混合检索 → 落 prd-tools（为何只用倒排+BM25，代码场景精确优先）。</p>
+    <p class="hint">[loop·已优化·已复核] 念法：选型口诀（互补非替代）→ 业务背景（选错召回不准/维护重）→ 两种方案对比（结构化精确 vs 向量语义）→ 混合检索 → 落 prd-tools（为何只用倒排+BM25，代码场景精确优先）。</p>
   </div>
 </div>
 
@@ -2255,7 +2255,7 @@ function buildTreeOptimized(list) {
     <p><strong>第三层·怎么跑起来（底层机制）</strong>：注入层——Skills 内容拼进 Agent 的 system prompt，模型看到用户输入匹配 trigger 就按指令选调哪个；执行层——本质类似 Function Calling，模型识别意图 → 匹配 Skill → 按 workflow 一步步走，每步的 XML 约束卡住边界，中间产物靠文件传递不占对话上下文。</p>
     <p><strong>落到我的项目</strong>：prd-tools 就是用 Claude Code Skills 搭的——四个 Skill（prd-distill / team-distill / reference / team-reference），每个都是 SKILL.md + workflow.md + steps/ 三件套。以 prd-distill 为例：workflow.md 定义 3 步（解析 PRD → 分类分层 → 确认输出），step-01-parse.md 里 <code>&lt;allowed_inputs&gt;</code> 卡死只能读 PRD 和 reference、<code>&lt;must_not_produce&gt;</code> 禁止提前生成 layer-impact。这就是"用约束换可靠"——不是靠模型更聪明，是靠流程兜底。</p>
     <p><strong>和 MCP 的区别（高频追问一句话）</strong>：MCP 是 C/S 协议（工具注册在 Server、Agent 当 Client 调），管"工具怎么标准化连"，偏单次调用；Skills 是 Agent 原生的多步骤工作流，管"复杂任务怎么分步跑稳"，支持上下文管理和中间文件传递。<strong>两者互补不冲突</strong>——Skill 编排流程，MCP 补工具能力。</p>
-    <p class="hint">[loop·已优化·待复核] 念法：钩子（先破误区：Skill 是 Markdown 不是代码）→ 三文件协作（SKILL.md 触发/workflow.md 流程 SSOT/steps XML 约束）→ 怎么跑（注入 system prompt + 类 FC 执行）→ 落 prd-tools（四 Skill 三件套，举 step-01 的 allowed_inputs/must_not_produce 显深度）→ vs MCP 一句收口。被问"和写代码调 AI 区别"翻 Skill vs 写代码卡。</p>
+    <p class="hint">[loop·已优化·已复核] 念法：钩子（先破误区：Skill 是 Markdown 不是代码）→ 三文件协作（SKILL.md 触发/workflow.md 流程 SSOT/steps XML 约束）→ 怎么跑（注入 system prompt + 类 FC 执行）→ 落 prd-tools（四 Skill 三件套，举 step-01 的 allowed_inputs/must_not_produce 显深度）→ vs MCP 一句收口。被问"和写代码调 AI 区别"翻 Skill vs 写代码卡。</p>
   </div>
 </div>
 
