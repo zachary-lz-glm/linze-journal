@@ -3370,13 +3370,14 @@ function buildTreeOptimized(list) {
   <div class="card-head"><span class="tag ai">AI</span><div class="card-title">流式 Markdown 增量解析（代码块未闭合怎么办）</div></div>
   <div class="core">逐 token 到达，代码块/表格未闭合时暂存 buffer，闭合后再渲染</div>
   <div class="card-body">
-    <p><strong>核心挑战</strong>：LLM 流式是逐 token 到达，但代码块/表格/列表跨多个 token 才完整，直接渲染会乱。</p>
-    <p><strong>三个挑战</strong>：① 代码块未闭合（```javascript 未闭合就渲染会变普通文本）② 表格分隔行（|---|）必须先出现 ③ 列表嵌套需要看后续行。</p>
-    <p><strong>性能瓶颈</strong>：每 token 全量 re-render → 万级 token 卡死。</p>
-    <p><strong>主流方案</strong>：① marked-streaming / markdown-it incremental（专用流式解析器，状态机）② 分块渲染（按换行切分）③ 缓冲 + 批量解析（50ms 一批）。</p>
-    <p><strong>性能优化四件套</strong>：① rAF 节流（合并多次渲染）② Web Worker（解析放主线程外）③ 虚拟列表（万级 token 不全量渲染）④ useDeferredValue（React 18+ 不阻塞输入）。</p>
-    <p><strong>Chrome 官方最佳实践</strong>：流式 Markdown 解析器 + 异步 syntax highlighter（Shiki/highlight.js）+ 图片懒加载 + content-visibility:auto。</p>
-    <p class="hint">蚂蚁 JD 明确点名"流式输出"，必考。代码块未闭合是追问杀手锏。</p>
+    <p><strong>这道题是流式输出的下钻追问——"渲染层怎么不卡、不乱"。我答两层：先讲未闭合怎么暂存，再讲性能怎么扛住。</strong></p>
+    <p><strong>先说核心矛盾</strong>：LLM 流式是逐 token 吐的，但 Markdown 的代码块、表格、列表是跨多 token 才完整的结构——比如 <code>```javascript</code> 后面的代码块没等到闭合的 <code>```</code> 就强行渲染，会当成普通文本糊出来；表格的分隔行 <code>|---|</code> 没出现就没法成表；嵌套列表要看后续行才知道层级。所以不能"来一个 token 渲染一次"，得<strong>暂存 buffer、等结构闭合再渲染</strong>。</p>
+    <p><strong>未闭合的三个典型坑</strong>：① 代码块未闭合（最常见，````javascript 未闭合就渲染会变成一堆乱字符）；② 表格分隔行（<code>|---|</code> 这行没到，表格没法成型）；③ 列表嵌套（缩进层级要往后看才知道）。处理思路统一——维护一个 buffer，遇到结构起始标记就累积，检测到闭合标记再整段交给解析器渲染。</p>
+    <p><strong>第二个矛盾是性能</strong>：如果每个 token 到了就全量 re-render，万级 token 直接卡死主线程。所以渲染层要降频——别来一次渲染一次。三种主流降频方案：① <strong>专用流式解析器</strong>（marked-streaming / markdown-it incremental，内部是状态机，能识别未闭合结构暂存）；② <strong>分块渲染</strong>（按换行切成完整行再渲染）；③ <strong>缓冲 + 批量解析</strong>（攒一批 50ms 渲染一次）。</p>
+    <p><strong>性能优化四件套（背下来）</strong>：① <strong>rAF 节流</strong>——用 requestAnimationFrame 合并多次渲染到一帧，绝不每 token 触发 DOM 更新；② <strong>Web Worker</strong>——把 Markdown 解析这种 CPU 活挪出主线程，UI 不卡顿；③ <strong>虚拟列表</strong>——万级 token 的长输出只渲染视口内的，不全部挂 DOM；④ <strong>useDeferredValue</strong>（React 18+）——渲染再重也不阻塞用户在输入框打字。</p>
+    <p><strong>Chrome 官方最佳实践（被追问再甩）</strong>：流式 Markdown 解析器 + 异步 syntax highlighter（Shiki/highlight.js，别同步高亮）+ 图片懒加载 + <code>content-visibility:auto</code>（让屏幕外的内容跳过渲染开销）。</p>
+    <p><strong>追问杀手锏</strong>：被问"代码块没闭合怎么办" → 答"暂存 buffer 等闭合标记再渲染，同时用 rAF 降频不阻塞 UI"；被问"万级 token 怎么不卡" → 答"虚拟列表只渲染视口 + Web Worker 解析 + useDeferredValue 不阻塞输入"。这两个细节答出来，面试官就知道你真做过流式输出。</p>
+    <p class="hint">[loop·已优化·待复核] 念法：钩子（流式输出渲染层下钻，分两层）→ 核心矛盾（逐 token 但结构跨多 token，暂存 buffer 等闭合）→ 三个坑（代码块/表格分隔行/列表嵌套）→ 性能矛盾（每 token 全量 re-render 卡死）→ 三种降频方案 → 四件套（rAF/Web Worker/虚拟列表/useDeferredValue）→ Chrome 最佳实践被追问再甩 → 追问杀手锏收口。和"流式输出5层"卡配套，那是整体架构这张是渲染层深挖。</p>
   </div>
 </div>
 
