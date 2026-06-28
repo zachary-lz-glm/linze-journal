@@ -2424,12 +2424,14 @@ function buildTreeOptimized(list) {
   <div class="card-head"><span class="tag ai">AI</span><div class="card-title">Agent工作记忆怎么管理？</div></div>
   <div class="core">Progressive Summarization递归压缩旧消息保持上下文固定大小，类似操作系统的虚拟内存分页</div>
   <div class="card-body">
-    <p><strong>核心问题</strong>：对话越长上下文越满，Token消耗线性增长、延迟增加、模型注意力被稀释。必须压缩，但不能丢关键信息。</p>
-    <p><strong>方案一：Progressive Summarization</strong>。把最老的消息递归压缩成摘要块放在Prompt开头，上下文保持固定大小。优点是成本和延迟恒定，缺点是有损压缩——多次摘要后会丢失细节，像传话游戏。</p>
-    <p><strong>方案二：MemGPT/Letta分页机制</strong>。设置上下文阈值，超过就把旧内容flush成摘要存到外部存储，需要时再检索回来。跟操作系统的虚拟内存分页一个思路——主存放不下就换到磁盘，用的时候再换回来。</p>
-    <p><strong>方案三：Observation Masking</strong>（JetBrains研究）。不真删旧消息，用简短占位符替换，保留对话结构信息但大幅减少Token。比如把一段50行的讨论压缩成"[讨论了API设计，决定用REST]"。</p>
-    <p><strong>实际工程中的做法</strong>：Claude Code的Memory文件就是长期记忆和短期记忆的桥梁——自动提取关键决策和约束存成Markdown，下次对话自动注入。这解决了"每次对话从零开始"的问题。</p>
-    <p><strong>面试一句话</strong>："工作记忆管理本质是信息压缩问题——像操作系统管内存一样，主存（上下文窗口）放不下就换页（flush到外部存储），但压缩策略决定了你会丢多少细节。"</p>
+    <p><strong>这道题小红书一面直接追问过我"工作记忆怎么做 Summary"——核心矛盾一句话：对话越轮越长，但上下文窗口是硬上限，所以记忆管理本质是"在有限窗口里保留最多有效信息"。我把它拆成三套方案，再加一个我落地的对照。</strong></p>
+    <p><strong>先把矛盾讲透，这是面试官想听的第一层</strong>：LLM 是自回归的，每生成一个 token 都要回看历史 K/V，所以前文越长越贵、延迟越高，还会触发 "Lost in the Middle"——中间的信息被忽略。所以"长对话怎么管"不是优化项，是必须项，必须压。</p>
+    <p><strong>方案一·Progressive Summarization（递归摘要，最经典）</strong>：把最老的消息递归压缩成一段摘要块放在 prompt 开头，上下文保持固定大小。好处是成本和延迟恒定、可预测；代价是有损压缩——多压几轮细节就糊了，像传话游戏。<strong>这是小红书面试官要的那个关键词，必须主动甩出来。</strong></p>
+    <p><strong>方案二·MemGPT/Letta 分页（最能显深度）</strong>：设个上下文阈值，超过就把旧内容 flush 成摘要存到外部存储，下次要用再检索回来。思路跟<strong>操作系统的虚拟内存分页一模一样</strong>——主存放不下就换到磁盘，用的时候再换回来。这套是亮点，能讲到"分页"这个类比就比 90% 候选人强。</p>
+    <p><strong>方案三·Observation Masking（JetBrains 的研究）</strong>：不真删旧消息，用简短占位符替换——比如一段 50 行的讨论压成 "[讨论了 API 设计，决定用 REST]"。保留了对话结构信息，但大幅省 token。适合不想丢上下文脉络、又想省钱的场景。</p>
+    <p><strong>落到我的项目（被追问就甩，显你不是背概念）</strong>：prd-tools 的 reference 6 文件就是这套思路的工程化变体——不是把整段开发对话都存下来，而是把几万行代码蒸馏成 6 个领域知识文件（结构/规则/契约/路由/领域 Map/实体索引），每次请求按需检索相关片段拼进上下文。本质和 Progressive Summarization 一样：信息从"全量对话"压缩成"结构化精选"，既省 token 又不丢关键事实。Claude Code 的 Memory 文件也是同款——自动把长对话的关键决策和约束压缩成 Markdown，下次对话自动注入，这就是长期记忆和短期记忆的桥梁。</p>
+    <p><strong>收个口</strong>：记忆管理的本质就是信息压缩问题——主存（上下文窗口）放不下就换页（flush 到外部存储），但压缩策略决定了你会丢多少细节。被问"Claude Code 具体怎么管"翻多轮对话上下文管理卡（auto-compaction + CLAUDE.md 三层）。</p>
+    <p class="hint">[loop·已优化·待复核] 念法：钩子（小红书一面真题，核心矛盾=窗口有限要压）→ 为啥必考（自回归越贵+Lost in Middle）→ 三方案逐条（Progressive Summarization 递归摘要经典款/MemGPT 分页亮点类比操作系统换页/Observation Masking 占位符）→ 落 prd-tools（reference 6 文件=结构化压缩变体）+ Claude Code Memory 桥梁 → 收口金句（主存放不下换页）。被问"具体怎么管"翻多轮对话卡。</p>
   </div>
 </div>
 
