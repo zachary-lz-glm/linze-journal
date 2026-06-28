@@ -2758,10 +2758,18 @@ function buildTreeOptimized(list) {
   <div class="card-head"><span class="tag proj">架构</span><div class="card-title">代码上下文怎么精准定位？</div></div>
   <div class="core">知识库路由优先定向 → 索引精确扫描 → 全局搜索补充，三轮逐步精准</div>
   <div class="card-body">
-    <p><strong>给AI提供了什么</strong>：两层。①静态层：6个YAML知识库（目录/枚举/契约/路由映射/编码规则/领域术语）+ 4个索引文件（实体/边/倒排索引/清单）；②动态层：运行时按需求搜索源码。</p>
-    <p><strong>三阶段扫描</strong>：Phase1 Reference路由（04-routing-playbooks匹配关键词→定向文件路径）→ Phase2 Index精确扫描（context-pack.py构建查询计划匹配实体）→ Phase3 rg/glob补充（覆盖未命中）。</p>
-    <p><strong>能力面适配器</strong>：前端(9面:ui_route/view_component/form_or_schema等)、BFF(10面:schema_or_template/linkage_options等)、后端(10面:api_surface/domain_model等)。路径只是搜索候选，事实由源码确认。</p>
-    <p><strong>上下文包</strong>：context-pack.py合并索引实体与蒸馏上下文，产出≤800行精准上下文（需求种子/关键实体/相似注册表/高置信线索）。</p>
+    <p><strong>这道题面试官想听的不是"我用了向量库"，是你能不能讲清"怎么把几万行代码精准收敛成几百行喂给模型"——核心矛盾是 token 预算有限，喂多了爆窗、喂少了幻觉。我答三层递进的扫描策略 + 一个能力面抽象，照念能答出真做过 RAG 的深度。</strong></p>
+    <p><strong>先甩一句定调（这题骨架）</strong>：精准定位不是一次搜出来，是<strong>三轮逐步收敛——知识库路由先定向、索引精确匹配再缩小、全局搜索兜底补漏</strong>。核心思想是"先靠记忆缩小范围，再靠精确匹配锁定，最后才全文搜索"。这一句先立住，下面三层都是给它做支撑。</p>
+    <p><strong>业务背景（为什么这题对我特别重要）</strong>：prd-tools 喂 20+ 人用，几万行代码不可能全塞进 prompt——窗口会爆、还 Lost in Middle。所以我必须做到"每次只给 AI 它真正需要的那几百行"。这套三轮扫描就是干这个的：不是堆全量知识，是给模型精准的"导航+锚点"。</p>
+    <p><strong>先说给 AI 准备了什么（两层弹药）</strong>：① <strong>静态层</strong>是 6 个 YAML 知识库（目录/枚举/契约/路由映射/编码规则/领域术语）+ 4 个索引文件（实体/边/倒排索引/清单），跑一次 build 全建好；② <strong>动态层</strong>是运行时按需求搜源码。两层的分工是——静态管"导航和约束"，动态管"确认事实"。</p>
+    <p><strong>再讲三轮扫描，每轮一句（被问"具体怎么搜"就按这三轮念）</strong>：</p>
+    <p>· <strong>第一轮·Reference 路由定向（先靠记忆）</strong>：消费 04-routing-playbooks，匹配 PRD 关键词 → 定向到候选文件路径。本质是"上次改这类需求去了哪些文件"的有记忆搜索，不是从零猜。这一轮把搜索范围从全仓库缩到几十个候选文件。</p>
+    <p>· <strong>第二轮·索引精确扫描（再靠匹配）</strong>：context-pack.py 构建查询计划，匹配实体（函数/类/枚举）。比如 PRD 写"完单油站券"，先用 05-domain 术语表桥接成 CompleteOrderGas，再从倒排索引精确查到 <code>enum:campaignType.ts:CompleteOrderGas:42</code>。这一轮从候选文件缩到具体符号，是定位最关键的一跳。</p>
+    <p>· <strong>第三轮·rg/glob 兜底补漏</strong>：前两轮没命中的，再用全局搜索覆盖一遍——确保没漏掉关键文件。三轮是"广撒网 → 精确锚 → 兜底扫"的递进，漏的概率被一层层压下去。</p>
+    <p><strong>能力面适配器（这是我最深的设计，杀手锏在这里）</strong>：传统搜索按文件路径，路径一变就失效；我按"能力面"抽象——前端 9 个面（ui_route/view_component/form_or_schema 等）、BFF 10 个面（schema_or_template/linkage_options 等）、后端 10 个面（api_surface/domain_model 等）共 29 个维度。AI 先识别需求命中哪些能力面，再按能力面定位候选文件。<strong>关键认知</strong>：能力面给的只是"候选"，最终事实必须由源码确认——这一句堵住"你怎么保证不幻觉"的追问，因为定位是导航不是结论。</p>
+    <p><strong>上下文包是最后产物</strong>：context-pack.py 把索引实体和蒸馏上下文合并，产出<strong>≤800 行的精准上下文</strong>（需求种子/关键实体/相似注册表/高置信线索）。几万行 → 800 行，token 预算稳住、关键事实不丢。</p>
+    <p><strong>落到我的项目收口</strong>：这套是 prd-tools 真跑的——三轮扫描 + 能力面 + context-pack 不是 PPT。一句话：<strong>给 AI 喂数据的核心不是"喂多少"，是"喂得准不准"</strong>——三轮递进收敛 + 能力面抽象 + 路径只是候选事实归源码，是让中等模型也能跑出贵模型效果的关键工程手段。被问"和 RAG 向量检索区别"→ 翻 BM25 检索卡，代码场景精确匹配优先于语义模糊。</p>
+    <p class="hint">[loop·已优化·待复核] 念法：钩子（核心矛盾 token 预算有限，喂多爆窗喂少幻觉）→ 定调金句（三轮逐步收敛：路由定向→索引精确→全局兜底）→ 业务背景（prd-tools 喂 20+ 人、几万行不能全塞）→ 两层弹药（静态 6 YAML+4 索引管导航约束/动态运行时管确认事实）→ 三轮逐条（路由先靠记忆缩范围/context-pack 倒排精确匹配缩到符号是关键跳/rg 兜底补漏）→ 能力面杀手锏（29 维=前端9/BFF10/后端10，路径只是候选事实归源码堵幻觉追问）→ 产物 ≤800 行收口（几万→800，喂得准比喂多重要）。被问"和 RAG 向量检索区别"翻 BM25 检索卡。</p>
   </div>
 </div>
 
