@@ -1680,7 +1680,7 @@ function buildTreeOptimized(list) {
     <p><strong>第一层·本质</strong>：Agent 和普通 LLM 对话的区别，在于它不是问一句答一句的单轮调用，而是会自己决定"下一步做什么"的循环——<strong>感知</strong>（接收输入和工具返回）→ <strong>思考</strong>（LLM 推理下一步）→ <strong>行动</strong>（调工具），不断迭代到任务完成。普通 Chat 停在"思考完输出"，Agent 多了"行动 + 再感知"的闭环。</p>
     <p><strong>第二层·三个核心组件</strong>：① <strong>Tool Use</strong> 让它能调外部工具——底层 Function Calling，开发者定义 schema，LLM 语义判断调不调、调哪个，输出 tool_call JSON 由运行时执行，结果回灌上下文继续推理；② <strong>Memory</strong> 让它记住上下文——短期是对话窗口、长期是摘要或向量库、工作是任务中间状态；③ <strong>编排模式</strong> 决定怎么决策，主流 <strong>ReAct</strong>（边想边干，GPT/Claude 默认），复杂任务 <strong>Plan-and-Execute</strong>（先规划再执行），要自我纠错加 <strong>Reflection</strong>（成本翻倍慎用）。</p>
     <p><strong>第三层·落到我的项目</strong>：prd-tools 就是 Plan-and-Execute 模式——双 Skill + 11 步固定流水线，用证据链和 Readiness 门控约束行为，规避开放式 Agent Loop 的死循环。框架上 LangGraph 适合需要循环分支和人工介入的复杂编排。</p>
-    <p class="hint">[loop·待复核] 念法：先甩"循环决策系统"定义 → 三组件（Tool/Memory/编排）→ 落 prd-tools。被追问 ReAct 细节见 Agent Loop 卡。</p>
+    <p class="hint">[loop·已优化·已复核] 念法：先甩定义钩子（Agent 不是单次调模型，是"感知→思考→行动"循环，比 Chat 多了"行动+再感知"闭环）→ 三层递进（本质一句/三核心组件逐条：Tool Use 走 FC 运行时执行、Memory 短期长期工作三层、编排 ReAct 默认-Plan-and-Execute 复杂-Reflection 慎用成本翻倍/落 prd-tools Plan-and-Execute 11步+证据链+Readiness 门控防死循环）→ 收口金句"LLM 决策+工具执行+记忆持续缺一不可"。被问 ReAct 细节见 Agent Loop 卡，被问"和普通 Chat 区别"甩闭环多出来的行动+再感知。</p>
   </div>
 </div>
 
