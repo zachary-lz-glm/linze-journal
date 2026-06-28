@@ -2294,7 +2294,7 @@ function buildTreeOptimized(list) {
     <p>第三是<strong>结果波动大、无法保证一致性</strong>——同样输入，今天跑出 80 分明天 50 分，没法承诺"每次都做到合格"。这对喂团队用的工具是致命的：质量不稳就没人敢长期依赖。</p>
     <p><strong>Skill 的本质一句话</strong>：把上面这些"人怎么用 AI 做好这个任务"的隐性经验显性化、结构化——什么时候做什么判断、每步产出什么、什么算合格，全都编码进 workflow。它<strong>不是给 AI 新能力，是教 AI 怎么每次都干好</strong>。</p>
     <p><strong>落我的项目收口</strong>：prd-tools 后来就把"PRD→计划"的全流程抽象成四个 Skill，workflow.md 定义步骤、steps/ 卡住每步边界、中间产物靠文件传递不占对话。从"每人各跑各的"变成"20+ 人跑同一条流水线"，5h 压到 2h。<strong>金句收口：直接调 AI 是让模型"能干活"，Skill 是教模型"怎么每次都干好"——一个解决能力，一个解决质量。</strong></p>
-    <p class="hint">[loop·已优化·待复核] 念法：钩子先甩（核心问题不是调不通是经验无法沉淀，Skill 把隐性过程固化成可复用流程）→ 业务背景（prd-tools 喂 20+ 人，最早各自直接调 AI，同一份 PRD 十人十种质量，模型一更新又全变）→ 三大痛点逐条（从零开始/无状态靠人脑/波动大无法承诺一致）→ Skill 本质一句（不是给能力是教怎么干好）→ 落 prd-tools 收口（四 Skill 流水线 5h→2h）→ 金句（能干活 vs 每次都干好）。被问"Skill 具体怎么跑"翻 Skills 调用原理卡，被问"和写代码调 AI 区别"翻下一卡。</p>
+    <p class="hint">[loop·已优化·已复核] 念法：钩子先甩（核心问题不是调不通是经验无法沉淀，Skill 把隐性过程固化成可复用流程）→ 业务背景（prd-tools 喂 20+ 人，最早各自直接调 AI，同一份 PRD 十人十种质量，模型一更新又全变）→ 三大痛点逐条（从零开始/无状态靠人脑/波动大无法承诺一致）→ Skill 本质一句（不是给能力是教怎么干好）→ 落 prd-tools 收口（四 Skill 流水线 5h→2h）→ 金句（能干活 vs 每次都干好）。被问"Skill 具体怎么跑"翻 Skills 调用原理卡，被问"和写代码调 AI 区别"翻下一卡。</p>
   </div>
 </div>
 
@@ -2308,7 +2308,7 @@ function buildTreeOptimized(list) {
     <p><strong>第二种·Skill 方式（对应着讲怎么补上）</strong>：prompt 即配置，改 Markdown 文件就能调整行为，不动代码不重新部署；流程声明式定义在 workflow.md 里，步骤、依赖、门控一目了然；中间文件传递和质量门控是内置机制，不用自己实现。本质是在写一份"AI 的操作手册"，关注的是过程怎么编排、质量怎么保障。</p>
     <p><strong>三处关键差异（被追问"到底差什么"就甩这三条）</strong>：① <strong>改动成本</strong>——写代码是动代码+部署，Skill 是改 Markdown 即时生效；② <strong>流程可见性</strong>——写代码的逻辑藏在 if-else 里换人看不懂，Skill 的流程在 workflow.md 里人人能读；③ <strong>状态管理</strong>——写代码要手写上下文传递和中间结果存储，Skill 用中间文件+内置门控，不用造轮子。</p>
     <p><strong>落到我的项目收口</strong>：prd-tools 最早也是写代码调 AI，prompt 散落在各个 TypeScript 文件里。后来发现同样的 PRD 分析逻辑每次都在不同文件里重写 prompt、改一句要动好几个文件，才抽象成 Skill——workflow.md 管流程、steps/ 管每步约束、中间文件管状态传递。<strong>收口金句再说一遍</strong>：写代码调 AI 是给模型写客户端，Skill 是给模型写操作手册——一个解决调通不通，一个解决每次好不好。能讲到这句，面试官就知道你是真从写代码演进过来的，不是只会用现成框架。</p>
-    <p class="hint">[loop·已优化·待复核] 念法：钩子金句先甩（写代码调 AI 是给模型写客户端，Skill 是给模型写操作手册；一个解决调通不通，一个解决每次好不好）→ 两种方式逐条对比（写代码 prompt hardcode 在代码里改要重新部署+流程藏 if-else+状态靠造轮子 / Skill 改 Markdown 即时生效+workflow.md 声明式+中间文件门控内置）→ 三处关键差异被追问甩（改动成本/流程可见性/状态管理）→ 落 prd-tools 收口（最早写代码 prompt 散落 TS 文件，演进成 workflow.md+steps/+中间文件，金句再说一遍收尾）。被问"Skill 和写代码调 AI 区别 / 为什么不直接写代码调"翻这张卡，主动甩金句定调。</p>
+    <p class="hint">[loop·已优化·已复核] 念法：钩子金句先甩（写代码调 AI 是给模型写客户端，Skill 是给模型写操作手册；一个解决调通不通，一个解决每次好不好）→ 两种方式逐条对比（写代码 prompt hardcode 在代码里改要重新部署+流程藏 if-else+状态靠造轮子 / Skill 改 Markdown 即时生效+workflow.md 声明式+中间文件门控内置）→ 三处关键差异被追问甩（改动成本/流程可见性/状态管理）→ 落 prd-tools 收口（最早写代码 prompt 散落 TS 文件，演进成 workflow.md+steps/+中间文件，金句再说一遍收尾）。被问"Skill 和写代码调 AI 区别 / 为什么不直接写代码调"翻这张卡，主动甩金句定调。</p>
   </div>
 </div>
 
@@ -2492,7 +2492,7 @@ function buildTreeOptimized(list) {
     <p><strong>诚实说边界（这句最显工程判断，别只夸）</strong>：OpenClaw <strong>不提供默认安全沙箱</strong>，权限和操作范围得手动配置——灵活但上手门槛高，高级用户能精细管控每一步，新手容易配错。所以它的定位是<strong>"你配置它执行"的工具型网关，不是自进化伙伴</strong>。主动说这句，比把它吹成银弹可信十倍。</p>
     <p><strong>横向对比（被追问"和别的有啥区别"就甩这两组）</strong>：① <strong>vs Claude Code</strong>——Claude Code 专注编码场景、深度集成终端和 IDE，一个精专；OpenClaw 是通用 Agent 平台、连接聊天平台做各类任务，一个广谱。② <strong>vs 自定义 Agent</strong>——OpenClaw 是<strong>运行平台（操作系统）</strong>，自定义 Agent 是上面跑的<strong>应用</strong>：它提供消息连接、记忆管理、插件生态这些基础设施，你的业务逻辑用 Skills 定义。一个好记的类比：<strong>OpenClaw 是手机，你的 Skills 是 APP</strong>。</p>
     <p><strong>收口落回我自己（桥接，证明不是背概念）</strong>：我自己做的 prd-tools，思路和 OpenClaw 的"文件驱动 + Skills 扩展"是同频的——我也用 SKILL.md + workflow.md 定义工作流、用 XML 约束行为边界、用质量门控卡产出，本质都是<strong>把 Agent 行为约束从硬编码降成可读、可版本控制的配置</strong>。差异我也主动说：OpenClaw 是通用平台、广谱；我做的是编码场景的窄而深。<strong>金句收口：2026 年搭 Agent 的趋势不是从零写循环，是选一个基座（OpenClaw/Claude Code/自研）+ 用配置定义行为——基座选错天花板低，配置做松就翻车。</strong></p>
-    <p class="hint">[loop·已优化·待复核] 念法：钩子（不是背功能清单，是一句话点透产品定位）→ 一句定位立骨架（开源本地优先通用 Agent 平台，不是某个 Agent 是搭 Agent 的"操作系统"基座）→ 能力组合顺一遍（文件驱动/Skills+MCP/持久记忆/24/7+子代理/ClawHub，本质=搭 Agent 从写代码降成配文件+装插件）→ 诚实边界（无默认安全沙箱=工具型网关不是自进化伙伴，主动说不夸银弹）→ 横向对比被追问甩（vs Claude Code 精专 vs 广谱 / vs 自定义 Agent = 操作系统 vs 应用，类比手机 vs APP）→ 落 prd-tools（SKILL.md+workflow.md+XML 约束=同频，差异=广谱 vs 编码窄而深）→ 金句（基座选错天花板低+配置做松翻车）。被问"OpenClaw 和 Claude Code 区别"甩 vs Claude Code 那段。</p>
+    <p class="hint">[loop·已优化·已复核] 念法：钩子（不是背功能清单，是一句话点透产品定位）→ 一句定位立骨架（开源本地优先通用 Agent 平台，不是某个 Agent 是搭 Agent 的"操作系统"基座）→ 能力组合顺一遍（文件驱动/Skills+MCP/持久记忆/24/7+子代理/ClawHub，本质=搭 Agent 从写代码降成配文件+装插件）→ 诚实边界（无默认安全沙箱=工具型网关不是自进化伙伴，主动说不夸银弹）→ 横向对比被追问甩（vs Claude Code 精专 vs 广谱 / vs 自定义 Agent = 操作系统 vs 应用，类比手机 vs APP）→ 落 prd-tools（SKILL.md+workflow.md+XML 约束=同频，差异=广谱 vs 编码窄而深）→ 金句（基座选错天花板低+配置做松翻车）。被问"OpenClaw 和 Claude Code 区别"甩 vs Claude Code 那段。</p>
   </div>
 </div>
 
@@ -2509,7 +2509,7 @@ function buildTreeOptimized(list) {
     <p>第四是 <strong>记忆和知识持久化</strong>——Claude Code 的 Memory 文件、OpenClaw 的持久记忆、BMAD 的上下文文件、我 prd-tools 的 Reference 六文件——都在解决"AI 每次从零开始"的痛点，把经验固化成可检索的知识，而不是每次重新喂。</p>
     <p><strong>落到我的项目（这道题的真正加分项）</strong>：prd-tools 的每个设计决策都能在热榜工具里找到对应——我的双 Skill 拆分对应 BMAD 的多 Agent 分工，XML 约束对应 Superpowers 的 allowed_inputs，中间文件传递对应所有工具的状态管理。<strong>这说明我不是闭门造车，我的架构选择跟行业最前沿是同频的</strong>——被问"凭什么相信你的设计"，这一句就是答案。</p>
     <p><strong>收个口</strong>：方法论收敛这件事本身就是 2026 年 AI 工程化的最大信号——工具还会换，但"Markdown 定义指令、Skills 拆任务、文件传状态、门控保质量"这套骨架短期不会变。被问"AI 工具这么多怎么选"，翻 Cursor/Copilot/Claude Code 对比卡；被问"你怎么跟进前沿"，就甩这套方法论验证的逻辑。</p>
-    <p class="hint">[loop·已优化·待复核] 念法：钩子（被问"怎么跟进前沿"别列工具名，答方法论，把信息题拔成判断力题）→ 核心观察立骨架（BMAD/Superpowers/OpenClaw/prd-tools 都在把"手写 prompt"变"可复用工程化"，工具在变方法论在收敛）→ 四模式顺一遍（Markdown即代码/任务拆分+中间文件/质量门控/记忆持久化，每个带为什么）→ 落 prd-tools（双Skill对应BMAD/XML约束对应allowed_inputs/中间文件对应状态管理，证明同频不是闭门造车）→ 金句收口（工具会换骨架不变）。被问"凭啥信你的设计"→甩同频那句。</p>
+    <p class="hint">[loop·已优化·已复核] 念法：钩子（被问"怎么跟进前沿"别列工具名，答方法论，把信息题拔成判断力题）→ 核心观察立骨架（BMAD/Superpowers/OpenClaw/prd-tools 都在把"手写 prompt"变"可复用工程化"，工具在变方法论在收敛）→ 四模式顺一遍（Markdown即代码/任务拆分+中间文件/质量门控/记忆持久化，每个带为什么）→ 落 prd-tools（双Skill对应BMAD/XML约束对应allowed_inputs/中间文件对应状态管理，证明同频不是闭门造车）→ 金句收口（工具会换骨架不变）。被问"凭啥信你的设计"→甩同频那句。</p>
   </div>
 </div>
 
