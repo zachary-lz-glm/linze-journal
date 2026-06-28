@@ -2238,10 +2238,15 @@ function buildTreeOptimized(list) {
   <div class="card-head"><span class="tag proj">工作流</span><div class="card-title">AI工作流怎么优化和迭代</div></div>
   <div class="core">维护黄金Case集 + Benchmark回归 + LLM-as-Judge自动评分；端到端原型已落地完整 eval/auto-tune 五模块闭环</div>
   <div class="card-body">
-    <p><strong>黄金Case集</strong>：维护一套已人工验证的完整需求案例（5-10个中等复杂度需求），覆盖典型场景。每次变更后用这套Case重跑，对比前后评分。</p>
-    <p><strong>Benchmark回归</strong>：用已跑完的case当用例评分集，优化Prompt或配置后重跑，对比五维评分和文件覆盖率的变化——进步还是退步。相当于A/B测试。</p>
-    <p><strong>LLM-as-Judge（端到端原型已实现）</strong>：prd2code-gen 里完整跑通了 eval/auto-tune 五模块闭环——case-loader 加载黄金集 → llm-judge 用另一个大模型对产物做五维独立评分 → scorer 计算分值 → gap-analyzer 定位失分点 → pattern-detector 跨 case 提炼共性 pattern 反哺 prompt。已做 R01/R02 对照实验（54→68 分，量化 reference 知识库价值 +14 分）。</p>
-    <p><strong>迭代节奏</strong>：每次只改一个变量（Prompt/门禁阈值/能力面配置），跑黄金Case看效果，确认无退化后再合入。</p>
+    <p><strong>这道题先甩一句定调——AI 工作流不是"调好 prompt 就完了"，是"能持续量化效果、能定位失分、能自动反哺"，缺哪环都会停在一次性 demo。我答的骨架是"三件套闭环 + 量化实验"，照念能讲出真正搭过 eval 体系的深度。</strong></p>
+    <p><strong>先讲为什么必须有这套（业务背景）</strong>：prd-tools 喂 20+ 人用，我每次改 prompt、调门禁阈值、加能力面，都会担心"是不是改坏了别的"。如果只靠人工看几个产物，既不可复现、也没法量化退步——必须有一套"固定输入跑出来的、能用同一把尺子打分"的东西。这套东西就是黄金 Case 集 + LLM-as-Judge 自动评分。</p>
+    <p><strong>三件套顺一遍（答题骨架，每件一句）</strong>：</p>
+    <p>· <strong>第一件·黄金 Case 集做 Benchmark 回归</strong>：维护一套人工验证过的完整需求案例（5-10 个中等复杂度，覆盖典型场景），每次改完 prompt 或配置就用这套重跑，对比前后五维评分和文件覆盖率的变化——本质就是 A/B 测试，进步还是退步一眼看出。</p>
+    <p>· <strong>第二件·LLM-as-Judge 做自动评分</strong>：不用人工逐个看产物，用另一个大模型对生成产物做五维独立评分。这一步把"主观好不好"变成"可比较的数字"，是整个闭环的前提。</p>
+    <p>· <strong>第三件·迭代节奏（防改坏的纪律）</strong>：每次只改一个变量（prompt / 门禁阈值 / 能力面配置），跑黄金 Case 看效果，确认无退化才合入——别一次改五处，否则退步了都说不清是哪处引入的。</p>
+    <p><strong>落到我的项目（关键桥接，杀手锏在这里）</strong>：我端到端原型 prd2code-gen 里真跑通了 eval/auto-tune 五模块闭环，不是 PPT——<strong>case-loader</strong> 加载黄金集 → <strong>llm-judge</strong> 用另一个大模型对产物五维独立评分 → <strong>scorer</strong> 算分 → <strong>gap-analyzer</strong> 定位单 case 失分点 → <strong>pattern-detector</strong> 跨 case 提炼共性 pattern 反哺 prompt。还做了 R01/R02 对照实验（基线 54 vs 实验 68，+26%），量化证明了 reference 知识库的真实价值——这是把"我感觉加了 reference 更好"变成"有数据证明"的关键。</p>
+    <p><strong>收口金句</strong>："AI 工作流优化的核心不是调 prompt，是搭一个能自评分、自定位、自反哺的闭环。我的判断标准是三问：能量化效果吗？能定位失分吗？能自动反哺吗？三问都 yes 才是能长期演进的 AI 系统，否则只是一次性 demo。"</p>
+    <p class="hint">[loop·已优化·待复核] 念法：定调金句（能持续量化+定位+反哺，缺哪环都停在一次性 demo）→ 业务背景（prd-tools 喂 20+ 人，改 prompt 怕改坏别的，靠人看不复现）→ 三件套（黄金 Case 做 Benchmark 回归=A/B 测试 / LLM-as-Judge 把主观变数字 / 每次只改一个变量防改坏）→ 落 prd2code-gen（eval/auto-tune 五模块闭环 case-loader→llm-judge→scorer→gap-analyzer→pattern-detector，R01/R02 实验 54→68 +26%）→ 收口金句（三问：量化/定位/反哺）。被问"AI 工作流怎么优化 / 怎么迭代 / 怎么保证不退化"翻这张卡，主动甩五模块闭环 + 54→68 量化实验显深度。</p>
   </div>
 </div>
 
