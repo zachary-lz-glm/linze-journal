@@ -2205,12 +2205,12 @@ function buildTreeOptimized(list) {
   <div class="card-head"><span class="tag proj">架构</span><div class="card-title">端到端原型：模板/LLM 双路径 + verified_by 审计</div></div>
   <div class="core">Handlebars 模板优先（0 token）+ LLM 兜底；每条事实带 file:line 溯源 + drift-report 自动发现 reference 漂移</div>
   <div class="card-body">
-    <p>应对"成本怎么控 / token 怎么省 / 知识库怎么保鲜"的工程化追问。</p>
-    <p><strong>双路径代码生成</strong>：① 模板路径——读取 templates/{campaign_type}/ 下的 Handlebars 模板（.hbs），渲染蒸馏 JSON 数据，0 token 消耗、确定性输出；② LLM 路径——无匹配模板时 LLM 参照 reference 规则生成。LLM 结果可经人工确认后保存为新模板，形成"模板库越用越大"的学习闭环。</p>
-    <p><strong>四级回退策略（LLM 路径写入文件时）</strong>：Level 1 精确 SEARCH/REPLACE → Level 2 模糊匹配（容忍空格/换行）→ Level 3 行号定位 → Level 4 全文件重写。从最安全到最激进逐级回退。</p>
-    <p><strong>verified_by 审计链</strong>：reference 文件里每条事实附 <code>verified_by: ["file.ts:line"]</code>，强制源码 Read 后写入，禁止推断。Phase 2 强制验证 + Phase 3 致命类检查（枚举完备性、分支计数、方法签名、字段路径 100% 匹配）。</p>
-    <p><strong>漂移检测 drift-report.json</strong>：每次验证后对比 reference 与实际代码——reference 有但代码找不到的实体 → stale 漂移；代码有但 reference 未记录 → missing 漂移；reference 引用的文件路径不存在 → broken_path。warning 级别不阻塞流程，提示知识库需要更新。</p>
-    <p class="hint">被问"AI 成本怎么控" / "reference 怎么保鲜" / "知识库过时怎么办" → 翻这张卡。verified_by + drift-report 是工程化核心防御。</p>
+    <p><strong>这题我答一句话——"能不算钱就不算钱，能不靠猜就不靠猜"。</strong>面试官一问"成本怎么控 / 知识库怎么保鲜"，我先甩这句定调，再分两层讲我是怎么把这句话落成代码的。</p>
+    <p><strong>先说背景，为什么这块对我特别重要</strong>：我独立设计的端到端原型 prd2code-gen，是从 PRD 一路生成到能跑的代码，一个需求可能动几十个文件。如果每次都让 LLM 从零生成，token 账单爆炸不说，输出还不可复现、还容易幻觉编字段。所以我必须做到两件事——能确定的部分零 token 出，必须靠模型的部分每条事实都能追溯、还能发现知识库自己过期了。</p>
+    <p><strong>第一块是双路径代码生成，把"能不算钱就不算钱"做成机制</strong>：① <strong>模板路径优先</strong>——读 templates/{campaign_type}/ 下的 Handlebars 模板，渲染蒸馏出来的 JSON 数据，0 token、确定性输出，同一个输入永远同一个产物；② <strong>LLM 路径兜底</strong>——没匹配模板时才让模型参照 reference 规则生成。关键在这两条路径会自学习：LLM 兜底生成、人工确认质量够的产物，会被抽出来存成新模板，"模板库越用越大，LLM 越用越少"。配合一个 <strong>四级回退</strong>（LLM 写文件时精确 SEARCH/REPLACE → 模糊匹配 → 行号定位 → 全文件重写，从最安全到最激进逐级降级），把成本和风险都压到最低。</p>
+    <p><strong>第二块是 verified_by 审计链 + drift-report，把"能不靠猜就不靠猜"做成机制</strong>：reference 里每条事实都强制附 <code>verified_by: ["file.ts:line"]</code>，必须真去源码 Read 过才允许写，禁止凭推断——这是防幻觉的硬规则，Phase 2 强制验证、Phase 3 再做致命类检查（枚举完备性、分支计数、方法签名、字段路径 100% 匹配）。但代码会变、reference 会过期，所以我每次验证后跑 <strong>drift-report.json</strong> 自动对比：reference 有但代码找不到的是 stale 漂移，代码有但 reference 没记的是 missing 漂移，引用路径失效的是 broken_path——warning 级别不阻塞流程，但会明确提示"知识库该更新了"。</p>
+    <p><strong>落到我的项目收口</strong>：这套不是 PPT，是 prd2code-gen 里真跑的——双路径省 token、verified_by 防幻觉、drift-report 防过期，三件套各管一类风险。一句话：<strong>工程化的核心是"让确定性归代码、让模型只补不确定性"</strong>——能讲清这套，面试官就知道你不是只会调 API，是真搭过能长期跑的 AI 系统。</p>
+    <p class="hint">[loop·已优化·待复核] 念法：定调金句（能不算钱就不算钱、能不靠猜就不靠猜）→ 业务背景（prd2code-gen 几十文件、全靠 LLM 会爆 token + 不可复现 + 幻觉编字段）→ 两块（双路径模板优先 0 token+LLM 兜底+模板库自学习+四级回退 / verified_by 强制 file:line 溯源防幻觉+Phase2/3 致命类检查 / drift-report 三类漂移 stale/missing/broken_path 防过期）→ 收口（确定性归代码、模型只补不确定性）。被问"AI 成本怎么控 / token 怎么省 / reference 怎么保鲜 / 知识库过时怎么办"翻这张卡，主动甩双路径和 drift-report 显深度。</p>
   </div>
 </div>
 
