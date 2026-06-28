@@ -2619,6 +2619,16 @@ function buildTreeOptimized(list) {
   <div class="card-head"><span class="tag ai">AI</span><div class="card-title">AI编程工具横向对比：Cursor vs Copilot vs Claude Code</div></div>
   <div class="core">Cursor=AI编辑器(图形界面全栈)，Copilot=IDE插件(快速补全)，Claude Code=终端CLI(复杂任务最准)</div>
   <div class="card-body">
+    <p><strong>这题面试官想听的不是你背产品参数表，是你能不能一句话点透"三家定位不同、不存在谁取代谁"——笼统说"我都用过"会显得没判断。我把它整理成"一句定调 + 三家各一段定位 + 选型决策 + 落我自己 + AI取代前端收口"，照念就能答得有判断又不飘。</strong></p>
+    <p><strong>先甩一句定调（这是全场骨架）</strong>：这三家不是同维度竞品——<strong>形态决定定位</strong>：Cursor 是独立 AI 编辑器（VS Code 魔改），GitHub Copilot 是兼容所有 IDE 的插件，Claude Code 是终端 CLI。选哪个不取决于"谁最强"，取决于<strong>你解决什么任务</strong>。这句先立住，后面三家都是给它做支撑。</p>
+    <p><strong>① Cursor（图形界面党，全栈日常）</strong>：最大卖点是<strong>图形界面 + 实时预览 + 多模型切换</strong>，Composer 能做多文件协同编辑，前端写页面边写边看效果很顺。短板是闭源付费、资源占用高。我的定位——前端日常开发首选。</p>
+    <p><strong>② GitHub Copilot（补全党，免费生态最广）</strong>：本质是 IDE 插件，强在<strong>行内快速补全 + 生态广（VS Code/JetBrains 通吃）+ 免费版可用</strong>，速度快。短板是 Agent 模式有限、复杂多文件任务成功率低。我的定位——写业务代码时的快速补全，不指望它做重构。</p>
+    <p><strong>③ Claude Code（CLI 党，复杂任务最准）</strong>：终端 CLI 工具，强在<strong>准确率最高 + 复杂代码库理解 + 多文件修改 + Bash 执行 + 自主循环</strong>，能直接进 CI/CD 跑自动化。配套 Skill 机制 + MCP Server 比 .cursorrules 更工程化。短板是无图形界面、学习曲线陡。我的定位——复杂任务（代码库理解、多文件重构、自动化流水线）必用 Claude Code，它是我日常主力。</p>
+    <p><strong>选型决策（被追问"你到底用哪个"的标准答案）</strong>：不是三选一，是<strong>按任务分工</strong>——复杂任务 Claude Code、前端日常 Cursor、快速补全 Copilot。三句话讲完，面试官就知道你有体系、不是站队党。</p>
+    <p><strong>方法论四条（这是加分点，显你真踩过坑）</strong>：① 先让 AI 理解代码库再动手（喂 Reference/上下文，别让它瞎猜）；② 单 Chat 单功能，别一个会话塞三件事（上下文会串）；③ AI 生成后必须人工 Review，核心路径压测+边界测试一道不能少；④ Skill/.cursorrules 把团队规范固化进去，AI 出码才稳。</p>
+    <p><strong>最后落回我自己（桥接收口，证明不空谈）</strong>：我做的 prd-tools 跑在 Claude Code 上——选它不是因为"最强"，是因为它的 <strong>Skill 机制能把我 11 步流水线固化、MCP Server 能挂自定义工具、终端 CLI 能进自动化</strong>。这就是"按任务选型"的真实落地：我要的是确定性编排 + 质量门控，CLI + Skill 比 GUI 编辑器更合适。</p>
+    <p><strong>被问"AI 会取代前端吗"（高频追问，标准收口）</strong>：编码效率确实提升 50-70%，但价值点在迁移——从"会写代码"迁到<strong>需求拆解 &gt; 业务理解 &gt; 架构感知 &gt; Prompt 表达</strong>。未来工程师更像"AI 协调者"，核心竞争力是系统设计能力和复杂业务建模。<strong>金句：模型越强，把模型变成靠谱系统的能力越值钱</strong>——这句和我的 prd-tools 完全对应。</p>
+    <p><strong>速查表（细节被追问再翻）</strong>：</p>
     <table>
     <tr><th>维度</th><th>Cursor</th><th>GitHub Copilot</th><th>Claude Code</th></tr>
     <tr><td><strong>形态</strong></td><td>独立AI编辑器(VS Code魔改)</td><td>IDE插件(兼容所有IDE)</td><td>终端CLI工具</td></tr>
@@ -2628,8 +2638,7 @@ function buildTreeOptimized(list) {
     <tr><td><strong>Skill/Plugin</strong></td><td>.cursorrules配置</td><td>插件生态</td><td>Skill机制+MCP Server</td></tr>
     <tr><td><strong>劣势</strong></td><td>闭源付费、资源占用高</td><td>复杂任务成功率低</td><td>无图形界面、学习曲线陡</td></tr>
     </table>
-    <p><strong>面试回答框架</strong>：①日常用Claude Code处理复杂任务(代码库理解+多文件重构) ②Cursor做前端日常开发(图形界面+实时预览) ③Copilot做快速补全。关键方法论：先让AI理解代码库再动手、单Chat专注单功能、AI生成后必须人工Review、核心路径做压测和边界测试。</p>
-    <p><strong>被问"AI会取代前端吗"</strong>：编码效率提升50-70%但价值点迁移——需求拆解>业务理解>架构感知>Prompt表达能力。未来工程师更像"AI协调者"，核心竞争力是系统设计能力和复杂业务建模。</p>
+    <p class="hint">[loop·已优化·待复核] 念法：钩子（不是考背参数表，是考你能不能一句话点透"三家定位不同"）→ 一句定调（形态决定定位：编辑器/插件/CLI，不存在谁取代谁）→ 三家各一段（Cursor 图形界面党/Copilot 补全党/Claude Code CLI 党，各一句定位+短板+我的用法）→ 选型决策（按任务分工不三选一）→ 方法论四条（理解代码库/单Chat单功能/人工Review核心压测/Skill固化规范）→ 落 prd-tools（Claude Code 跑，Skill+MCP+CLI 对应确定性编排）→ AI取代前端收口（价值迁移+金句"模型越强把模型变系统越值钱"）。细节被追问翻底部速查表。</p>
   </div>
 </div>
 
