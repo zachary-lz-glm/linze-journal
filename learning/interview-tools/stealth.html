@@ -1766,18 +1766,13 @@ function buildTreeOptimized(list) {
   <div class="card-head"><span class="tag ai">AI</span><div class="card-title">单Agent vs Multi-Agent：区别、对比、使用场景</div></div>
   <div class="core">单Agent是一把瑞士军刀，Multi-Agent是一个团队——任务异构且需要专精时才值得拆</div>
   <div class="card-body">
-    <p><strong>单Agent</strong>：一个LLM实例完成所有步骤——感知、推理、调用工具、记忆管理全靠一个模型。优点是简单、调试容易、上下文共享直接。缺点是上下文窗口有上限，任务越复杂越容易"顾此失彼"——既要分析PRD又要校验代码规范，两个维度的指令混在一起互相干扰。</p>
-    <p><strong>Multi-Agent</strong>：多个Agent各司其职，每个Agent有独立上下文窗口和专属prompt。Agent间通过消息/中间文件传递状态。优点是每个Agent专注一件事，prompt更精准，上下文不互相污染。缺点是编排复杂、调试困难、Agent间通信成本高。</p>
-    <p><strong>核心区别</strong>：</p>
-    <p>· <strong>上下文管理</strong>：单Agent共享一个窗口，好处是信息天然流通，坏处是窗口拥挤。Multi-Agent各管各的窗口，好处是互不干扰，坏处是信息传递要显式编码。</p>
-    <p>· <strong>调试难度</strong>：单Agent出问题看一条链路。Multi-Agent出问题要在多条链路和交叉点之间定位——"是A的输出有问题还是B的理解有问题？"</p>
-    <p>· <strong>成本</strong>：Multi-Agent多实例运行，Token消耗通常2-3倍于单Agent。但每个Agent可以用小模型——粗活用便宜模型，精活用贵模型，反而可能省成本。</p>
-    <p><strong>什么时候用Multi-Agent</strong>：①任务有明显异构子任务——一个分析代码、一个分析文档、一个做Review，各需要不同的知识背景和推理方式。②单Agent的prompt已经膨胀到互相干扰——指令太多模型分不清优先级。③需要并行加速——多个Agent同时处理不同子任务，最后汇总。</p>
-    <p><strong>什么时候不该用</strong>：①任务本身是线性单链路——A→B→C顺序执行，拆开反而增加通信开销。②团队没有Multi-Agent编排经验——AutoGen/CrewAI的学习曲线不低，强行上Multi-Agent容易翻车。③调试成本不可接受——生产环境问题要快速定位，Multi-Agent的排查链路太长。</p>
-    <p><strong>项目桥接</strong>：prd-tools用双Skill（Reference + PRD蒸馏）但共享同一个Agent上下文——本质是"单Agent+多Skill"模式。如果未来PRD分析需要同时做代码理解+竞品分析+用户研究，可能值得拆成Multi-Agent。目前单Agent+Skill编排够用。</p>
-    <p><strong>Anthropic 工程化金句（面试加分点）</strong>："拆分的本质是<strong>用通信成本换取单点负载</strong>——当单个 Agent 的上下文管理成本超过了多 Agent 间协调的通信成本，就该拆分。"这比"团队类比"更工程化、更有理论依据，被追问深度时拿出来。</p>
-    <p><strong>Multi-Agent 4 种协作模式（被问架构时答）</strong>：① Supervisor-Worker（主 Agent 拆任务派子 Agent）；② Pipeline（流水线串联）；③ Debate（多 Agent 辩论）；④ Hierarchical（树状层级）。引入的新复杂度：通信协议设计 / 冲突解决 / 错误传播 / 终止条件。</p>
-    <p><strong>面试一句话</strong>："Multi-Agent不是银弹——用团队类比：一个人能干好的活没必要拉一个团队。只有任务异构到需要不同的专业知识、或者需要并行加速时，Multi-Agent才值得付出编排复杂度的代价。"</p>
+    <p><strong>这道题我先甩一句话定调，再讲区别，最后落项目——Multi-Agent 不是银弹，本质是"用通信成本换单点负载"，只在任务异构到必须分工时才值得拆。</strong></p>
+    <p><strong>先说两种形态</strong>：单 Agent 是一个 LLM 实例包揽感知、推理、工具、记忆，优点是简单、调试容易、上下文天然共享，缺点是任务一复杂窗口就挤、指令互相干扰——又要分析 PRD 又要校验代码规范，两个维度的 prompt 打架。Multi-Agent 是多个 Agent 各司其职，每个有独立上下文和专属 prompt，好处是专注、互不污染，坏处是编排复杂、调试要在多条链路之间定位。</p>
+    <p><strong>核心区别看三点</strong>：① 上下文管理——单 Agent 共享一个窗口信息流通顺但挤，Multi-Agent 各管各的窗口互不干扰但要显式传消息；② 调试难度——单 Agent 看一条链路，Multi-Agent 出问题得先判断"是 A 输出错还是 B 理解错"；③ 成本——Multi-Agent 多实例 Token 通常 2-3 倍，但粗活能上便宜模型、精活才上贵模型，反而可能省。</p>
+    <p><strong>什么时候值得拆（三个信号）</strong>：任务有明显异构子任务——一个分析代码、一个分析文档、一个做 Review，知识背景不一样；单 Agent 的 prompt 已经膨胀到指令打架、模型分不清优先级；需要并行加速多个子任务最后汇总。反过来，线性单链路、团队没编排经验（AutoGen/CrewAI 学习曲线不低）、调试成本不能接受——这三类别硬上 Multi-Agent。</p>
+    <p><strong>落到我的项目</strong>：prd-tools 用双 Skill（Reference + PRD 蒸馏）但共享同一个 Agent 上下文——本质是"单 Agent + 多 Skill"模式，步骤明确、链路线性，单 Agent 够用。如果未来 PRD 分析要同时做代码理解 + 竞品分析 + 用户研究，才考虑拆 Multi-Agent。<strong>Anthropic 工程化金句（被追问深度甩）</strong>：拆分本质是<strong>用通信成本换单点负载</strong>——当单个 Agent 的上下文管理成本超过多 Agent 协调的通信成本，就该拆。</p>
+    <p><strong>被问架构时再甩 Multi-Agent 四种协作模式</strong>：Supervisor-Worker（主 Agent 拆任务派子 Agent）、Pipeline（流水线串联）、Debate（多 Agent 辩论）、Hierarchical（树状层级）——每引入一种都要处理通信协议、冲突解决、错误传播、终止条件四类新复杂度。</p>
+    <p class="hint">[loop·已优化·待复核] 念法：先甩定调金句（用通信成本换单点负载，不是银弹）→ 两种形态（单/多各一句优缺点）→ 核心区别三点（上下文/调试/成本）→ 三个值得拆的信号 → 落 prd-tools（单Agent+多Skill够用）→ 被问架构甩四种协作模式。别上来就堆四种模式，那是被追问才讲的。</p>
   </div>
 </div>
 
