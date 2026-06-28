@@ -364,7 +364,7 @@ body{overscroll-behavior-y:contain}
     <p><strong>先用一句话把面试官定住：Suspense 是"异步渲染的协调机制"，不是 lazy 的附属品</strong>。涂虎面试被问"Suspense 干嘛的"，张口就答"配合 lazy 做懒加载"——只对了一半，面试官立刻追问"还有呢"就卡住。问题在于把 Suspense 当成了 lazy 的语法糖，没讲透它真正的定位：把"加载态"从命令式的 isLoading 变成声明式的渲染协调。这个定位讲出来，面试官就知道你懂本质。</p>
     <p><strong>然后甩两个用法，第二个才是这道题的分水岭</strong>：① <strong>组件级懒加载（人人都会答的那一半）</strong>——React.lazy() 把组件代码分割，用 Suspense 包一层配 fallback，组件还没下载完就显示 loading 骨架屏。通常包在路由级组件上。② <strong>数据获取协调（区分懂不懂的那一半）</strong>——在 Concurrent 模式下，Suspense 能包"数据请求"。组件 render 时数据没就绪就主动"挂起"显示 fallback，数据好了再渲染，天然避免请求瀑布。但有个硬前提：必须用 Suspense-enabled 的数据框架（Relay、Next.js App Router、TanStack Query 这类），自己手写 fetch 是挂不起来的。能讲到"需要框架配合"，比 90% 候选人强。</p>
     <p><strong>追问"实际怎么组织"答嵌套模式</strong>：多层 Suspense 嵌套——外层管全局 loading（比如路由切换整页 loading），内层管局部 loading（比如某个卡片的数据还没来）。效果是渐进式加载：页面骨架先出来，哪块数据好了哪块就填充，体验比"整页转圈直到全部就绪"好得多。本质是把"什么时候显示 loading、显示在哪"声明式地交给 React 协调，不用再手搓一堆 isLoading 布尔值。</p>
-    <p class="hint">[loop·已优化·待复核] 念法：钩子先甩（不是 lazy 附属品，是异步渲染协调机制）→ 两用法（懒加载人人答/数据获取协调是分水岭，必带框架前提）→ 嵌套模式（外层全局内层局部，渐进式加载）→ 收口（isLoading 命令式变声明式）。涂虎真题：只答懒加载=只对一半，必补数据获取。</p>
+    <p class="hint">[loop·已优化·已复核] 念法：钩子先甩（不是 lazy 附属品，是异步渲染协调机制）→ 两用法（懒加载人人答/数据获取协调是分水岭，必带框架前提）→ 嵌套模式（外层全局内层局部，渐进式加载）→ 收口（isLoading 命令式变声明式）。涂虎真题：只答懒加载=只对一半，必补数据获取。</p>
   </div>
 </div>
 
@@ -2246,7 +2246,7 @@ function buildTreeOptimized(list) {
     <p>· <strong>第三件·迭代节奏（防改坏的纪律）</strong>：每次只改一个变量（prompt / 门禁阈值 / 能力面配置），跑黄金 Case 看效果，确认无退化才合入——别一次改五处，否则退步了都说不清是哪处引入的。</p>
     <p><strong>落到我的项目（关键桥接，杀手锏在这里）</strong>：我端到端原型 prd2code-gen 里真跑通了 eval/auto-tune 五模块闭环，不是 PPT——<strong>case-loader</strong> 加载黄金集 → <strong>llm-judge</strong> 用另一个大模型对产物五维独立评分 → <strong>scorer</strong> 算分 → <strong>gap-analyzer</strong> 定位单 case 失分点 → <strong>pattern-detector</strong> 跨 case 提炼共性 pattern 反哺 prompt。还做了 R01/R02 对照实验（基线 54 vs 实验 68，+26%），量化证明了 reference 知识库的真实价值——这是把"我感觉加了 reference 更好"变成"有数据证明"的关键。</p>
     <p><strong>收口金句</strong>："AI 工作流优化的核心不是调 prompt，是搭一个能自评分、自定位、自反哺的闭环。我的判断标准是三问：能量化效果吗？能定位失分吗？能自动反哺吗？三问都 yes 才是能长期演进的 AI 系统，否则只是一次性 demo。"</p>
-    <p class="hint">[loop·已优化·待复核] 念法：定调金句（能持续量化+定位+反哺，缺哪环都停在一次性 demo）→ 业务背景（prd-tools 喂 20+ 人，改 prompt 怕改坏别的，靠人看不复现）→ 三件套（黄金 Case 做 Benchmark 回归=A/B 测试 / LLM-as-Judge 把主观变数字 / 每次只改一个变量防改坏）→ 落 prd2code-gen（eval/auto-tune 五模块闭环 case-loader→llm-judge→scorer→gap-analyzer→pattern-detector，R01/R02 实验 54→68 +26%）→ 收口金句（三问：量化/定位/反哺）。被问"AI 工作流怎么优化 / 怎么迭代 / 怎么保证不退化"翻这张卡，主动甩五模块闭环 + 54→68 量化实验显深度。</p>
+    <p class="hint">[loop·已优化·已复核] 念法：定调金句（能持续量化+定位+反哺，缺哪环都停在一次性 demo）→ 业务背景（prd-tools 喂 20+ 人，改 prompt 怕改坏别的，靠人看不复现）→ 三件套（黄金 Case 做 Benchmark 回归=A/B 测试 / LLM-as-Judge 把主观变数字 / 每次只改一个变量防改坏）→ 落 prd2code-gen（eval/auto-tune 五模块闭环 case-loader→llm-judge→scorer→gap-analyzer→pattern-detector，R01/R02 实验 54→68 +26%）→ 收口金句（三问：量化/定位/反哺）。被问"AI 工作流怎么优化 / 怎么迭代 / 怎么保证不退化"翻这张卡，主动甩五模块闭环 + 54→68 量化实验显深度。</p>
   </div>
 </div>
 
@@ -2308,7 +2308,7 @@ function buildTreeOptimized(list) {
     <p><strong>两种传参方式</strong>：① <strong>Base64 内联</strong>——把图片编码成 base64 字符串直接塞进请求体，模型当场就能看到，不用再发第二次网络请求；② <strong>传图片 URL</strong>——只给一个链接，让模型自己去下载。本地图片（截图、用户上传）走 Base64，在线图片（CDN 上已有的）走 URL。</p>
     <p><strong>两家 API 结构要能脱口而出（这是加分点）</strong>：<strong>Claude API</strong> 用 <code>{"type":"image","source":{"type":"base64","media_type":"image/png","data":"..."}}</code>——source 里拆 type/media_type/data 三段；<strong>OpenAI API</strong> 用 <code>{"type":"image_url","image_url":{"url":"data:image/png;base64,..."}}</code>——把 base64 前缀拼进 url 字段。两家的字段名不一样，面试时说出差异说明你真写过。</p>
     <p><strong>选型 + 落到我的项目（桥接收口）</strong>：本地图片用 Base64（省一次网络往返），在线图片用 URL（请求体小）。大图要盯 token 消耗——一张高分辨率图能烧掉上千 token。prd-tools 里把图片<strong>按每 8 张一批开并行子 Agent 分析</strong>，就是控 token 又提速的工程化做法：批量化压住单次上下文膨胀，并行化把串行等待摊平。<strong>金句：多模态不是新接口，是 content 数组里多一种 type——会传文本就会传图片，差异只在两家的字段命名。</strong></p>
-    <p class="hint">[loop·已优化·待复核] 念法：钩子（不是考会调API，是考两种形态+各家差异，能脱口 JSON 结构就比 90% 强）→ 一个本质（文本图片同塞 content 数组，靠 type 区分）→ 两种方式（Base64 内联/传 URL，本地 vs 在线）→ 两家结构（Claude source 三段/OpenAI url 前缀，差异=真写过）→ 选型 + 落 prd-tools（8 张一批并行=控 token 又提速）→ 金句（不是新接口，是 content 多一种 type）。被问"大图怎么处理"→ token 消耗 + 批量并行。</p>
+    <p class="hint">[loop·已优化·已复核] 念法：钩子（不是考会调API，是考两种形态+各家差异，能脱口 JSON 结构就比 90% 强）→ 一个本质（文本图片同塞 content 数组，靠 type 区分）→ 两种方式（Base64 内联/传 URL，本地 vs 在线）→ 两家结构（Claude source 三段/OpenAI url 前缀，差异=真写过）→ 选型 + 落 prd-tools（8 张一批并行=控 token 又提速）→ 金句（不是新接口，是 content 多一种 type）。被问"大图怎么处理"→ token 消耗 + 批量并行。</p>
   </div>
 </div>
 
@@ -2325,7 +2325,7 @@ function buildTreeOptimized(list) {
     <p><strong>再补一个"前端Agent方向"显格局（腾讯+Booster+面试官三源佐证）</strong>：腾讯团队产品都在用AI写代码、工程师从"写代码"转为"把控质量"；Booster 认为前端需要自己的 Agent 去做能力补充；面试官也提出"前端自有 Agent 给协同团队和用户提供能力"。三源一交叉指向同一句——<strong>前端工程师的未来是构建前端 Agent，让AI在前端领域自主执行复杂任务</strong>。这句是金句，背下来。</p>
     <p><strong>最后必须接"C端AI渗透的实际路径"（涂虎面试官亲口校正，最防飘）</strong>：面试时千万别扯太远的愿景（比如"AI直接操作APP"），面试官会立刻追问"现在怎么做"。务实答三个层面：① <strong>设计还原</strong>——Design Token + 组件 Schema + 视觉回归测试三层约束，现有 Locofy/Builder.io 这类工具对简单页面准确率不错，复杂页面仍需人工微调；② <strong>H5优先落地</strong>——国内APP生态封闭，AI 没法自动化操作APP，但 H5 和小程序能做对话式导购、个性化推荐；③ <strong>辅助开发者提效</strong>——代码生成、自动化测试、视觉走查这些已经成熟。结论要诚实：UI界面短期不会消失，百分百AI生产是目标，但还在路上。</p>
     <p><strong>收口落回我的项目（桥接，证明不是空谈）</strong>：我自己做的 prd-tools 就在走第二层——不是替人写代码，而是<strong>设计 Agent 的行为约束和质量门控</strong>：用 Skill 固定流水线、用证据链锁事实、用 quality-gate 五维评分卡住质量。这正是"前端工程师从写代码转向设计 Agent 行为"的真实落地。一句话收口：<strong>模型能力在涨，但把模型变成靠谱系统的能力，是前端工程师在AI时代最值钱的护城河。</strong></p>
-    <p class="hint">[loop·已优化·待复核] 念法：钩子（不是考会不会用Cursor，是考未来判断）→ 一句定调（三层递进：编码自动化→工程Agentic→用户侧AI，越往上越值钱）→ 三层逐条（第一层成熟是起点别停/第二层核心角色转变"写代码→设计Agent行为+质量门控"/第三层前端独占地盘）→ 不可替代对冲（业务知识越重不是越轻，堵"会不会消失"）→ 前端Agent方向三源佐证（腾讯+Booster+面试官，金句=构建前端Agent）→ C端路径防飘（涂虎校正三层：设计还原/H5优先/辅助提效，UI短期不消失）→ 落 prd-tools（Skill+证据链+quality-gate=设计Agent行为的真实落地）→ 金句（把模型变系统的能力=护城河）。被问"前端会不会被取代"→ 甩不可替代段+金句。</p>
+    <p class="hint">[loop·已优化·已复核] 念法：钩子（不是考会不会用Cursor，是考未来判断）→ 一句定调（三层递进：编码自动化→工程Agentic→用户侧AI，越往上越值钱）→ 三层逐条（第一层成熟是起点别停/第二层核心角色转变"写代码→设计Agent行为+质量门控"/第三层前端独占地盘）→ 不可替代对冲（业务知识越重不是越轻，堵"会不会消失"）→ 前端Agent方向三源佐证（腾讯+Booster+面试官，金句=构建前端Agent）→ C端路径防飘（涂虎校正三层：设计还原/H5优先/辅助提效，UI短期不消失）→ 落 prd-tools（Skill+证据链+quality-gate=设计Agent行为的真实落地）→ 金句（把模型变系统的能力=护城河）。被问"前端会不会被取代"→ 甩不可替代段+金句。</p>
   </div>
 </div>
 
