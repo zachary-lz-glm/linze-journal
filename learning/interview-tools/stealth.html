@@ -1927,14 +1927,13 @@ function buildTreeOptimized(list) {
   <div class="card-head"><span class="tag proj">G6</span><div class="card-title">Schema 引擎 + 插槽 + 微前端性能损失多少？</div></div>
   <div class="core">三大瓶颈：包体积膨胀（多版本并存）+ 联动接口重复调用 + 长列表渲染</div>
   <div class="card-body">
-    <p><strong>面试官追问</strong>（阿里二面13:31）："Schema 引擎加微前端加插槽式加载，跟纯 SPA 相比，性能损失具体多少？这块有没有量化整理？"</p>
-    <p><strong>我当时的回答</strong>：弱——"做的少""凭个人了解""包体积、Web Worker、长列表"。缺性能基线。</p>
-    <p><strong>升级版回答三个瓶颈 + 量化思路</strong>：</p>
-    <p>· <strong>瓶颈1：包体积膨胀</strong>。组件库多版本并存（业务方用 v1.0，营销平台用 v2.0），Webpack 都打进 bundle，体积膨胀 1.5-2x。极端情况触发前端打包内存溢出。<strong>量化指标</strong>：bundle size 基线（主包 < 300KB，按路由 chunk split 后首屏 < 200KB），webpack-bundle-analyzer 周报。</p>
-    <p>· <strong>瓶颈2：联动接口重复调用</strong>。表单 50+ 字段，每个联动触发一次接口，转圈圈体感 1-2 秒。<strong>优化</strong>：Service Worker 缓存相同前置条件的联动结果；Web Worker 把序列化计算挪出主线程；同 key 请求 batch 合并。<strong>量化指标</strong>：联动接口 P95 延迟 < 300ms，缓存命中率 > 60%。</p>
-    <p>· <strong>瓶颈3：长列表渲染</strong>。50+ 字段表单，每次 schema 重渲染触发全量 diff。<strong>优化</strong>：组件按 dot-path 订阅（Redux selector 原理），只通知受影响组件；折叠区懒加载。<strong>量化指标</strong>：FPS > 50（chrome performance panel），字段编辑响应 < 16ms。</p>
-    <p><strong>诚实边界</strong>："这块目前确实缺系统化的性能基线对比，是公认短板。下一步计划用 Lighthouse + Web Vitals 建立 SPA / Schema 引擎 / Schema+微前端 三档性能基线，量化损耗。"</p>
-    <p class="hint">不要装懂——答"三大瓶颈 + 已做的优化 + 待建基线"三层，体现工程化思维。</p>
+    <p><strong>这题先甩一个定调——性能损失问的不是"具体几个百分点"，是你知不知道引擎+微前端+插槽这三层各自会卡在哪、有没有量化的抓手。所以我答三层瓶颈 + 每层一个已做的优化 + 最后一句话诚实说基线还缺，照念下来就比"凭个人了解、做得少"高一个档次。</strong></p>
+    <p><strong>先给业务背景立住场景</strong>：营销活动表单字段多（50+）、联动密，引擎外还套了微前端做插槽式加载——架构灵活的代价就是性能要主动设计。这题阿里二面 13:31 追的，我当时答得弱（"做得少""凭个人了解""包体积、Web Worker、长列表"），复盘后整理成三个瓶颈。</p>
+    <p><strong>第一层·包体积膨胀（最容易先想到）</strong>：组件库多版本并存——业务方用 v1.0、营销平台用 v2.0，Webpack 都打进 bundle，体积膨胀 1.5-2x，极端情况触发打包内存溢出。<strong>优化抓手</strong>：建 bundle size 基线（主包 &lt; 300KB、按路由 chunk split 后首屏 &lt; 200KB），配 webpack-bundle-analyzer 周报盯异常增长。</p>
+    <p><strong>第二层·联动接口重复调用（体验体感最强）</strong>：50+ 字段每个联动都可能触发一次接口，转圈圈体感 1-2 秒。<strong>三招优化</strong>：Service Worker 缓存相同前置条件的联动结果、Web Worker 把序列化计算挪出主线程、同 key 请求 batch 合并。<strong>抓手</strong>：联动接口 P95 &lt; 300ms、缓存命中率 &gt; 60%。</p>
+    <p><strong>第三层·长列表渲染（Schema 引擎特有的坑）</strong>：50+ 字段表单，每次 schema 重渲染会触发全量 diff。<strong>优化</strong>：组件按 dot-path 订阅（就是 Redux selector 那套原理）——字段变化只通知受影响组件、折叠区懒加载。<strong>抓手</strong>：FPS &gt; 50、字段编辑响应 &lt; 16ms。</p>
+    <p><strong>收口必须诚实说边界（这句最显工程判断，别硬编实测数据）</strong>：这块目前确实缺系统化的三档基线对比（纯 SPA / Schema 引擎 / Schema+微前端），是公认短板。下一步计划用 Lighthouse + Web Vitals 把三档基线建起来，量化每层损耗。<strong>金句：性能优化不是堆技巧，是先识别瓶颈、再给可量化的抓手、最后诚实说基线还缺——不装懂比硬编数据可信十倍。</strong></p>
+    <p class="hint">[loop·已优化·待复核] 念法：钩子先甩（问的不是几个百分点，是知不知道卡哪+有没有量化抓手）→ 业务背景（50+字段+联动密+微前端套插槽，阿里二面13:31追的、当时答弱）→ 三层瓶颈逐条（包体积膨胀多版本1.5-2x+bundle基线/联动接口重复P95<300ms+缓存命中>60%/长列表渲染dot-path订阅+FPS>50）→ 诚实边界收口（缺三档基线是公认短板，Lighthouse+Web Vitals待建，金句=不装懂比硬编可信十倍）。被问"具体损失多少"→ 别编实测，甩三档基线计划。</p>
   </div>
 </div>
 <!-- ===== 防御卡结束 ===== -->
