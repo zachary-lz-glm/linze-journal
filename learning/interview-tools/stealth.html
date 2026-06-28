@@ -2962,11 +2962,12 @@ function buildTreeOptimized(list) {
   <div class="card-head"><span class="tag proj">Schema</span><div class="card-title">为什么不用Formily？和自研方案有什么差异？</div></div>
   <div class="core">Formily是纯前端方案，我们的联动需要BFF双端解析；但如果只需要纯前端表单，Formily是更好的选择</div>
   <div class="card-body">
-    <p><strong>Formily的能力边界</strong>：Formily确实是成熟的JSON Schema驱动表单方案，支持x-reactions联动描述、自定义组件扩展、路径系统。对于纯前端表单场景——一个页面、一套联动、纯客户端计算——Formily完全够用，而且生态更完善。</p>
-    <p><strong>我们的场景差异在哪</strong>：核心差异是"双端联动"。我们的联动不只是前端组件间的依赖，还涉及BFF层的接口联动——用户切换城市，前端不是直接调后端拿数据，是调BFF，BFF根据城市+产品线+活动类型重新裁剪Schema再返回。这个"前端触发→BFF重新生成配置→前端重新渲染"的链路，Formily的x-reactions覆盖不了，因为它只管前端层。</p>
-    <p><strong>第二个差异——联动DSL的表达能力</strong>：我们的dAction DSL有两种联动类型。State型是组件间依赖（A变→B隐/禁/改值），这个Formily能做。Fetch型是跨接口联动（城市变→调BFF拿新配置→重新渲染），这个需要BFF有对应的模板引擎来处理，不是前端表单库能解决的。Formily如果要做Fetch型联动，需要自己写大量的自定义副作用（effects），本质上还是要自研联动层，那不如从头设计一个统一的DSL。</p>
-    <p><strong>选型决策</strong>：如果只看前端表单层，Formily是更好的选择——社区活跃、文档完善、开箱即用。但我们的场景需要前后端共享同一套Schema协议、BFF有模板引擎做动态裁剪、联动描述要双端都能解析。这不是"表单渲染"的问题，是"配置驱动双端协同"的问题。选自研不是因为Formily不好，是因为问题域不一样。</p>
-    <p class="hint">这道题考的是技术选型的判断力。好的回答不是"Formily不行"，是"问题域不同"。主动承认Formily在纯前端场景更好，反而说明你做过认真对比。千万不要贬低开源方案。</p>
+    <p><strong>这道题考的是技术选型的判断力——好回答不是"Formily 不行"，是"问题域不同"。先承认 Formily 在纯前端场景更好，反而说明你做过认真对比。</strong></p>
+    <p><strong>Formily 的能力（先肯定）</strong>：它是成熟的 JSON Schema 表单方案，支持 x-reactions 联动、自定义组件、路径系统。纯前端表单——一个页面、一套联动、纯客户端计算——Formily 完全够用，生态还更完善。</p>
+    <p><strong>核心差异：双端联动（关键）</strong>：我们的联动不只前端组件间依赖，还涉及 BFF 层接口联动——用户切城市，前端不直接调后端，是调 BFF，BFF 根据城市+产品线+活动类型重新裁剪 Schema 再返回。这个"前端触发→BFF 重新生成配置→前端重新渲染"链路，Formily 的 x-reactions 覆盖不了（它只管前端层）。</p>
+    <p><strong>第二个差异：联动 DSL 表达力</strong>：我们的 dAction 有两类联动——State 型（组件间依赖，A 变→B 显隐/禁用，Formily 能做）；Fetch 型（跨接口，城市变→调 BFF 拿新配置→重渲染，需要 BFF 模板引擎，Formily 做不了）。Formily 要做 Fetch 型得自己写大量 effects，本质还是自研联动层，不如从头设计统一 DSL。</p>
+    <p><strong>选型决策（收口）</strong>：纯前端表单层，Formily 更好（社区活跃、开箱即用）。但我们的场景要前后端共享 Schema 协议、BFF 模板引擎动态裁剪、联动双端可解析——这不是"表单渲染"问题，是"配置驱动双端协同"问题。<strong>选自研不是 Formily 不好，是问题域不一样。</strong></p>
+    <p class="hint">[loop·已优化·待复核] 念法：钩子（问题域不同不是Formily不行）→ 肯定Formily（纯前端够用）→ 核心差异（双端联动BFF重新裁剪Schema）→ DSL差异（State型能做/Fetch型做不了）→ 收口（表单渲染vs配置驱动双端协同）。千万别贬低开源。</p>
   </div>
 </div>
 
