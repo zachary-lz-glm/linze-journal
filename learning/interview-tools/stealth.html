@@ -491,11 +491,12 @@ body{overscroll-behavior-y:contain}
   <div class="card-head"><span class="tag bagu">#24</span><div class="card-title">SSR + Hydration 详解（千问一面卡壳题）</div></div>
   <div class="core">SSR是服务端拼HTML直出首屏，Hydration是客户端React对比virtual DOM后复用节点并绑定事件</div>
   <div class="card-body">
-    <p><strong>SSR流程6步</strong>：客户端发起请求 → Node服务器匹配路由 → 执行数据预取函数（如getServerSideProps）→ 调后端API拿数据 → React把组件树renderToString成HTML字符串 → 数据注入HTML（window.__INITIAL_STATE__）→ 返回浏览器直接绘制（首屏快）。</p>
-    <p><strong>Hydration水合6步</strong>：浏览器下载HTML立即显示（用户已能看到内容）→ JS bundle下载执行 → React在内存基于同样的组件构建virtual DOM → <strong>对比</strong>virtual DOM和SSR的DOM节点（匹配则复用，不匹配报Mismatch warning）→ 给现有DOM节点<strong>绑定事件监听</strong>（这是为什么按钮在hydration前点了没反应）→ 组件state和effect激活，页面变成可交互。</p>
-    <p><strong>关键坑——Hydration Mismatch</strong>：用了Date.now()、Math.random()、window.innerWidth等会导致服务端和客户端渲染结果不一致，React会丢弃SSR HTML重渲染，性能收益归零。解决：用useEffect里设置这些值，或typeof window !== 'undefined'判断。</p>
-    <p><strong>React 18增强</strong>：Selective Hydration（优先hydrate用户正在交互的部分）+ Concurrent Features，避免大页面hydration阻塞整个交互。</p>
-    <p class="hint">千问一面被追问到这块时只答到"DOM树构建+事件绑定"——核心漏掉了"对比virtual DOM匹配则复用"这个机制和Mismatch坑。</p>
+    <p><strong>这题答三层就够了——SSR 是怎么把首屏变快的、Hydration 是怎么把静态 HTML 变成可交互的、中间最容易踩的坑是什么。先把框架甩出来，面试官就知道你不是只会背"DOM 树构建+事件绑定"。</strong></p>
+    <p><strong>第一层——SSR 首屏直出，顺数据流念 6 步</strong>：客户端发请求 → Node 服务器匹配路由 → 执行数据预取函数（比如 Next.js 的 getServerSideProps）→ 调后端 API 拿数据 → React 把组件树 renderToString 拼成 HTML 字符串 → 数据塞进 HTML（window.__INITIAL_STATE__）→ 直接返回浏览器绘制。这一段的核心就一句——<strong>用户不用等 JS 下载完就能看到内容</strong>，这就是 SSR 首屏快的本质。</p>
+    <p><strong>第二层——Hydration 水合，这是这题的真正考点（千问就栽在这层只答了一半）</strong>：浏览器拿到 HTML 立即显示，用户已经能看到页面，但还点不动——因为这时候只是"静态骨架"。接着 JS bundle 下载执行，React 在内存里基于同样的组件构建一份 virtual DOM，<strong>关键一步是拿它和 SSR 那份 DOM 节点对比：匹配的复用，不匹配的报 Mismatch warning</strong>。复用之后，给现有 DOM 节点<strong>绑定事件监听</strong>（这就是为什么 hydration 之前的按钮点了没反应），最后 state 和 effect 激活，页面变成可交互。这 6 步里"对比复用"是核心，只答"构建 DOM+绑事件"等于漏了中间那步——千问一面就是这么丢的分。</p>
+    <p><strong>第三层——Hydration Mismatch，主动甩这个坑显深度</strong>：一旦在渲染里用了 Date.now()、Math.random()、window.innerWidth 这种"服务端和客户端结果注定不一样"的值，两边 DOM 对不上，React 会直接丢弃 SSR 的 HTML 重渲染，性能收益归零。解法两条——要么把这些值放到 useEffect 里设置（只跑一次、只跑客户端），要么用 typeof window !== 'undefined' 做判断。</p>
+    <p><strong>加分点（被追问再甩）——React 18 的增强</strong>：Selective Hydration 让 React 优先 hydrate 用户正在交互的那部分，不再让大页面的 hydration 阻塞整个交互；配合 Concurrent Features，体验更顺。能讲到"按需 hydrate"这层，比 90% 候选人强。</p>
+    <p class="hint">[loop·已优化·待复核] 念法：先甩三层框架（SSR 怎么快/Hydration 怎么变可交互/中间的坑）→ 第一层 SSR 顺数据流念 6 步，金句是"不用等 JS 就能看到内容"→ 第二层 Hydration 6 步重点讲"对比 virtual DOM 匹配则复用"这一步（千问就是漏了这步丢的分）→ 第三层主动甩 Mismatch 坑+两条解法 → 加分点 React 18 Selective Hydration 被追问再甩。被问"hydration 之前按钮为什么点不动"答"还没绑事件"，被问"为什么 SSR 快"答"HTML 直出不等 JS"。</p>
   </div>
 </div>
 
