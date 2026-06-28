@@ -361,10 +361,10 @@ body{overscroll-behavior-y:contain}
   <div class="card-head"><span class="tag bagu">#1.5</span><div class="card-title">React Suspense 核心用法</div></div>
   <div class="core">Suspense是React的异步渲染协调机制，配合lazy做代码分割，配合数据框架做加载态管理</div>
   <div class="card-body">
-    <p><strong>用法一：组件级懒加载</strong>：React.lazy()配合Suspense和fallback，实现代码分割，只在需要时加载组件。包裹路由级组件，fallback显示loading骨架屏。</p>
-    <p><strong>用法二：数据获取协调</strong>：React 19的Concurrent模式下，Suspense可以包裹数据请求。组件render时如果数据还没好就"挂起"显示fallback，等数据就绪再渲染，避免瀑布式请求。需要Suspense-enabled的数据框架（如Relay、Next.js App Router、TanStack Query）配合。</p>
-    <p><strong>实战模式</strong>：嵌套多层Suspense——外层管全局loading（如路由切换），内层管局部loading（如某个卡片数据），实现渐进式加载体验。比手动管理isLoading状态更声明式。</p>
-    <p class="hint">涂虎面试直接考到，答"配合懒加载的"只对了一半，必须补充数据获取协调这个核心场景。</p>
+    <p><strong>先用一句话把面试官定住：Suspense 是"异步渲染的协调机制"，不是 lazy 的附属品</strong>。涂虎面试被问"Suspense 干嘛的"，张口就答"配合 lazy 做懒加载"——只对了一半，面试官立刻追问"还有呢"就卡住。问题在于把 Suspense 当成了 lazy 的语法糖，没讲透它真正的定位：把"加载态"从命令式的 isLoading 变成声明式的渲染协调。这个定位讲出来，面试官就知道你懂本质。</p>
+    <p><strong>然后甩两个用法，第二个才是这道题的分水岭</strong>：① <strong>组件级懒加载（人人都会答的那一半）</strong>——React.lazy() 把组件代码分割，用 Suspense 包一层配 fallback，组件还没下载完就显示 loading 骨架屏。通常包在路由级组件上。② <strong>数据获取协调（区分懂不懂的那一半）</strong>——在 Concurrent 模式下，Suspense 能包"数据请求"。组件 render 时数据没就绪就主动"挂起"显示 fallback，数据好了再渲染，天然避免请求瀑布。但有个硬前提：必须用 Suspense-enabled 的数据框架（Relay、Next.js App Router、TanStack Query 这类），自己手写 fetch 是挂不起来的。能讲到"需要框架配合"，比 90% 候选人强。</p>
+    <p><strong>追问"实际怎么组织"答嵌套模式</strong>：多层 Suspense 嵌套——外层管全局 loading（比如路由切换整页 loading），内层管局部 loading（比如某个卡片的数据还没来）。效果是渐进式加载：页面骨架先出来，哪块数据好了哪块就填充，体验比"整页转圈直到全部就绪"好得多。本质是把"什么时候显示 loading、显示在哪"声明式地交给 React 协调，不用再手搓一堆 isLoading 布尔值。</p>
+    <p class="hint">[loop·已优化·待复核] 念法：钩子先甩（不是 lazy 附属品，是异步渲染协调机制）→ 两用法（懒加载人人答/数据获取协调是分水岭，必带框架前提）→ 嵌套模式（外层全局内层局部，渐进式加载）→ 收口（isLoading 命令式变声明式）。涂虎真题：只答懒加载=只对一半，必补数据获取。</p>
   </div>
 </div>
 
