@@ -3575,12 +3575,15 @@ function buildTreeOptimized(list) {
   <div class="card-head"><span class="tag ai">AI</span><div class="card-title">MoE 混合专家：DeepSeek V3 为什么便宜</div></div>
   <div class="core">总参数 671B 但每 token 只激活 37B，性能接近 Dense 模型但推理成本低一个数量级</div>
   <div class="card-body">
-    <p><strong>MoE 架构</strong>（Mixture of Experts）：把 FFN 层替换成多个"专家"（expert）FFN，每个 token 经过一个路由器（Router/Gate）只激活其中 K 个专家（典型 top-2）。其他专家不参与前向和反向。等效于"动态稀疏激活"。</p>
-    <p><strong>DeepSeek V3 的数据</strong>：总参数 671B（256 个专家，每个 ~2.6B），每 token 激活 37B（1 个共享专家 + top-8 路由专家）。性能对标 GPT-4o，但推理算力只相当于 70B Dense 模型——成本降一个数量级。这是 DeepSeek 能把 API 价格打到 OpenAI 1/10 的核心。</p>
-    <p><strong>MoE 的核心挑战</strong>：① <strong>负载均衡</strong>——如果不强制约束，路由器会倾向选少数热门专家，其他专家"饿死"。DeepSeek 用 auxiliary-loss-free balancing（无辅助损失均衡）。② <strong>通信开销</strong>——多卡部署时专家分布在不同 GPU，路由跨 GPU 通信是大头。解决方案：Expert Parallelism + All-to-All 通信优化。③ <strong>训练不稳定</strong>——稀疏激活让梯度噪声大，需要更精细的 lr 调度。</p>
-    <p><strong>2026 主流 MoE 模型</strong>：① <strong>DeepSeek V3 / R1</strong>——671B/37B 激活，国产 SOTA。② <strong>Qwen3-235B-A22B</strong>——阿里 MoE，激活 22B。③ <strong>Mistral Mixtral 8x22B</strong>——欧洲代表。④ <strong>Grok-2</strong>——xAI，参数未公开。共同特征：总参数远大于激活参数，推理成本可控。</p>
-    <p><strong>为什么 MoE 是趋势</strong>：① <strong>Chinchilla 配比</strong>——训练 FLOPs 最优配比是参数:token = 1:20。MoE 增大参数但不增加激活 FLOPs，等效"白嫖"更多容量。② <strong>推理成本可控</strong>——用户只为激活的 37B 付费，不是 671B。③ <strong>专精化</strong>——不同专家学习不同子任务（代码、数学、语言等），效果优于 Dense。</p>
-    <p><strong>面试金句</strong>："MoE 的本质是参数容量和推理成本的解耦——671B 总参数给模型容量，37B 激活给推理成本。DeepSeek V3 的低价不是补贴是架构红利。"</p>
+    <p><strong>这道题用一句话开场：DeepSeek API 价格能打到 OpenAI 1/10，不是补贴，是 MoE 架构红利。我讲清为什么。</strong></p>
+    <p><strong>业务背景</strong>：大模型推理成本是大头，Dense 模型（所有参数都激活）越强越贵。MoE 解决了"参数容量和推理成本耦合"的问题——容量大但推理便宜。</p>
+    <p><strong>MoE 架构（Mixture of Experts）</strong>：把 FFN 层替换成多个"专家"FFN，每个 token 经过路由器（Router/Gate）只激活 K 个专家（典型 top-2）。其他专家不参与计算。等效<strong>动态稀疏激活</strong>。</p>
+    <p><strong>DeepSeek V3 的数据（记住）</strong>：总参数 671B（256 个专家，每个 ~2.6B），每 token <strong>只激活 37B</strong>（1 个共享专家 + top-8 路由专家）。性能对标 GPT-4o，但推理算力只相当于 70B Dense 模型——<strong>成本降一个数量级</strong>。这是 DeepSeek 价格打到 OpenAI 1/10 的核心。</p>
+    <p><strong>MoE 三个核心挑战（被追问甩）</strong>：① <strong>负载均衡</strong>——路由器倾向选少数热门专家，其他"饿死"（DeepSeek 用 auxiliary-loss-free balancing）；② <strong>通信开销</strong>——多卡部署专家分布在不同 GPU，路由跨 GPU 通信是大头（Expert Parallelism + All-to-All 优化）；③ <strong>训练不稳定</strong>——稀疏激活梯度噪声大，需精细 lr 调度。</p>
+    <p><strong>2026 主流 MoE</strong>：DeepSeek V3/R1（671B/37B，国产 SOTA）、Qwen3-235B-A22B（阿里，激活 22B）、Mistral Mixtral 8x22B（欧洲）。共同特征：总参数远大于激活参数。</p>
+    <p><strong>为什么是趋势</strong>：① <strong>Chinchilla 配比</strong>——训练最优是参数:token=1:20，MoE 增参数不增激活 FLOPs，"白嫖"更多容量；② <strong>推理成本可控</strong>——用户只为激活的 37B 付费；③ <strong>专精化</strong>——不同专家学不同子任务（代码/数学/语言）。</p>
+    <p><strong>收口金句</strong>："MoE 本质是参数容量和推理成本解耦——671B 总参数给容量，37B 激活给成本。DeepSeek 低价不是补贴是架构红利。"</p>
+    <p class="hint">[loop·已优化·待复核] 念法：DeepSeek便宜钩子（非补贴是架构）→ 业务背景（Dense越强越贵）→ MoE架构（稀疏激活）→ DeepSeek数据（671B/激活37B，成本降一个数量级）→ 三挑战（追问甩）→ 主流模型 → 为什么趋势 → 金句。</p>
   </div>
 </div>
 
