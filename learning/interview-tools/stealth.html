@@ -1826,14 +1826,14 @@ function buildTreeOptimized(list) {
   <div class="card-head"><span class="tag proj">G1</span><div class="card-title">reference 知识过时怎么办？（L7 会员升级问题）</div></div>
   <div class="core">三层防线：时效性分层 + 触发式失效 + 金标准回归</div>
   <div class="card-body">
-    <p><strong>面试官追问</strong>（阿里一面27:34）："滴滴L7会员6/1刚升级了规则，你reference里还是老规则，这种过时知识反而误导AI，怎么办？"</p>
-    <p><strong>我当时的回答</strong>：弱——"暂时不可避免的痛点""定时两周更新""用比较新的PRD""半自动化"。这个回答不够结构化。</p>
-    <p><strong>升级版回答三层防线</strong>：</p>
-    <p>· <strong>时效性分层（SLA-based）</strong>：Tier1 永久事实（枚举/API路径/类型定义）走代码 diff 触发失效；Tier2 慢变事实（业务规则/契约/字段语义）30天 reverify；Tier3 快变事实（配置/文案/活动模板）7天 reverify。每条记录带 valid_from / valid_to / last_verified_at。</p>
-    <p>· <strong>触发式更新</strong>：集成 GitNexus 的 detect_changes，代码 diff 涉及到 reference 某条记录自动标 stale，下次蒸馏强制走 source 验证而不是 reference。</p>
-    <p>· <strong>金标准回归</strong>：把 L7 升级、跨端配置变更这种作为 benchmark case，每次 prd-tools 发版回归，确保失效检测生效。</p>
-    <p><strong>具体场景答法</strong>："6/1 升级当天，GitNexus 检测到 membership-level.ts diff，自动把 reference 05-domain 里所有 L7 相关键标为 stale。下次蒸馏会发现这些键过期，强制走源码验证而不是 reference，所以 AI 拿到的就是新规则。"</p>
-    <p class="hint">关键不要说"暂时不可避免"——这是承认短板。要答机制：分层 + 触发 + 回归。</p>
+    <p><strong>先甩个钩子：reference 过时不是"忍不忍"的问题，是"有没有机制兜住"的问题。我场上那句"暂时不可避免"是承认短板，正确答法是拿机制说话——分层、触发、回归三层防线。这道题是阿里一面27:34的真实追问："滴滴L7会员6/1刚升级了规则，你reference里还是老规则，过时知识反而误导AI，怎么办？"</strong></p>
+    <p><strong>先讲业务背景</strong>：我做 prd-tools，reference 六文件是 AI 的唯一事实来源，喂 20+ 人团队真用——一旦某条记录过期（比如 L7 升级规则变了），AI 照老规则出计划，下游同事照错计划开工就是返工，信任一塌就废了。所以"知识保鲜"不是可选项是必修课。</p>
+    <p><strong>第一层·时效性分层（SLA-based）</strong>：我把 reference 里的每条记录按"变不变"分三档——Tier1 永久事实（枚举、API 路径、类型定义）几乎不变，绑代码 diff 触发失效；Tier2 慢变事实（业务规则、契约、字段语义）30 天 reverify 一次；Tier3 快变事实（配置、文案、活动模板）7 天 reverify。每条记录带三个时间戳：valid_from、valid_to、last_verified_at，过期自动标 stale。</p>
+    <p><strong>第二层·触发式更新，这是机制核心</strong>：集成 GitNexus 的 detect_changes，代码一 diff 涉及到 reference 某条记录，自动标 stale，下次蒸馏强制走 source 验证而不是 reference——AI 不再吃老规则。这层把"被动等过期"变成"主动感知变化"。</p>
+    <p><strong>第三层·金标准回归兜底</strong>：把 L7 升级、跨端配置变更这种高风险变更做成 benchmark case，每次 prd-tools 发版都回归一遍，确保失效检测真生效——不是纸上机制，是有回归守护的机制。</p>
+    <p><strong>落到具体场景念给面试官</strong>："6/1 升级当天，GitNexus 检测到 membership-level.ts 的 diff，自动把 reference 05-domain 里所有 L7 相关键标为 stale。下次蒸馏发现这些键过期，强制走源码验证，所以 AI 拿到的就是新规则。"</p>
+    <p><strong>收个口</strong>：这道题的关键不是知识会不会过时——一定会；是有没有机制兜住过时。分层管"多久查一次"、触发管"变了立刻知道"、回归管"机制别失效"。三件套缺一不可。</p>
+    <p class="hint">[loop·已优化·待复核] 念法：钩子（不是忍不忍是有没有机制兜）→ 业务背景（喂20+人、过期即返工塌信任）→ 三层逐条（时效性分层Tier1/2/3+三时间戳/触发式更新GitNexus检测/金标准回归）→ 具体场景念L7升级（GitNexus检测membership-level.ts→05-domain标stale→强制走source）→ 收口（分层管频率/触发管感知/回归管机制本身）。核心：别再说"暂时不可避免"，那是认输，要答机制。</p>
   </div>
 </div>
 
