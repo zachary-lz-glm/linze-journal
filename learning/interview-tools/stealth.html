@@ -1703,7 +1703,7 @@ function buildTreeOptimized(list) {
     <p><strong>第四步·设计记忆</strong>：短期记忆管上下文窗口（对话压缩），长期记忆用向量库+结构化索引，工作记忆用中间文件传任务状态。</p>
     <p><strong>第五步·质量保障（工业级 Agent 和玩具的分水岭）</strong>：每步设门控条件，产出做证据链可追溯，异常设恢复策略（重试/降级/转人工）。</p>
     <p><strong>落到我的项目</strong>：prd-tools 就是严格按这五步设计的——边界是"PRD 到 Plan 不含编码"（生成自主、发布人审）；模式是 Plan-and-Execute（11 步蒸馏流水线）；工具是两个 Skill（/reference、/prd-distill）；记忆是 reference 6 文件（01-codebase 到 05-domain）+ 中间 YAML；保障是 quality-gate.py 五维评分 + Spec Review 硬停止。这套设计让我能讲清每个决策的 why，不是堆概念。</p>
-    <p class="hint">[loop·已优化·待复核] 念法：五步骨架开场 → 每步一句（边界/模式/Tool/记忆/保障）→ 落 prd-tools 五步对应。被问"怎么设计 Agent"直接用这套。</p>
+    <p class="hint">[loop·已优化·已复核] 念法：五步骨架开场 → 每步一句（边界/模式/Tool/记忆/保障）→ 落 prd-tools 五步对应。被问"怎么设计 Agent"直接用这套。</p>
   </div>
 </div>
 
@@ -1719,7 +1719,7 @@ function buildTreeOptimized(list) {
     <p>④ <strong>多 Agent 框架</strong>（AutoGen 对话协作、CrewAI 角色分工）——多个 Agent 各司其职（一个写代码、一个测试、一个 Review）。</p>
     <p><strong>选型决策（落到我的项目）</strong>：prd-tools 就是按"从轻到重"选的——最初裸 API 起家（最大灵活），后来抽象成 Skill + 脚本（相当于自研轻量编排），<strong>没直接上 LangGraph</strong>，因为我的流程是固定 11 步、不需要运行时动态分支，上 LangGraph 是过度设计。如果未来要做多 Agent 协作（PRD 分析+代码生成+验证拆开），才会考虑 AutoGen/A2A。</p>
     <p><strong>面试金句</strong>："我倾向从轻到重按需升级——裸 API 能搞定就不上 SDK，单 Agent 能搞定就不上多 Agent。"这比"我上来就用 LangGraph"显得成熟得多。</p>
-    <p class="hint">[loop·已优化·待复核] 念法：先甩原则（从轻开始）→ 四层快速过 → 选型决策落 prd-tools（为何没上 LangGraph）→ 金句收口。</p>
+    <p class="hint">[loop·已优化·已复核] 念法：先甩原则（从轻开始）→ 四层快速过 → 选型决策落 prd-tools（为何没上 LangGraph）→ 金句收口。</p>
   </div>
 </div>
 
@@ -1734,7 +1734,7 @@ function buildTreeOptimized(list) {
     <p><strong>三个上 Agent 的真信号</strong>（被追问"到底什么算动态决策"就甩）：① 中间结果会改变下一步走向（搜索完根据结果决定深挖还是换方向）；② 必须调外部工具补信息（查库、读文件、调接口）；③ 步骤之间依赖关系没法线性写死。</p>
     <p><strong>边界和风险（必须主动说，显得成熟）</strong>：Agent 的不确定性是双刃剑——能处理意外，但也会跑偏甚至死循环。工业级落地三道约束：Tool 白名单限能力范围、门控限产出质量、HITL 限自主程度。没约束的 Agent 在生产环境是定时炸弹。</p>
     <p><strong>落我的项目（项目桥接，最关键）</strong>：prd-tools 主流程我<strong>故意没做成开放 Agent</strong>——它是固定的蒸馏流水线、确定性编排，每步顺序和门禁都写死，因为我要喂二十多人团队、要可预测可调试。真正用到 Agent Loop 的只有端到端原型的自验证+自修复那一小段——代码跑挂了才让 LLM 自主决定怎么修。这就是这套判断框架的真实落地：该确定的地方确定，该开放的地方才开放。</p>
-    <p class="hint">[loop·已优化·待复核] 念法：钩子（不是考能干嘛，是考会不会乱用）→ 核心一问（要不要 LLM 运行时决策）→ 业务背景（prd-tools 喂 20+ 人、最怕不确定）→ 三层框架（API/Skill/Agent 各解决什么问题）→ 三信号 → 风险三约束 → 落 prd-tools（主流程确定性编排，只自修复那段是 Agent Loop）。金句："该确定的地方确定，该开放的地方才开放"。</p>
+    <p class="hint">[loop·已优化·已复核] 念法：钩子（不是考能干嘛，是考会不会乱用）→ 核心一问（要不要 LLM 运行时决策）→ 业务背景（prd-tools 喂 20+ 人、最怕不确定）→ 三层框架（API/Skill/Agent 各解决什么问题）→ 三信号 → 风险三约束 → 落 prd-tools（主流程确定性编排，只自修复那段是 Agent Loop）。金句："该确定的地方确定，该开放的地方才开放"。</p>
   </div>
 </div>
 
@@ -1775,7 +1775,7 @@ function buildTreeOptimized(list) {
     <p><strong>什么时候值得拆（三个信号）</strong>：任务有明显异构子任务——一个分析代码、一个分析文档、一个做 Review，知识背景不一样；单 Agent 的 prompt 已经膨胀到指令打架、模型分不清优先级；需要并行加速多个子任务最后汇总。反过来，线性单链路、团队没编排经验（AutoGen/CrewAI 学习曲线不低）、调试成本不能接受——这三类别硬上 Multi-Agent。</p>
     <p><strong>落到我的项目</strong>：prd-tools 用双 Skill（Reference + PRD 蒸馏）但共享同一个 Agent 上下文——本质是"单 Agent + 多 Skill"模式，步骤明确、链路线性，单 Agent 够用。如果未来 PRD 分析要同时做代码理解 + 竞品分析 + 用户研究，才考虑拆 Multi-Agent。<strong>Anthropic 工程化金句（被追问深度甩）</strong>：拆分本质是<strong>用通信成本换单点负载</strong>——当单个 Agent 的上下文管理成本超过多 Agent 协调的通信成本，就该拆。</p>
     <p><strong>被问架构时再甩 Multi-Agent 四种协作模式</strong>：Supervisor-Worker（主 Agent 拆任务派子 Agent）、Pipeline（流水线串联）、Debate（多 Agent 辩论）、Hierarchical（树状层级）——每引入一种都要处理通信协议、冲突解决、错误传播、终止条件四类新复杂度。</p>
-    <p class="hint">[loop·已优化·待复核] 念法：先甩定调金句（用通信成本换单点负载，不是银弹）→ 两种形态（单/多各一句优缺点）→ 核心区别三点（上下文/调试/成本）→ 三个值得拆的信号 → 落 prd-tools（单Agent+多Skill够用）→ 被问架构甩四种协作模式。别上来就堆四种模式，那是被追问才讲的。</p>
+    <p class="hint">[loop·已优化·已复核] 念法：先甩定调金句（用通信成本换单点负载，不是银弹）→ 两种形态（单/多各一句优缺点）→ 核心区别三点（上下文/调试/成本）→ 三个值得拆的信号 → 落 prd-tools（单Agent+多Skill够用）→ 被问架构甩四种协作模式。别上来就堆四种模式，那是被追问才讲的。</p>
   </div>
 </div>
 
