@@ -4156,14 +4156,13 @@ function buildTreeOptimized(list) {
   <div class="card-head"><span class="tag bagu">基础</span><div class="card-title">React 19 新特性（use Hook + Actions + RSC）</div></div>
   <div class="core">use Hook 打破顶层调用限制，Actions 统一异步操作，RSC 正式版</div>
   <div class="card-body">
-    <p><strong>use Hook（革命性）</strong>：在组件内<strong>条件性</strong>读取 Promise/Context，打破 Hooks 必须顶层调用的限制。可以在 if 里调用！</p>
-    <p><strong>Actions（表单处理新范式）</strong>：统一处理异步操作。核心 API：useActionState（替代 useState + 异步 reducer）、useFormStatus、useOptimistic（乐观更新）。</p>
-    <p><strong>RSC（React Server Components）正式版</strong>：组件在服务端渲染，<strong>运行时无 JS</strong>，减少 bundle size。</p>
-    <p>· <strong>和 SSR 本质区别</strong>：SSR 是页面级 + 需要 hydration（客户端重新执行 JS）；RSC 是组件级 + <strong>不需要 hydration</strong>。</p>
-    <p>· <strong>限制</strong>：不能有交互（onClick），需要交互的部分用 Client Component（'use client'）。</p>
-    <p><strong>其他新特性</strong>：① Document Metadata（原生支持 title/meta）② Asset Loading（preload/preinit）③ Ref as Prop（不用 forwardRef 了）④ React Compiler（自动 memoization，不用手写 useMemo/useCallback）。</p>
-    <p><strong>安全注意</strong>：RSC 曾爆 CVSS 10 分 RCE 漏洞（服务端渲染时执行恶意 key），Next.js 等框架受影响。</p>
-    <p class="hint">2026 必考。能讲到 RSC vs SSR 区别 + 安全风险显得专业。</p>
+    <p><strong>这道题面试官不是想听你背 API 名字，是想看你有没有"框架演进方向"的判断——一句话定调：React 19 三件事都是在<strong>把工作从客户端挪到服务端/编译期</strong>，让运行时更轻。三个特性顺着念：use Hook 破限制、Actions 统一异步、RSC 正式版，最后用 RSC vs SSR 的本质区别和安全风险收口，显得你既懂新东西也懂它的坑。</strong></p>
+    <p><strong>先说 use Hook（最革命的一个）</strong>：以前 Hooks 铁律是"只能在顶层调用、不能在 if 里"，use Hook 打破了这个限制——能在条件分支、循环里读 Promise 或 Context。它解决的是"条件性地等一个异步结果"这种以前写起来很别扭的场景，不用再层层写 useState + useEffect 手搓。一句话点透：它把"异步值"变成可以像普通变量一样在条件里读的东西。</p>
+    <p><strong>再说 Actions（表单/异步操作的新范式）</strong>：以前写一个表单提交，要自己管 loading、错误、乐观更新，代码很碎。Actions 把这一套统一成三个 API——useActionState（管提交状态，替代 useState + 异步 reducer）、useFormStatus（表单内部组件读提交态）、useOptimistic（乐观更新，点了就先渲染结果、失败再回滚）。本质是把"异步操作的状态管理"标准化，不用每个表单重写一遍。</p>
+    <p><strong>最后说 RSC（React Server Components）正式版——这是面试核心考点</strong>：组件在服务端渲染，运行时无 JS，静态部分直接打进服务端产物、不打进客户端 bundle。区别于 SSR 的本质有两点——① <strong>粒度</strong>：SSR 是页面级把整个页面 renderToString 成 HTML，RSC 是<strong>组件级</strong>，可以一个页面里静态部分用 RSC、交互部分用 Client Component（标 'use client'）；② <strong>要不要 hydration</strong>：SSR 必须 hydration（浏览器下载后再执行一遍 JS 重建 vDOM），RSC<strong>不需要 hydration</strong>——它输出的是"已经渲染好的组件描述"，客户端直接消费不重新执行 JS。所以 RSC 能减少 40%+ 的客户端 bundle。限制也要说清：RSC 组件不能有交互（onClick 这类），需要交互的拆成 Client Component。</p>
+    <p><strong>其他新特性快速带过（被追问再展开）</strong>：① Document Metadata 原生支持 title/meta 不用 react-helmet；② Asset Loading（preload/preinit）优化资源加载；③ Ref as Prop 不用再写 forwardRef；④ React Compiler 自动 memoization，不用手写 useMemo/useCallback——这一条是"编译期优化"的代表，呼应开头那句定调。</p>
+    <p><strong>安全风险必须主动提一句（显得你真做过、不是只看利好）</strong>：RSC 曾爆过 CVSS 10 分的 RCE 漏洞——服务端渲染时如果执行了来自不可信数据的恶意 key，等于在服务端跑了任意代码，Next.js 等框架都受影响。所以讲 RSC 别只讲快，要补一句"服务端渲染不可信数据是新的攻击面，框架层要兜底"。</p>
+    <p class="hint">[loop·已优化·待复核] 念法：钩子先甩定调（React 19 三件事都是把工作从客户端挪到服务端/编译期，让运行时更轻）→ use Hook（破顶层调用限制，能在 if 里读 Promise/Context）→ Actions（三 API 统一异步操作状态：useActionState/useFormStatus/useOptimistic）→ RSC 正式版（核心考点，组件级+无 hydration，区别 SSR 两点：粒度页面级vs组件级、必须hydrationvs不需要，减40% bundle，限制是不能有交互拆Client Component）→ 其他新特性快速带（被追问展开，React Compiler呼应定调）→ 安全风险收口（RSC曾爆CVSS 10 RCE，服务端渲染不可信数据是新攻击面，别只讲快）。被问"RSC 和 SSR 到底啥区别"→ 重点念粒度+hydration两点；被问"RSC 有什么坑"→ 甩 CVES RCE 那句。</p>
   </div>
 </div>
 
