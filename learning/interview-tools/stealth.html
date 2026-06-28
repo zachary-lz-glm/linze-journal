@@ -2072,12 +2072,16 @@ function buildTreeOptimized(list) {
 
 <div class="card" data-c="ai" data-kw="结构化索引 向量检索 embedding 倒排 正则 RAG 检索方案 选型 对比 BM25">
   <div class="card-head"><span class="tag ai">E25</span><div class="card-title">结构化索引 vs 向量检索怎么选？</div></div>
-  <div class="core">结构化高→正则索引；语义模糊→向量检索</div>
+  <div class="core">结构化高→正则索引；语义模糊→向量检索；代码场景精确优先</div>
   <div class="card-body">
-    <p><strong>结构化索引（正则/倒排）</strong>：用规则从代码中提取实体关系（函数名、字段名、文件路径），构建倒排表。精准、轻量、无需模型。适合：代码库、配置文件等结构化程度高的场景。</p>
-    <p><strong>向量检索（Embedding）</strong>：把文本切成 chunk → 用 embedding 模型向量化 → 存向量数据库 → 余弦相似度检索。能理解语义相似但字面不同的内容。适合：自然语言文档、FAQ、非结构化知识库。</p>
-    <p><strong>混合检索</strong>：实际生产中通常两者结合——BM25 关键词匹配保精准，向量检索补语义。再接 Reranker 重排序。</p>
-    <p><strong>面试口诀</strong>：它们不是替代关系，是互补关系。正则索引 = 精确查找，向量检索 = 语义查找。场景结构化程度高就用正则就够了，场景有自然语言模糊性就需要向量。</p>
+    <p><strong>这道题的选型口诀：它们不是替代，是互补——正则索引管精确查找，向量检索管语义查找。看场景结构化程度选。</strong></p>
+    <p><strong>业务背景</strong>：检索方案选错，要么召回不准（代码场景用向量，精确符号匹配不到），要么维护重（自然语言场景硬写正则）。得根据数据特点选。</p>
+    <p><strong>结构化索引（正则/倒排）</strong>：用规则从代码提取实体关系（函数名、字段名、文件路径），构建倒排表。<strong>特点</strong>：精准、轻量、无需模型。<strong>适合</strong>：代码库、配置文件这类结构化程度高的场景。</p>
+    <p><strong>向量检索（Embedding）</strong>：文本切 chunk → embedding 向量化 → 存向量库 → 余弦相似度检索。<strong>特点</strong>：能理解语义相似但字面不同的内容（如"汽车"匹配"轿车"）。<strong>适合</strong>：自然语言文档、FAQ、非结构化知识库。</p>
+    <p><strong>混合检索（生产主流）</strong>：两者结合——BM25 关键词保精准，向量补语义，再接 Reranker 重排序。</p>
+    <p><strong>落到我的项目（关键决策）</strong>：prd-tools <strong>只用倒排+BM25，没上向量</strong>。原因是检索对象是代码——函数名、字段名、路径都是离散符号，精确匹配比语义近似更准更快（搜 getMembershipLevel 要精确命中，不要"语义相近"的 getLevel）。还能 grep 调试、零模型依赖。这是主动选型，不是不懂向量——换成自然语言知识库（PRD 文档/用户问答）我会上向量。</p>
+    <p class="hint">[loop·已优化·待复核] 念法：选型口诀（互补非替代）→ 业务背景（选错召回不准/维护重）→ 两种方案对比（结构化精确 vs 向量语义）→ 混合检索 → 落 prd-tools（为何只用倒排+BM25，代码场景精确优先）。</p>
+  </div>
   </div>
 </div>
 
