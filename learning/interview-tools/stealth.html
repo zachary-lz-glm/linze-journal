@@ -2237,10 +2237,11 @@ function buildTreeOptimized(list) {
   <div class="card-head"><span class="tag ai">D27</span><div class="card-title">大模型成本优化策略</div></div>
   <div class="core">效果vs成本权衡：更贵模型≠更好效果，用工程手段补齐短板</div>
   <div class="card-body">
-    <p><strong>核心矛盾</strong>：更好的模型+更长的上下文=更好的效果，但也=更高的成本。不能无脑上最强模型，需要找到效果和成本的甜蜜点。</p>
-    <p><strong>Token管理</strong>：上下文预算管理——只传必要信息，用Reference/知识库做预筛选；渐进式披露——不一次性给全部上下文；中间文件传递——Skill间不重复传上下文。</p>
-    <p><strong>记忆压缩</strong>：对话历史不能每轮全传，需要做压缩（类似MemGPT思路）。大厂通常自研对话压缩，去掉历史无关信息只保留关键上下文。</p>
-    <p><strong>工程手段补短板</strong>：用质量门控（L1前置检查+L2 distill门禁+L3 final评分）、证据链、Spec Review硬停止等工程手段弥补模型能力不足，而不是简单换更贵的模型。prd-tools的多层门控就是这个思路——用约束换可靠性。</p>
+    <p><strong>这题我答一句话定调——成本优化的核心不是换便宜的模型，是"用工程约束换可靠性"，让中等模型也能跑出贵模型的效果。</strong></p>
+    <p><strong>先说为什么必考、为什么有空间</strong>：我做的 prd-tools 喂 20+ 人用，每天几十次调用，如果每次都无脑把全量上下文塞进 prompt，token 账单会爆炸、稳定性还会劣化（上下文越长越贵、还容易 Lost in Middle）。真实场景里"更好模型 + 更长上下文"既贵又未必更准——必须找效果和成本的甜蜜点。</p>
+    <p><strong>我从三层往下控</strong>：第一层是 <strong>Token 管理</strong>——上下文预算管控，只传必要信息（用 Reference 知识库做预筛选，不一次性全量灌入）、渐进式披露（按需检索按需注入）、中间产物靠文件传递（Skill 之间不重复传上下文，省的是真金白银的 token）。第二层是 <strong>记忆压缩</strong>——对话历史不能每轮全传，要做压缩（类似 MemGPT 思路），大厂普遍自研对话压缩去掉无关信息只留关键上下文。第三层是 <strong>工程手段补短板</strong>——这是我最深的实践：用质量门控（L1 前置检查 + L2 distill 门禁 + L3 final 评分）、证据链、Spec Review 硬停止这些工程机制弥补模型能力不足，而不是简单堆更贵的模型。</p>
+    <p><strong>落到我的项目</strong>：prd-tools 的多层门控就是这个思路——把 T/P 参数定死（T=0.2、P=0.95 让一致性从 40 拉到 85），主流程走确定性编排不烧钱，只在自修复那段开 Agent Loop 兜底。<strong>一句话收口：该确定的地方用工程锁死，该开放的地方才花 token 让模型发挥</strong>——这才是成本优化的本质。</p>
+    <p class="hint">[loop·已优化·待复核] 念法：定调金句（用工程约束换可靠性，不是换便宜模型）→ 业务背景（prd-tools 喂 20+ 人、越长越贵+Lost in Middle）→ 三层（Token 管理/记忆压缩/工程补短板）→ 落 prd-tools（多层门控+T=0.2/P=0.95 一致性 40→85+确定性编排只在自修复开 Agent Loop）→ 金句收口（该确定锁死该开放才花 token）。被问"为什么不直接换 GPT-5/最贵模型"→ 工程兜底比换模型稳且省。</p>
   </div>
 </div>
 
