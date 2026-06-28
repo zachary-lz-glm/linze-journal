@@ -323,7 +323,7 @@ body{overscroll-behavior-y:contain}
     <p><strong>第二步，根因分析</strong>：根子不在 resolver 本身，在于——<strong>我们的依赖版本没有锁死，谁都能自动升</strong>。rc 是 release candidate（候选版），本来就不保证稳定，结果被当成正式版自动拉了。这类隐性版本漂移是 Monorepo 最常见的炸弹。</p>
     <p><strong>第三步，流程改进（这才是面试官真正想听的）</strong>：复盘做了三件事，后来成了团队的依赖管理规范——① <strong>yarn.lock 加入 git 保护</strong>，禁止自动升级；② <strong>CI 加 lockfile diff 检测</strong>，依赖变了必须在 PR 里显式说明、走 review；③ <strong>依赖升级强制走 staging 验证</strong>，过了再上生产。</p>
     <p><strong>收口</strong>：好的事故回答不是"我没出过事"，是"出过、而且我把教训固化成了机制"。这三步流程后来也复用到了别的故障处理上——这也是我在 Monorepo 依赖管理那块讲的三道防线的由来。</p>
-    <p class="hint">[loop·已优化·待复核] 念法：定调三步开场（止血/根因/改进）→ 背景（Monorepo CI 自动拉依赖是定时炸弹）→ 逐步（15 分钟回滚 yarn.lock / 根因是版本没锁死 rc 候选版被当正式版拉 / 三件改进 lock 入 git+CI diff+staging 验证）→ 收口（教训固化成机制，呼应依赖管理三道防线）。被问"踩过什么坑/线上出过事故吗/怎么处理故障"都用这套，主动甩三件流程改进显成熟度。</p>
+    <p class="hint">[loop·已优化·已复核] 念法：定调三步开场（止血/根因/改进）→ 背景（Monorepo CI 自动拉依赖是定时炸弹）→ 逐步（15 分钟回滚 yarn.lock / 根因是版本没锁死 rc 候选版被当正式版拉 / 三件改进 lock 入 git+CI diff+staging 验证）→ 收口（教训固化成机制，呼应依赖管理三道防线）。被问"踩过什么坑/线上出过事故吗/怎么处理故障"都用这套，主动甩三件流程改进显成熟度。</p>
   </div>
 </div>
 
@@ -1758,7 +1758,7 @@ function buildTreeOptimized(list) {
     <p><strong>Anthropic 官方选型建议（被问"该怎么选"就甩）</strong>：任务明确步骤固定 → Workflow；任务目标明确但路径不确定 → Agent。Anthropic 自己的建议是<strong>"从 Workflow 起步，确认不够用再升级 Agent"</strong>——别一上来就 Agent，那是初级坑。</p>
     <p><strong>项目定位校准（最关键，避免被问爆）</strong>：我诚实说——prd-tools 团队推广版的 11 步蒸馏流水线<strong>本质是 Workflow + Skills 编排</strong>，步骤、依赖、门禁全部预定义，开发者主导控制权；prd2code-gen 端到端原型也是 Workflow 框架，但<strong>自验证 + 自修复循环里嵌了一段 Agent Loop</strong>——代码跑挂了才让 LLM 自主决定怎么修。一句话定位："Workflow 为主，关键节点引入 Agent Loop"。</p>
     <p><strong>核心公式（被问"Agent 本质是什么"翻这个）</strong>：来自 Lilian Weng / OpenAI 的经典公式——<strong>Agent = LLM（大脑）+ Planning（规划）+ Memory（记忆）+ Tool Use（工具）</strong>，四组件缺一不可。Workflow 不要求四组件完整，所以更轻、更适合步骤明确的场景。</p>
-    <p class="hint">[loop·已优化·待复核] 念法：钩子（不是背名词，是考概念清晰度）→ 业务背景（prd-tools 喂 20+ 人、最怕过程不确定、必须能讲清自己定位）→ Anthropic 权威定义（出处+Workflow/Agent 各一句）→ 金句记忆（控制权归谁）→ 官方选型建议（从 Workflow 起步）→ 项目校准（诚实说 11 步是 Workflow，自修复段是 Agent Loop）→ 核心公式（四组件）。被问"你这算 Agent 吗"→ 主动承认是 Workflow + Skills，自修复环节有 Agent Loop；被问"为啥不用纯 Agent"→ "Anthropic 建议 Workflow 优先，prd-tools 任务步骤明确，Workflow 更可预测可调试"；被问"Agent 本质是什么"→ 翻核心公式。</p>
+    <p class="hint">[loop·已优化·已复核] 念法：钩子（不是背名词，是考概念清晰度）→ 业务背景（prd-tools 喂 20+ 人、最怕过程不确定、必须能讲清自己定位）→ Anthropic 权威定义（出处+Workflow/Agent 各一句）→ 金句记忆（控制权归谁）→ 官方选型建议（从 Workflow 起步）→ 项目校准（诚实说 11 步是 Workflow，自修复段是 Agent Loop）→ 核心公式（四组件）。被问"你这算 Agent 吗"→ 主动承认是 Workflow + Skills，自修复环节有 Agent Loop；被问"为啥不用纯 Agent"→ "Anthropic 建议 Workflow 优先，prd-tools 任务步骤明确，Workflow 更可预测可调试"；被问"Agent 本质是什么"→ 翻核心公式。</p>
   </div>
 </div>
 
@@ -1887,7 +1887,7 @@ function buildTreeOptimized(list) {
     <p><strong>L3 业务价值——量长期飞轮</strong>：reference 飞轮增速（每月新增 playbook/术语数）、团队模式契约对齐度提升。这层偏定性，是产品长期价值的佐证。</p>
     <p><strong>严谨的 A/B 设计念给面试官</strong>：实验组 = `/prd-distill` 全流程 + Claude Code 执行 plan，对照组 = Claude Code init + 直接给 PRD，样本量 ≥ 30 个真实需求 pair-wise 对照，主指标锁定开发返工率。把"分母是什么""对照组怎么定义"两个最容易追穿的点一次性堵死。</p>
     <p><strong>收个口，诚实交代进度</strong>：v2.19 已经有 readiness/final QG 内部评分（L1 能跑），但 L2/L3 业务指标在 Sprint 3 排期，现在没有硬 A/B——这是公认短板，正在补。"已经有内部评分、业务指标在排期"两层 roadmap 讲清，比说"暂时没考虑"强一百倍。<strong>核心一句</strong>：工程化项目最忌讳"我觉得有用"，得拿指标名+数字+对照组说话。</p>
-    <p class="hint">[loop·已优化·待复核] 念法：钩子（阿里一面追到分母，场上答弱）→ 口径收敛（5h→2h 主指标）→ 业务背景（产出是 plan 不是代码，收益绕一层）→ L1 产物质量三锚点（已能跑）→ L2 研发效率三指标（主指标返工率，对照组也用 Claude Code 变量单一）→ L3 业务价值（飞轮定性）→ A/B 设计（实验组/对照组/样本30/主指标返工率，堵分母和对照定义）→ 收口（v2.19 已有内部评分+L2L3 在 Sprint 3 排期，诚实说没硬 A/B）。三件套口诀：指标名+数字+对照组定义。</p>
+    <p class="hint">[loop·已优化·已复核] 念法：钩子（阿里一面追到分母，场上答弱）→ 口径收敛（5h→2h 主指标）→ 业务背景（产出是 plan 不是代码，收益绕一层）→ L1 产物质量三锚点（已能跑）→ L2 研发效率三指标（主指标返工率，对照组也用 Claude Code 变量单一）→ L3 业务价值（飞轮定性）→ A/B 设计（实验组/对照组/样本30/主指标返工率，堵分母和对照定义）→ 收口（v2.19 已有内部评分+L2L3 在 Sprint 3 排期，诚实说没硬 A/B）。三件套口诀：指标名+数字+对照组定义。</p>
   </div>
 </div>
 
@@ -2200,7 +2200,7 @@ function buildTreeOptimized(list) {
     <p>第二块是 <strong>自修复循环——验证失败不是直接重写，是"差异修正"</strong>：只改报错的那几行那几个字段，不是把整个文件重写一遍；改完做的是 <strong>全量重验</strong>，不是只验刚修的那一项（否则会修 A 坏 B）；最多重试 3 次，还过不了就 <strong>暂停交人工</strong>，不无限循环烧 token。</p>
     <p>第三块是 <strong>震荡检测，这是我自己的核心创新，也是面试杀手锏</strong>：朴素重试有个坑——第一次把 A 改成 B，第二次又改回 A，无限横跳。我的做法是读 validation.json 的 history 数组，识别出 A→B→A 这种来回横跳的模式，一旦命中就 <strong>切换策略：整段重写</strong>，跳出局部最优。每一次修正的 attempt、用了什么 strategy、修了哪些 error、又冒出什么 new_error 全程记进 history，事后能复盘。</p>
     <p><strong>落到我的项目收口</strong>：这套不是 PPT，是 prd2code-gen 里真跑的——validation.json 的 history 数组就是证据，每一次自修复都可追溯。一句话：<strong>工程化的核心不是"AI 多准"，是"错了之后能在有限的预算里可控地兜回来"</strong>——震荡检测这块能讲出来，面试官就知道你真做过 Harness，不是只调过 API。</p>
-    <p class="hint">[loop·已优化·待复核] 念法：钩子四字"出错兜底"（错的不是边界是主路径）→ 业务背景（prd2code-gen 几十文件、错了不能人肉看 diff）→ 三块（四类校验层层过滤/自修复差异修正+全量重验+3 次封顶交人工/震荡检测 A→B→A 整段重写是杀手锏）→ 收口（validation.json 可追溯，工程化核心是有限预算内可控兜回）。被问"出码后怎么保证质量 / Harness 怎么落地 / Agent 自修复怎么实现"翻这张卡，主动甩震荡检测显深度。</p>
+    <p class="hint">[loop·已优化·已复核] 念法：钩子四字"出错兜底"（错的不是边界是主路径）→ 业务背景（prd2code-gen 几十文件、错了不能人肉看 diff）→ 三块（四类校验层层过滤/自修复差异修正+全量重验+3 次封顶交人工/震荡检测 A→B→A 整段重写是杀手锏）→ 收口（validation.json 可追溯，工程化核心是有限预算内可控兜回）。被问"出码后怎么保证质量 / Harness 怎么落地 / Agent 自修复怎么实现"翻这张卡，主动甩震荡检测显深度。</p>
   </div>
 </div>
 
