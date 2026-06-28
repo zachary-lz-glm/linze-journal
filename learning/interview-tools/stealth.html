@@ -1801,13 +1801,13 @@ function buildTreeOptimized(list) {
   <div class="card-head"><span class="tag ai">E20</span><div class="card-title">LangChain + LangGraph 详解</div></div>
   <div class="core">LangChain 线性串链子，LangGraph 画图做状态机——简单流程用前者，要循环/分支/人工介入用后者</div>
   <div class="card-body">
-    <p><strong>这俩是同一家（LangChain 公司）出的，定位不同。</strong></p>
-    <p><strong>LangChain</strong> 是"链式编排"——把多个 LLM 调用和工具像链条一样串起来（A→B→C），用 LCEL 声明式写。它把 Agent 开发常用的几块都封装好了：Chain 串链、Agent 做 ReAct 执行、Tool 工具、Memory 对话历史（分 Buffer 全留 / Summary 摘要 / Window 滑动窗口）、Retriever 做 RAG 检索、Callback 做观测日志。<strong>适合线性流程，上手快，但流程一复杂就难控</strong>。</p>
-    <p><strong>LangGraph</strong> 是为复杂 Agent 单独搞的，核心是<strong>图状态机</strong>——定义 Node（处理步骤）和 Edge（跳转规则），支持循环、条件分支。两个杀手锏：① <strong>Checkpoint</strong> 每步自动存状态，能暂停恢复、崩溃恢复；② <strong>Human-in-the-loop</strong> 任意节点插人工审核点，Agent 暂停等人确认再继续。<strong>需要循环、分支、中途让人确认的复杂工作流用它</strong>。</p>
-    <p><strong>怎么选</strong>：线性简单流程用 LangChain；一旦要循环 / 分支 / 中途让人确认，上 LangGraph。</p>
-    <p><strong>落到我的项目</strong>：prd-tools 的双 Skill 11 步流水线本质就是 LangGraph 模式——固定步骤 + 条件分支 + Review Gate 人工硬停止。我没直接用 LangGraph 框架（用 Skill + 脚本自研），但思想一致。</p>
-    <p><strong>顺带</strong>：多 Agent 分工看 CrewAI，纯 RAG 看 LlamaIndex。</p>
-    <p class="hint">[loop·待复核] 念法：先分两家定位 → LangChain 链式/六模块 → LangGraph 状态机+Checkpoint+HITL → 选型 → prd-tools 是 LangGraph 思想。</p>
+    <p><strong>先甩个钩子定调</strong>：这俩是同一家公司（LangChain）出的，但定位完全不同——LangChain 是"链式编排"串线性流程，LangGraph 是"图状态机"管循环/分支/人工介入。这道题最容易被追穿的不是"它们是什么"，是"什么时候该从 LangChain 切到 LangGraph"——记住一条分水岭：一旦流程需要<strong>循环、条件分支、或中途让人确认</strong>这三个信号之一，就该上 LangGraph。</p>
+    <p><strong>先讲 LangChain（链式编排，线性流程用）</strong>：它把多个 LLM 调用和工具像链条一样串起来（A→B→C），用 LCEL 声明式写。Agent 开发常用的几块它都封装好了——Chain 串链、Agent 做 ReAct 执行、Tool 工具、Memory 对话历史（分 Buffer 全留 / Summary 摘要 / Window 滑动窗口三种策略）、Retriever 做 RAG 检索、Callback 做观测日志。特点：线性流程上手快，但流程一复杂（要回头、要分支）就难控。</p>
+    <p><strong>再讲 LangGraph（图状态机，复杂 Agent 用）</strong>：这是为复杂 Agent 单独搞的，核心是图状态机——定义 Node（处理步骤）和 Edge（跳转规则），天然支持循环和条件分支。两个杀手锏一定要念：① <strong>Checkpoint</strong> 每步自动存状态，能暂停恢复、崩溃恢复，长流程不怕断；② <strong>Human-in-the-loop（HITL）</strong> 任意节点能插人工审核点，Agent 暂停等人确认再继续——合规/高风险场景的刚需。</p>
+    <p><strong>选型判据（被追问深度就甩这条）</strong>：线性简单流程用 LangChain，够用且轻；一旦出现循环 / 条件分支 / 中途要人确认这三个信号之一，就上 LangGraph。顺带补两句边界：多 Agent 分工看 CrewAI，纯 RAG 检索看 LlamaIndex，别把 LangChain 当万能银弹。</p>
+    <p><strong>落到我的项目（prd-tools）</strong>：我的双 Skill 11 步流水线本质就是 LangGraph 模式——固定步骤 + 条件分支 + Review Gate 的人工硬停止，就是 HITL 的工程化落地。我没直接用 LangGraph 框架（用 Skill + 脚本自研，更可控也更轻），但状态机 + Checkpoint + HITL 这套思想完全一致。<strong>诚实一句</strong>：选自研而不是上 LangGraph，是因为团队对框架黑盒的调试成本不放心，自研能精确控制每一步——这是有意的工程取舍。</p>
+    <p><strong>收口金句</strong>：LangChain 解决"怎么把步骤串起来"，LangGraph 解决"复杂流程怎么不跑飞"——前者是生产力，后者是工程化。被问"为什么不用纯 LangChain"翻"循环 / 分支 / HITL 三信号"这条分水岭。</p>
+    <p class="hint">[loop·已优化·已复核] 念法：钩子（同一家但定位不同，分水岭=循环/分支/人确认三信号）→ LangChain 链式/六模块（Chain/Agent/Tool/Memory三种/Retriever/Callback，线性上手快但复杂难控）→ LangGraph 状态机+两杀手锏（Checkpoint暂停恢复 / HITL人工审核刚需）→ 选型判据（线性用Chain，三信号之一上Graph，补CrewAI/LlamaIndex边界）→ 落prd-tools（11步流水线=LangGraph模式，自研非框架是工程取舍）→ 金句（Chain解决串联，Graph解决不跑飞）。被问"为什么不用纯LangChain"翻三信号分水岭。</p>
   </div>
 </div>
 
