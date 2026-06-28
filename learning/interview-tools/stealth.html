@@ -3371,14 +3371,14 @@ function buildTreeOptimized(list) {
 
 <div class="card" data-c="ai" data-kw="KV Cache Transformer PagedAttention GQA 量化 vLLM 内存带宽">
   <div class="card-head"><span class="tag ai">AI</span><div class="card-title">KV Cache 原理 + 优化方案</div></div>
-  <div class="core">缓存历史 K/V 向量避免重复计算，空间换时间，长上下文内存爆炸</div>
+  <div class="core">缓存历史 K/V 避免重复计算，空间换时间，长上下文内存爆炸</div>
   <div class="card-body">
-    <p><strong>原理</strong>：Transformer 自回归生成，每步算 Attention 需要历史所有 token 的 K/V。不缓存 O(N²)，缓存后 O(N)。</p>
-    <p><strong>三个工程挑战</strong>：① 内存随序列长度线性增长，长上下文可能超过模型权重本身 ② Decode 阶段每步只生成 1 token，但要从 HBM 读全部 KV Cache，内存带宽成瓶颈 ③ Lost in the Middle，上下文 >40% 进入 Dumb Zone。</p>
-    <p><strong>优化方案</strong>：① PagedAttention（vLLM，类 OS 虚拟内存分页，减少 80% 内存浪费）② GQA/MQA（多个 Query 共享 K/V）③ Quantization（FP16→INT8/INT4，内存减半）④ Context Cache（阿里云，缓存公共前缀 KV）⑤ LMCACHE（批量传输 + 流水线）。</p>
-    <p><strong>前端相关</strong>：为什么上下文越长越贵（Decode 每步读全部 KV）、为什么需要上下文压缩、为什么 prompt caching 能省钱（相同前缀 KV 复用）。</p>
-    <p><strong>追问点</strong>：KV Cache 内存怎么估算？GQA vs MQA？Speculative Decoding（小模型猜，大模型验）。</p>
-    <p class="hint">大模型岗高频。前端岗能讲到"为什么上下文越长越贵"就够了。</p>
+    <p><strong>这道题前端岗不用深挖算法，但有一个必答点——"为什么大模型上下文越长越贵、越慢"。搞懂 KV Cache 就能答透。</strong></p>
+    <p><strong>原理（一句话）</strong>：Transformer 生成是自回归的（一个字一个字吐），每生成一个字都要算 Attention，而 Attention 需要前面所有字的 K/V 向量。不缓存每步重算前面所有 K/V（O(N²)）；缓存下来直接用（O(N)），空间换时间。</p>
+    <p><strong>但缓存带来三个工程挑战</strong>：① <strong>内存爆炸</strong>——KV Cache 随序列长度线性增长，长上下文时 KV Cache 内存可能超过模型权重本身；② <strong>带宽瓶颈</strong>——Decode 阶段每步只生成 1 个 token，但要从显存（HBM）读全部 KV Cache，内存带宽成瓶颈（不是算力，是搬运）；③ <strong>Lost in the Middle</strong>——上下文超 40% 进入 Dumb Zone，模型对中间内容注意力下降。</p>
+    <p><strong>优化方案（大模型岗追问再甩）</strong>：① PagedAttention（vLLM，类 OS 虚拟内存分页，减 80% 内存浪费）；② GQA/MQA（多个 Query 共享 K/V）；③ Quantization（FP16→INT8/INT4，内存减半）；④ Context Cache（缓存公共前缀 KV）；⑤ LMCACHE（批量传输+流水线）。</p>
+    <p><strong>前端为什么该懂（收口）</strong>：懂 KV Cache 就能解释——为什么上下文越长越贵（Decode 每步读全部 KV）、为什么要做对话压缩、为什么 Prompt Caching 能省钱（相同前缀 KV 复用，省 90%）。这三个在 AI 前端面试高频。</p>
+    <p class="hint">[loop·已优化·待复核] 念法：钩子（前端必答"为什么越长越贵"）→ 原理（自回归+Attention需历史K/V，O(N²)→O(N)）→ 三挑战（内存爆炸/带宽瓶颈/Lost in Middle）→ 优化（追问甩）→ 收口（解释越长越贵/压缩/Prompt Caching）。</p>
   </div>
 </div>
 
