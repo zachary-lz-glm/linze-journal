@@ -3434,11 +3434,11 @@ function buildTreeOptimized(list) {
   <div class="card-head"><span class="tag ai">AI</span><div class="card-title">RAG vs 微调：什么场景用哪个？</div></div>
   <div class="core">知识频繁变用 RAG，能力/风格固化用微调，最佳实践是 RAG 为主+轻量微调互补</div>
   <div class="card-body">
-    <p><strong>四维度对比</strong>：① <strong>数据时效</strong>——RAG 知识可动态更新（换文档即可），微调知识冻结在训练时刻。② <strong>成本</strong>——RAG 只需向量库+检索，微调要 GPU 训练（百万 token 起步）。③ <strong>可控性</strong>——RAG 可溯源（每条答案挂文档 ID），微调是黑盒（错误难定位）。④ <strong>适用场景</strong>——RAG 适合知识问答、企业知识库；微调适合风格对齐、领域术语、固定输出格式。</p>
-    <p><strong>选型决策树</strong>：① 知识每周更新 → RAG。② 需要特殊输出格式（JSON Schema、SQL）→ 微调（SFT）。③ 数据不能出域且量大 → 私有化部署+RAG。④ 同时需要 → RAG 为主（覆盖 80% 场景）+ LoRA 轻量微调（处理风格和术语）。</p>
-    <p><strong>常见误区</strong>：① "微调能解决幻觉"——错，微调反而可能加剧幻觉（模型更自信）。② "RAG 替代微调"——错，能力问题（推理弱、风格差）微调才能解决。③ "先微调再上 RAG"——错，应该反过来，RAG 是基础设施。</p>
-    <p><strong>面试答题句式</strong>："微调解决能力问题（会不会），RAG 解决知识问题（知不知道）。我的项目以 RAG 为主——PRD 知识频繁更新且需要证据链溯源，微调做不到。只有需要 Agent 输出固定 JSON Schema 时，才考虑 LoRA 轻量微调。"</p>
-    <p class="hint">被问"为什么不微调" → 翻这张卡。被问"微调和 RAG 哪个好" → 别选边，说互补。</p>
+    <p><strong>这道题我最想强调一句——别选边，说互补。微调解决能力问题（模型会不会），RAG 解决知识问题（模型知不知道），两者根本不在一个维度上，硬比就是答错方向了。</strong></p>
+    <p><strong>四个维度快速对比</strong>：① <strong>数据时效</strong>——RAG 换文档就更新，微调的知识冻结在训练那一刻；② <strong>成本</strong>——RAG 只要向量库+检索，微调要 GPU 训练（百万 token 起步），差一个数量级；③ <strong>可控性</strong>——RAG 能溯源（每条答案挂文档 ID），微调是黑盒，错了难定位；④ <strong>场景</strong>——知识问答、企业知识库用 RAG，风格对齐、领域术语、固定输出格式用微调。</p>
+    <p><strong>三个常见误区（必答，这是面试官想听的）</strong>：① "微调能解决幻觉"——错，微调反而可能加剧幻觉，因为模型更自信了；② "RAG 能替代微调"——也错，能力问题（推理弱、风格差）RAG 救不了；③ "先微调再上 RAG"——顺序反了，RAG 是基础设施，得先有。一句话总结：<strong>RAG 是地基，微调是装修，先地基后装修</strong>。</p>
+    <p><strong>落到我的项目（关键桥接）</strong>：prd-tools 我选 <strong>RAG 为主</strong>——PRD 知识每周都在更新，而且要求每条答案挂 evidence 文档 ID 能溯源，微调做不到这两点。结构化检索（BM25+倒排）覆盖 80% 场景。只有当 Agent 需要稳定输出固定 JSON Schema 时，才会考虑加 LoRA 轻量微调做格式对齐——这是 RAG 为主、微调兜底的典型组合。</p>
+    <p class="hint">[loop·已优化·待复核] 念法：钩子（别选边说互补+能力vs知识一句话定位）→ 四维度快速过（时效/成本/可控/场景）→ 三误区（微调加剧幻觉/RAG救不了能力/顺序反了）+ 金句"RAG地基微调装修" → 落 prd-tools（为何RAG为主：知识更新快+要溯源，微调做不到；LoRA只在固定Schema时兜底）。被问"为什么微调解决不了幻觉"→ 模型更自信反而更敢编；被问"先做哪个"→ 先RAG。</p>
   </div>
 </div>
 
