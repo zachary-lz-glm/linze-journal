@@ -1952,7 +1952,7 @@ function buildTreeOptimized(list) {
     <p><strong>一个 Server 能暴露三种东西</strong>：① <strong>Tools</strong>——可调用函数（name + 入参 schema + 描述，LLM 按语义选）；② <strong>Resources</strong>——可读数据源（文件/DB/API，URI 标识）；③ <strong>Prompts</strong>——预置提示词模板。</p>
     <p><strong>我做过</strong>：用 TS SDK 写过内部 MCP Server——从飞书文档抓 PRD 转 Markdown，Claude Code 和 Cursor 接上就能用，一次开发两个客户端复用。</p>
     <p><strong>和 FC、A2A 的关系（高频追问）</strong>：Function Calling 是模型内置能力、绑厂商（OpenAI）、单次调用；MCP 是协议层、不绑模型、管"工具怎么标准化连"；A2A 是 Google 的 Agent 间通信、管"Agent 之间怎么协作"。三者不冲突——Agent 用 MCP 接工具、用 A2A 接别的 Agent、用 FC 做模型侧决策。</p>
-    <p class="hint">[loop·待复核] 念法：USB-C 类比 → 三层架构 → 三种能力 → 我做过的 Server → 和 FC/A2A 区分。</p>
+    <p class="hint">[loop·已优化·已复核] 念法：先甩 USB-C 一句话定位（标准化连工具，不绑厂商）→ 三层架构（Host/Client/Server，JSON-RPC，stdio 本地 SSE 远程）→ 三种能力（Tools 可调用/Resources 可读/Prompts 模板）→ 我做过的 Server（飞书抓 PRD 转 MD，一次开发 Claude Code+Cursor 复用）→ 和 FC/A2A 区分收口（FC 模型内置绑厂商/MCP 协议层不绑模型/A2A Agent 间协作，三者不冲突）。被问"和 Function Calling 区别"翻最后一段。</p>
   </div>
 </div>
 
