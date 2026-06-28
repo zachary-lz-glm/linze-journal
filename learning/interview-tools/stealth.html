@@ -3673,12 +3673,13 @@ function buildTreeOptimized(list) {
   <div class="card-head"><span class="tag ai">AI</span><div class="card-title">为什么有些推理模型不支持 MCP？</div></div>
   <div class="core">推理模型为长链思考优化，思维链会打断结构化 tool_call；且推理延迟高，放大 MCP 多轮往返</div>
   <div class="card-body">
-    <p><strong>推理模型 vs 指令模型</strong>：指令模型（GPT-4o/Claude Sonnet）直接输出答案 token；推理模型（o1/o3/DeepSeek-R1）先吐一大段思维链（&lt;think&gt;...&lt;/think&gt;）再给答案，为复杂数学/代码/逻辑优化。</p>
-    <p><strong>根因一：思维链打断结构化输出</strong>。MCP/Function Calling 要求模型在特定位置吐出严格 JSON-RPC 的 tool_call。推理模型的思维链"吞掉"了结构化输出能力——中途思考打断了格式约定，tool_call 的位置/格式不稳定。这是推理模型早期完全不支持 FC 的根本原因。</p>
-    <p><strong>根因二：延迟放大</strong>。推理模型单次响应几十秒（长思维链），而 MCP/Agent 是多轮往返（调工具→看结果→再调），每轮几十秒累加，体验崩塌。</p>
-    <p><strong>现状</strong>：OpenAI o1 早期完全不支持 FC，后续版本才逐步支持（要额外适配，把 tool_call 嵌进思维链结尾）。DeepSeek-R1 用"混合模式"——ReAct 风格里思维链和 tool_call 交错。</p>
-    <p><strong>工程启示</strong>：生产 Agent 通常用<strong>指令模型做编排</strong>（FC/MCP 稳定、延迟低），<strong>推理模型只在"需要深度思考的某一步"单独调用</strong>（如复杂规划/代码审查），不承担多轮工具调用。</p>
-    <p class="hint">补盲卡，有意思的追问题。答出"思维链打断结构化输出 + 延迟放大"两个根因，再补"指令模型编排 + 推理模型单点"的工程解法，显得懂底层。</p>
+    <p><strong>这道题先分清楚两类模型，再讲两个根因，最后给工程解法——三段下来面试官就知道你懂底层。</strong></p>
+    <p><strong>先分两类模型</strong>：指令模型（GPT-4o、Claude Sonnet）是"问一句直接吐答案 token"；推理模型（o1/o3、DeepSeek-R1）是"先在脑子里吐一大段思维链 &lt;think&gt;...&lt;/think&gt;，再给最终答案"，为复杂数学、代码、逻辑优化。差异就出在这段思维链上。</p>
+    <p><strong>根因一·思维链打断结构化输出</strong>：MCP 和 Function Calling 要求模型在特定位置吐出严格的 JSON-RPC tool_call。但推理模型的思维链会"吞掉"这个结构化能力——中途一长串思考打乱了格式约定，tool_call 的位置和格式都不稳定。这就是推理模型早期完全不支持 FC 的根本原因，不是厂商偷懒，是架构冲突。</p>
+    <p><strong>根因二·延迟放大</strong>：推理模型单次响应就要几十秒（思维链太长），而 MCP 和 Agent 是多轮往返——调工具、看结果、再调工具，每轮几十秒累加，体验直接崩塌。推理和工具调用这两个特性叠在一起，延迟会乘性放大。</p>
+    <p><strong>现状</strong>：OpenAI o1 早期完全不支持 FC，后续版本才逐步支持，但要额外适配——把 tool_call 嵌进思维链结尾。DeepSeek-R1 走"混合模式"，ReAct 风格里让思维链和 tool_call 交错。整体是慢慢补齐，不是天生支持。</p>
+    <p><strong>工程解法·落到我的项目</strong>：生产级 Agent 的标准做法是"指令模型做编排 + 推理模型单点调用"——编排这层（多轮 FC、调 MCP、管上下文）交给指令模型，因为它稳定、延迟低；推理模型只在"需要深度思考的那一步"单独用，比如复杂规划、代码审查。我的 prd-tools 走的就是这个路子：主流程用 Claude 这类指令模型做确定性编排（11 步流水线 + Skill 调脚本 + 证据链门控），需要硬推理的环节才考虑单独调推理模型——不让推理模型承担多轮工具调用，否则延迟和稳定性都扛不住。</p>
+    <p class="hint">[loop·已优化·待复核] 念法：钩子（先分两类再讲根因，三段答完）→ 两类模型一句（指令吐答案/推理先吐思维链）→ 根因一（思维链吞掉结构化）+ 根因二（延迟乘性放大）→ 现状（o1 后期补齐/DeepSeek 混合模式）→ 落 prd-tools（指令模型编排 + 推理模型单点，主流程 Claude 确定性编排 11 步）。被问"那推理模型还能用吗"→ 能用但要单点调，别让它扛多轮。</p>
   </div>
 </div>
 
