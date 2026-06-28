@@ -2695,11 +2695,14 @@ function buildTreeOptimized(list) {
   <div class="card-head"><span class="tag proj">AI</span><div class="card-title">设计稿AI还原：三层约束方案</div></div>
   <div class="core">Design Token管基础样式，组件Schema管组合，截图对比管最终验证</div>
   <div class="card-body">
-    <p><strong>第一层 Design Token</strong>：整理基础样式token（颜色、主次色、圆角、间距、字体）成文档，让AI严格遵守，生成代码时不使用未定义的值。配合Lint规则在提交前自动拦截不符合设计系统的色值和间距。</p>
-    <p><strong>第二层 组件Schema</strong>：把业务组件（卡片、弹窗、表单组）的结构描述成JSON Schema，AI生成时优先组合现有组件而不是从零写div。对于复杂布局引入Layout Token（栅格系统、常见布局模式），让AI从预定义模板中选择。</p>
-    <p><strong>第三层 视觉回归测试</strong>：用Chromatic或Playwright截图断言对比AI生成的页面和设计稿，自动检测像素级偏差。这是Token和Schema之外的最终兜底。</p>
-    <p><strong>现有工具（涂虎面试官追问时参考）</strong>：Locofy.ai（Figma转React准确率最高）、Builder.io Visual Copilot（像素级还原好）、Figma原生AI React生成器。但复杂活动页面布局多变，AI读取有幻觉，这三层约束是必须的补充。</p>
-    <p class="hint">涂虎面试官直接追问"复杂页面怎么还原"，Design Token只够回答第一层，必须补上组件Schema和视觉回归才算完整。</p>
+    <p><strong>这题涂虎一面34分28秒被追穿的——面试官原话是"设计稿来了，用 AI 快速产出代码结合业务组件，但 MCP 这种还原度不高，怎么解决"。我答到 Design Token 就卡住了，被追"Token 太基础覆盖不了复杂场景"。复盘下来这题要答三层约束，缺一层都不算完整。</strong></p>
+    <p><strong>先把业务背景说清楚</strong>：C 端营销活动页面是真实痛点——布局多变、一个活动一个样、还经常改版。我方有现成的平台业务组件库，但 AI 直接读设计稿会"幻觉"：该用业务 Card 的地方它手写一堆 div，颜色圆角也不遵守设计系统，还原度上不去。所以核心矛盾不是"AI 能不能还原"，是"怎么约束 AI 严格按设计系统+业务组件来还原"。</p>
+    <p><strong>第一层·Design Token（管原子样式）</strong>：把基础样式——颜色、主色次色、圆角、间距、字体——整理成一份 token 文档，让 AI 严格只用这些预定义值，不许自己编色值和间距。再加一条 Lint 规则在提交前自动拦截不符合设计系统的值。这一层解决"原子层不漂"，但只够回答第一层，复杂组合它管不住。</p>
+    <p><strong>第二层·组件 Schema（管组合，这才是复杂场景的关键）</strong>：把业务组件——卡片、弹窗、表单组——的结构描述成 JSON Schema，AI 生成时优先组合现有组件，而不是从零堆 div。复杂布局再引一层 Layout Token（栅格系统、常见布局模板），让 AI 从预定义模板里选而不是自由发挥。这层是堵"复杂页面怎么还原"那问的核心——把"AI 自由生成"压成"AI 在约束框里选"。</p>
+    <p><strong>第三层·视觉回归测试（最终兜底）</strong>：用 Chromatic 或 Playwright 做截图断言，把 AI 生成的页面和设计稿像素级比对，自动标出偏差。Token 和 Schema 是"生成时约束"，视觉回归是"生成后验证"——前两层漏的，这层兜住。三层是"约束-约束-验证"的递进，不是堆三个工具。</p>
+    <p><strong>现有工具（被追问再甩）</strong>：Locofy.ai（Figma 转 React 准确率最高）、Builder.io Visual Copilot（像素级还原好）、Figma 原生 AI React 生成器。但这些都是通用工具，复杂活动页面布局多变它们一样有幻觉——所以三层约束不是替代工具，是给工具套上业务约束。</p>
+    <p><strong>收口金句</strong>：还原度问题本质是"AI 自由度 vs 业务约束"的矛盾——给 AI 越自由还原越不准，靠三层把自由度一层层收进设计系统和业务组件框里，还原度才上得去。</p>
+    <p class="hint">[loop·已优化·待复核] 念法：钩子（涂虎34:28被追穿，原话"MCP还原度不高怎么解决"，我答到Token就卡住）→ 业务背景（C端活动页面多变+有组件库但AI幻觉用div不用组件）→ 三层递进（Token管原子/组件Schema管组合是复杂场景关键/视觉回归兜底，约束-约束-验证）→ 现有工具被追问甩 → 金句收口（自由度vs约束矛盾）。被问"复杂页面怎么还原"重点讲第二层组件Schema。</p>
   </div>
 </div>
 
