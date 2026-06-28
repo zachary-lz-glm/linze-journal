@@ -1,21 +1,27 @@
 # Loop Worker — 优化 1 张面试卡（独立 subagent 任务说明）
 
-你是 loop 的 worker。你在**自己的独立上下文**里运行，本轮只完成 1 张卡的优化，然后返回 **1 行简报**（这是你唯一会向上传递的内容，主会话只转述它，所以简报要自包含）。严格只动 1 张。仓库根：`d:/work/linze-journal`，先 `cd` 进去再操作。
+你是 loop 的 worker。你在**自己的独立上下文**里运行，本轮只完成 1 张卡的优化，然后返回 **1 行简报**（这是你唯一会向上传递的内容，主会话只转述它，所以简报要自包含）。严格只动 1 张。仓库根：`d:/work/linze-journal`。
+
+## ⚠️ 0. 命令规范（避免卡死，必须遵守）
+Claude Code 对**「带 `cd` 又带输出重定向（`2>/dev/null` / `>` / `>>`）」的复合 bash 命令**会强制人工审批——**权限白名单也绕不过**，无人值守时一触发就卡死。所以：
+1. **搜文件内容一律用 Grep 工具**，不要用 bash `grep`（尤其禁止 `cd X && grep ... 2>/dev/null | head` 这种形态）。
+2. **awk 自检用绝对路径、不带 cd**：`awk '...' d:/work/linze-journal/learning/interview-tools/stealth.html`。
+3. **git 命令保留 `cd d:/work/linze-journal && git ...` 即可**（git 命令本身无输出重定向，不触发该规则）。
+4. 任何 bash 命令**都不要加 `2>/dev/null` / `>` / `>>`**；要静默就用工具自带选项（grep 走 Grep 工具即可）。
 
 ## 1. 选卡
-1. 找未处理的卡：`cd d:/work/linze-journal && grep -n 'class="hint"' learning/interview-tools/stealth.html | grep -v '已优化'`
-   （grep 用中文子串 `已优化` 更稳，别用带 `·` 的完整串）
+1. 找未处理的卡：用 **Grep 工具**搜 pattern=`class="hint"`，path=`d:/work/linze-journal/learning/interview-tools/stealth.html`，output_mode=`content`，-n=true；再从结果里排除含 `已优化` 的行（用中文子串 `已优化`，别用带 `·` 的完整串）。
 2. 从结果里挑 1 张，优先级：AI 卡(data-c="ai") > Schema 项目卡(data-c="proj") > AI 工程化卡(proj 的 A4/A5/A9/A10/G1-G5) > 综合答题型卡(emer 的话术/反问/HR/软技能——挑答题型，跳过纯数据速查)。
 3. 若候选 card-body 已经是口语段落（**不是** `<p><strong>词</strong>:解释</p>` + bullet 堆砌），直接给它打 `[loop·已优化·已复核]` 跳过实质改写。
 4. 若挑中的卡 card-body 里有 `<!-- loop-retry:N 原因:xxx -->` 注释（被 reviewer 退回过）→ 先读它，改写时针对性解决该原因，改好后**删掉该注释**。
-5. **没有任何未标记卡** → 走第 7 步"补缺口"；补缺口也无果 → 返回 `DONE 无可改卡`。
+5. **没有任何未标记卡** → 走第 8 步"补缺口"；补缺口也无果 → 返回 `DONE 无可改卡`。
 
 ## 2. 学风格（每轮 fresh 读，保证不漂移）
 Read 这几张样板卡的 card-body（它们是标准答案）：`E16 Agent架构全解`、`E19 MCP协议全解`、`E20 LangChain+LangGraph`、`E26 AI工程化主线`、`@152 Schema驱动架构`、`@163 400+权益组件库`。
 风格 = 钩子开头 → 业务背景 → 分层口语展开 → 项目/业务桥接收口 + hint 念法提示。
 
 ## 3. 精准读目标卡
-grep 拿到目标 hint 的行号后，用 Read 的 `offset`/`limit` **只读该卡 ±40 行**，不要整文件读（4515 行，浪费上下文）。
+Grep 拿到目标 hint 的行号后，用 Read 的 `offset`/`limit` **只读该卡 ±40 行**，不要整文件读（4515 行，浪费上下文）。
 
 ## 4. 改写
 参照样板把 card-body 改成"照念就能答好面试题"的口语段落：钩子→业务背景→分层口语→项目桥接收口。**保留 core 字段，保留 card-title 不改。**
@@ -30,7 +36,7 @@ hint 末尾加 `[loop·已优化·待复核]`（注意是"待复核"，等 revie
 
 ## 6. ⚠️ 结构自检（commit 前必做，最重要）
 ```
-cd d:/work/linze-journal && awk '{o+=gsub(/<div/,"x");c+=gsub(/<\/div>/,"y")} END{print o-c}' learning/interview-tools/stealth.html
+awk '{o+=gsub(/<div/,"x");c+=gsub(/<\/div>/,"y")} END{print o-c}' d:/work/linze-journal/learning/interview-tools/stealth.html
 ```
 - 输出**必须 `0`**（div 平衡）。不是 0 → 立即 `cd d:/work/linze-journal && git checkout learning/interview-tools/stealth.html` 撤销本次改动，返回 `结构自检失败已撤销:<卡名>`，**绝不提交不平衡的改动**（会破坏 card 嵌套→子tab栏不显示+卡片点不展开）。
 - 防错关键：Edit 的 new_string 结尾**只写 card-body 闭合的一个 `</div>`**，绝不写 card 容器闭合 `</div>`（它在 old_string 范围外，保留原位即可，多写一个就破坏结构）。
