@@ -317,8 +317,13 @@ body{overscroll-behavior-y:contain}
   <div class="card-head"><span class="tag proj">追问</span><div class="card-title">线上出过事故吗？</div></div>
   <div class="core">yarn 解析器升级导致构建全挂，15 分钟回滚</div>
   <div class="card-body">
-    <p>resolver 从 rc.31 自动升到 rc.48 不兼容 Node 16，整个构建全挂。15 分钟回滚 yarn.lock 恢复。复盘三件事：yarn.lock 加入 git 保护；CI 加 lockfile diff 检测；依赖升级必须 staging 验证。</p>
-    <p class="hint">事故处理 = 快速止血 + 根因分析 + 流程改进。</p>
+    <p><strong>这道题我不会藏着——确实出过一次线上事故，但我把它讲透，反而显工程成熟度。事故处理就三步：快速止血、根因分析、流程改进，我按这三步讲。</strong></p>
+    <p><strong>先说背景，为什么这种事故躲不掉</strong>：营销中台是 Monorepo，依赖装不好就是定时炸弹。我们的 CI 每次构建都自动拉最新依赖，正常情况没事，但有一次踩了坑。</p>
+    <p><strong>第一步，快速止血（15 分钟）</strong>：某次构建突然全挂——所有活动页面都发不出去。我第一时间定位到是 yarn 的 resolver（依赖解析器）版本被自动升级了，从 rc.31 跳到了 rc.48，新版本和 Node 16 不兼容。止血很直接：立刻把 yarn.lock 回滚到旧版本，15 分钟内恢复构建。先让线上活过来，再查根因。</p>
+    <p><strong>第二步，根因分析</strong>：根子不在 resolver 本身，在于——<strong>我们的依赖版本没有锁死，谁都能自动升</strong>。rc 是 release candidate（候选版），本来就不保证稳定，结果被当成正式版自动拉了。这类隐性版本漂移是 Monorepo 最常见的炸弹。</p>
+    <p><strong>第三步，流程改进（这才是面试官真正想听的）</strong>：复盘做了三件事，后来成了团队的依赖管理规范——① <strong>yarn.lock 加入 git 保护</strong>，禁止自动升级；② <strong>CI 加 lockfile diff 检测</strong>，依赖变了必须在 PR 里显式说明、走 review；③ <strong>依赖升级强制走 staging 验证</strong>，过了再上生产。</p>
+    <p><strong>收口</strong>：好的事故回答不是"我没出过事"，是"出过、而且我把教训固化成了机制"。这三步流程后来也复用到了别的故障处理上——这也是我在 Monorepo 依赖管理那块讲的三道防线的由来。</p>
+    <p class="hint">[loop·已优化·待复核] 念法：定调三步开场（止血/根因/改进）→ 背景（Monorepo CI 自动拉依赖是定时炸弹）→ 逐步（15 分钟回滚 yarn.lock / 根因是版本没锁死 rc 候选版被当正式版拉 / 三件改进 lock 入 git+CI diff+staging 验证）→ 收口（教训固化成机制，呼应依赖管理三道防线）。被问"踩过什么坑/线上出过事故吗/怎么处理故障"都用这套，主动甩三件流程改进显成熟度。</p>
   </div>
 </div>
 
