@@ -1912,7 +1912,7 @@ function buildTreeOptimized(list) {
     <p><strong>补一个工程亮点 auto-compaction</strong>：上下文逼近容量极限（约 90%，剩 10%）时，自动把旧对话总结成摘要，一次释放 60-70% 窗口，用户几乎无感。CLAUDE.md 压缩后会重新加载，保证项目指令不丢。手动可以 /compact 主动压、/clear 硬重置。</p>
     <p><strong>通用超窗策略（被追问就甩）</strong>：核心就一句——别把所有内容塞短期记忆。输入侧靠渐进式披露按需加载 + RAG 语义检索做压缩；输出侧把结果分流到文件，不塞聊天回复；中间推理过程（agent 自我反思）外置到 MD/memory 文件。</p>
     <p><strong>落到我的项目</strong>：prd-tools 的 reference 6 文件，本质就是"按需检索"那层的工程化变体——不是把几万行代码塞进上下文，而是蒸馏成 6 个领域知识文件，每次请求按需检索相关片段拼进去。和 Claude Code 管 context 是同一套思路：信息从"全量"压缩成"结构化精选"，既省 token 又不丢关键事实。</p>
-    <p class="hint">[loop·已优化·待复核] 念法：钩子（蚂蚁三连问，最坑"缓存在哪"当场答错）→ 缓存在哪（服务端 KV cache 张量，90%/85%，区分本地 transcript）→ 单次请求带什么（四样，公共前缀复用只新增计费）→ memory 三层（持久/短期/按需，不会无限长）→ auto-compaction 亮点（90%触发释放60-70%）→ 通用超窗策略（追问甩）→ 落 prd-tools（reference 6 文件=按需检索工程化）。</p>
+    <p class="hint">[loop·已优化·已复核] 念法：钩子（蚂蚁三连问，最坑"缓存在哪"当场答错）→ 缓存在哪（服务端 KV cache 张量，90%/85%，区分本地 transcript）→ 单次请求带什么（四样，公共前缀复用只新增计费）→ memory 三层（持久/短期/按需，不会无限长）→ auto-compaction 亮点（90%触发释放60-70%）→ 通用超窗策略（追问甩）→ 落 prd-tools（reference 6 文件=按需检索工程化）。</p>
   </div>
 </div>
 
@@ -1984,7 +1984,7 @@ function buildTreeOptimized(list) {
     <p><strong>核心突破是自进化（KSG，小红书面试官补充）</strong>：传统 Agent 三段式（接收→规划→执行）是无状态的，每个上下文窗口独立、不积累。Harness 的突破是 KSG（Knowledge-Skill-Growth）——把短期记忆抽象成长期记忆、知识库、技能手册，让 Agent 能自我迭代。靠三类引擎：合并引擎整合多 Agent 输出、通信引擎传状态、<strong>反思引擎从失败提炼规则</strong>。</p>
     <p><strong>最重要的习惯：Ratchet 机制（错误即规则）</strong>——每次 Agent 犯错，提炼成一条永久约束，不让它犯第二次。比如 Agent 注释了测试，就在 AGENTS.md 加"永远不要注释测试"；执行了破坏命令，就加 hook 拦截。每一行规则都要能追溯到一次具体失败。</p>
     <p><strong>落到我的项目</strong>：prd-tools 整个架构就是 Harness——reference=L1、MCP+Skill=L2、11 步流水线=L3、Evidence Index=L4、quality-gate=L5、置信度+questions.md=L6。诚实说，我缺 KSG 自进化闭环（现在靠人工回流，没自动化反思引擎），这是后续方向。</p>
-    <p class="hint">[loop·已优化·待复核] 念法：发动机比喻 → 六层 → KSG 自进化（反思引擎）→ Ratchet 错误即规则 → 落 prd-tools（诚实说缺自进化闭环）。小红书失分点。</p>
+    <p class="hint">[loop·已优化·已复核] 念法：发动机比喻 → 六层 → KSG 自进化（反思引擎）→ Ratchet 错误即规则 → 落 prd-tools（诚实说缺自进化闭环）。小红书失分点。</p>
   </div>
 </div>
 
@@ -2027,7 +2027,7 @@ function buildTreeOptimized(list) {
     <p><strong>Evals 三层体系</strong>：① <strong>Benchmark</strong>（模型选型层，MMLU/HumanEval 评模型本身）；② <strong>Eval Suite</strong>（任务质量层，针对你的任务构造专属测试集+评分，评 prompt/workflow 表现）；③ <strong>Production Monitor</strong>（生产监控层，上线后持续监控，退化告警，相当于线上 CI/CD）。</p>
     <p><strong>LLM-as-Judge</strong>：用 LLM 评判 LLM 输出——构造评分 prompt 让强模型打分。可扩展（1000 条自动评）但有误差，必须先跟人工标注校准。Langfuse/Arize 都支持。</p>
     <p><strong>落到我的项目（桥接）</strong>：prd-tools 的 Readiness Score 是 Eval Suite 轻量版（定义评分维度、自动打分、达标才放行）。<strong>端到端原型 prd2code-gen 已跑通完整 eval/auto-tune 五模块闭环</strong>——case-loader 加载黄金集 → llm-judge 五维独立评分 → scorer 计分 → gap-analyzer 定位失分 → pattern-detector 跨 case 提炼 pattern 反哺 prompt。做过 R01/R02 对照（54→68 分，量化 reference 知识库 +14 分）。</p>
-    <p class="hint">[loop·已优化·待复核] 念法：比喻钩子（凭感觉开车）→ 业务背景（20+人盲改风险）→ 凭感觉三硬伤 → 三层体系 → LLM-as-Judge → 落 prd-tools（Readiness）+ prd2code-gen（eval/auto-tune 五模块，54→68）。</p>
+    <p class="hint">[loop·已优化·已复核] 念法：比喻钩子（凭感觉开车）→ 业务背景（20+人盲改风险）→ 凭感觉三硬伤 → 三层体系 → LLM-as-Judge → 落 prd-tools（Readiness）+ prd2code-gen（eval/auto-tune 五模块，54→68）。</p>
   </div>
 </div>
 
@@ -2042,7 +2042,7 @@ function buildTreeOptimized(list) {
     <p><strong>Agent 能力类</strong>：① <strong>AgentBench</strong>（综合评 Agent 多维能力：规划/工具使用/自反思/记忆，覆盖 Web/OS/DB）；② <strong>BFCL</strong>（Berkeley Function Calling 排行榜，专评 FC 准确率——4 个 Tool 到 50+ 个 Tool 的衰减就是它揭示的）。</p>
     <p><strong>2026 年 Benchmark 三个坑（被追问再甩）</strong>：① <strong>区分度下降</strong>——头部分数越来越近，排行榜挤一团；② <strong>数据污染</strong>——训练数据可能含测试集，分数虚高；③ <strong>跟业务脱节</strong>——Benchmark 高分不等于你场景好。</p>
     <p><strong>收口</strong>：Benchmark 是选型参考不是质量保证。我的做法是 Benchmark 筛短名单，再用业务数据集做 Eval（Recall@K / Readiness）——选模型看 Benchmark，调效果看 Evals。</p>
-    <p class="hint">[loop·已优化·待复核] 念法：关键区分钩子（测上限不测业务）→ 业务背景（排行榜高分≠场景好）→ 三类 Benchmark（通用/代码/Agent 各举例）→ 三坑（区分度/污染/脱节）→ 收口（Benchmark 筛短名单+业务 Eval 调效果）。</p>
+    <p class="hint">[loop·已优化·已复核] 念法：关键区分钩子（测上限不测业务）→ 业务背景（排行榜高分≠场景好）→ 三类 Benchmark（通用/代码/Agent 各举例）→ 三坑（区分度/污染/脱节）→ 收口（Benchmark 筛短名单+业务 Eval 调效果）。</p>
   </div>
 </div>
 
