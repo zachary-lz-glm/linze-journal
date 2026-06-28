@@ -2480,14 +2480,16 @@ function buildTreeOptimized(list) {
   <div class="card-head"><span class="tag ai">AI</span><div class="card-title">AI工具共性方法论：从GitHub热榜看工程化趋势</div></div>
   <div class="core">2026年AI工具收敛到同一套方法论：Markdown定义指令、Skills拆任务、文件传状态、门控保质量</div>
   <div class="card-body">
-    <p><strong>热榜工具的共性</strong>：不管是BMAD（多Agent架构）、Superpowers（Claude Code Skills框架）、OpenClaw（Agent平台）、mattpocock/skills，还是我的prd-tools——都在做同一件事：把AI的使用方式从"每次手写prompt"变成"可复用的工程化流程"。只是各自切入点不同。</p>
-    <p><strong>收敛的四个模式</strong>：</p>
-    <p>· <strong>Markdown即代码</strong>：BMAD用Markdown定义架构思考和讨论流程，Superpowers用Markdown写Skill指令，OpenClaw用Workspace文件定义Agent行为，prd-tools用SKILL.md+workflow.md定义工作流。所有人都不约而同选择了Markdown作为指令载体——可读、可版本控制、LLM原生理解。</p>
-    <p>· <strong>任务拆分+中间文件</strong>：BMAD拆成架构师→讨论→文档→执行→复盘，每步产出中间文件传递给下一步。Superpowers把TDD流程拆成红→绿→重构的Skill链。prd-tools拆成Reference→PRD蒸馏→Plan产出。核心思路一样：复杂任务=多个原子步骤+文件传递状态。</p>
-    <p>· <strong>质量门控</strong>：每个工具都有某种形式的"检查点"——BMAD要人确认中间产物才继续，Superpowers每步有allowed_inputs约束，OpenClaw通过Workspace文件限制行为边界，prd-tools有XML约束+Readiness Score。本质上都是在控制AI产出的确定性。</p>
-    <p>· <strong>记忆/知识持久化</strong>：Claude Code Memory文件、OpenClaw持久记忆、BMAD的上下文文件、prd-tools的Reference六文件——都是解决"AI每次从零开始"的问题，把经验固化成可检索的知识。</p>
-    <p><strong>和我的项目的映射</strong>：prd-tools的每个设计决策都能在热榜工具中找到对应——双Skill拆分对应BMAD的多Agent分工，XML约束对应Superpowers的allowed_inputs，中间文件传递对应所有工具的状态管理方案。说明prd-tools的架构选择跟行业最前沿是同频的。</p>
-    <p><strong>面试用法</strong>："被问你怎么跟进AI前沿时，不要列举工具名，说方法论——'我跟踪GitHub热榜不是为了追新，是在验证自己的架构选择。BMAD验证了我的多Skill拆分，Superpowers验证了我的Markdown指令设计，OpenClaw验证了我的文件驱动配置。工具在变，方法论在收敛。'"</p>
+    <p><strong>这道题有个钩子先甩出来——被问"你怎么跟进 AI 前沿"，别列举工具名，那显得浅；要答方法论，说"我跟踪 GitHub 热榜不是为了追新，是在验证自己的架构选择"。一句话就把"AI 前沿"从信息题拔高成判断力题。</strong></p>
+    <p><strong>先立核心观察（这是全场骨架）</strong>：不管是 BMAD（多 Agent 架构）、Superpowers（Claude Code Skills 框架）、OpenClaw（Agent 平台）、mattpocock/skills，还是我做 prd-tools 把 PRD 转开发计划喂给 20+ 人团队——大家切入点不同，但都在做<strong>同一件事</strong>：把 AI 的使用方式从"每次手写 prompt"变成"可复用的工程化流程"。<strong>工具在变，方法论在收敛</strong>，这句先立住。</p>
+    <p><strong>收敛到四个模式，我顺一遍（每个模式都带一句"为什么"，不堆名词）</strong>：</p>
+    <p>第一是 <strong>Markdown 即代码</strong>——BMAD 用 Markdown 定义架构讨论流程，Superpowers 用 Markdown 写 Skill 指令，OpenClaw 用 Workspace 文件定义 Agent 行为，我的 prd-tools 用 SKILL.md 加 workflow.md 定义工作流。大家不约而同选 Markdown 当指令载体，原因就一条：可读、能版本控制、LLM 原生理解，比硬编码代码灵活得多。</p>
+    <p>第二是 <strong>任务拆分加中间文件</strong>——BMAD 拆成架构师到讨论到文档到执行到复盘，每步产出中间文件往下传；Superpowers 把 TDD 拆成红绿重构的 Skill 链；我的 prd-tools 拆成 Reference 到 PRD 蒸馏到 Plan 产出。思路一样：复杂任务等于多个原子步骤加文件传状态，AI 每步只干一件事、有明确输入输出。</p>
+    <p>第三是 <strong>质量门控</strong>——每个工具都有某种"检查点"：BMAD 要人确认中间产物才往下走，Superpowers 每步有 allowed_inputs 约束，OpenClaw 用 Workspace 文件限行为边界，我的 prd-tools 是 XML 约束加 Readiness Score 五维评分。本质都在干一件事：把 AI 产出的不确定性，用机制约束成可控的确定性。</p>
+    <p>第四是 <strong>记忆和知识持久化</strong>——Claude Code 的 Memory 文件、OpenClaw 的持久记忆、BMAD 的上下文文件、我 prd-tools 的 Reference 六文件——都在解决"AI 每次从零开始"的痛点，把经验固化成可检索的知识，而不是每次重新喂。</p>
+    <p><strong>落到我的项目（这道题的真正加分项）</strong>：prd-tools 的每个设计决策都能在热榜工具里找到对应——我的双 Skill 拆分对应 BMAD 的多 Agent 分工，XML 约束对应 Superpowers 的 allowed_inputs，中间文件传递对应所有工具的状态管理。<strong>这说明我不是闭门造车，我的架构选择跟行业最前沿是同频的</strong>——被问"凭什么相信你的设计"，这一句就是答案。</p>
+    <p><strong>收个口</strong>：方法论收敛这件事本身就是 2026 年 AI 工程化的最大信号——工具还会换，但"Markdown 定义指令、Skills 拆任务、文件传状态、门控保质量"这套骨架短期不会变。被问"AI 工具这么多怎么选"，翻 Cursor/Copilot/Claude Code 对比卡；被问"你怎么跟进前沿"，就甩这套方法论验证的逻辑。</p>
+    <p class="hint">[loop·已优化·待复核] 念法：钩子（被问"怎么跟进前沿"别列工具名，答方法论，把信息题拔成判断力题）→ 核心观察立骨架（BMAD/Superpowers/OpenClaw/prd-tools 都在把"手写 prompt"变"可复用工程化"，工具在变方法论在收敛）→ 四模式顺一遍（Markdown即代码/任务拆分+中间文件/质量门控/记忆持久化，每个带为什么）→ 落 prd-tools（双Skill对应BMAD/XML约束对应allowed_inputs/中间文件对应状态管理，证明同频不是闭门造车）→ 金句收口（工具会换骨架不变）。被问"凭啥信你的设计"→甩同频那句。</p>
   </div>
 </div>
 
