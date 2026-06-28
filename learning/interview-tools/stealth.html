@@ -3421,7 +3421,7 @@ function buildTreeOptimized(list) {
     <p><strong>性能优化四件套（背下来）</strong>：① <strong>rAF 节流</strong>——用 requestAnimationFrame 合并多次渲染到一帧，绝不每 token 触发 DOM 更新；② <strong>Web Worker</strong>——把 Markdown 解析这种 CPU 活挪出主线程，UI 不卡顿；③ <strong>虚拟列表</strong>——万级 token 的长输出只渲染视口内的，不全部挂 DOM；④ <strong>useDeferredValue</strong>（React 18+）——渲染再重也不阻塞用户在输入框打字。</p>
     <p><strong>Chrome 官方最佳实践（被追问再甩）</strong>：流式 Markdown 解析器 + 异步 syntax highlighter（Shiki/highlight.js，别同步高亮）+ 图片懒加载 + <code>content-visibility:auto</code>（让屏幕外的内容跳过渲染开销）。</p>
     <p><strong>追问杀手锏</strong>：被问"代码块没闭合怎么办" → 答"暂存 buffer 等闭合标记再渲染，同时用 rAF 降频不阻塞 UI"；被问"万级 token 怎么不卡" → 答"虚拟列表只渲染视口 + Web Worker 解析 + useDeferredValue 不阻塞输入"。这两个细节答出来，面试官就知道你真做过流式输出。</p>
-    <p class="hint">[loop·已优化·待复核] 念法：钩子（流式输出渲染层下钻，分两层）→ 核心矛盾（逐 token 但结构跨多 token，暂存 buffer 等闭合）→ 三个坑（代码块/表格分隔行/列表嵌套）→ 性能矛盾（每 token 全量 re-render 卡死）→ 三种降频方案 → 四件套（rAF/Web Worker/虚拟列表/useDeferredValue）→ Chrome 最佳实践被追问再甩 → 追问杀手锏收口。和"流式输出5层"卡配套，那是整体架构这张是渲染层深挖。</p>
+    <p class="hint">[loop·已优化·已复核] 念法：钩子（流式输出渲染层下钻，分两层）→ 核心矛盾（逐 token 但结构跨多 token，暂存 buffer 等闭合）→ 三个坑（代码块/表格分隔行/列表嵌套）→ 性能矛盾（每 token 全量 re-render 卡死）→ 三种降频方案 → 四件套（rAF/Web Worker/虚拟列表/useDeferredValue）→ Chrome 最佳实践被追问再甩 → 追问杀手锏收口。和"流式输出5层"卡配套，那是整体架构这张是渲染层深挖。</p>
   </div>
 </div>
 
@@ -3434,7 +3434,7 @@ function buildTreeOptimized(list) {
     <p><strong>第二层·选型分界（面试官想听的取舍）</strong>：简单一问一答用 Function Calling 就够，别上 Agent；多步骤但每步都要灵活推理用 ReAct；流程固定、要可控可调试用 Agent Loop；工作流复杂、要状态持久化和人工介入用 LangGraph；要跨模型复用工具就加 MCP 配任一框架。关键是别一上来就上最重的——Anthropic 的建议是 Workflow 优先、Agent 兜底。</p>
     <p><strong>第三层·落到我的项目</strong>：prd-tools 团队推广版（11 步蒸馏流水线）<strong>本质是 Agent Loop 思路</strong>——循环结构是预定义的，用证据链和 Readiness 门控把每步约束住，规避开放式 ReAct 的死循环风险。prd2code-gen 端到端原型里的<strong>自验证+自修复循环</strong>是个小 Agent Loop——验证 fail 让 LLM 自主决定怎么改，但加了三道保险：最多 3 次重试上限、震荡检测（识别 A→B→A 就切整段重写）、仍 fail 暂停交人工。诚实说：我没用 LangGraph，因为 prd-tools 步骤明确、没有复杂分支，上状态机是过度设计。</p>
     <p><strong>关键纠正（腾讯一面踩过的坑）</strong>：被问 LangGraph 怎么挂 skill，别答"全量灌进去"——正确做法是 progressive disclosure：先把所有 skill description 拼一起传一遍做意图匹配，AI 判断需要哪些才按需懒加载，否则上下文直接炸。</p>
-    <p class="hint">[loop·已优化·待复核] 念法：钩子（分三层）→ 第一层三架构顺控制权讲（ReAct 自由/Agent Loop 固定/LangGraph 画图）→ 第二层选型分界（Workflow 优先 Agent 兜底）→ 第三层落 prd-tools（11 步是 Agent Loop 思路+自修复加三道保险）→ 腾讯踩坑收口（progressive disclosure）。被问"ReAct 和 CoT 区别"→ CoT 只推理不行动，ReAct 推理+行动。</p>
+    <p class="hint">[loop·已优化·已复核] 念法：钩子（分三层）→ 第一层三架构顺控制权讲（ReAct 自由/Agent Loop 固定/LangGraph 画图）→ 第二层选型分界（Workflow 优先 Agent 兜底）→ 第三层落 prd-tools（11 步是 Agent Loop 思路+自修复加三道保险）→ 腾讯踩坑收口（progressive disclosure）。被问"ReAct 和 CoT 区别"→ CoT 只推理不行动，ReAct 推理+行动。</p>
   </div>
 </div>
 
@@ -3447,7 +3447,7 @@ function buildTreeOptimized(list) {
     <p><strong>但缓存带来三个工程挑战</strong>：① <strong>内存爆炸</strong>——KV Cache 随序列长度线性增长，长上下文时 KV Cache 内存可能超过模型权重本身；② <strong>带宽瓶颈</strong>——Decode 阶段每步只生成 1 个 token，但要从显存（HBM）读全部 KV Cache，内存带宽成瓶颈（不是算力，是搬运）；③ <strong>Lost in the Middle</strong>——上下文超 40% 进入 Dumb Zone，模型对中间内容注意力下降。</p>
     <p><strong>优化方案（大模型岗追问再甩）</strong>：① PagedAttention（vLLM，类 OS 虚拟内存分页，减 80% 内存浪费）；② GQA/MQA（多个 Query 共享 K/V）；③ Quantization（FP16→INT8/INT4，内存减半）；④ Context Cache（缓存公共前缀 KV）；⑤ LMCACHE（批量传输+流水线）。</p>
     <p><strong>前端为什么该懂（收口）</strong>：懂 KV Cache 就能解释——为什么上下文越长越贵（Decode 每步读全部 KV）、为什么要做对话压缩、为什么 Prompt Caching 能省钱（相同前缀 KV 复用，省 90%）。这三个在 AI 前端面试高频。</p>
-    <p class="hint">[loop·已优化·待复核] 念法：钩子（前端必答"为什么越长越贵"）→ 原理（自回归+Attention需历史K/V，O(N²)→O(N)）→ 三挑战（内存爆炸/带宽瓶颈/Lost in Middle）→ 优化（追问甩）→ 收口（解释越长越贵/压缩/Prompt Caching）。</p>
+    <p class="hint">[loop·已优化·已复核] 念法：钩子（前端必答"为什么越长越贵"）→ 原理（自回归+Attention需历史K/V，O(N²)→O(N)）→ 三挑战（内存爆炸/带宽瓶颈/Lost in Middle）→ 优化（追问甩）→ 收口（解释越长越贵/压缩/Prompt Caching）。</p>
   </div>
 </div>
 
@@ -3460,7 +3460,7 @@ function buildTreeOptimized(list) {
     <p><strong>第二层·Prompt Caching（省钱的杀手锏）</strong>：原理是 Attention 计算要复用历史 token 的 KV 向量，相同前缀的 KV 算过一次缓存下来，下次直接读不用重算——Anthropic 同前缀 5 分钟内重复请求便宜约 90%，OpenAI 已自动启用。落地手法很关键：<strong>把不变的部分（系统提示词 + 工具定义 + 知识库前缀）固定在 prompt 头部，每次只换尾部的用户输入</strong>，前缀就持续命中缓存。这不是省钱技巧，是 AI 应用能不能扛住高频调用的基础设施。</p>
     <p><strong>第三层·超了怎么办（指向压缩方案）</strong>：上下文一旦逼近窗口，得压缩——滑动窗口、关键信息提取、自动摘要、MemGPT 分页、LLMLingua 小模型筛 token 都是手段。这块细节多，被追问再甩"对话压缩"那张卡。</p>
     <p><strong>落到我的项目（收口）</strong>：prd-tools 就是 Context Engineering 落地——精选 6 个 SSOT 做"信息选择"（只存精选领域知识不堆全量源码），build-index.py 倒排索引，context-pack.py 按 must/should/optional 分层注入做"预算管理"（优先级高的 must 必塞、optional 按需）。本质就是把 Smart Zone 用满、不浪费在无关内容上。</p>
-    <p class="hint">[loop·已优化·待复核] 念法：钩子（上下文越多越笨，不是越多越好）→ Smart Zone 量化（0-40%/40%/>80%）→ 预算分配（六项比例，检索+对话给大头，输出留 20-30%）→ Prompt Caching（KV 复用降 90%，前缀固定尾部变）→ 压缩方案一句带过指向对话压缩卡 → 落 prd-tools（6 SSOT + context-pack 三层注入）。被问"为什么越长越贵"→ Attention 要复用历史 KV，O(N²) 计算量；被问"怎么省成本"→ 先 Prompt Caching 再压缩。</p>
+    <p class="hint">[loop·已优化·已复核] 念法：钩子（上下文越多越笨，不是越多越好）→ Smart Zone 量化（0-40%/40%/>80%）→ 预算分配（六项比例，检索+对话给大头，输出留 20-30%）→ Prompt Caching（KV 复用降 90%，前缀固定尾部变）→ 压缩方案一句带过指向对话压缩卡 → 落 prd-tools（6 SSOT + context-pack 三层注入）。被问"为什么越长越贵"→ Attention 要复用历史 KV，O(N²) 计算量；被问"怎么省成本"→ 先 Prompt Caching 再压缩。</p>
   </div>
 </div>
 
