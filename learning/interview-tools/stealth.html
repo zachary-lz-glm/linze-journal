@@ -4321,17 +4321,12 @@ function buildTreeOptimized(list) {
   <div class="card-head"><span class="tag bagu">基础</span><div class="card-title">Serverless 冷启动 + 优化（简历 Serverless BFF 必考）</div></div>
   <div class="core">冷启动 500ms-3s，优化到 100ms-500ms</div>
   <div class="card-body">
-    <p><strong>冷启动原因</strong>：① 容器调度（K8s 分配 Pod + 拉镜像）② 代码加载（Node 启动 + require 整个依赖树）③ V8 优化（JIT 编译预热）。</p>
-    <p><strong>典型耗时</strong>：未优化 500ms-3s，优化后 100ms-500ms。</p>
-    <p><strong>优化方案</strong>：</p>
-    <p>· <strong>预置并发（Provisioned Concurrency）</strong>：几乎无冷启动，但贵（按时间付费）。</p>
-    <p>· <strong>瘦身依赖</strong>：移除未用的 npm 包，用 bundle 打包。加快代码加载。</p>
-    <p>· <strong>延迟加载（lazy require）</strong>：首次请求才加载，不在顶层 require。最有效。</p>
-    <p>· <strong>代码分割</strong>：按需加载，冷启动只加载核心代码。</p>
-    <p>· <strong>复用执行环境</strong>：全局变量在 warm 启动时复用（注意不能存用户状态）。</p>
-    <p><strong>关键技巧</strong>：<strong>减少顶层 require</strong>。把大依赖（如 ORM、SDK）改成函数内 require，只在真正用时才加载。</p>
-    <p><strong>项目桥接</strong>：Schema 营销中台 BFF 是 Serverless 部署，冷启动通过 lazy require 把 3s 降到 800ms。</p>
-    <p class="hint">简历写了 Serverless BFF 就要能讲清冷启动。</p>
+    <p>这道题为什么必答——简历上写了 Serverless BFF，面试官一定会顺手追一句"冷启动怎么优化的"，答不出等于简历注水，所以这块不是加分题是保命题。先给一个口径：冷启动从请求到响应要 500ms 到 3s，优化后能压到 100ms 到 500ms，这就是要填的坑。</p>
+    <p>冷启动为什么慢，按时间顺序讲三段就清楚：第一是<strong>容器调度</strong>，平台要分配 Pod、拉镜像，这是平台层、我们能干预的不多；第二是<strong>代码加载</strong>，Node 启动后会把整个依赖树 require 一遍，这是大头、也是我们能下手的地方；第三是 <strong>V8 预热</strong>，JIT 还没编译好、热点代码跑得慢，靠多次请求会自动热起来。三段里第一段平台兜、第三段自然好，真正要优化的是第二段。</p>
+    <p>所以我的核心招就一个——<strong>lazy require</strong>：不在文件顶层 require 大依赖（比如 ORM、SDK），而是改成函数内 require，第一次真正用到时才加载。这样冷启动只加载核心代码，重的依赖推迟到 warm 期。这是最有效、改动也最小的一招，必须主动讲透。</p>
+    <p>配合这一招还有几个常规手段，被追问再甩：<strong>瘦身依赖</strong>（砍掉没用的包、bundle 打包）、<strong>代码分割</strong>（冷启动只加载核心）、<strong>复用 warm 环境</strong>（全局变量在 warm 期复用，但注意不能存用户状态，否则串号）。还有一个"用钱换时间"的——<strong>预置并发（Provisioned Concurrency）</strong>，几乎没冷启动但按时间付费、贵，适合核心链路、不能无脑上。</p>
+    <p>落我项目上：Schema 营销中台的 BFF 就是 Serverless 部署，营销活动配置页首屏依赖 BFF 聚合多个下游接口，冷启动慢直接影响运营自助体验。我就是靠把大依赖改 lazy require，把冷启动从 3s 压到 800ms 左右，没花预置并发的钱、效果就够用了。这就是"先用免费手段、钱留着给核心链路"的取舍。</p>
+    <p class="hint">[loop·已优化·待复核] 念法：钩子先甩（简历写了就必考，答不出=注水）→ 口径（500ms-3s，优化到100-500ms）→ 三段原因按时间顺序（容器调度/代码加载是重点/V8预热）→ 核心招 lazy require（讲透，函数内 require 推迟到 warm 期）→ 配套手段被追问再甩（瘦身/分割/复用 warm/预置并发用钱换时间）→ 落 Schema BFF（3s→800ms，免费手段优先）。被问"具体怎么优化"先甩 lazy require，别上来就堆五条。</p>
   </div>
 </div>
 
