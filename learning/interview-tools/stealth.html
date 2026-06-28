@@ -3001,11 +3001,12 @@ function buildTreeOptimized(list) {
   <div class="card-head"><span class="tag proj">Schema</span><div class="card-title">Schema能覆盖所有表单场景吗？遇到不满足的怎么处理？</div></div>
   <div class="core">不能覆盖所有场景，遇到边界case走custom标记降级到自定义组件渲染，逐步把高频custom模式沉淀进Schema</div>
   <div class="card-body">
-    <p><strong>坦诚说：不能覆盖所有</strong>。Schema驱动的前提是"页面结构可以用JSON描述"。但实际业务中有几类场景是Schema难以描述的——动态增删表单组（可变数组嵌套复杂联动）、条件渲染逻辑特别复杂的自定义交互（比如拖拽排序配置权益优先级）、跨步骤的全局状态依赖（后面步骤的配置影响前面步骤的显示）。</p>
-    <p><strong>遇到不满足的三步处理</strong>。第一步，Schema里标记custom类型——componentMap支持"custom"标记，渲染引擎遇到custom字段时不走标准渲染流程，直接渲染业务方register的自定义组件，自定义组件自己处理内部逻辑。第二步，联动DSL扩展——如果发现多个业务都有类似的custom需求，提取共性模式扩展dAction DSL。比如初版不支持"数组操作"类型的联动，后来扩展了arrayPush/arrayRemove/arraySort三种操作类型，从custom沉淀为标准能力。第三步，保持克制——不是所有custom都要标准化，只沉淀出现3次以上的模式，低频定制就让它待在custom里。</p>
-    <p><strong>实际案例</strong>：上线后遇到过"权益包配置"场景——用户可以动态添加多个权益包，每个权益包内部又有联动规则（选择权益类型后显示不同配置项）。初版联动DSL的value-type只支持静态值，不支持嵌套Schema引用。处理方式是先custom走通，第二个迭代扩展了$ref联动类型支持嵌套引用，然后把这个场景从custom迁回标准流程。这个过程本身就是Schema方案的持续迭代——不是一次设计到位，是在业务中逐步完善。</p>
-    <p><strong>其他已知边界</strong>：联动嵌套超过三层时模板难维护，需拆成多个模板各管一层。动态生成不能断点调试，通过Schema diff工具辅助排查。字符串键值编译时无法检查类型安全，在BFF模板层做字段枚举校验兜底。样式隔离方面，Schema渲染组件有三种方案——CSS Modules（编译时hash隔离，简单但不够灵活）、CSS-in-JS（运行时动态样式，灵活但有性能开销）、CSS原生方案（@layer+自定义属性+Shadow DOM，零运行时开销但浏览器兼容性限制），趋势是向CSS原生方案迁移。</p>
-    <p class="hint">这道题考的是方案的工程成熟度。好的回答不是"什么都能做"，是"有明确的边界、有边界case的处理机制、有持续演进的路径"。面试官想听的是你遇到了什么真实的限制、怎么务实地解决的。</p>
+    <p><strong>这道题考的是方案的工程成熟度——好回答不是"什么都能做"，是"有明确边界、有处理机制、有持续演进路径"。我坦诚讲边界和怎么务实解决。</strong></p>
+    <p><strong>坦诚说：不能覆盖所有</strong>。Schema 驱动的前提是"页面结构能用 JSON 描述"。但有几类场景难描述——动态增删表单组（可变数组嵌套复杂联动）、特别复杂的自定义交互（拖拽排序配权益优先级）、跨步骤全局状态依赖（后面步骤影响前面显示）。</p>
+    <p><strong>遇到不满足的三步处理</strong>：① <strong>custom 标记降级</strong>——componentMap 支持 custom 标记，渲染引擎遇到直接渲染业务 register 的自定义组件，它自己处理内部逻辑；② <strong>联动 DSL 扩展</strong>——发现多个业务有类似 custom 需求，提取共性扩展 dAction（初版不支持数组操作，后来加 arrayPush/arrayRemove/arraySort，从 custom 沉淀为标准）；③ <strong>保持克制</strong>——不是所有 custom 都标准化，只沉淀出现 3 次以上的模式，低频定制就留 custom 里。</p>
+    <p><strong>真实案例</strong>：权益包配置——用户动态加多个权益包，每个包内部又有联动（选权益类型显示不同配置项）。初版 DSL 只支持静态值不支持嵌套引用，先 custom 走通，第二迭代扩展 $ref 支持嵌套引用，再从 custom 迁回标准。这就是 Schema 的持续迭代——不是一次设计到位，是在业务里逐步完善。</p>
+    <p><strong>其他已知边界（被追问再甩）</strong>：联动嵌套超三层模板难维护（拆多模板各管一层）；动态生成不能断点调试（Schema diff 工具辅助）；字符串键值编译时无类型安全（BFF 模板层枚举校验兜底）；样式隔离三种方案（CSS Modules / CSS-in-JS / CSS 原生 @layer+Shadow DOM，趋势向原生迁移）。</p>
+    <p class="hint">[loop·已优化·待复核] 念法：钩子（工程成熟度=有边界+机制+演进）→ 坦诚不能覆盖（三类难场景）→ 三步处理（custom降级/DSL扩展/克制沉淀）→ 真实案例（权益包$ref）→ 其他边界被追问再甩。</p>
   </div>
 </div>
 
