@@ -1905,13 +1905,14 @@ function buildTreeOptimized(list) {
   <div class="card-head"><span class="tag ai">G6</span><div class="card-title">Claude Code 怎么管 context？prompt 缓存在哪？（蚂蚁三连问）</div></div>
   <div class="core">缓存是服务端的 KV cache 不是本地文件；context 靠 auto-compaction 自动压缩 + CLAUDE.md 长期记忆</div>
   <div class="card-body">
-    <p><strong>面试官三连问</strong>（蚂蚁一面）：① Claude Code 怎么管 context？② memory 每轮带着不会越来越长吗？③ 单次请求除了 query 还带什么、缓存在哪？</p>
-    <p><strong>缓存在哪（最易答错）</strong>：prompt caching 缓存在<strong>Anthropic 服务端</strong>，存的是 Transformer 前向传播算出的 KV cache（attention 的 key/value 张量），<strong>不是 prompt 文本、不是 hash、不是本地文件</strong>。相同前缀的下次请求直接复用这些张量，跳过重复计算，成本降约 90%、延迟降约 85%。本地 <code>.claude</code> 文件夹存的是会话历史 transcript，那是持久化存储，和 prompt cache 是两回事——别混。</p>
-    <p><strong>单次请求带什么</strong>：系统 prompt + tools 的 schema 定义 + 对话历史（messages）+ 可能的附加文件内容。其中公共前缀（系统 prompt + tools）稳定不变，会被 prompt caching 复用，所以多轮对话只有新增部分真正计费。</p>
-    <p><strong>memory 不会无限长</strong>：分三层——持久记忆（CLAUDE.md，项目指令，内容稳定不涨）、短期记忆（对话历史，靠滑动窗口只留最近几轮 + compaction 压缩）、按需检索（要更多上下文时 agent 读文件、@引用，不是全量塞）。所以每轮不会把整个记忆库都带上。</p>
-    <p><strong>auto-compaction</strong>：上下文接近容量极限（约 90%，剩 10%）时自动把旧对话总结成摘要，一次释放 60-70% 窗口，用户几乎无感。CLAUDE.md 在压缩后会重新加载，保证项目指令不丢。手动可 /compact 主动压缩、/clear 硬重置。</p>
-    <p><strong>通用超窗策略</strong>：别把所有内容塞短期记忆——输入侧渐进式披露按需加载 + RAG 语义检索压缩；输出侧文件分流不塞聊天回复；中间推理过程（agent 自我反思）外置到 MD/memory 文件。</p>
-    <p class="hint">答错点复盘：当时把"会话历史本地存储"当成 prompt cache，被"缓存在哪"追穿。记住三件事分开：本地 transcript（历史）/ 服务端 KV cache（prompt caching）/ 内存滑动窗口（短期对话）。</p>
+    <p><strong>这题蚂蚁一面连问三问，最坑的是"缓存在哪"——我当场答错了，把会话历史本地存储当成了 prompt cache，被追穿。复盘下来，这题要分三块讲清楚：缓存在哪、单次请求带什么、memory 为什么不会无限长。</strong></p>
+    <p><strong>先答最坑的"缓存在哪"</strong>：prompt caching 缓存在 <strong>Anthropic 服务端</strong>，存的是 Transformer 前向传播算出来的 KV cache——就是 attention 的 key/value 张量，<strong>不是 prompt 文本、不是 hash、更不是本地文件</strong>。原理是相同前缀的下次请求直接复用这些张量，跳过重复计算，成本降约 90%、延迟降约 85%。这里有个易混点必须分清——本地 <code>.claude</code> 文件夹存的是会话历史 transcript，那是持久化存储；服务端 KV cache 是计算加速。两个根本不是一回事，别搅在一起。</p>
+    <p><strong>再答"单次请求除了 query 还带什么"</strong>：四样——系统 prompt + tools 的 schema 定义 + 对话历史（messages）+ 可能的附加文件内容。关键是前两样是稳定不变的公共前缀，会被 prompt caching 复用，所以多轮对话<strong>只有新增的那部分真正计费</strong>，不是每轮把整个上下文重新算一遍。</p>
+    <p><strong>最后答"memory 每轮带着不会越来越长吗"</strong>：不会，分三层兜着——① <strong>持久记忆</strong>是 CLAUDE.md，放项目指令，内容稳定基本不涨；② <strong>短期记忆</strong>是对话历史，靠滑动窗口只留最近几轮，超了靠 compaction 压缩；③ <strong>按需检索</strong>是要更多上下文时 agent 主动读文件、用 @ 引用，不是全量塞进窗口。所以每轮不会把整个记忆库都带上。</p>
+    <p><strong>补一个工程亮点 auto-compaction</strong>：上下文逼近容量极限（约 90%，剩 10%）时，自动把旧对话总结成摘要，一次释放 60-70% 窗口，用户几乎无感。CLAUDE.md 压缩后会重新加载，保证项目指令不丢。手动可以 /compact 主动压、/clear 硬重置。</p>
+    <p><strong>通用超窗策略（被追问就甩）</strong>：核心就一句——别把所有内容塞短期记忆。输入侧靠渐进式披露按需加载 + RAG 语义检索做压缩；输出侧把结果分流到文件，不塞聊天回复；中间推理过程（agent 自我反思）外置到 MD/memory 文件。</p>
+    <p><strong>落到我的项目</strong>：prd-tools 的 reference 6 文件，本质就是"按需检索"那层的工程化变体——不是把几万行代码塞进上下文，而是蒸馏成 6 个领域知识文件，每次请求按需检索相关片段拼进去。和 Claude Code 管 context 是同一套思路：信息从"全量"压缩成"结构化精选"，既省 token 又不丢关键事实。</p>
+    <p class="hint">[loop·已优化·待复核] 念法：钩子（蚂蚁三连问，最坑"缓存在哪"当场答错）→ 缓存在哪（服务端 KV cache 张量，90%/85%，区分本地 transcript）→ 单次请求带什么（四样，公共前缀复用只新增计费）→ memory 三层（持久/短期/按需，不会无限长）→ auto-compaction 亮点（90%触发释放60-70%）→ 通用超窗策略（追问甩）→ 落 prd-tools（reference 6 文件=按需检索工程化）。</p>
   </div>
 </div>
 
