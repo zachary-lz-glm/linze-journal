@@ -2044,17 +2044,13 @@ function buildTreeOptimized(list) {
   <div class="card-head"><span class="tag ai">AI</span><div class="card-title">Agent评测怎么做？跟LLM评测有什么区别？</div></div>
   <div class="core">LLM评测是单轮输入输出，Agent评测是多步决策+工具调用的完整轨迹评估</div>
   <div class="card-body">
-    <p><strong>核心区别</strong>：LLM评测是"给一个输入看输出对不对"，一次判定。Agent评测是"给一个任务看整个执行轨迹好不好"——包括规划是否合理、工具选择是否正确、中间判断是否准确、最终结果是否达标。复杂度不在一个量级。</p>
-    <p><strong>Agent评测的三个维度</strong>：</p>
-    <p>· <strong>规划能力</strong>：任务分解是否合理？步骤顺序是否正确？有没有遗漏关键步骤？评测方法：把Agent的规划过程跟人工黄金路径对比，算步骤覆盖率和顺序准确率。</p>
-    <p>· <strong>工具使用</strong>：选了正确的工具吗？参数传对了吗？在应该调用工具时调用了、不该调用时没乱调？BFCL就是专门测这个的。评测方法：工具选择准确率+参数正确率+无效调用率。</p>
-    <p>· <strong>自反思与恢复</strong>：执行出错后能发现吗？发现了能修正吗？修正后结果改善了吗？评测方法：故意构造会出错的场景，观察Agent的恢复行为。</p>
-    <p><strong>三种评测方法（组合使用）</strong>：</p>
-    <p>· <strong>LLM-as-Judge</strong>：用强模型评判Agent输出。可扩展、成本低，但评判本身有误差。必须先跟人工标注校准。</p>
-    <p>· <strong>Win Rate</strong>：两个Agent做同一个任务，自动或人工判断谁更好。适合对比不同配置/模型的效果。HelloAgents等框架原生支持。</p>
-    <p>· <strong>人工验证</strong>：金标准但不可扩展。通常抽样LLM Judge的判定结果做交叉验证——如果两者一致性高，说明Judge可信赖。</p>
-    <p><strong>项目桥接</strong>：prd-tools的Evidence Index就是Agent评测的简化版——每步产出都有溯源证据，可以事后审计"这个结论从哪来的"。Readiness Score是自动化评分。如果要做完整Agent评测，下一步是构造标准PRD测试集，做版本间Win Rate对比。</p>
-    <p><strong>面试一句话</strong>："Agent评测比LLM评测复杂一个量级——不是评一次输出，而是评整个执行轨迹：规划、工具选择、错误恢复。跟自动驾驶评测一个道理，不只看终点到没到，看全程开得安不安全。"</p>
+    <p><strong>这道题的核心区分：LLM 评测是"给输入看输出对不对"（一次判定），Agent 评测是"给任务看整个执行轨迹好不好"（规划/工具/恢复/结果全程看）。复杂度不在一个量级。</strong></p>
+    <p><strong>业务背景</strong>：prd-tools 是 Agent 工作流，光看最终 plan 对不对不够——得看规划合不合理、工具选对没、出错能不能恢复。所以 Agent 评测比 LLM 评测难得多。</p>
+    <p><strong>Agent 评测三个维度</strong>：① <strong>规划能力</strong>——任务分解合不合理、步骤顺序对不对、有没有漏关键步骤（评测：跟人工黄金路径比，算步骤覆盖率和顺序准确率）；② <strong>工具使用</strong>——选对工具没、参数对没、该调时调了不该调时没乱调（BFCL 专测，评测：工具选择准确率+参数正确率+无效调用率）；③ <strong>自反思与恢复</strong>——出错能发现吗、能修正吗、修正后改善了吗（评测：故意构造会出错的场景，观察恢复行为）。</p>
+    <p><strong>三种评测方法（组合用）</strong>：① <strong>LLM-as-Judge</strong>（强模型评 Agent 输出，可扩展但有误差，需先跟人工校准）；② <strong>Win Rate</strong>（两 Agent 做同任务比谁好，适合对比配置/模型，HelloAgents 等框架支持）；③ <strong>人工验证</strong>（金标准但不可扩展，抽样 LLM Judge 做交叉验证）。</p>
+    <p><strong>落到我的项目（桥接）</strong>：prd-tools 的 Evidence Index 是 Agent 评测简化版——每步产出有溯源证据，能事后审计"结论从哪来"；Readiness Score 是自动化评分。端到端原型 prd2code-gen 的 eval 闭环更进一步——llm-judge 五维独立评分 + R01/R02 对照量化迭代效果。完整 Agent 评测的下一步是构造标准 PRD 测试集做版本间 Win Rate。</p>
+    <p><strong>收口金句</strong>："Agent 评测比 LLM 评测复杂一个量级——不是评一次输出，是评整个执行轨迹：规划、工具选择、错误恢复。跟自动驾驶评测一个道理，不只看终点到没到，看全程开得安不安全。"</p>
+    <p class="hint">[loop·已优化·待复核] 念法：核心区分钩子（轨迹评测非单次）→ 业务背景（Agent工作流评全程）→ 三维度（规划/工具/恢复）→ 三方法（Judge/WinRate/人工）→ 落 prd-tools（Evidence+Readiness+prd2code-gen eval）→ 自动驾驶金句收口。</p>
   </div>
 </div>
 
