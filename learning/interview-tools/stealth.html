@@ -3514,14 +3514,17 @@ function buildTreeOptimized(list) {
 
 <div class="card" data-c="ai" data-kw="CoT 思维链 Chain of Thought 推理 ReAct 触发词 局限">
   <div class="card-head"><span class="tag ai">AI</span><div class="card-title">CoT（思维链）：为啥效果好？</div></div>
-  <div class="core">让模型先想再答，多出来的 token 给了模型"推理空间"，本质是扩展计算量</div>
+  <div class="core">让模型先想再答，多出来的 token 给了推理空间，本质是用 token 换推理深度</div>
   <div class="card-body">
-    <p><strong>原理</strong>：标准 prompt 让模型直接输出答案（input → output），CoT 让模型先输出推理过程再答（input → reasoning → output）。多出来的 token 等价于多了前向计算步骤，模型在生成中间步骤时能"逐步逼近"正确答案。类比人：心算 17×24 卡壳，列竖式就清楚。</p>
-    <p><strong>三种触发方式</strong>：① <strong>Few-shot CoT</strong>——给几个带推理过程的示例，模型学会"先想再答"。② <strong>Zero-shot CoT</strong>——在 prompt 末尾加"Let's think step by step"，GPT-3 起有效。③ <strong>Auto-CoT</strong>——让模型自己生成示例。</p>
-    <p><strong>为啥有效（三种解释）</strong>：① <strong>计算量扩展</strong>——多 token = 多前向 = 更深的推理。② <strong>分解任务</strong>——把复杂问题拆成简单子问题，每个子问题命中模型训练分布。③ <strong>对齐训练分布</strong>——训练数据里"思考过程"的样本权重大。</p>
-    <p><strong>CoT 是 ReAct/Plan-Execute 的底层</strong>：ReAct = CoT + Tool Use（Thought → Action → Observation 循环）；Plan-Execute = CoT + 任务拆分（先全盘想，再分步做）。理解了 CoT 才能解释为什么 ReAct 比"直接调 LLM"效果好。</p>
-    <p><strong>局限</strong>：① <strong>不是所有任务都受益</strong>——简单计算/事实问答反而变慢变贵。② <strong>推理路径可能错</strong>——CoT 不保证正确，可能"想错但答对"或"想对但答错"。③ <strong>Token 成本翻倍</strong>——长 CoT 让 API 成本激增。④ <strong>黑盒不可解释</strong>——CoT 的推理过程不真实反映模型内部决策，Self-Consistency 多采样投票更稳。</p>
-    <p><strong>面试金句</strong>："CoT 的本质是用 token 换推理深度。简单任务不需要，复杂任务必用。ReAct/Plan-Execute 都是 CoT 的工程化扩展——加工具调用、加任务拆分。"</p>
+    <p><strong>这道题先甩本质：CoT 是用 token 换推理深度。简单任务不需要，复杂任务必用——这是判断该不该用 CoT 的第一原则。</strong></p>
+    <p><strong>业务背景</strong>：AI 应用里，复杂推理（多步逻辑、数学、代码）直接问模型常出错。CoT 让模型先想再答，准确率显著提升。但 CoT 烧 token，简单任务用反而变慢变贵。</p>
+    <p><strong>原理（一句话）</strong>：标准 prompt 是 input→output（直接答），CoT 是 input→reasoning→output（先推理再答）。多出来的 token 等于多了前向计算步骤，模型能逐步逼近正确答案。<strong>类比人</strong>：心算 17×24 卡壳，列竖式就清楚。</p>
+    <p><strong>三种触发方式</strong>：① <strong>Few-shot CoT</strong>（给几个带推理的示例，模型学会先想再答）；② <strong>Zero-shot CoT</strong>（prompt 末尾加"Let's think step by step"，GPT-3 起有效）；③ <strong>Auto-CoT</strong>（模型自己生成示例）。</p>
+    <p><strong>为啥有效（被追问再甩）</strong>：① 计算量扩展（多 token=多前向=更深推理）；② 分解任务（复杂问题拆简单子问题，各自命中训练分布）；③ 对齐训练分布（训练数据里"思考过程"样本权重大）。</p>
+    <p><strong>CoT 是 ReAct/Plan-Execute 的底层（关键认知）</strong>：ReAct = CoT + Tool Use（Thought→Action→Observation 循环）；Plan-Execute = CoT + 任务拆分（先全盘想再分步做）。理解 CoT 才能解释为什么 ReAct 比"直接调 LLM"效果好。</p>
+    <p><strong>局限（诚实说）</strong>：① 不是所有任务都受益（简单计算/事实问答反而变慢变贵）；② 推理路径可能错（CoT 不保证正确，可能"想错答对"或"想对答错"）；③ Token 成本翻倍（长 CoT 让 API 成本激增）；④ 黑盒不可解释（CoT 推理不真实反映内部决策，Self-Consistency 多采样投票更稳）。</p>
+    <p><strong>收口金句</strong>："CoT 本质是用 token 换推理深度。简单任务不需要，复杂任务必用。ReAct/Plan-Execute 都是 CoT 的工程化扩展——加工具调用、加任务拆分。"</p>
+    <p class="hint">[loop·已优化·待复核] 念法：本质钩子（用token换推理深度，简单不用复杂必用）→ 业务背景（复杂推理直接问易错）→ 原理（竖式类比）→ 三触发 → 为啥有效（追问甩）→ CoT是ReAct底层（关键认知）→ 局限（诚实）→ 金句。</p>
   </div>
 </div>
 
