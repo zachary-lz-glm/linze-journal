@@ -1846,14 +1846,12 @@ function buildTreeOptimized(list) {
   <div class="card-head"><span class="tag proj">G2</span><div class="card-title">2-3万字 PRD 直接打爆 Context 怎么办？</div></div>
   <div class="core">显式 Context Budget + PRD Chunking + Map-Reduce 蒸馏</div>
   <div class="card-body">
-    <p><strong>面试官追问</strong>（阿里一面30:00）："2-3万字的 PRD 基本直接打爆你的 context，这个事情执行不下去，你怎么保证它能跑下去？"</p>
-    <p><strong>我当时的回答</strong>：弱——"暂时还没考虑""主要是流程串联""一个重构级的项目"。真实 gap，必须补。</p>
-    <p><strong>升级版回答三件套</strong>：</p>
-    <p>· <strong>显式 Context Budget 模型</strong>：总预算 200K（Opus 4.x）= reference 索引 30K（15%）+ PRD 相关 chunks 80K（40%）+ code anchors 50K（25%）+ 历史对话 20K（10%）+ 思考空间 20K（10%）。超预算 → quality-gate distill 子命令直接 fail。</p>
-    <p>· <strong>PRD Chunking 策略</strong>：大 PRD 按章节切，每 chunk 5-8K。Step 1 PRD Ingestion 已经产出 document-structure.json，按段落/表格/图片分块。蒸馏时只加载相关 chunk，不全文加载。</p>
-    <p>· <strong>Map-Reduce 蒸馏</strong>（对标 Anthropic 多 Agent 研究系统）：大 PRD 先 sub-agent 按章节并行蒸馏，产出 chapter-summary；main agent 只合并 chapter-summaries，不重新读原文。Token 消耗从 O(n) 降到 O(log n)。</p>
-    <p><strong>边界诚实</strong>：现在 v2.19 已经做了 PRD Ingestion 拆分，但显式 Budget 还在 Sprint 0 规划中，Map-Reduce 在 Sprint 4。所以面试官追问"做了吗"，答"Chunking 已经上线，Budget 显式管理在排期"。</p>
-    <p class="hint">不要说"暂时没考虑"——答"已做哪一层，规划做哪一层"，体现 roadmap 清晰。</p>
+    <p><strong>这道题阿里一面直接把我问住了（30:00）——"2-3万字 PRD 基本直接打爆你的 context，这个事情执行不下去，你怎么保证它能跑下去？"我当场答得很弱，"暂时还没考虑""主要是流程串联"。这是真实 gap，回来必须补上。正确答法是三招递进：先做显式 Context Budget，再做 PRD Chunking，进阶上 Map-Reduce 蒸馏。</strong></p>
+    <p><strong>第一招·显式 Context Budget（先承认这是有限资源）</strong>：总预算 200K（Opus 4.x 上下文窗）不能让 PRD 一个人吃光，得显式切五块——reference 索引 30K（15%，检索用）、PRD 相关 chunks 80K（40%，主战场）、code anchors 50K（25%，证据锚点）、历史对话 20K（10%）、思考空间 20K（10%）。一旦加起来超预算，quality-gate 的 distill 子命令直接 fail，硬拦——不让模型"撑爆了硬答"，而是逼人先收紧上下文。这个"显式管预算"的意识本身就是工程化和业余的分水岭。</p>
+    <p><strong>第二招·PRD Chunking（按章节切，不全文加载）</strong>：大 PRD 按章节切，每 chunk 控在 5-8K。这里有个现成的抓手——Step 1 PRD Ingestion 已经产出了 document-structure.json，按段落/表格/图片把 PRD 结构化了。蒸馏时只加载和当前任务相关的 chunk，不用把整份 PRD 灌进去。这是已经上线的能力。</p>
+    <p><strong>第三招·Map-Reduce 蒸馏（对标 Anthropic 多 Agent 研究系统）</strong>：超大 PRD 先派 sub-agent 按章节并行蒸馏，每个产出一份 chapter-summary，main agent 只合并这些摘要、不回头读原文。这样 token 消耗从 O(n) 降到 O(log n)。这是进阶招，复杂场景才上。</p>
+    <p><strong>收口·诚实交代进度（这道题的杀手锏是 roadmap 清晰）</strong>：现在 v2.19 已经做了 PRD Ingestion 拆分（Chunking 落地），但显式 Budget 还在 Sprint 0 规划中、Map-Reduce 在 Sprint 4。所以面试官追问"做了吗"，答"Chunking 已经上线，Budget 显式管理和 Map-Reduce 在排期"——已经做的、正在做的、计划做的三层讲清，比说"暂时没考虑"强一百倍。</p>
+    <p class="hint">[loop·已优化·待复核] 念法：钩子（阿里一面被问住，真 gap）→ 三招递进（显式 Budget 切五块硬拦 / Chunking 按章节已上线 / Map-Reduce 进阶降阶）→ 收口（已做+在排期两层 roadmap）。被问"超窗怎么办"先甩 Budget 切五块，被问"PRD 太长"甩 Chunking 已上线。</p>
   </div>
 </div>
 
