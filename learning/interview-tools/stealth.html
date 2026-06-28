@@ -3411,12 +3411,12 @@ function buildTreeOptimized(list) {
   <div class="card-head"><span class="tag ai">AI</span><div class="card-title">Token Smart Zone + Prompt Caching</div></div>
   <div class="core">上下文 0-40% Smart Zone 质量最高，>40% Dumb Zone 明显下降；相同前缀 KV 可复用降本 90%</div>
   <div class="card-body">
-    <p><strong>Smart Zone vs Dumb Zone</strong>：0-40% 上下文模型推理质量最高，>40% 逐渐下降，>80% 明显幻觉遗忘（Anthropic Lost in the Middle 研究）。</p>
-    <p><strong>预算分配经验</strong>：系统提示词 5-10%、工具定义 10-20%、检索文档 20-30%、对话历史 20-30%、用户输入 5-10%、输出预留 20-30%。</p>
-    <p><strong>上下文压缩七方案</strong>：① 滑动窗口（保留最近 N 轮）② 关键信息提取（持久化重要实体）③ 自动摘要（递归压缩旧消息）④ Progressive Summarization（递归压缩成摘要块放 prompt 开头）⑤ MemGPT/Letta 分页（超阈值 flush 到外部存储，类似 OS 虚拟内存）⑥ Observation Masking（JetBrains，占位符替换保留结构）⑦ LLMLingua/TKBF（小模型判断 token 重要性）。</p>
-    <p><strong>Prompt Caching</strong>：Anthropic 相同前缀 5 分钟内重复请求便宜 90%，OpenAI 自动启用。应用：系统提示词 + 工具定义 + 知识库前缀固定，每次只变用户输入。</p>
-    <p><strong>项目桥接</strong>：prd-tools 是 Context Engineering 落地——精选 6 个 SSOT，build-index.py 倒排索引，context-pack.py 按 must/should/optional 分层注入。</p>
-    <p class="hint">小红书/星河觉醒失分点。主动说"上下文越长越贵"显得懂底层。</p>
+    <p><strong>这道题我先甩一个反直觉的钩子——上下文不是越多越好，喂太满模型反而变笨。</strong>Anthropic 的 Lost in the Middle 研究给了量化结论：上下文用到 0-40% 是 Smart Zone，推理质量最高；超 40% 进 Dumb Zone 开始下降；到 80% 以上明显幻觉、遗忘开头的内容。所以做 Context Engineering 第一条铁律就是——<strong>上下文是稀缺资源，得像分配内存一样分配 token</strong>，不是把所有东西都塞进去。</p>
+    <p><strong>第一层·预算怎么分（这是面试官想听的实操经验）</strong>：我按一个经验比例分配——系统提示词 5-10%、工具定义 10-20%、检索文档 20-30%、对话历史 20-30%、用户输入 5-10%、输出预留 20-30%。核心思想是<strong>把预算花在刀刃上</strong>：检索文档和对话历史是回答质量的命脉，给最大头；工具定义虽多但靠 Prompt Caching 几乎免费；始终给输出留 20-30%，别填满上下文让模型没地方写。</p>
+    <p><strong>第二层·Prompt Caching（省钱的杀手锏）</strong>：原理是 Attention 计算要复用历史 token 的 KV 向量，相同前缀的 KV 算过一次缓存下来，下次直接读不用重算——Anthropic 同前缀 5 分钟内重复请求便宜约 90%，OpenAI 已自动启用。落地手法很关键：<strong>把不变的部分（系统提示词 + 工具定义 + 知识库前缀）固定在 prompt 头部，每次只换尾部的用户输入</strong>，前缀就持续命中缓存。这不是省钱技巧，是 AI 应用能不能扛住高频调用的基础设施。</p>
+    <p><strong>第三层·超了怎么办（指向压缩方案）</strong>：上下文一旦逼近窗口，得压缩——滑动窗口、关键信息提取、自动摘要、MemGPT 分页、LLMLingua 小模型筛 token 都是手段。这块细节多，被追问再甩"对话压缩"那张卡。</p>
+    <p><strong>落到我的项目（收口）</strong>：prd-tools 就是 Context Engineering 落地——精选 6 个 SSOT 做"信息选择"（只存精选领域知识不堆全量源码），build-index.py 倒排索引，context-pack.py 按 must/should/optional 分层注入做"预算管理"（优先级高的 must 必塞、optional 按需）。本质就是把 Smart Zone 用满、不浪费在无关内容上。</p>
+    <p class="hint">[loop·已优化·待复核] 念法：钩子（上下文越多越笨，不是越多越好）→ Smart Zone 量化（0-40%/40%/>80%）→ 预算分配（六项比例，检索+对话给大头，输出留 20-30%）→ Prompt Caching（KV 复用降 90%，前缀固定尾部变）→ 压缩方案一句带过指向对话压缩卡 → 落 prd-tools（6 SSOT + context-pack 三层注入）。被问"为什么越长越贵"→ Attention 要复用历史 KV，O(N²) 计算量；被问"怎么省成本"→ 先 Prompt Caching 再压缩。</p>
   </div>
 </div>
 
