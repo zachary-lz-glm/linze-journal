@@ -2691,7 +2691,7 @@ function buildTreeOptimized(list) {
     <p><strong>落到前端架构，三个关键点逐条讲</strong>：第一是<strong>流式渲染（SSE）</strong>——AI 回答是逐 token 生成的，前端用 Server-Sent Events 做流式展示，关键是增量渲染性能，绝不能用 innerHTML 全量替换，长回答会卡，得用 DOM diff 增量追加；第二是<strong>引用溯源</strong>，回答里每个论点都要标来源、能点跳原文，技术上要在流式生成的同时做实体标记（类似 Annotation 机制），后端配合返回结构化的引用块而不是纯文本；第三是<strong>结构化摘要</strong>，不是甩一大段文字，而是分点分块渲染——标题、要点、对比表、引用列表，这也要后端配合结构化输出。这三点串起来，就是 AI 搜索前端和传统搜索前端最不一样的地方。</p>
     <p><strong>PE 工程师视角收一层——搜索不是纯前端岗</strong>：得理解检索排序逻辑，才能设计合理的摘要 UI 和引用展示；得理解模型推理成本，才能做合理的流式策略和缓存设计；得理解用户搜索意图，才能设计追问、相关推荐这些交互形态。一句话，PE = 产品 sense + 全栈技术，不是"写页面的"。这点说出来，面试官就知道你 grasp 到了岗位本质。</p>
     <p><strong>最后甩一个洞察显格局（小红书面试官亲口说的）</strong>：搜索正在从"提供答案"进化到"提供服务"——结果里藏着可执行的服务，不只是信息。更远期搜索本身会被泛化：从"用户输入指令→拿结果"，变成"AI 无时无刻理解用户需求、主动推送服务"。抖音和谷歌把"猜你喜欢"做到了极致，下一步就是 AI 在用户无感知的情况下主动服务。讲到这里面试官通常会接话，说明方向对上了。</p>
-    <p class="hint">[loop·已优化·待复核] 念法：先甩定位（考产品判断不是考技术）→ 四产品横向对比（问一问/Perplexity/百度/豆包各一句优缺点，强调自己真用过）→ 前端三关键点（SSE 增量渲染/引用溯源/结构化摘要）→ PE 视角收层（产品 sense+全栈）→ 进化洞察甩格局（答案→服务→主动推送）。被问"和传统搜索前端区别"翻三关键点。</p>
+    <p class="hint">[loop·已优化·已复核] 念法：先甩定位（考产品判断不是考技术）→ 四产品横向对比（问一问/Perplexity/百度/豆包各一句优缺点，强调自己真用过）→ 前端三关键点（SSE 增量渲染/引用溯源/结构化摘要）→ PE 视角收层（产品 sense+全栈）→ 进化洞察甩格局（答案→服务→主动推送）。被问"和传统搜索前端区别"翻三关键点。</p>
   </div>
 </div>
 
@@ -3068,7 +3068,7 @@ function buildTreeOptimized(list) {
     <p><strong>遇到不满足的三步处理</strong>：① <strong>custom 标记降级</strong>——componentMap 支持 custom 标记，渲染引擎遇到直接渲染业务 register 的自定义组件，它自己处理内部逻辑；② <strong>联动 DSL 扩展</strong>——发现多个业务有类似 custom 需求，提取共性扩展 dAction（初版不支持数组操作，后来加 arrayPush/arrayRemove/arraySort，从 custom 沉淀为标准）；③ <strong>保持克制</strong>——不是所有 custom 都标准化，只沉淀出现 3 次以上的模式，低频定制就留 custom 里。</p>
     <p><strong>真实案例</strong>：权益包配置——用户动态加多个权益包，每个包内部又有联动（选权益类型显示不同配置项）。初版 DSL 只支持静态值不支持嵌套引用，先 custom 走通，第二迭代扩展 $ref 支持嵌套引用，再从 custom 迁回标准。这就是 Schema 的持续迭代——不是一次设计到位，是在业务里逐步完善。</p>
     <p><strong>其他已知边界（被追问再甩）</strong>：联动嵌套超三层模板难维护（拆多模板各管一层）；动态生成不能断点调试（Schema diff 工具辅助）；字符串键值编译时无类型安全（BFF 模板层枚举校验兜底）；样式隔离三种方案（CSS Modules / CSS-in-JS / CSS 原生 @layer+Shadow DOM，趋势向原生迁移）。</p>
-    <p class="hint">[loop·已优化·待复核] 念法：钩子（工程成熟度=有边界+机制+演进）→ 坦诚不能覆盖（三类难场景）→ 三步处理（custom降级/DSL扩展/克制沉淀）→ 真实案例（权益包$ref）→ 其他边界被追问再甩。</p>
+    <p class="hint">[loop·已优化·已复核] 念法：钩子（工程成熟度=有边界+机制+演进）→ 坦诚不能覆盖（三类难场景）→ 三步处理（custom降级/DSL扩展/克制沉淀）→ 真实案例（权益包$ref）→ 其他边界被追问再甩。</p>
   </div>
 </div>
 
@@ -3386,7 +3386,7 @@ function buildTreeOptimized(list) {
     <p><strong>③ 反思引擎（Reflection）——这是最值钱的一个，也是 ratchet 机制的核心</strong>：让 Agent 从失败里提炼规则。四步闭环：① 先收集日志（每次决策 + 工具调用 + 评分）② 反思分析高频失败模式，生成候选规则 ③ 人工审批后写进 AGENTS.md ④ 用 golden sample 回归验证规则真的有效。关键在于<strong>"错误即规则，只进不退"</strong>——踩过的坑固化成规则，下次绕着走，系统只会越来越稳不会退化。</p>
     <p><strong>项目桥接（这是我的落地证据）</strong>：prd-tools 本身就是 Harness 雏形，六层一层对应一个引擎能力——L1 信息边界是 SSOT、L2 工具是 MCP、L3 编排是 11 步、L4 记忆是 Evidence Index、L5 评估是 quality-gate.py、L6 约束是 questions.md。但我必须诚实交代一个缺口：最大短板就在反思引擎——现在 Mode E 的规则回流还是<strong>人工</strong>做的，没有自动化反思闭环，这是我下一步要补的。</p>
     <p><strong>业界参照（被追问再甩）</strong>：OpenAI 的 AGENTS.md 就 ~100 行但极其精炼；Anthropic 的三 Agent 分工（Planner/Generator/Evaluator）就是合并引擎的范式；Stripe 的 Minions 一周跑 1300+ PR 靠的就是 Harness 兜底；Ghostty 的 AGENTS.md 最狠——每一行都是过去踩过的真实失败。这印证了"错误即规则"不是理念，是工程实践。</p>
-    <p class="hint">[loop·已优化·待复核] 念法：钩子先甩（小红书栽在这题，护城河是 Harness 自我长进）→ 定义一句 → 三引擎逐条（合并/通信/反思各 1-2 句，反思重点讲透 ratchet "错误即规则只进不退"）→ 项目桥接（prd-tools 六层对应+诚实说反思引擎还是人工）→ 业界参照被追问再甩。被问"Agent 怎么不退化"直接甩 ratchet 四步闭环。</p>
+    <p class="hint">[loop·已优化·已复核] 念法：钩子先甩（小红书栽在这题，护城河是 Harness 自我长进）→ 定义一句 → 三引擎逐条（合并/通信/反思各 1-2 句，反思重点讲透 ratchet "错误即规则只进不退"）→ 项目桥接（prd-tools 六层对应+诚实说反思引擎还是人工）→ 业界参照被追问再甩。被问"Agent 怎么不退化"直接甩 ratchet 四步闭环。</p>
   </div>
 </div>
 
@@ -3401,7 +3401,7 @@ function buildTreeOptimized(list) {
     <p><strong>④ 可靠性</strong>——断线了怎么办。用 Last-Event-ID 告诉服务端"最后收到第几条"，让它从这续传并去重；客户端自己也 buffer 累积防重复；再加个 15-30 秒心跳保活。</p>
     <p><strong>⑤ 中断层</strong>——用户点"停止生成"，用 AbortController + fetch(signal) 中断请求，服务端配合取消推理；前端状态机从 streaming 切到 aborted，但已经生成的内容要保留，不能丢。</p>
     <p><strong>追问杀手锏</strong>：代码块未闭合怎么办（暂存 buffer 等闭合再渲染）+ 断线去重（Last-Event-ID + 客户端 buffer）。这两个细节能答出来，面试官就知道你真做过。</p>
-    <p class="hint">[loop·已优化·待复核] 念法：先甩五层框架 → 每层一句话说清（连接/解析/渲染/可靠性/中断）→ 追问杀手锏（代码块未闭合+断线去重）。蚂蚁 JD 明确点名。</p>
+    <p class="hint">[loop·已优化·已复核] 念法：先甩五层框架 → 每层一句话说清（连接/解析/渲染/可靠性/中断）→ 追问杀手锏（代码块未闭合+断线去重）。蚂蚁 JD 明确点名。</p>
   </div>
 </div>
 
