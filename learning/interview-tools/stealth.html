@@ -3785,7 +3785,7 @@ function buildTreeOptimized(list) {
     <p><strong>根因二·延迟放大</strong>：推理模型单次响应就要几十秒（思维链太长），而 MCP 和 Agent 是多轮往返——调工具、看结果、再调工具，每轮几十秒累加，体验直接崩塌。推理和工具调用这两个特性叠在一起，延迟会乘性放大。</p>
     <p><strong>现状</strong>：OpenAI o1 早期完全不支持 FC，后续版本才逐步支持，但要额外适配——把 tool_call 嵌进思维链结尾。DeepSeek-R1 走"混合模式"，ReAct 风格里让思维链和 tool_call 交错。整体是慢慢补齐，不是天生支持。</p>
     <p><strong>工程解法·落到我的项目</strong>：生产级 Agent 的标准做法是"指令模型做编排 + 推理模型单点调用"——编排这层（多轮 FC、调 MCP、管上下文）交给指令模型，因为它稳定、延迟低；推理模型只在"需要深度思考的那一步"单独用，比如复杂规划、代码审查。我的 prd-tools 走的就是这个路子：主流程用 Claude 这类指令模型做确定性编排（11 步流水线 + Skill 调脚本 + 证据链门控），需要硬推理的环节才考虑单独调推理模型——不让推理模型承担多轮工具调用，否则延迟和稳定性都扛不住。</p>
-    <p class="hint">[loop·已优化·待复核] 念法：钩子（先分两类再讲根因，三段答完）→ 两类模型一句（指令吐答案/推理先吐思维链）→ 根因一（思维链吞掉结构化）+ 根因二（延迟乘性放大）→ 现状（o1 后期补齐/DeepSeek 混合模式）→ 落 prd-tools（指令模型编排 + 推理模型单点，主流程 Claude 确定性编排 11 步）。被问"那推理模型还能用吗"→ 能用但要单点调，别让它扛多轮。</p>
+    <p class="hint">[loop·已优化·已复核] 念法：钩子（先分两类再讲根因，三段答完）→ 两类模型一句（指令吐答案/推理先吐思维链）→ 根因一（思维链吞掉结构化）+ 根因二（延迟乘性放大）→ 现状（o1 后期补齐/DeepSeek 混合模式）→ 落 prd-tools（指令模型编排 + 推理模型单点，主流程 Claude 确定性编排 11 步）。被问"那推理模型还能用吗"→ 能用但要单点调，别让它扛多轮。</p>
   </div>
 </div>
 
@@ -4066,7 +4066,7 @@ function buildTreeOptimized(list) {
     <p><strong>第二层·智能客服幻觉控制四层（这是灵魂，必须讲透）</strong>：① <strong>证据链</strong>——每条 AI 回复必须标注知识库来源，不能凭空生成，和我 prd-tools 的"8 种证据类型"同款思路，把模型产出锁在事实里；② <strong>兜底机制</strong>——低置信度自动转人工坐席（阈值例如置信度 &lt; 0.7），不让低把握的回答直接到用户面前；③ <strong>离线评测</strong>——golden sample 回归测试，模型更新后必跑，防退化（和我 reference 回流机制同款，模型越用越准靠这个）；④ <strong>人工 review</strong>——投诉/退款/资损这类重要场景必须人工介入，AI 只做初筛不做终判。四层本质是<strong>把幻觉从"模型自纠"变成"机制可拦截"</strong>，和我做 prd-tools 防幻觉的理念完全一致。</p>
     <p><strong>成本优化（被追问再甩）</strong>：多大模型混合——强模型做意图识别（准），小模型做生成回复（省）；高频 FAQ 命中缓存（客服场景重复率高，缓存命中率上来了成本就下来）。这一段显你懂工程取舍，不是只懂算法。</p>
     <p><strong>最后落回我的项目桥接（这是这道题真正的加分项）</strong>：prd-tools 防污染三层——人工 check 回流 + golden sample 回归 + 前后评分对比——<strong>可以直接迁移到客服幻觉控制</strong>。差异要主动说：prd-tools 是开发侧防幻觉（AI 写代码），客服是用户侧防幻觉（AI 对用户讲话），场景不同但底层机制（证据链锁事实 + 回归防退化 + 兜底拦低把握）是同一套。<strong>金句收口：多语言解决"听不听得懂"，幻觉控制解决"敢不敢信"——全球化客服 AI 的两个护城河，我都能从已有项目长出来。</strong></p>
-    <p class="hint">[loop·已优化·待复核] 念法：钩子（考的不是背客服系统，是 TikTok 全球化场景同时 hold 住多语言+幻觉两个难题）→ 业务背景（多语种工单+幻觉=资损信任崩塌，两难题绑一起）→ 第一层多语言三路线（翻译统一/多语言模型直处理/混合推荐，每条带取舍，被问选哪条甩③）→ 第二层幻觉控制四层（证据链/置信度兜底阈值&lt;0.7/golden回归防退化/人工review资损场景，本质把幻觉变机制可拦截）→ 成本优化被追问再甩（强弱模型混合+FAQ缓存）→ 落 prd-tools（防污染三层直接迁移，差异=开发侧vs用户侧但底层机制同款）→ 金句（多语言=听不听得懂，幻觉=敢不敢信，两个护城河都能从已有项目长出来）。被问"客服 AI 难在哪"先甩两个难题再展开。</p>
+    <p class="hint">[loop·已优化·已复核] 念法：钩子（考的不是背客服系统，是 TikTok 全球化场景同时 hold 住多语言+幻觉两个难题）→ 业务背景（多语种工单+幻觉=资损信任崩塌，两难题绑一起）→ 第一层多语言三路线（翻译统一/多语言模型直处理/混合推荐，每条带取舍，被问选哪条甩③）→ 第二层幻觉控制四层（证据链/置信度兜底阈值&lt;0.7/golden回归防退化/人工review资损场景，本质把幻觉变机制可拦截）→ 成本优化被追问再甩（强弱模型混合+FAQ缓存）→ 落 prd-tools（防污染三层直接迁移，差异=开发侧vs用户侧但底层机制同款）→ 金句（多语言=听不听得懂，幻觉=敢不敢信，两个护城河都能从已有项目长出来）。被问"客服 AI 难在哪"先甩两个难题再展开。</p>
   </div>
 </div>
 
@@ -4166,7 +4166,7 @@ function buildTreeOptimized(list) {
     <p><strong>最后说 RSC（React Server Components）正式版——这是面试核心考点</strong>：组件在服务端渲染，运行时无 JS，静态部分直接打进服务端产物、不打进客户端 bundle。区别于 SSR 的本质有两点——① <strong>粒度</strong>：SSR 是页面级把整个页面 renderToString 成 HTML，RSC 是<strong>组件级</strong>，可以一个页面里静态部分用 RSC、交互部分用 Client Component（标 'use client'）；② <strong>要不要 hydration</strong>：SSR 必须 hydration（浏览器下载后再执行一遍 JS 重建 vDOM），RSC<strong>不需要 hydration</strong>——它输出的是"已经渲染好的组件描述"，客户端直接消费不重新执行 JS。所以 RSC 能减少 40%+ 的客户端 bundle。限制也要说清：RSC 组件不能有交互（onClick 这类），需要交互的拆成 Client Component。</p>
     <p><strong>其他新特性快速带过（被追问再展开）</strong>：① Document Metadata 原生支持 title/meta 不用 react-helmet；② Asset Loading（preload/preinit）优化资源加载；③ Ref as Prop 不用再写 forwardRef；④ React Compiler 自动 memoization，不用手写 useMemo/useCallback——这一条是"编译期优化"的代表，呼应开头那句定调。</p>
     <p><strong>安全风险必须主动提一句（显得你真做过、不是只看利好）</strong>：RSC 曾爆过 CVSS 10 分的 RCE 漏洞——服务端渲染时如果执行了来自不可信数据的恶意 key，等于在服务端跑了任意代码，Next.js 等框架都受影响。所以讲 RSC 别只讲快，要补一句"服务端渲染不可信数据是新的攻击面，框架层要兜底"。</p>
-    <p class="hint">[loop·已优化·待复核] 念法：钩子先甩定调（React 19 三件事都是把工作从客户端挪到服务端/编译期，让运行时更轻）→ use Hook（破顶层调用限制，能在 if 里读 Promise/Context）→ Actions（三 API 统一异步操作状态：useActionState/useFormStatus/useOptimistic）→ RSC 正式版（核心考点，组件级+无 hydration，区别 SSR 两点：粒度页面级vs组件级、必须hydrationvs不需要，减40% bundle，限制是不能有交互拆Client Component）→ 其他新特性快速带（被追问展开，React Compiler呼应定调）→ 安全风险收口（RSC曾爆CVSS 10 RCE，服务端渲染不可信数据是新攻击面，别只讲快）。被问"RSC 和 SSR 到底啥区别"→ 重点念粒度+hydration两点；被问"RSC 有什么坑"→ 甩 CVES RCE 那句。</p>
+    <p class="hint">[loop·已优化·已复核] 念法：钩子先甩定调（React 19 三件事都是把工作从客户端挪到服务端/编译期，让运行时更轻）→ use Hook（破顶层调用限制，能在 if 里读 Promise/Context）→ Actions（三 API 统一异步操作状态：useActionState/useFormStatus/useOptimistic）→ RSC 正式版（核心考点，组件级+无 hydration，区别 SSR 两点：粒度页面级vs组件级、必须hydrationvs不需要，减40% bundle，限制是不能有交互拆Client Component）→ 其他新特性快速带（被追问展开，React Compiler呼应定调）→ 安全风险收口（RSC曾爆CVSS 10 RCE，服务端渲染不可信数据是新攻击面，别只讲快）。被问"RSC 和 SSR 到底啥区别"→ 重点念粒度+hydration两点；被问"RSC 有什么坑"→ 甩 CVES RCE 那句。</p>
   </div>
 </div>
 
@@ -4329,7 +4329,7 @@ function buildTreeOptimized(list) {
     <p>所以我的核心招就一个——<strong>lazy require</strong>：不在文件顶层 require 大依赖（比如 ORM、SDK），而是改成函数内 require，第一次真正用到时才加载。这样冷启动只加载核心代码，重的依赖推迟到 warm 期。这是最有效、改动也最小的一招，必须主动讲透。</p>
     <p>配合这一招还有几个常规手段，被追问再甩：<strong>瘦身依赖</strong>（砍掉没用的包、bundle 打包）、<strong>代码分割</strong>（冷启动只加载核心）、<strong>复用 warm 环境</strong>（全局变量在 warm 期复用，但注意不能存用户状态，否则串号）。还有一个"用钱换时间"的——<strong>预置并发（Provisioned Concurrency）</strong>，几乎没冷启动但按时间付费、贵，适合核心链路、不能无脑上。</p>
     <p>落我项目上：Schema 营销中台的 BFF 就是 Serverless 部署，营销活动配置页首屏依赖 BFF 聚合多个下游接口，冷启动慢直接影响运营自助体验。我就是靠把大依赖改 lazy require，把冷启动从 3s 压到 800ms 左右，没花预置并发的钱、效果就够用了。这就是"先用免费手段、钱留着给核心链路"的取舍。</p>
-    <p class="hint">[loop·已优化·待复核] 念法：钩子先甩（简历写了就必考，答不出=注水）→ 口径（500ms-3s，优化到100-500ms）→ 三段原因按时间顺序（容器调度/代码加载是重点/V8预热）→ 核心招 lazy require（讲透，函数内 require 推迟到 warm 期）→ 配套手段被追问再甩（瘦身/分割/复用 warm/预置并发用钱换时间）→ 落 Schema BFF（3s→800ms，免费手段优先）。被问"具体怎么优化"先甩 lazy require，别上来就堆五条。</p>
+    <p class="hint">[loop·已优化·已复核] 念法：钩子先甩（简历写了就必考，答不出=注水）→ 口径（500ms-3s，优化到100-500ms）→ 三段原因按时间顺序（容器调度/代码加载是重点/V8预热）→ 核心招 lazy require（讲透，函数内 require 推迟到 warm 期）→ 配套手段被追问再甩（瘦身/分割/复用 warm/预置并发用钱换时间）→ 落 Schema BFF（3s→800ms，免费手段优先）。被问"具体怎么优化"先甩 lazy require，别上来就堆五条。</p>
   </div>
 </div>
 
