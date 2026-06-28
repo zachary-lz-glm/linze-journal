@@ -2029,18 +2029,14 @@ function buildTreeOptimized(list) {
   <div class="card-head"><span class="tag ai">AI</span><div class="card-title">LLM Benchmark体系：排行榜到底在评什么？</div></div>
   <div class="core">Benchmark测的是模型能力上限，不是你的业务效果——选模型看Benchmark，调效果看Evals</div>
   <div class="card-body">
-    <p><strong>通用能力类</strong>：</p>
-    <p>· <strong>MMLU</strong>：多学科知识理解，57个学科的选择题。测的是"知识储备"——模型懂多少领域知识。GPT-4o约88%，Claude Opus约87%。</p>
-    <p>· <strong>GSM8K</strong>：小学数学应用题。别小看，测的是"多步推理"——模型能不能一步步算对而不跳步。早期模型在这上面栽得很惨。</p>
-    <p>· <strong>MMLU-Pro/MMLU-Hard</strong>：更难的版本，区分度更高。2026年原版MMLU区分度已严重下降——头部模型都在90%+，拉不开差距。</p>
-    <p><strong>代码能力类</strong>：</p>
-    <p>· <strong>HumanEval</strong>：164道Python编程题，测函数级代码生成。通过率（pass@1）是核心指标。Claude Sonnet约92%，GPT-4o约90%。</p>
-    <p>· <strong>SWE-bench</strong>：真实GitHub issue修复任务。比HumanEval难得多——不只是写代码，还要理解已有代码库。2026年成为Agent评测的事实标准。</p>
-    <p><strong>Agent能力类</strong>：</p>
-    <p>· <strong>AgentBench</strong>：综合评测Agent的多维能力——规划、工具使用、自反思、记忆管理。覆盖Web、操作系统、数据库等多个环境。</p>
-    <p>· <strong>BFCL</strong>（Berkeley Function Calling Leaderboard）：专注评测Function Calling准确率。从4个Tool到50+个Tool时的表现衰减就是这个数据集揭示的。</p>
-    <p><strong>2026年Benchmark的三个问题</strong>：①区分度下降——头部模型分数越来越接近，排行榜挤成一团。②数据污染——训练数据可能包含测试集，分数虚高。③跟实际业务脱节——Benchmark高分不等于你的场景表现好。</p>
-    <p><strong>面试一句话</strong>："Benchmark告诉你模型的能力上限，但不告诉你你的业务效果。选模型看Benchmark，调效果看自己的Evals——不要拿排行榜分数当产品质量。"</p>
+    <p><strong>这道题先甩一个关键区分：Benchmark 测的是模型的能力上限，不是你的业务效果。选模型看 Benchmark，调效果看自己的 Evals——别拿排行榜分数当产品质量。</strong></p>
+    <p><strong>业务背景</strong>：选模型时大家爱甩排行榜分数，但排行榜高分不等于你的场景好。得懂每个 Benchmark 测什么、有什么坑。</p>
+    <p><strong>通用能力类</strong>：① <strong>MMLU</strong>（57 学科选择题，测知识储备，GPT-4o 约 88%）；② <strong>GSM8K</strong>（小学数学，测多步推理能不能一步步算对不跳步）；③ <strong>MMLU-Pro/Hard</strong>（更难版，区分度高——2026 年原版 MMLU 头部都 90%+，拉不开差距）。</p>
+    <p><strong>代码能力类</strong>：① <strong>HumanEval</strong>（164 道 Python 函数级编程，pass@1 核心，Claude Sonnet 约 92%）；② <strong>SWE-bench</strong>（真实 GitHub issue 修复，比 HumanEval 难得多——不只写代码还要理解已有代码库，2026 年成 Agent 评测事实标准）。</p>
+    <p><strong>Agent 能力类</strong>：① <strong>AgentBench</strong>（综合评 Agent 多维能力：规划/工具使用/自反思/记忆，覆盖 Web/OS/DB）；② <strong>BFCL</strong>（Berkeley Function Calling 排行榜，专评 FC 准确率——4 个 Tool 到 50+ 个 Tool 的衰减就是它揭示的）。</p>
+    <p><strong>2026 年 Benchmark 三个坑（被追问再甩）</strong>：① <strong>区分度下降</strong>——头部分数越来越近，排行榜挤一团；② <strong>数据污染</strong>——训练数据可能含测试集，分数虚高；③ <strong>跟业务脱节</strong>——Benchmark 高分不等于你场景好。</p>
+    <p><strong>收口</strong>：Benchmark 是选型参考不是质量保证。我的做法是 Benchmark 筛短名单，再用业务数据集做 Eval（Recall@K / Readiness）——选模型看 Benchmark，调效果看 Evals。</p>
+    <p class="hint">[loop·已优化·待复核] 念法：关键区分钩子（测上限不测业务）→ 业务背景（排行榜高分≠场景好）→ 三类 Benchmark（通用/代码/Agent 各举例）→ 三坑（区分度/污染/脱节）→ 收口（Benchmark 筛短名单+业务 Eval 调效果）。</p>
   </div>
 </div>
 
