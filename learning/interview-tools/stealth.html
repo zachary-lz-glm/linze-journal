@@ -2082,7 +2082,6 @@ function buildTreeOptimized(list) {
     <p><strong>落到我的项目（关键决策）</strong>：prd-tools <strong>只用倒排+BM25，没上向量</strong>。原因是检索对象是代码——函数名、字段名、路径都是离散符号，精确匹配比语义近似更准更快（搜 getMembershipLevel 要精确命中，不要"语义相近"的 getLevel）。还能 grep 调试、零模型依赖。这是主动选型，不是不懂向量——换成自然语言知识库（PRD 文档/用户问答）我会上向量。</p>
     <p class="hint">[loop·已优化·待复核] 念法：选型口诀（互补非替代）→ 业务背景（选错召回不准/维护重）→ 两种方案对比（结构化精确 vs 向量语义）→ 混合检索 → 落 prd-tools（为何只用倒排+BM25，代码场景精确优先）。</p>
   </div>
-  </div>
 </div>
 
 <div class="card" data-c="proj" data-kw="能力面 适配器 目录 项目 可复用 surface">
@@ -3551,7 +3550,6 @@ function buildTreeOptimized(list) {
     <p><strong>常见误区（被追问甩）</strong>：① "调高温度让模型更聪明"——错，温度只影响随机性不影响能力；② "Top-K 越大越多样"——错，K 太大引入噪声；③ "Agent 必须 T=0"——错，T=0 会让 Agent 陷入循环。</p>
     <p><strong>收口金句</strong>："温度控方差、Top-P 控范围、Top-K 控数量。Agent 我默认 T=0.3 P=0.9，既稳定又能跳出死循环。"</p>
     <p class="hint">[loop·已优化·待复核] 念法：三参数定位钩子（控方差/范围/数量）→ 业务背景（调参影响稳定性，Agent T=0死循环）→ 三参数本质 → 各场景最佳值（背）→ 组合策略 → 落 prd-tools（T=0.2/P=0.95一致性40→85%）→ 常见误区 → 金句。</p>
-  </div>
   </div>
 </div>
 
