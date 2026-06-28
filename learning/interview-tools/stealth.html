@@ -3484,12 +3484,14 @@ function buildTreeOptimized(list) {
   <div class="card-head"><span class="tag ai">AI</span><div class="card-title">Transformer 基础：Encoder/Decoder/Q/K/V</div></div>
   <div class="core">Q/K/V 是输入的三次线性投影，Attention 公式除 √d_k 防止 softmax 进入饱和区</div>
   <div class="card-body">
-    <p><strong>架构</strong>：Encoder 负责理解输入（BERT 是纯 Encoder），Decoder 负责生成输出（GPT 是纯 Decoder），T5 是 Encoder-Decoder。现代 LLM（GPT-4/Claude）都是 Decoder-only 架构——因为生成任务的主流，且 Decoder-only 在 scaling 后效果反超。</p>
-    <p><strong>Q/K/V 的本质</strong>：输入向量 X 经过三个不同的线性变换矩阵（W_Q、W_K、W_V）投影出 Query/Key/Value。类比数据库：Q 是查询条件，K 是索引键，V 是实际返回值。Attention(Q,K,V) = softmax(Q·K^T / √d_k) · V。</p>
-    <p><strong>为什么除 √d_k</strong>：点积结果随维度 d_k 增大而方差变大，softmax 进入饱和区（梯度趋零）导致训练停滞。除以 √d_k 把方差拉回 1，保持梯度健康。这是面试必答的细节。</p>
-    <p><strong>Multi-Head Attention</strong>：把 Q/K/V 拆成 H 个头（如 32 头），每个头独立做 Attention，最后拼接。优势：① 不同头学习不同语义关系（语法、共指、语义等）。② 并行度高。③ 表达能力强。</p>
-    <p><strong>位置编码</strong>：Transformer 本身无位置感知（Attention 是置换不变的），必须额外注入位置信息。① <strong>sin/cos</strong>（原始论文）——绝对位置。② <strong>RoPE</strong>（旋转位置编码）——主流方案，通过旋转矩阵让 Q·K 自动反映相对位置，外推性好。③ <strong>ALiBi</strong>——直接在 Attention 分数上加位置偏置，无需修改输入。</p>
-    <p><strong>面试金句</strong>："Transformer 核心是 Self-Attention——让每个 token 直接关注序列中所有其他 token，绕过 RNN 的递归瓶颈。Q/K/V 是同一输入的三个投影，分别承担'查什么'、'有什么'、'取什么'三个角色。"</p>
+    <p><strong>这道题前端岗不用能手推公式，但懂 Transformer 能解释 LLM 很多行为——为什么上下文越长越慢（Attention 是 O(N²)）、为什么有位置编码（模型本身不知道词序）。我讲清几个关键点。</strong></p>
+    <p><strong>架构（先分清三类）</strong>：Encoder 负责理解输入（BERT 是纯 Encoder），Decoder 负责生成输出（GPT 是纯 Decoder），T5 是 Encoder-Decoder。<strong>现代 LLM（GPT-4/Claude）都是 Decoder-only</strong>——生成任务主流，且 Decoder-only 在 scaling 后效果反超。</p>
+    <p><strong>Q/K/V 的本质（核心）</strong>：输入向量 X 经过三个不同线性变换矩阵投影出 Query/Key/Value。<strong>类比数据库</strong>：Q 是查询条件，K 是索引键，V 是实际返回值。Attention(Q,K,V) = softmax(Q·K^T / √d_k) · V——每个 token 用 Q 去和所有 token 的 K 算相关度，加权取 V。</p>
+    <p><strong>为什么除 √d_k（面试必答细节）</strong>：点积结果随维度 d_k 增大方差变大，softmax 进入饱和区（梯度趋零）训练停滞。除 √d_k 把方差拉回 1，保持梯度健康。</p>
+    <p><strong>Multi-Head Attention</strong>：把 Q/K/V 拆成 H 个头（如 32 头）各自做 Attention 再拼接。好处：不同头学不同语义关系（语法/共指/语义），并行度高。</p>
+    <p><strong>位置编码（前端该懂）</strong>：Transformer 本身无位置感知（Attention 置换不变），必须额外注入位置。① sin/cos（原始论文，绝对位置）；② <strong>RoPE</strong>（旋转位置编码，主流，让 Q·K 自动反映相对位置，外推性好）；③ ALiBi（Attention 分数加位置偏置）。</p>
+    <p><strong>收口金句</strong>："Transformer 核心是 Self-Attention——让每个 token 直接关注所有其他 token，绕过 RNN 递归瓶颈。Q/K/V 是同一输入的三个投影，分别承担'查什么/有什么/取什么'。"</p>
+    <p class="hint">[loop·已优化·待复核] 念法：前端钩子（懂Transformer解释LLM行为）→ 架构三类（Decoder-only主流）→ QKV本质（数据库类比+公式）→ 除√d_k细节 → Multi-Head → 位置编码（RoPE主流）→ 金句收口。</p>
   </div>
 </div>
 
