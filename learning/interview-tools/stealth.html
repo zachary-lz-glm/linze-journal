@@ -2243,10 +2243,13 @@ function buildTreeOptimized(list) {
   <div class="card-head"><span class="tag ai">AI</span><div class="card-title">Claude Code Skills 调用原理</div></div>
   <div class="core">Skills通过system prompt注入，模型按指令匹配触发</div>
   <div class="card-body">
-    <p><strong>定义层</strong>：每个Skill由SKILL.md（触发条件+输入输出+规则）+ workflow.md（分步流程SSOT）+ steps/（每步XML约束）组成。</p>
-    <p><strong>注入层</strong>：Skills内容被注入Agent的system prompt，用户输入匹配trigger时模型按指令选择调用。</p>
-    <p><strong>执行层</strong>：底层类似function calling——模型识别意图→匹配Skill→按workflow步骤执行，每步XML约束(allowed_inputs/must_not_produce)限制行为。</p>
-    <p><strong>vs MCP</strong>：MCP是C/S协议（工具注册在Server，Agent作为Client调用），偏向单次工具调用；Skills是Agent原生多步骤工作流，支持上下文管理和中间文件传递。</p>
+    <p><strong>这道题我答三层——从"是什么"到"怎么跑起来"再到"我落地过"。</strong></p>
+    <p><strong>第一层·Skill 是什么（先破一个误区）</strong>：很多人以为 Skill 是一段代码或一个插件，其实<strong>它就是一组 Markdown 文件</strong>——靠 system prompt 注入让模型"读懂流程"，再按指令一步步执行。核心是<strong>把"人怎么用好 AI 干一件事"的隐性经验显性化</strong>，固化成可复用流程。不写代码、不绑模型，改 Markdown 就能调行为。</p>
+    <p><strong>第二层·三个文件怎么协作</strong>：① <strong>SKILL.md</strong> 管"什么时候触发"——写清 trigger 触发条件、输入输出、硬规则；② <strong>workflow.md</strong> 管"分几步做"——是整个流程的 SSOT（单一事实源），声明步骤、依赖、门控；③ <strong>steps/ 目录</strong> 管"每步不能越界"——每个 step 文件用 XML 标签做硬约束（<code>&lt;allowed_inputs&gt;</code> 规定只能读什么、<code>&lt;must_not_produce&gt;</code> 规定不许产出什么）。</p>
+    <p><strong>第三层·怎么跑起来（底层机制）</strong>：注入层——Skills 内容拼进 Agent 的 system prompt，模型看到用户输入匹配 trigger 就按指令选调哪个；执行层——本质类似 Function Calling，模型识别意图 → 匹配 Skill → 按 workflow 一步步走，每步的 XML 约束卡住边界，中间产物靠文件传递不占对话上下文。</p>
+    <p><strong>落到我的项目</strong>：prd-tools 就是用 Claude Code Skills 搭的——四个 Skill（prd-distill / team-distill / reference / team-reference），每个都是 SKILL.md + workflow.md + steps/ 三件套。以 prd-distill 为例：workflow.md 定义 3 步（解析 PRD → 分类分层 → 确认输出），step-01-parse.md 里 <code>&lt;allowed_inputs&gt;</code> 卡死只能读 PRD 和 reference、<code>&lt;must_not_produce&gt;</code> 禁止提前生成 layer-impact。这就是"用约束换可靠"——不是靠模型更聪明，是靠流程兜底。</p>
+    <p><strong>和 MCP 的区别（高频追问一句话）</strong>：MCP 是 C/S 协议（工具注册在 Server、Agent 当 Client 调），管"工具怎么标准化连"，偏单次调用；Skills 是 Agent 原生的多步骤工作流，管"复杂任务怎么分步跑稳"，支持上下文管理和中间文件传递。<strong>两者互补不冲突</strong>——Skill 编排流程，MCP 补工具能力。</p>
+    <p class="hint">[loop·已优化·待复核] 念法：钩子（先破误区：Skill 是 Markdown 不是代码）→ 三文件协作（SKILL.md 触发/workflow.md 流程 SSOT/steps XML 约束）→ 怎么跑（注入 system prompt + 类 FC 执行）→ 落 prd-tools（四 Skill 三件套，举 step-01 的 allowed_inputs/must_not_produce 显深度）→ vs MCP 一句收口。被问"和写代码调 AI 区别"翻 Skill vs 写代码卡。</p>
   </div>
 </div>
 
