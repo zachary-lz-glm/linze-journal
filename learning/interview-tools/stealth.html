@@ -158,7 +158,7 @@ body{overscroll-behavior-y:contain}
     <p><strong>最核心是 injectDActions（联动声明+双重求值）</strong>：联动关系在 Schema 里声明一次，但求值两次——BFF 先 safeEval 算初始状态（决定首屏展示什么），序列化给前端；前端运行时再求值（响应用户操作）。联动分两类：fetchApi 型（依赖字段变化调接口拿新数据，如选城市拉产品线）、state 型（纯前端本地算，如显隐/禁用）。沉淀了 16 个联动模板覆盖常见场景。</p>
     <p><strong>前端两个关键机制（源码细节）</strong>：① <strong>路径拍平</strong>——嵌套表单（step→card→row→field）拍成 dot 路径，联动能精确定位任意字段；② <strong>发布订阅</strong>——字段变化时通知依赖方，只更新受影响组件，不重渲染整棵树。组件两种匹配：基础组件 switch-case、业务组件 Register 动态注册，目前 35 个动态渲染组件。</p>
     <p><strong>业务成果（收口）</strong>：新增活动类型前端基本零代码，上线从 2 周→几小时；同一套引擎服务活动表单和权益 SDK 两个业务，维护成本降一半。从"读代码理解业务"变成"看 Schema 理解业务"。</p>
-    <p class="hint">[loop·已优化·待复核] 念法：先业务背景（营销活动痛点+目标）→ 三层架构 → injectDActions 核心（双重求值+两类联动）→ 前端两机制（路径拍平+发布订阅）→ 业务成果收口。</p>
+    <p class="hint">[loop·已优化·已复核] 念法：先业务背景（营销活动痛点+目标）→ 三层架构 → injectDActions 核心（双重求值+两类联动）→ 前端两机制（路径拍平+发布订阅）→ 业务成果收口。</p>
   </div>
 </div>
 
@@ -171,7 +171,7 @@ body{overscroll-behavior-y:contain}
     <p><strong>核心是 Register 注册模式</strong>：SDK 内置 24 个通用组件，业务方运行时用 register 方法注册自己的权益组件。通用组件注册一次所有业务复用，业务定制组件只注册到自己的命名空间。好处是——通用组件满足不了时，业务自己注册定制组件，<strong>不用 fork 一份改</strong>（避免分叉），也不会互相污染。</p>
     <p><strong>架构复用（业务价值）</strong>：权益 SDK 和营销活动表单是两个消费者，共享同一套 Schema 渲染架构。维护一套引擎，两个业务都能用，<strong>维护成本降一半</strong>。</p>
     <p><strong>工程化细节（被追问再甩）</strong>：Rollup 输出 ESM+CJS+d.ts 三份产物，peerDependencies 声明 React 避免重复打包；Changesets 管版本，alpha 环境联调，yalc 本地验证替代 npm link（symlink 在 Monorepo 有依赖解析问题）。</p>
-    <p class="hint">[loop·已优化·待复核] 念法：先破误区（400+是组合数不是组件数）→ 业务背景（多国家多业务线）→ Register 模式（通用+定制不 fork）→ 共享引擎维护降半 → 工程化细节被追问再甩。</p>
+    <p class="hint">[loop·已优化·已复核] 念法：先破误区（400+是组合数不是组件数）→ 业务背景（多国家多业务线）→ Register 模式（通用+定制不 fork）→ 共享引擎维护降半 → 工程化细节被追问再甩。</p>
   </div>
 </div>
 
@@ -186,7 +186,7 @@ body{overscroll-behavior-y:contain}
     <p>② <strong>代码锚定</strong>——涉及修改/删除的操作，必须有源码级锚点（具体文件+行），不能凭空推断"应该改某个文件"。静态分析+精准匹配定位，没锚点就拦。</p>
     <p>③ <strong>多层门控</strong>——摄入阶段检查 PRD 读取质量，Spec 阶段硬停止等人确认才允许生成 Plan，最终用 quality-gate.py 做五维评分（PRD 摄入/证据覆盖/代码搜索/契约对齐/计划完整）+ 五项确定性检查。低于阈值直接 fail。</p>
     <p><strong>再加反馈回流（防退化）</strong>：每次蒸馏的新知识更新 reference 知识库（Mode E），配合已验证的 golden case 集做回归——改了知识库要重跑基准案例，确保不劣化才上线（消融实验证明去掉证据链层 Readiness 从 82 掉到 54）。</p>
-    <p class="hint">[loop·已优化·待复核] 念法：先亮观点（靠流程不靠模型）→ 业务背景（20+人团队、返工成本）→ 三机制（证据链/代码锚定/多层门控，带 negative_search 和 quality-gate 五维）→ 反馈回流防退化（消融 82→54）。prd-tools 主线必讲。</p>
+    <p class="hint">[loop·已优化·已复核] 念法：先亮观点（靠流程不靠模型）→ 业务背景（20+人团队、返工成本）→ 三机制（证据链/代码锚定/多层门控，带 negative_search 和 quality-gate 五维）→ 反馈回流防退化（消融 82→54）。prd-tools 主线必讲。</p>
   </div>
 </div>
 
@@ -200,7 +200,7 @@ body{overscroll-behavior-y:contain}
     <p><strong>突破方案（1分钟，亮架构）</strong>：转向 Agent + Skill 工作流模式——自研 Reference 六文件 SSOT（项目知识结构化）+ 多轮搜索（Agent Loop 不是单次）+ 证据链验证（每条结论可追溯）。这套让 PRD→Plan 从 5h/需求降到 2h/需求，已推广到 20+ 人团队。</p>
     <p><strong>核心收获（收口）</strong>：AI 工程的难点不在调 prompt，在架构选型——单次调用 vs 多轮 Agent，决定了能力上限。我走过的弯路，让我对"什么场景该用 Agent 而不是简单工具调用"有体感。</p>
     <p><strong>备选（偏传统前端时）</strong>：选 Schema 引擎——营销中台月均 10+ bug，自研 Schema 渲染引擎后归零。</p>
-    <p class="hint">[loop·已优化·待复核] 念法：选prd-tools → 背景30秒（已有项目AI理解空白）→ 弯路30秒（MCP单次瓶颈）→ 突破1分钟（Agent+Skill+证据链，5h→2h）→ 收口（架构选型决定上限）。控制2分钟内。</p>
+    <p class="hint">[loop·已优化·已复核] 念法：选prd-tools → 背景30秒（已有项目AI理解空白）→ 弯路30秒（MCP单次瓶颈）→ 突破1分钟（Agent+Skill+证据链，5h→2h）→ 收口（架构选型决定上限）。控制2分钟内。</p>
   </div>
 </div>
 
@@ -1727,11 +1727,14 @@ function buildTreeOptimized(list) {
   <div class="card-head"><span class="tag ai">AI</span><div class="card-title">什么场景该用Agent？适用边界</div></div>
   <div class="core">需要动态决策的多步骤任务用Agent，确定性流程用工作流，单次调用用API</div>
   <div class="card-body">
-    <p><strong>适合用Agent的信号</strong>：①任务需要根据中间结果动态决策（上一步结果决定下一步做什么）；②需要调用外部工具获取信息（搜索、查数据库、读文件）；③步骤之间有复杂依赖关系，无法线性硬编码。</p>
-    <p><strong>不需要Agent的场景</strong>：①单次调用就能解决（翻译、摘要、情感分析），直接调API。②流程完全确定（A→B→C固定步骤），用工作流/Skill就行，不需要LLM每步决策。③不需要外部工具（纯文本生成），LLM直接回答就好。</p>
-    <p><strong>三层判断标准</strong>：单次调用够用 → API。流程确定但多步骤 → Skill/工作流。流程不确定需要动态决策 → Agent。</p>
-    <p><strong>Agent的边界和风险</strong>：Agent的不确定性是双刃剑——能处理意外情况，但也可能跑偏。工业实践中必须加约束：Tool白名单限制能力范围、门控条件限制输出质量、HITL限制自主程度。没有约束的Agent在生产环境是定时炸弹。</p>
-    <p><strong>面试一句话</strong>："我的判断框架是三层：API解决能力问题（能不能做），Skill/工作流解决流程问题（怎么做），Agent解决决策问题（根据情况怎么做）。不要上来就Agent，先问'我需要LLM在运行时做决策吗'，不需要就不是Agent场景。"</p>
+    <p><strong>这道题面试官不是考你"Agent 能干嘛"，是考你"会不会乱用 Agent"——乱用 Agent 是初级工程师最典型的坑。我有一套三层判断框架，一个核心问题先甩出来。</strong></p>
+    <p><strong>核心问题先问自己</strong>：我到底需不需要 LLM 在运行时做决策？不需要，就不是 Agent 场景，别上来就 Agent。这一句把一大半伪需求筛掉。</p>
+    <p><strong>业务背景（为什么这套判断重要）</strong>：在 prd-tools 里我把 PRD 转开发计划喂给二十多人团队用，最怕的就是"过程不确定"——AI 今天输出这套、明天输出那套，团队没法信。所以每个环节都得先想清楚"这一步要不要让模型自己决定"，该确定的地方绝不开放。</p>
+    <p><strong>三层判断框架（口语分层展开）</strong>：① <strong>单次调用够用 → 直接调 API</strong>——翻译、摘要、情感分析这种一次性生成，LLM 直接答就行，包一层都是浪费。这一层解决的是"能力问题"（能不能做）。② <strong>流程确定但多步骤 → Skill / 工作流</strong>——A→B→C 固定步骤、每步产出明确，用预定义的 Skill 或工作流串起来，不需要 LLM 每步都决策走哪条路。这一层解决"流程问题"（怎么做）。③ <strong>流程不确定、需要根据中间结果动态决策 → 才上 Agent</strong>——上一步结果决定下一步做什么、步骤间有复杂依赖、还要调外部工具查信息。这一层解决"决策问题"（根据情况怎么做）。</p>
+    <p><strong>三个上 Agent 的真信号</strong>（被追问"到底什么算动态决策"就甩）：① 中间结果会改变下一步走向（搜索完根据结果决定深挖还是换方向）；② 必须调外部工具补信息（查库、读文件、调接口）；③ 步骤之间依赖关系没法线性写死。</p>
+    <p><strong>边界和风险（必须主动说，显得成熟）</strong>：Agent 的不确定性是双刃剑——能处理意外，但也会跑偏甚至死循环。工业级落地三道约束：Tool 白名单限能力范围、门控限产出质量、HITL 限自主程度。没约束的 Agent 在生产环境是定时炸弹。</p>
+    <p><strong>落我的项目（项目桥接，最关键）</strong>：prd-tools 主流程我<strong>故意没做成开放 Agent</strong>——它是固定的蒸馏流水线、确定性编排，每步顺序和门禁都写死，因为我要喂二十多人团队、要可预测可调试。真正用到 Agent Loop 的只有端到端原型的自验证+自修复那一小段——代码跑挂了才让 LLM 自主决定怎么修。这就是这套判断框架的真实落地：该确定的地方确定，该开放的地方才开放。</p>
+    <p class="hint">[loop·已优化·待复核] 念法：钩子（不是考能干嘛，是考会不会乱用）→ 核心一问（要不要 LLM 运行时决策）→ 业务背景（prd-tools 喂 20+ 人、最怕不确定）→ 三层框架（API/Skill/Agent 各解决什么问题）→ 三信号 → 风险三约束 → 落 prd-tools（主流程确定性编排，只自修复那段是 Agent Loop）。金句："该确定的地方确定，该开放的地方才开放"。</p>
   </div>
 </div>
 
