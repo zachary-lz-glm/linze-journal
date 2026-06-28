@@ -3589,17 +3589,17 @@ function buildTreeOptimized(list) {
 
 <div class="card" data-c="ai" data-kw="Loop Engineering 循环工程 范式 Prompt Boris Cherny 自治循环">
   <div class="card-head"><span class="tag ai">AI</span><div class="card-title">Loop Engineering：2026 新范式</div></div>
-  <div class="core">从"人发 Prompt 给 Agent"升级到"设计自治循环系统驱动 Agent"——Prompt Engineering 的演进</div>
+  <div class="core">从"人发 Prompt"升级到"设计自治循环驱动 Agent"——Prompt Engineering 的演进</div>
   <div class="card-body">
-    <p><strong>定义</strong>（来自 Addy Osmani 2026 年 6 月博文）：Loop Engineering 不是写更好的 prompt，而是设计一个能自行流转、验证、触发的循环系统。Agent 在循环里自主接收输入、决策、调用工具、验证产出、反馈修正——人不再逐次手动 prompt。</p>
-    <p><strong>Boris Cherny 名言</strong>（Claude Code 负责人）："I don't write the prompt anymore. I have loops running that prompt (Claude) for me."——这句话成为 Loop Engineering 范式确立的标志性引语。核心转变：从"我使用 AI"到"我设计系统让 AI 自驱"。</p>
-    <p><strong>四要素</strong>：① <strong>目标</strong>（Goal）——Loop 要达成的最终状态（不是具体步骤）。② <strong>行动</strong>（Action）——Agent 可调用的工具/Skill 集合。③ <strong>验证</strong>（Verify）——每轮产出后判断"目标达成没"的质量门控。④ <strong>反馈</strong>（Feedback）——验证失败时把错误信息注入下一轮 prompt，让 Agent 自修复。</p>
-    <p><strong>vs Prompt Engineering</strong>：① <strong>Prompt Engineering</strong>——单次 prompt 优化（few-shot、CoT、角色扮演）。人主导，每次手动触发。② <strong>Loop Engineering</strong>——系统级设计，Agent 在循环里自驱。人设计循环，运行时 Agent 自己跑。</p>
-    <p><strong>vs Agentic Workflow</strong>：Agentic Workflow 是预定义步骤（步骤固定 + Agent 在每个步骤内决策）；Loop Engineering 是开放循环（目标固定 + Agent 自决定怎么达成）。Loop Engineering 比 Agentic Workflow 更"自治"，但风险也更高（需要更强的验证机制）。</p>
-    <p><strong>工程实现</strong>：① Claude Code 的 <code>/loop</code> 命令。② Cron 任务 + Agent Skill。③ 自建编排器（监控事件 → 触发 Agent → 验证 → 反馈）。④ Devin、Cursor Background Agent 都是 Loop Engineering 产品化的案例。</p>
-    <p><strong>项目桥接</strong>：prd-tools 的"自验证+自修复循环"就是 Loop Engineering 雏形——PRD→Plan→Code→Verify 失败时自动注入错误重新生成。我的 Claude Code Skills + Cron 周期触发的设计也是 Loop Engineering 实践。</p>
-    <p><strong>面试金句</strong>："Prompt Engineering 是写好一句话，Loop Engineering 是设计好一个系统。2026 年的价值重心从'会调 AI'转向'能设计让 AI 自驱的循环'——这是 Boris Cherny 说的'我不再写 prompt'的真正含义。"</p>
-    <p class="hint">2026 年面试加分点。被问"你怎么看 AI 协作的未来" / "Prompt Engineering 还会火多久" → 翻这张卡。</p>
+    <p><strong>这道题是 2026 年最新范式转变，面试加分点。先甩 Boris Cherny（Claude Code 负责人）名言："I don't write the prompt anymore. I have loops running that prompt (Claude) for me."——这句话标志着 Loop Engineering 范式确立。</strong></p>
+    <p><strong>核心转变</strong>：从"我使用 AI"到"我设计系统让 AI 自驱"。以前是人逐次手动写 prompt 调 AI（Prompt Engineering），现在是设计一个能自行流转、验证、触发的循环系统，Agent 在循环里自主跑（Loop Engineering）。</p>
+    <p><strong>四要素（设计 Loop 的骨架）</strong>：① <strong>目标（Goal）</strong>——Loop 要达成的最终状态（不是具体步骤）；② <strong>行动（Action）</strong>——Agent 可调用的工具/Skill 集合；③ <strong>验证（Verify）</strong>——每轮产出后判断"目标达成没"的质量门控；④ <strong>反馈（Feedback）</strong>——验证失败把错误注入下一轮 prompt，让 Agent 自修复。</p>
+    <p><strong>vs Prompt Engineering</strong>：Prompt Eng 是单次 prompt 优化（few-shot/CoT/角色扮演），人主导、手动触发；Loop Eng 是系统级设计，Agent 在循环里自驱，人设计循环、运行时 Agent 自己跑。</p>
+    <p><strong>vs Agentic Workflow</strong>：Agentic Workflow 是预定义步骤（步骤固定 + 每步内 Agent 决策）；Loop Engineering 是开放循环（目标固定 + Agent 自决定怎么达成）。Loop 更自治但风险更高（需更强验证）。</p>
+    <p><strong>工程实现（被追问甩）</strong>：Claude Code 的 /loop 命令、Cron+Agent Skill、自建编排器（监控事件→触发 Agent→验证→反馈）、Devin/Cursor Background Agent 都是产品化案例。</p>
+    <p><strong>落到我的项目（桥接）</strong>：prd-tools 的"自验证+自修复循环"就是 Loop Engineering 雏形——PRD→Plan→Code→Verify 失败自动注入错误重新生成。端到端原型 prd2code-gen 的 eval/auto-tune 闭环也是（跑完→llm-judge→失败 pattern 反哺 prompt）。我的 Claude Code Skills + Cron 周期触发也是 Loop Engineering 实践。</p>
+    <p><strong>收口金句</strong>："Prompt Engineering 是写好一句话，Loop Engineering 是设计好一个系统。2026 年价值重心从'会调 AI'转向'能设计让 AI 自驱的循环'——这是 Boris Cherny'我不再写 prompt'的真正含义。"</p>
+    <p class="hint">[loop·已优化·待复核] 念法：Boris名言钩子（不再写prompt）→ 核心转变（用AI→设计系统让AI自驱）→ 四要素（目标/行动/验证/反馈）→ vs Prompt Eng → vs Agentic Workflow → 工程实现 → 落 prd-tools（自验证自修复+eval闭环+Cron触发）→ 金句。2026加分点。</p>
   </div>
 </div>
 
