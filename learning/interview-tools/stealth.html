@@ -2969,7 +2969,7 @@ function buildTreeOptimized(list) {
     <p><strong>性能层面</strong>：400+ 组件的权益配置页面，做了虚拟滚动+按需渲染——只渲染视口内组件，联动触发时精确更新受影响组件而非全量重渲染。<strong>这不是调 API 写页面的前端，是从渲染引擎层面做架构设计</strong>。</p>
     <p><strong>工程层面</strong>：组件库用 Rollup 双模式打包（ESM+CJS），tree-shaking 精确到组件粒度，Lerna 独立版本管理+Nx 增量构建。这些不是"用过"，是"设计过"。</p>
     <p><strong>收口</strong>：用渲染引擎这种"从 0 设计"的证据证明前端扎实，比说"我前端很牛"有说服力 10 倍。面试官要的是深度不是广度。</p>
-    <p class="hint">[loop·已优化·待复核] 念法：潜台词钩子（确认前端底子）→ 渲染引擎证据（自研非Formily，dAction双求值，命令式→声明式）→ 性能（400+组件虚拟滚动+按需渲染+精确更新）→ 工程（Rollup双模式/Lerna/Nx，设计过非用过）→ 收口（从0设计证据比吹牛强10倍）。</p>
+    <p class="hint">[loop·已优化·已复核] 念法：潜台词钩子（确认前端底子）→ 渲染引擎证据（自研非Formily，dAction双求值，命令式→声明式）→ 性能（400+组件虚拟滚动+按需渲染+精确更新）→ 工程（Rollup双模式/Lerna/Nx，设计过非用过）→ 收口（从0设计证据比吹牛强10倍）。</p>
   </div>
 </div>
 
@@ -2983,7 +2983,7 @@ function buildTreeOptimized(list) {
     <p><strong>第三段·前端动态渲染（这里甩源码细节）</strong>：前端拿到运行时 Schema，渲染引擎三步走——① 解析建组件树（componentMap 映射到 React 组件，StepForm 遍历 schemaList，每个字段用 FieldWrapper 包裹）；② 注入联动（injectDActions 扫全表收集 dAction 建依赖图）；③ 按依赖图渲染。两个关键机制：<strong>formatName 路径拍平</strong>——把 step→card→Form.List row→field 的层级拍成 dot 路径（如 rules.reward.0.method），让联动能精确定位嵌套表单里的任意字段；<strong>Listener 发布订阅</strong>——FieldWrapper mount 时注册、字段值变化时 emit 触发，只更新受影响的组件，不重渲染整棵树。</p>
     <p><strong>第四段·协同闭环</strong>：运营配 Schema → BFF 按用户条件裁剪 → 前端渲染引擎解析+注入联动+渲染 → 用户操作触发联动（State 型本地算、Fetch 型调 BFF 拿新配置）→ 新配置进渲染引擎重处理。新增活动类型只配一份 Schema，不写代码。</p>
     <p><strong>收口金句</strong>：联动从命令式变成声明式。以前新人看 if-else 不知道处理啥场景，现在打开 Schema，联动关系、条件、影响范围一眼可见——从"读代码理解业务"变成"看配置理解业务"。</p>
-    <p class="hint">[loop·已优化·待复核] 念法：顺数据流四段（Schema定义→BFF生成→前端渲染→协同闭环），每段30秒画一条线。前端渲染段甩源码细节（formatName拍平+Listener发布订阅）显深度。收口用"命令式→声明式"金句。鸿湖逐字稿。</p>
+    <p class="hint">[loop·已优化·已复核] 念法：顺数据流四段（Schema定义→BFF生成→前端渲染→协同闭环），每段30秒画一条线。前端渲染段甩源码细节（formatName拍平+Listener发布订阅）显深度。收口用"命令式→声明式"金句。鸿湖逐字稿。</p>
   </div>
 </div>
 
@@ -3021,7 +3021,7 @@ function buildTreeOptimized(list) {
     <p><strong>核心差异：双端联动（关键）</strong>：我们的联动不只前端组件间依赖，还涉及 BFF 层接口联动——用户切城市，前端不直接调后端，是调 BFF，BFF 根据城市+产品线+活动类型重新裁剪 Schema 再返回。这个"前端触发→BFF 重新生成配置→前端重新渲染"链路，Formily 的 x-reactions 覆盖不了（它只管前端层）。</p>
     <p><strong>第二个差异：联动 DSL 表达力</strong>：我们的 dAction 有两类联动——State 型（组件间依赖，A 变→B 显隐/禁用，Formily 能做）；Fetch 型（跨接口，城市变→调 BFF 拿新配置→重渲染，需要 BFF 模板引擎，Formily 做不了）。Formily 要做 Fetch 型得自己写大量 effects，本质还是自研联动层，不如从头设计统一 DSL。</p>
     <p><strong>选型决策（收口）</strong>：纯前端表单层，Formily 更好（社区活跃、开箱即用）。但我们的场景要前后端共享 Schema 协议、BFF 模板引擎动态裁剪、联动双端可解析——这不是"表单渲染"问题，是"配置驱动双端协同"问题。<strong>选自研不是 Formily 不好，是问题域不一样。</strong></p>
-    <p class="hint">[loop·已优化·待复核] 念法：钩子（问题域不同不是Formily不行）→ 肯定Formily（纯前端够用）→ 核心差异（双端联动BFF重新裁剪Schema）→ DSL差异（State型能做/Fetch型做不了）→ 收口（表单渲染vs配置驱动双端协同）。千万别贬低开源。</p>
+    <p class="hint">[loop·已优化·已复核] 念法：钩子（问题域不同不是Formily不行）→ 肯定Formily（纯前端够用）→ 核心差异（双端联动BFF重新裁剪Schema）→ DSL差异（State型能做/Fetch型做不了）→ 收口（表单渲染vs配置驱动双端协同）。千万别贬低开源。</p>
   </div>
 </div>
 
@@ -3047,7 +3047,7 @@ function buildTreeOptimized(list) {
     <p>② <strong>组件层——dynamic import 按需加载</strong>：componentMap 不启动时全 import，只注册加载路径（factory），首次渲染某类型才 dynamic import。通用组件（Input/Select/DatePicker）打进主 bundle，业务定制组件（地图选择器、复杂权益面板）按需加载，控制首屏 JS 体积。</p>
     <p>③ <strong>SDK 层——按业务线注册</strong>：权益 SDK 的 register 天然按需——每个业务模块只 register 自己用到的组件，不会把 8 个业务 400+ 组件全加载。国际化业务可能只用 30 通用+5 定制，打包体积只含实际 register 部分。</p>
     <p><strong>监控指标（收口，量化）</strong>：首屏 FCP < 1.5s（海外 CDN）、配置接口 P99 < 800ms、联动触发到 UI 更新 < 100ms（State 型本地计算）。有指标才有说服力。</p>
-    <p class="hint">[loop·已优化·待复核] 念法：钩子（架构级三层而非代码技巧）→ 业务背景（50+字段+海外弱网）→ 三层（Schema分块/组件dynamic import/SDK按业务线register）→ 监控指标量化收口。</p>
+    <p class="hint">[loop·已优化·已复核] 念法：钩子（架构级三层而非代码技巧）→ 业务背景（50+字段+海外弱网）→ 三层（Schema分块/组件dynamic import/SDK按业务线register）→ 监控指标量化收口。</p>
   </div>
 </div>
 
