@@ -583,10 +583,11 @@ body{overscroll-behavior-y:contain}
   <div class="card-head"><span class="tag bagu">#40</span><div class="card-title">TS 泛型是干什么用的（网易硬伤题）</div></div>
   <div class="core">泛型是类型的"参数"，让一份代码复用多种类型同时不丢类型信息</div>
   <div class="card-body">
-    <p><strong>本质</strong>：泛型是类型层面的参数化——就像函数参数化值一样，泛型参数化类型。写一次类型定义，多种类型复用，同时保持类型信息不丢。</p>
-    <p><strong>三个典型场景</strong>：① 容器类型——Array&lt;T&gt;、Map&lt;K,V&gt;、Promise&lt;T&gt;，你知道里面装的是什么，调 map/then 时类型不丢。② 工具函数——useState&lt;T&gt;(initial: T): [T, (v: T) =&gt; void]，返回值类型跟入参绑定，不写泛型就只能用 any。③ 类型工具——Partial&lt;T&gt;、Pick&lt;T,K&gt;、Readonly&lt;T&gt;，T 是入参输出新类型。</p>
-    <p><strong>关键</strong>：大多数时候不用显式写 &lt;T&gt;，TS 会从入参推导，但泛型让这种推导成为可能。约束用 extends，比如 &lt;T extends string&gt; 限制 T 必须是字符串子类型。</p>
-    <p class="hint">网易大数据 2026-06-26 一面硬伤题——场上挤了 30 秒只挤出 Partial（且 Partial 是映射类型不是泛型本身）。下次必须把"Array/Map/Promise/useState"四类例子刻进肌肉记忆。</p>
+    <p><strong>先用一句话把面试官定住：泛型就是"类型的参数"</strong>。函数参数化的是值——你传不同的值进来；泛型参数化的是类型——你传不同的类型进来，一份定义复用多种类型，同时类型信息不丢。这一个类比讲完，面试官就知道你懂本质，不是只会背 API。</p>
+    <p><strong>然后立刻甩四类典型例子（这是过这道题的肌肉记忆，少一类都危险）</strong>：① <strong>容器类型</strong>——Array&lt;T&gt;、Map&lt;K,V&gt;、Promise&lt;T&gt;，类型告诉你"里面装的是什么"，所以调 .map/.then 时类型能一路传下去不退化为 any；② <strong>工具函数</strong>——useState&lt;T&gt;(initial: T): [T, (v: T) =&gt; void]，返回值类型绑死入参类型，没泛型就只能 any；③ <strong>类型工具</strong>——Partial&lt;T&gt;、Pick&lt;T,K&gt;、Readonly&lt;T&gt;，T 是输入，加工出新的类型当输出（注意 Partial 本身是映射类型，但它依赖泛型参数 T 才能工作，别混成一回事）；④ <strong>约束泛型</strong>——&lt;T extends string&gt; 限制 T 必须是字符串子类型，约束+复用一起拿。</p>
+    <p><strong>追问"什么时候要显式写 &lt;T&gt;"答这层</strong>：大多数时候不用写，TS 从入参自动推导（比如 useState(0) 它自己推出 number）。但两种情况必须显式写：① 入参推导不出来（比如传进来的类型不够具体）；② 推出来的类型太宽（传一个 Cat 数组，TS 可能推出 Animal，你想锁成 Cat 就得显式写）。能讲到"推导有上限、显式是兜底"，比 90% 候选人强。</p>
+    <p><strong>真实失分点（务必提前说，主动暴露 = 加分）</strong>：网易大数据一面这题，场上挤了 30 秒只挤出 Partial，而且 Partial 是映射类型不是泛型本身，等于没答到点上。这道题的坑在于——面试官问的是"泛型是干嘛的"，不是"列举用了泛型的工具"。正确打开方式是先讲本质（类型的参数）→ 再用四类例子落地，别本末倒置先甩工具名。</p>
+    <p class="hint">[loop·已优化·待复核] 念法：钩子先甩（泛型=类型的参数，类比函数参数化值）→ 四类典型例子（容器/工具函数/类型工具/约束泛型，四类都甩，Partial 别当泛型本身）→ 追问显式 vs 推导（推导有上限显式是兜底）→ 真实失分点收口（先本质再落地别本末倒置）。被问"举几个泛型例子"直接甩四类。</p>
   </div>
 </div>
 
