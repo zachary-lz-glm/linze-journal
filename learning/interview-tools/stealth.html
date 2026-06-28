@@ -3671,14 +3671,14 @@ function buildTreeOptimized(list) {
   <div class="card-head"><span class="tag ai">AI</span><div class="card-title">A2A 协议：Agent 间通信（vs MCP）</div></div>
   <div class="core">MCP 解决 Agent 调工具，A2A 解决 Agent 调 Agent——两者互补不冲突</div>
   <div class="card-body">
-    <p><strong>A2A 是什么</strong>（Agent2Agent Protocol）：谷歌 2025 年提出的开放协议，让不同厂商/框架的 Agent 之间互相发现、通信、协作。底层是 HTTP + JSON-RPC + SSE，Agent 暴露 <code>agent.json</code> 描述自己的能力，其他 Agent 通过任务委派（Task Delegation）调用。</p>
-    <p><strong>核心概念</strong>：① <strong>Agent Card</strong>（<code>/agent.json</code>）——Agent 的"名片"，包含 name、description、capabilities、endpoint。② <strong>Task</strong>——A2A 的基本通信单元，有 lifecycle（submitted/working/input-required/completed/failed）。③ <strong>Artifact</strong>——Task 完成后产出的数据（文件、消息、结构化结果）。④ <strong>Streaming</strong>——SSE 支持长任务流式输出。</p>
-    <p><strong>A2A vs MCP 对比</strong>：① <strong>关系</strong>——MCP 是 Agent ↔ Tool，A2A 是 Agent ↔ Agent。② <strong>粒度</strong>——MCP 调用是工具级（一次函数调用），A2A 是任务级（委托一个完整任务）。③ <strong>角色</strong>——MCP 里 Agent 是大脑，Tool 是手脚；A2A 里两个 Agent 都是大脑，互相协作。④ <strong>组合</strong>——Agent 可以同时用 MCP（接工具）和 A2A（接其他 Agent），不冲突。</p>
-    <p><strong>典型场景</strong>：① <strong>跨厂商协作</strong>——你的 Claude Agent 调用同事的 GPT Agent。② <strong>专精分工</strong>——前端 Agent + 后端 Agent + 测试 Agent 各做自己擅长的。③ <strong>异构系统</strong>——企业内的 Salesforce Agent + SAP Agent + 自研 Agent 互通。④ <strong>多模型协作</strong>——贵模型做规划 + 便宜模型做执行。</p>
-    <p><strong>当前生态</strong>：① 谷歌 A2A SDK 已发布（Python/JS）。② 50+ 厂商参与（Salesforce、SAP、Atlassian 等）。③ 与 LangChain/AutoGen/CrewAI 等框架集成中。④ 与 MCP 形成互补关系，业界共识是两者共存。</p>
-    <p><strong>项目桥接</strong>：prd-tools 是单 Agent + MCP（工具调用），但如果未来要拆"PRD 分析 Agent + 代码生成 Agent + 验证 Agent"多 Agent 协作，A2A 比 AutoGen 更标准化（跨框架兼容）。</p>
-    <p><strong>面试金句</strong>："MCP 解决 Agent 调工具，A2A 解决 Agent 调 Agent。两者互补——一个 Agent 通常同时用 MCP 接工具生态、用 A2A 接其他 Agent。2026 年这两个协议是 Agent 互联的基础设施。"</p>
-    <p class="hint">2025-2026 新协议，被问"Agent 之间怎么通信" / "MCP 能解决多 Agent 协作吗" → 翻这张卡。</p>
+    <p><strong>这道题有个钩子——很多人一听 A2A 就以为是 MCP 的替代，其实它俩互补不冲突。一句话区分：MCP 解决 Agent 调工具，A2A 解决 Agent 调 Agent。</strong></p>
+    <p><strong>先说 A2A 是什么</strong>：谷歌 2025 年提出的开放协议，全称 Agent2Agent，让不同厂商、不同框架的 Agent 能互相发现、通信、协作。底层就是 HTTP + JSON-RPC + SSE 这套常规 Web 技术栈，门槛不高。每个 Agent 暴露一个 <code>agent.json</code> 当名片，写清楚自己是谁、能干什么、在哪调用，别的 Agent 通过任务委派来调用它。</p>
+    <p><strong>四个核心概念顺一遍（被追问再展开）</strong>：① <strong>Agent Card</strong> 就是那个名片（<code>/agent.json</code>），放 name、capabilities、endpoint；② <strong>Task</strong> 是基本通信单元，有完整生命周期——submitted → working → input-required → completed/failed；③ <strong>Artifact</strong> 是 Task 跑完产出的数据（文件、消息、结构化结果）；④ <strong>Streaming</strong> 用 SSE 支持长任务流式输出。</p>
+    <p><strong>和 MCP 的区别（这题核心）</strong>：从四个维度切——<strong>关系</strong>上 MCP 是 Agent ↔ Tool，A2A 是 Agent ↔ Agent；<strong>粒度</strong>上 MCP 是工具级一次函数调用，A2A 是任务级委托一个完整任务；<strong>角色</strong>上 MCP 里 Agent 是大脑、Tool 是手脚，A2A 里两个都是大脑互相协作；<strong>组合</strong>上两者能并存，一个 Agent 同时用 MCP 接工具、用 A2A 接别的 Agent，完全不冲突。</p>
+    <p><strong>典型场景</strong>：跨厂商协作（我的 Claude Agent 调同事的 GPT Agent）、专精分工（前端 Agent + 后端 Agent + 测试 Agent 各干各的）、异构系统互通（企业内 Salesforce、SAP、自研 Agent 联动）、多模型协作（贵模型规划 + 便宜模型执行）。当前生态：谷歌 SDK 已发 Python/JS 版，50+ 厂商参与，和 LangChain/AutoGen/CrewAI 集成中，业界共识是 A2A 和 MCP 共存。</p>
+    <p><strong>落到我的项目（桥接）</strong>：prd-tools 现在是单 Agent + MCP 架构——一个 Claude 做编排、调一批 MCP 工具和 Skill。但如果哪天要拆成"PRD 分析 Agent + 代码生成 Agent + 验证 Agent"多 Agent 协作，我会选 A2A 而不是 AutoGen——因为 A2A 是跨框架标准协议，每个 Agent 框架独立选型也不影响互通，AutoGen 那套还绑在自家生态里。这也是 2026 年 Agent 互联方向我会重点跟的事。</p>
+    <p><strong>面试金句收口</strong>："MCP 解决 Agent 调工具，A2A 解决 Agent 调 Agent。两者互补——一个 Agent 通常同时用 MCP 接工具生态、用 A2A 接其他 Agent。2026 年这两个协议是 Agent 互联的基础设施。"</p>
+    <p class="hint">[loop·已优化·待复核] 念法：钩子（A2A 不是 MCP 替代是互补，一句话区分调工具/调 Agent）→ 是什么（谷歌 2025、HTTP+JSON-RPC+SSE、agent.json 名片）→ 四概念（Card/Task/Artifact/Streaming，被追问展开）→ vs MCP 四维度（关系/粒度/角色/组合，这题核心）→ 场景+生态一句带 → 落 prd-tools（单 Agent+MCP，未来拆多 Agent 选 A2A 不选 AutoGen 因为跨框架）→ 金句收口。被问"MCP 能解决多 Agent 协作吗"→ 不能，MCP 是工具协议不是 Agent 间协议。</p>
   </div>
 </div>
 
