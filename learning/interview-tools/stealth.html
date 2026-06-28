@@ -3499,12 +3499,16 @@ function buildTreeOptimized(list) {
   <div class="card-head"><span class="tag ai">AI</span><div class="card-title">MHA / MQA / GQA / Flash Attention</div></div>
   <div class="core">MHA 是基准、MQA 省 8x KV Cache、GQA 折中、Flash Attention 不省显存但提速 2-4x</div>
   <div class="card-body">
-    <p><strong>MHA 问题</strong>：标准 Multi-Head Attention 每个头都有独立的 K/V 矩阵，长上下文场景 KV Cache 显存爆炸——Llama-2 70B 在 4K 上下文就要 16GB KV Cache，64K 上下文直接爆显存。</p>
-    <p><strong>三种优化</strong>：① <strong>MQA</strong>（Multi-Query Attention）——所有 head 共享一组 K/V，KV Cache 直接除以 head 数（8x 起步）。缺点：效果略降。② <strong>GQA</strong>（Grouped-Query Attention）——折中方案，每 N 个 head 共享一组 K/V。Llama-2 70B 用 GQA-8（8 组）。效果接近 MHA，速度接近 MQA。③ <strong>Flash Attention</strong>——不改 KV Cache 但优化计算顺序，利用 SRAM 分块避免 HBM 读写。显存不变但推理/训练快 2-4x。Flash Attention v2 进一步优化并行度。</p>
-    <p><strong>选型决策</strong>：① 显存是瓶颈 → GQA（主流选择）。② 训练速度是瓶颈 → Flash Attention v2/v3。③ 长上下文场景 → GQA + Flash Attention 组合。④ 极致压榨 → MQA + Flash Attention（牺牲一点效果）。</p>
-    <p><strong>项目桥接</strong>：选 LLM 推理框架时看是否支持这些优化——vLLM 用 PagedAttention（类似 OS 虚拟内存）+ 默认开 GQA；SGLang 在多轮对话场景更优（KV Cache 复用率高）。</p>
-    <p><strong>面试金句</strong>："MHA/MQA/GQA 是 KV Cache 显存优化——把多 head 共享 K/V 把显存降下来。Flash Attention 是计算优化——不省显存但通过分块计算减少 HBM 读写提速。两者正交，可以叠加。"</p>
-    <p class="hint">面 DeepSeek/字节/阿里这种自研大厂必问。被追问"为什么不直接用 MHA" → 显存爆炸。</p>
+    <p><strong>这道题是 KV Cache 优化的深化——前端懂这个能解释"为什么大模型推理贵"，面自研大厂（DeepSeek/字节/阿里）必问。</strong></p>
+    <p><strong>业务背景</strong>：标准 MHA 每个 head 都有独立 K/V，长上下文 KV Cache 显存爆炸——Llama-2 70B 在 4K 上下文就要 16GB KV Cache，64K 直接爆显存。推理成本大头是 KV Cache 显存，必须优化。</p>
+    <p><strong>三种优化（记清各解决什么）</strong>：</p>
+    <p>① <strong>MQA</strong>（Multi-Query）——所有 head 共享一组 K/V，KV Cache 直接除以 head 数（省 8x 起步）。代价：效果略降。</p>
+    <p>② <strong>GQA</strong>（Grouped-Query）——折中，每 N 个 head 共享一组 K/V。Llama-2 70B 用 GQA-8。<strong>效果接近 MHA、速度接近 MQA，是主流选择</strong>。</p>
+    <p>③ <strong>Flash Attention</strong>——不改 KV Cache，优化计算顺序，利用 SRAM 分块避免 HBM 读写。<strong>显存不变但推理/训练快 2-4x</strong>。v2/v3 进一步优化并行度。</p>
+    <p><strong>选型决策</strong>：显存瓶颈→GQA（主流）；训练速度瓶颈→Flash Attention v2/v3；长上下文→GQA+Flash Attention 组合；极致压榨→MQA+Flash Attention（牺牲一点效果）。</p>
+    <p><strong>落到我的项目（桥接）</strong>：选 LLM 推理框架看是否支持这些优化——vLLM 用 PagedAttention（类 OS 虚拟内存分页）+ 默认开 GQA；SGLang 在多轮对话场景更优（KV Cache 复用率高）。</p>
+    <p><strong>收口金句</strong>："MHA/MQA/GQA 是 KV Cache <strong>显存</strong>优化（多 head 共享 K/V 降显存）；Flash Attention 是<strong>计算</strong>优化（分块减 HBM 读写提速）。两者正交，可叠加。"</p>
+    <p class="hint">[loop·已优化·待复核] 念法：前端钩子（解释推理贵，自研大厂必问）→ 业务背景（MHA显存爆炸16GB）→ 三优化（MQA省8x/GQA折中主流/Flash Attention提速不省显存）→ 选型 → 桥接（vLLM PagedAttention+GQA）→ 金句（显存优化vs计算优化正交）。</p>
   </div>
 </div>
 
