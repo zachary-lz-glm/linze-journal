@@ -2058,11 +2058,15 @@ function buildTreeOptimized(list) {
   <div class="card-head"><span class="tag ai">追问</span><div class="card-title">怎么量化 AI 工程工具的效果？</div></div>
   <div class="core">基线对比 + 文件覆盖率，分三个维度答</div>
   <div class="card-body">
-    <p><strong>答题模板（分三步答）</strong>：</p>
-    <p>① <strong>转化效率</strong>：人工基线 vs 工具自动化。人工读 PRD + 评审 + 三方对齐 + 出方案平均 5h/需求，工具自动蒸馏出 Spec+Plan 平均 2h/需求（5 需求对照）。</p>
-    <p>② <strong>准确率</strong>：实际开发分支修改的文件集合 vs plan 产出文件集合做匹配，命中率 80%。20% gap 来自 PRD 本身不完整——AI 主动标记让人确认。</p>
-    <p>③ <strong>稳定性</strong>：质量门控在计划阶段拦截低质量输出，Readiness Score 低于阈值自动降级。</p>
-    <p><strong>口径原则</strong>：不说"效率提升 10 倍"这种虚数，说可衡量的中间指标——文件覆盖率、门控拦截率、人工确认项数量。</p>
+    <p><strong>这道题是被问"提效怎么算"的必答题——我有个三维度模板，每个维度都有可衡量指标，不堆虚数。</strong></p>
+    <p><strong>业务背景</strong>：prd-tools 给 20+ 人团队用，面试官必问"你怎么证明它有效"。光说"快了"不行，要有口径、有数据、诚实说局限。</p>
+    <p><strong>三维度（答题模板）</strong>：</p>
+    <p>① <strong>转化效率</strong>：人工基线 vs 工具自动化。人工读 PRD+评审+三方对齐+出方案平均 5h/需求，工具自动蒸馏出 Spec+Plan 平均 2h/需求（5 个需求对照）。<strong>诚实口径</strong>：单环节提效，全链路（含联调/协同）约 20-30%。</p>
+    <p>② <strong>准确率</strong>：实际开发分支改的文件集合 vs plan 产出的文件集合做匹配，命中率 80%。20% gap 来自 PRD 本身不完整——AI 主动标记让人确认（不是 AI 算错，是 PRD 没写清）。</p>
+    <p>③ <strong>稳定性</strong>：质量门控在计划阶段拦截低质量输出，Readiness Score 低于阈值自动降级。还有一致性指标——同一 PRD 跑 10 次文件列表一致率从 40% 提到 85%+。</p>
+    <p><strong>口径原则（关键，体现数据素养）</strong>：不说"效率提升 10 倍"这种虚数，说可衡量的中间指标——文件覆盖率、门控拦截率、人工确认项数量、一致性。<strong>主动说局限</strong>（不是严格 AB 实验、样本量小）比"包装完美"得分高。</p>
+    <p><strong>收口</strong>：端到端原型 prd2code-gen 还有更硬的数据——llm-judge 五维 R01 54→R02 68 分（量化 reference 知识库 +14 分），这是端到端产物质量的客观评测。</p>
+    <p class="hint">[loop·已优化·待复核] 念法：三维度模板开场 → 业务背景（必答+要口径）→ 三维度（转化效率5h→2h/准确率80%/稳定性门控+一致性40→85%）→ 口径原则（不堆虚数+主动说局限）→ 收口 prd2code-gen 54→68。</p>
   </div>
 </div>
 
