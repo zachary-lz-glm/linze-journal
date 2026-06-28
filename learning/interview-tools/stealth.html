@@ -2484,12 +2484,15 @@ function buildTreeOptimized(list) {
   <div class="card-head"><span class="tag proj">AI</span><div class="card-title">幻觉怎么答（四层防线·聚合卡）</div></div>
   <div class="core">防幻觉靠四层防线——证据链溯源、负向搜索显式标记、Spec Review硬停止、Readiness五维兜底</div>
   <div class="card-body">
-    <p><strong>先定根因</strong>：大模型有强完成倾向，给任务就给答案，没把握也编，这是特性不是bug。所以防幻觉不是让模型更准，是把偏差转成可拦截的工程信号。</p>
-    <p><strong>第一层·证据链</strong>：每条非显然结论必须挂Evidence ID，可追溯到PRD第几页或代码第几行，八种证据类型（PRD、源码、git_diff、negative_search、api_doc等）。</p>
-    <p><strong>第二层·负向搜索（亮点）</strong>：搜不到也是证据。AI说改某个文件第142行，一搜不存在直接拦截，把编路径从隐蔽错误变成显性可拦截信号。</p>
-    <p><strong>第三层·Spec Review Gate</strong>：Spec生成后硬停止等人工确认才往下出Plan，挡住完成倾向把错误从Spec放大到Plan。</p>
-    <p><strong>第四层·Readiness五维</strong>：跑完流水线五维加权评分，低于阈值必须修；消融实验证明去掉IR层Readiness从82掉到54。</p>
-    <p class="hint">细节见证据链机制卡、质量门控卡。注意别把倒排索引加BM25说成RAG，那是检索工程不是RAG。</p>
+    <p><strong>这道题我有个核心判断先甩出来：防幻觉不是让模型更准，是把偏差变成可拦截的工程信号——模型爱编是特性不是 bug，工程上能拦住就够了。</strong></p>
+    <p><strong>先把背景讲清楚</strong>：我做 prd-tools，把 PRD 自动转成开发计划，喂给 20+ 人团队真用——AI 要是编了个路径或者漏读了 PRD，下游同事照着错计划开工就是返工，信任一旦塌了工具就废了。所以防幻觉不是选择题是必答题，我从根因出发搭了四层防线。</p>
+    <p><strong>先定根因</strong>：大模型有强完成倾向，给任务就给答案，没把握也编。所以思路不是追着模型喊"别编"，是把每一步的偏差显式化、可拦截。</p>
+    <p><strong>第一层·证据链</strong>：每条非显然结论都必须挂一个 Evidence ID，能追溯到 PRD 第几页或代码第几行。我定义了八种证据类型——PRD、源码、git_diff、negative_search、api_doc 这些——结论没挂证据就当幻觉拦掉。</p>
+    <p><strong>第二层·负向搜索，这是我最得意的</strong>：搜不到也是证据。AI 说"改某个文件第 142 行"，一搜文件根本不存在，直接拦截。原本编路径是个隐蔽错误，靠这条变成显性可拦截的工程信号——反直觉、好记、面试官一听就记住。</p>
+    <p><strong>第三层·Spec Review Gate</strong>：Spec 生成完硬停止，必须等人确认才往下出 Plan。这层挡的是"错误从 Spec 放大到 Plan"——越往后返工成本越高，早拦便宜。</p>
+    <p><strong>第四层·Readiness 五维兜底</strong>：整条流水线跑完做五维加权评分，低于阈值必须修。消融实验我专门做过——去掉 IR 那一层 Readiness 从 82 掉到 54，直接堵住"是不是过度设计"的质疑。</p>
+    <p><strong>收个口</strong>：这四层不是我拍脑袋加的，是事故逼出来的——每层都对应一类真实幻觉。被追问细节甩证据链机制卡和质量门控卡。注意别把倒排索引加 BM25 说成 RAG，那是检索工程不是 RAG，分清楚。</p>
+    <p class="hint">[loop·已优化·待复核] 念法：先甩核心判断（防幻觉=变偏差为可拦截信号，不靠模型更准）→ 业务背景（prd-tools 喂 20+ 人、编了就塌信任）→ 根因一句 → 四层逐条（证据链/负向搜索亮点/Spec Gate 早拦/Readiness 五维+消融 82→54）→ 收口金句（事故逼出来的，每层对应一类幻觉）。消融 82→54 是堵"过度设计"质疑的杀手锏，主动甩。</p>
   </div>
 </div>
 
