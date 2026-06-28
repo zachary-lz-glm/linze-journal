@@ -2564,11 +2564,12 @@ function buildTreeOptimized(list) {
   <div class="card-head"><span class="tag proj">AI</span><div class="card-title">Agent死循环怎么防（编排层+运行时层·bridge）</div></div>
   <div class="core">Agent死循环防两处——编排层用状态机和最大迭代设终止条件，运行时层用递归上限和工具失败熔断</div>
   <div class="card-body">
-    <p><strong>先纠概念（对应被追穿的硬伤）</strong>：Tool Use底层是循环直到不再调用工具，死循环风险真实存在，不是会不会而是怎么防。</p>
-    <p><strong>编排层（我有实战）</strong>：LangGraph用状态机显式定义Node和Edge，加max_iterations上限和终止条件；裸Agent Loop加循环计数器。我的prd-tools用十一部固定顺序流水线，本质是用确定性编排规避开放式Agent Loop的死循环风险。</p>
-    <p><strong>运行时层（设计认知）</strong>：RecursionLimit限制递归深度，单个工具失败超过阈值就熔断返回错误而不是无限重试；再加重复检测，相邻几步tool call相同就中断。</p>
-    <p><strong>诚实桥接</strong>：prd-tools是单Agent加脚本门控的可靠性工程，多Agent我评估过ROI成本十到十五倍选择不做；运行时循环控制设计过还没落地，思路是max_iter加重复检测加成本熔断加人审介入。</p>
-    <p class="hint">确定性vs非确定性分工见成本优化卡。注意别和Schema联动死循环混淆，那是表单联动不是Agent循环。</p>
+    <p><strong>这题我先甩一句定调——Agent 死循环不是"会不会发生"的问题，是"怎么防"的问题，而且必须分两层防。</strong>很多人听到死循环会慌，其实把它拆成编排层和运行时层两道防线，每层管一个维度，这题就答透了。别和 Schema 表单联动混淆——那是配置层面的联动，不是 Agent 推理循环层面的死循环。</p>
+    <p><strong>先说为什么这题必考、为什么有空间</strong>：我做的 prd-tools 把 PRD 转开发计划喂给二十多人团队用，团队最怕的就是"过程不确定"——AI 跑着跑着陷入循环、卡在某一步反复调用同一个工具烧 token、甚至永远停不下来。Tool Use 底层本来就是"循环直到模型不再调工具"，这意味着只要模型一直觉得"我还要再调一下"，它就会无限转下去。所以防死循环不是优化项，是 Agent 能不能上生产的底线项。</p>
+    <p><strong>第一层·编排层（我有实战）</strong>：这一层防的是"流程没有终止条件"。两个手段——① <strong>状态机显式定义 Node 和 Edge</strong>（LangGraph 就是这个路子），每个节点有明确的下一步，循环只在受控的回退路径上发生；② <strong>max_iterations 上限</strong>，无论是状态机还是裸 Agent Loop，都硬设一个最大步数，到了就强制结束。这是"用确定性结构约束开放式循环"——我的 prd-tools 用的就是这条，11 步固定顺序蒸馏流水线，本质是用确定性编排直接规避了开放式 Agent Loop 的死循环风险，主流程根本不给它循环的机会。</p>
+    <p><strong>第二层·运行时层（设计认知）</strong>：这一层防的是"单步异常导致无限重试"。三个手段叠加——① <strong>RecursionLimit</strong> 限制递归深度，防止工具回调嵌套爆栈；② <strong>工具失败熔断</strong>，单个工具连续失败超过阈值就返回错误而不是无限重试（不然一个超时的接口能把整个 Agent 拖死）；③ <strong>重复检测</strong>，相邻几步的 tool call 参数都相同就判定卡死、主动中断。这一层我诚实说是设计认知、还没全部落地，但思路和第一层是配套的。</p>
+    <p><strong>诚实桥接（这题的收口分）</strong>：prd-tools 是单 Agent 加脚本门控的可靠性工程，多 Agent 我评估过 ROI 是十到十五倍成本、选择不做；运行时那套循环控制（max_iter + 重复检测 + 成本熔断 + 人审介入）我在自修复那一段才开 Agent Loop 时用——主流程走确定性编排不烧钱，只有自修复那段允许 Agent 自主循环，但加 max_iter=3、重复检测和成本熔断三道保险兜底。确定性 vs 非确定性的分工见成本优化卡。一句话收口：该确定的地方用编排锁死、绝不给循环的机会，该开放的地方才开 Agent Loop 但必须三道保险兜着——这才是工程上能上生产的 Agent。</p>
+    <p class="hint">[loop·已优化·待复核] 念法：钩子先甩（死循环不是会不会是怎么防，分两层，别和Schema表单联动混淆）→ 业务背景（prd-tools 喂20+人、最怕过程不确定、Tool Use底层就是循环）→ 第一层编排层（状态机Node/Edge+max_iter，落prd-tools 11步确定性编排直接规避）→ 第二层运行时层（RecursionLimit+工具失败熔断+重复检测三手段）→ 诚实桥接收口（单Agent+脚本门控，自修复段才开Agent Loop但max_iter=3+重复检测+成本熔断三道保险）。被问"多Agent怎么做"→ 评估过ROI十到十五倍选择不做；被问"具体运行时怎么防"→ 翻这层三手段。</p>
   </div>
 </div>
 
