@@ -3540,7 +3540,7 @@ function buildTreeOptimized(list) {
     <p><strong>四个维度快速对比</strong>：① <strong>数据时效</strong>——RAG 换文档就更新，微调的知识冻结在训练那一刻；② <strong>成本</strong>——RAG 只要向量库+检索，微调要 GPU 训练（百万 token 起步），差一个数量级；③ <strong>可控性</strong>——RAG 能溯源（每条答案挂文档 ID），微调是黑盒，错了难定位；④ <strong>场景</strong>——知识问答、企业知识库用 RAG，风格对齐、领域术语、固定输出格式用微调。</p>
     <p><strong>三个常见误区（必答，这是面试官想听的）</strong>：① "微调能解决幻觉"——错，微调反而可能加剧幻觉，因为模型更自信了；② "RAG 能替代微调"——也错，能力问题（推理弱、风格差）RAG 救不了；③ "先微调再上 RAG"——顺序反了，RAG 是基础设施，得先有。一句话总结：<strong>RAG 是地基，微调是装修，先地基后装修</strong>。</p>
     <p><strong>落到我的项目（关键桥接）</strong>：prd-tools 我选 <strong>RAG 为主</strong>——PRD 知识每周都在更新，而且要求每条答案挂 evidence 文档 ID 能溯源，微调做不到这两点。结构化检索（BM25+倒排）覆盖 80% 场景。只有当 Agent 需要稳定输出固定 JSON Schema 时，才会考虑加 LoRA 轻量微调做格式对齐——这是 RAG 为主、微调兜底的典型组合。</p>
-    <p class="hint">[loop·已优化·待复核] 念法：钩子（别选边说互补+能力vs知识一句话定位）→ 四维度快速过（时效/成本/可控/场景）→ 三误区（微调加剧幻觉/RAG救不了能力/顺序反了）+ 金句"RAG地基微调装修" → 落 prd-tools（为何RAG为主：知识更新快+要溯源，微调做不到；LoRA只在固定Schema时兜底）。被问"为什么微调解决不了幻觉"→ 模型更自信反而更敢编；被问"先做哪个"→ 先RAG。</p>
+    <p class="hint">[loop·已优化·已复核] 念法：钩子（别选边说互补+能力vs知识一句话定位）→ 四维度快速过（时效/成本/可控/场景）→ 三误区（微调加剧幻觉/RAG救不了能力/顺序反了）+ 金句"RAG地基微调装修" → 落 prd-tools（为何RAG为主：知识更新快+要溯源，微调做不到；LoRA只在固定Schema时兜底）。被问"为什么微调解决不了幻觉"→ 模型更自信反而更敢编；被问"先做哪个"→ 先RAG。</p>
   </div>
 </div>
 
@@ -3677,7 +3677,7 @@ function buildTreeOptimized(list) {
     <p><strong>特殊场景（被追问再甩）</strong>：① 函数调用/JSON 输出——T=0 贪心，结构化要稳；② 评测/复现实验——T=0 + 固定 seed，保证可复现；③ 多轮对话——Top-P=0.9 + T=0.7，平衡一致和生动。</p>
     <p><strong>落到我的项目（桥接）</strong>：prd-tools 里 evals 评分模块用 T=0 贪心——同一 PRD 跑 10 次要拿到一致结果才能做 A/B 对照（一致性 40→85%）；蒸馏生成用 Top-P + 低温度，既稳定又能处理 PRD 用词差异。</p>
     <p><strong>收口金句</strong>："Beam Search 在翻译时代是标配，但 LLM 时代被淘汰——成本高、多样性差、对开放生成不友好。现代 LLM 都用 Top-P 采样，关键参数是温度和 Top-P。"</p>
-    <p class="hint">[loop·已优化·待复核] 念法：定调钩子（解码=生成下个token怎么选，敢不敢赌概率）→ 业务背景（选法决定稳定性/多样性/成本）→ 三策略（贪心最确定/Beam备胎/采样按概率）→ 核心考点（LLM 为啥弃用 Beam：成本/多样性/场景/研究）→ 现代主流（Top-P默认）→ 特殊场景（追问甩）→ 落 prd-tools（evals T=0复现+蒸馏Top-P）→ 金句。</p>
+    <p class="hint">[loop·已优化·已复核] 念法：定调钩子（解码=生成下个token怎么选，敢不敢赌概率）→ 业务背景（选法决定稳定性/多样性/成本）→ 三策略（贪心最确定/Beam备胎/采样按概率）→ 核心考点（LLM 为啥弃用 Beam：成本/多样性/场景/研究）→ 现代主流（Top-P默认）→ 特殊场景（追问甩）→ 落 prd-tools（evals T=0复现+蒸馏Top-P）→ 金句。</p>
   </div>
 </div>
 
@@ -3693,7 +3693,7 @@ function buildTreeOptimized(list) {
     <p><strong>选型对比</strong>：全量微调（效果最好但 8x H100 起步）/ LoRA（主流，覆盖 80%）/ QLoRA（硬件受限时）/ Prefix Tuning（更轻但效果略差，2024 后边缘化）。</p>
     <p><strong>关键超参（被追问甩）</strong>：① rank r（通常 8/16/64，简单 r=8 够复杂 r=64+）；② alpha α（缩放系数，经验 α=2r）；③ target_modules（通常挂 q_proj/v_proj，全挂效果更好但参数多）。</p>
     <p><strong>收口金句</strong>："LoRA 不只是省参数，更是工程范式——一张 4090 微调 Llama-7B、多任务 adapter 切换、无推理延迟部署、防灾难性遗忘。这让 LoRA 成了 SFT 事实标准。"</p>
-    <p class="hint">[loop·已优化·待复核] 念法：加分钩子（前端懂LoRA能聊SFT）→ 业务背景（微调vs RAG/全量贵）→ 原理（低秩A·B降100x）→ 额外五优势（亮点）→ QLoRA（4bit量化）→ 选型 → 关键超参（追问甩）→ 金句。</p>
+    <p class="hint">[loop·已优化·已复核] 念法：加分钩子（前端懂LoRA能聊SFT）→ 业务背景（微调vs RAG/全量贵）→ 原理（低秩A·B降100x）→ 额外五优势（亮点）→ QLoRA（4bit量化）→ 选型 → 关键超参（追问甩）→ 金句。</p>
   </div>
 </div>
 
@@ -3709,7 +3709,7 @@ function buildTreeOptimized(list) {
     <p><strong>2026 主流 MoE</strong>：DeepSeek V3/R1（671B/37B，国产 SOTA）、Qwen3-235B-A22B（阿里，激活 22B）、Mistral Mixtral 8x22B（欧洲）。共同特征：总参数远大于激活参数。</p>
     <p><strong>为什么是趋势</strong>：① <strong>Chinchilla 配比</strong>——训练最优是参数:token=1:20，MoE 增参数不增激活 FLOPs，"白嫖"更多容量；② <strong>推理成本可控</strong>——用户只为激活的 37B 付费；③ <strong>专精化</strong>——不同专家学不同子任务（代码/数学/语言）。</p>
     <p><strong>收口金句</strong>："MoE 本质是参数容量和推理成本解耦——671B 总参数给容量，37B 激活给成本。DeepSeek 低价不是补贴是架构红利。"</p>
-    <p class="hint">[loop·已优化·待复核] 念法：DeepSeek便宜钩子（非补贴是架构）→ 业务背景（Dense越强越贵）→ MoE架构（稀疏激活）→ DeepSeek数据（671B/激活37B，成本降一个数量级）→ 三挑战（追问甩）→ 主流模型 → 为什么趋势 → 金句。</p>
+    <p class="hint">[loop·已优化·已复核] 念法：DeepSeek便宜钩子（非补贴是架构）→ 业务背景（Dense越强越贵）→ MoE架构（稀疏激活）→ DeepSeek数据（671B/激活37B，成本降一个数量级）→ 三挑战（追问甩）→ 主流模型 → 为什么趋势 → 金句。</p>
   </div>
 </div>
 
