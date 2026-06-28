@@ -2392,7 +2392,7 @@ function buildTreeOptimized(list) {
     <p><strong>完整链路是个五步循环</strong>：① 开发者定义工具 schema（name + 参数 JSON Schema + description，description 写得好不好直接决定模型选不选得对）→ ② 模型拿到用户输入+工具定义，靠语义判断要不要调、调哪个（不是关键词匹配）→ ③ 输出 tool_call JSON（只表达意图，不执行）→ ④ 运行时执行真正的函数拿结果 → ⑤ 结果作为新消息注入上下文，模型看到后继续推理。循环到不再调工具为止。</p>
     <p><strong>MCP vs Function Calling（高频追问）</strong>：两者不是替代是配合。FC 是模型侧内置能力（绑厂商，如 OpenAI），管"决策"；MCP 是协议层（不绑模型），管"工具怎么标准化连接、跨模型复用"。实际架构：MCP 负责把工具标准化暴露，FC 负责模型选哪个工具。</p>
     <p><strong>落到我的项目</strong>：prd-tools 跑在 Claude Code 里，用的就是这套机制——两个 Skill（/reference 构建知识库、/prd-distill 蒸馏 PRD）本质是封装好的 Tool Use 工作流：模型按 Skill 指令决策（读哪些 PRD、查哪些代码），真正的确定性计算交给 .prd-tools/scripts/ 里的运行时脚本（build-index、context-pack、quality-gate）。正好体现"模型决策 + 运行时执行"的分离——智能靠模型，可靠靠脚本。</p>
-    <p class="hint">[loop·已优化·待复核] 念法：先澄清名字（FC/Tools/Tool Use）→ 核心一句（模型决策、运行时执行）→ 五步循环 → MCP vs FC（决策 vs 连接）→ 落 prd-tools（Skill+scripts 分离）。</p>
+    <p class="hint">[loop·已优化·已复核] 念法：先澄清名字（FC/Tools/Tool Use）→ 核心一句（模型决策、运行时执行）→ 五步循环 → MCP vs FC（决策 vs 连接）→ 落 prd-tools（Skill+scripts 分离）。</p>
   </div>
 </div>
 
@@ -2405,7 +2405,7 @@ function buildTreeOptimized(list) {
     <p><strong>长期记忆</strong>：对话结束就消失的信息，得持久化到外部。三种载体按场景选：① <strong>向量存储</strong>（Chroma/Pinecone）——语义检索，适合大文档；② <strong>结构化文件</strong>（Markdown/JSON）——精确可读，适合规则和决策；③ <strong>知识图谱</strong>（Neo4j）——关系推理，适合实体密集场景。大多数场景前两种就够，知识图谱只在实体密集时才值得投入。</p>
     <p><strong>关键是桥接（检索-注入）</strong>：长期记忆不会自动出现在短期记忆里。每次对话开始：① 用当前任务检索长期记忆里的相关内容；② 注入到 system prompt 当背景；③ 对话结束时把本轮关键决策写回长期记忆。Claude Code 的 CLAUDE.md/Memory 文件就是这个桥接——Markdown 既能让人读，又能注入模型。</p>
     <p><strong>落到我的项目</strong>：prd-tools 的 reference 6 文件（01-codebase 到 05-domain）就是长期记忆的结构化文件实现——把项目知识沉淀成可检索的 YAML，每次蒸馏前按需检索注入（context-pack 做这件事），产出后再把新知识回流（reference 的 Mode E 反馈回流）。我选结构化文件而非向量，因为代码场景的事实要精确可审计，不能靠语义近似。</p>
-    <p class="hint">[loop·已优化·待复核] 念法：核心一句（短期vs长期+桥接）→ 短期压缩 → 长期三载体 → 桥接检索注入 → 落 prd-tools（reference 6 文件+Mode E 回流，为何选结构化不用向量）。</p>
+    <p class="hint">[loop·已优化·已复核] 念法：核心一句（短期vs长期+桥接）→ 短期压缩 → 长期三载体 → 桥接检索注入 → 落 prd-tools（reference 6 文件+Mode E 回流，为何选结构化不用向量）。</p>
   </div>
 </div>
 
@@ -2511,7 +2511,7 @@ function buildTreeOptimized(list) {
     <p><strong>第三层·Spec Review Gate</strong>：Spec 生成完硬停止，必须等人确认才往下出 Plan。这层挡的是"错误从 Spec 放大到 Plan"——越往后返工成本越高，早拦便宜。</p>
     <p><strong>第四层·Readiness 五维兜底</strong>：整条流水线跑完做五维加权评分，低于阈值必须修。消融实验我专门做过——去掉 IR 那一层 Readiness 从 82 掉到 54，直接堵住"是不是过度设计"的质疑。</p>
     <p><strong>收个口</strong>：这四层不是我拍脑袋加的，是事故逼出来的——每层都对应一类真实幻觉。被追问细节甩证据链机制卡和质量门控卡。注意别把倒排索引加 BM25 说成 RAG，那是检索工程不是 RAG，分清楚。</p>
-    <p class="hint">[loop·已优化·待复核] 念法：先甩核心判断（防幻觉=变偏差为可拦截信号，不靠模型更准）→ 业务背景（prd-tools 喂 20+ 人、编了就塌信任）→ 根因一句 → 四层逐条（证据链/负向搜索亮点/Spec Gate 早拦/Readiness 五维+消融 82→54）→ 收口金句（事故逼出来的，每层对应一类幻觉）。消融 82→54 是堵"过度设计"质疑的杀手锏，主动甩。</p>
+    <p class="hint">[loop·已优化·已复核] 念法：先甩核心判断（防幻觉=变偏差为可拦截信号，不靠模型更准）→ 业务背景（prd-tools 喂 20+ 人、编了就塌信任）→ 根因一句 → 四层逐条（证据链/负向搜索亮点/Spec Gate 早拦/Readiness 五维+消融 82→54）→ 收口金句（事故逼出来的，每层对应一类幻觉）。消融 82→54 是堵"过度设计"质疑的杀手锏，主动甩。</p>
   </div>
 </div>
 
@@ -2861,7 +2861,7 @@ function buildTreeOptimized(list) {
     <p>② <strong>上低代码平台</strong>（可视化拖拽生成页面）——排除理由：它只解决简单页面，但我们有复杂联动（城市→产品线→价格策略，跨接口要 BFF 调后端拿新配置），低代码联动描述能力不够；而且 B 端设计稿少、以原型为主，可视化拖拽 ROI 不高。</p>
     <p>③ <strong>JSON Schema 声明式配置驱动</strong>——最终选它。</p>
     <p><strong>选 Schema 的权衡（诚实说代价）</strong>：好处是声明式可静态校验、联动关系清晰可追溯、新人看 Schema 就懂页面结构。代价是学习曲线——新人要理解 DSL 语法和渲染引擎协议，大概一周上手。而且 Schema 有天花板——超复杂交互（拖拽排序+实时协作）还得写代码，不能全靠配置。这是清醒的取舍，不是银弹。</p>
-    <p class="hint">[loop·已优化·待复核] 念法：先说考的是取舍不是选择 → 业务背景 → 三选项逐个排除（if-else 维稳失控/低代码联动弱）→ Schema 权衡（诚实说学习曲线+天花板）。金句："架构决策的核心是取舍"。</p>
+    <p class="hint">[loop·已优化·已复核] 念法：先说考的是取舍不是选择 → 业务背景 → 三选项逐个排除（if-else 维稳失控/低代码联动弱）→ Schema 权衡（诚实说学习曲线+天花板）。金句："架构决策的核心是取舍"。</p>
   </div>
 </div>
 
