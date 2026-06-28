@@ -575,10 +575,11 @@ body{overscroll-behavior-y:contain}
   <div class="card-head"><span class="tag bagu">#39</span><div class="card-title">TS interface 和 type 区别（网易真题）</div></div>
   <div class="core">两者 90% 场景可互换，差别在两点：声明合并 vs 联合类型</div>
   <div class="card-body">
-    <p><strong>第一点：interface 支持声明合并</strong>。同名 interface 自动合并字段，第三方库类型增强（比如给 Window 加属性）必须用 interface。type 重复定义会报"Duplicate identifier"。</p>
-    <p><strong>第二点：type 能表达 interface 表达不了的</strong>。联合类型（A | B）、交叉类型（A & B）、元组、映射类型、条件类型、Partial/Pick/Readonly 这些工具类型的底层都是 type。</p>
-    <p><strong>判断准则</strong>：对象形状用 interface（错误提示更友好+可合并），需要联合/工具类型/元组用 type。React 组件 props 用 interface，TS 内置工具类型用 type。</p>
-    <p class="hint">网易大数据 2026-06-26 一面真题。回答要分两层：能力差异 + 何时用哪个。来源：TypeScript 官方 Declaration Merging 文档。</p>
+    <p><strong>先用一句话把面试官定住：90% 场景两者能互换，但面试考的就是那 10% 的差别——能力差异 + 何时用哪个，答全这两层才算过。</strong>别上来就背"interface 能合并 type 不能"，那是细节不是框架，先给结构再展开。</p>
+    <p><strong>第一层——能力差异，只记两点就够（网易这题就这两点）</strong>：① <strong>interface 支持声明合并，type 不支持</strong>。同名 interface 自动把字段合到一起，type 重名直接报 "Duplicate identifier"。这个特性最典型的场景是给第三方库做类型增强——比如想往 Window 上挂个自定义属性，必须用 interface，因为它要和库里的 Window 接口合并，type 根本做不到。② <strong>type 能表达 interface 表达不了的形状</strong>。联合类型（A | B）、交叉类型（A &amp; B）、元组、映射类型、条件类型，还有 Partial/Pick/Readonly 这些内置工具类型，底层全是 type alias。interface 只能描述对象形状，遇到"几种类型之一"这种联合就抓瞎。记住一个反向记忆：能合并是 interface 独有，能联合是 type 独有，正好一个补一个。</p>
+    <p><strong>第二层——何时用哪个，给一条可执行的准则（这道题的收口分）</strong>：默认描述对象形状优先用 interface——错误提示更友好（报的是接口名不是匿名类型）、还能合并扩展；一旦需要联合/交叉/元组/工具类型，就切 type。落到工程实践就是：React 组件的 props 用 interface，TS 内置的工具类型用 type。这一句落地，面试官就知道你不只是背文档，是真写过。</p>
+    <p><strong>真实失分点（主动说，网易大数据一面就是这道）</strong>：网易大数据 2026-06-26 一面真题，回答的坑在于只答了"interface 能合并"就停了，漏了"何时用哪个"这层判断准则——面试官追问"那 React props 该用哪个"答不上来就露馅。正确打开方式是先甩框架（90% 互换+考那 10%），再展开两点能力差异，最后用"props 用 interface、工具类型用 type"收口。来源：TypeScript 官方 Declaration Merging 文档。</p>
+    <p class="hint">[loop·已优化·待复核] 念法：先甩框架（90% 互换考那 10%，能力差异+何时用两层）→ 第一点能力差（interface 能合并是独有，举给 Window 加属性的场景；type 能联合/交叉/元组/工具类型是独有）→ 第二点判断准则（对象形状用 interface 错误提示友好，联合工具类型用 type，落 React props 用 interface 收口）→ 真实失分点收口（网易真题漏了"何时用哪个"，被追问 React props 露馅）。被问"interface 和 type 区别"先甩框架别直接背细节。</p>
   </div>
 </div>
 
