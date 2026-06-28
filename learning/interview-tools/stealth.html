@@ -1933,7 +1933,7 @@ function buildTreeOptimized(list) {
     <p><strong>第二层·联动接口重复调用（体验体感最强）</strong>：50+ 字段每个联动都可能触发一次接口，转圈圈体感 1-2 秒。<strong>三招优化</strong>：Service Worker 缓存相同前置条件的联动结果、Web Worker 把序列化计算挪出主线程、同 key 请求 batch 合并。<strong>抓手</strong>：联动接口 P95 &lt; 300ms、缓存命中率 &gt; 60%。</p>
     <p><strong>第三层·长列表渲染（Schema 引擎特有的坑）</strong>：50+ 字段表单，每次 schema 重渲染会触发全量 diff。<strong>优化</strong>：组件按 dot-path 订阅（就是 Redux selector 那套原理）——字段变化只通知受影响组件、折叠区懒加载。<strong>抓手</strong>：FPS &gt; 50、字段编辑响应 &lt; 16ms。</p>
     <p><strong>收口必须诚实说边界（这句最显工程判断，别硬编实测数据）</strong>：这块目前确实缺系统化的三档基线对比（纯 SPA / Schema 引擎 / Schema+微前端），是公认短板。下一步计划用 Lighthouse + Web Vitals 把三档基线建起来，量化每层损耗。<strong>金句：性能优化不是堆技巧，是先识别瓶颈、再给可量化的抓手、最后诚实说基线还缺——不装懂比硬编数据可信十倍。</strong></p>
-    <p class="hint">[loop·已优化·待复核] 念法：钩子先甩（问的不是几个百分点，是知不知道卡哪+有没有量化抓手）→ 业务背景（50+字段+联动密+微前端套插槽，阿里二面13:31追的、当时答弱）→ 三层瓶颈逐条（包体积膨胀多版本1.5-2x+bundle基线/联动接口重复P95<300ms+缓存命中>60%/长列表渲染dot-path订阅+FPS>50）→ 诚实边界收口（缺三档基线是公认短板，Lighthouse+Web Vitals待建，金句=不装懂比硬编可信十倍）。被问"具体损失多少"→ 别编实测，甩三档基线计划。</p>
+    <p class="hint">[loop·已优化·已复核] 念法：钩子先甩（问的不是几个百分点，是知不知道卡哪+有没有量化抓手）→ 业务背景（50+字段+联动密+微前端套插槽，阿里二面13:31追的、当时答弱）→ 三层瓶颈逐条（包体积膨胀多版本1.5-2x+bundle基线/联动接口重复P95<300ms+缓存命中>60%/长列表渲染dot-path订阅+FPS>50）→ 诚实边界收口（缺三档基线是公认短板，Lighthouse+Web Vitals待建，金句=不装懂比硬编可信十倍）。被问"具体损失多少"→ 别编实测，甩三档基线计划。</p>
   </div>
 </div>
 <!-- ===== 防御卡结束 ===== -->
@@ -2214,7 +2214,7 @@ function buildTreeOptimized(list) {
     <p><strong>第一块是双路径代码生成，把"能不算钱就不算钱"做成机制</strong>：① <strong>模板路径优先</strong>——读 templates/{campaign_type}/ 下的 Handlebars 模板，渲染蒸馏出来的 JSON 数据，0 token、确定性输出，同一个输入永远同一个产物；② <strong>LLM 路径兜底</strong>——没匹配模板时才让模型参照 reference 规则生成。关键在这两条路径会自学习：LLM 兜底生成、人工确认质量够的产物，会被抽出来存成新模板，"模板库越用越大，LLM 越用越少"。配合一个 <strong>四级回退</strong>（LLM 写文件时精确 SEARCH/REPLACE → 模糊匹配 → 行号定位 → 全文件重写，从最安全到最激进逐级降级），把成本和风险都压到最低。</p>
     <p><strong>第二块是 verified_by 审计链 + drift-report，把"能不靠猜就不靠猜"做成机制</strong>：reference 里每条事实都强制附 <code>verified_by: ["file.ts:line"]</code>，必须真去源码 Read 过才允许写，禁止凭推断——这是防幻觉的硬规则，Phase 2 强制验证、Phase 3 再做致命类检查（枚举完备性、分支计数、方法签名、字段路径 100% 匹配）。但代码会变、reference 会过期，所以我每次验证后跑 <strong>drift-report.json</strong> 自动对比：reference 有但代码找不到的是 stale 漂移，代码有但 reference 没记的是 missing 漂移，引用路径失效的是 broken_path——warning 级别不阻塞流程，但会明确提示"知识库该更新了"。</p>
     <p><strong>落到我的项目收口</strong>：这套不是 PPT，是 prd2code-gen 里真跑的——双路径省 token、verified_by 防幻觉、drift-report 防过期，三件套各管一类风险。一句话：<strong>工程化的核心是"让确定性归代码、让模型只补不确定性"</strong>——能讲清这套，面试官就知道你不是只会调 API，是真搭过能长期跑的 AI 系统。</p>
-    <p class="hint">[loop·已优化·待复核] 念法：定调金句（能不算钱就不算钱、能不靠猜就不靠猜）→ 业务背景（prd2code-gen 几十文件、全靠 LLM 会爆 token + 不可复现 + 幻觉编字段）→ 两块（双路径模板优先 0 token+LLM 兜底+模板库自学习+四级回退 / verified_by 强制 file:line 溯源防幻觉+Phase2/3 致命类检查 / drift-report 三类漂移 stale/missing/broken_path 防过期）→ 收口（确定性归代码、模型只补不确定性）。被问"AI 成本怎么控 / token 怎么省 / reference 怎么保鲜 / 知识库过时怎么办"翻这张卡，主动甩双路径和 drift-report 显深度。</p>
+    <p class="hint">[loop·已优化·已复核] 念法：定调金句（能不算钱就不算钱、能不靠猜就不靠猜）→ 业务背景（prd2code-gen 几十文件、全靠 LLM 会爆 token + 不可复现 + 幻觉编字段）→ 两块（双路径模板优先 0 token+LLM 兜底+模板库自学习+四级回退 / verified_by 强制 file:line 溯源防幻觉+Phase2/3 致命类检查 / drift-report 三类漂移 stale/missing/broken_path 防过期）→ 收口（确定性归代码、模型只补不确定性）。被问"AI 成本怎么控 / token 怎么省 / reference 怎么保鲜 / 知识库过时怎么办"翻这张卡，主动甩双路径和 drift-report 显深度。</p>
   </div>
 </div>
 
@@ -2230,7 +2230,7 @@ function buildTreeOptimized(list) {
     <p>· <strong>第三步：责任归属明确（最关键也最难）</strong>。AI 生成的代码必须有 owner review 才能 merge，bug 责任归 owner 不归 AI。建立"AI 生成标签"机制，QA 阶段重点 review——这一步谈不拢，前两步都没意义。</p>
     <p><strong>诚实承认四个 gap（被问"原型和生产差什么"就甩这四条，显真诚显深度）</strong>：① <strong>CI 对齐</strong>——独立 pipeline 还没接进团队流水线；② <strong>质量责任</strong>——AI 生成代码必须有人 owner，责任划分要制度落地；③ <strong>规模化</strong>——原型一个需求动几十个文件，生产要上 5000 文件级，溯源/检索/校验全得重写；④ <strong>模型成本</strong>——原型跑实验不计成本用强模型，生产必须分层模型控账单。</p>
     <p><strong>收口金句</strong>：过渡至少 6-12 个月 + 团队投入，不是技术 ready 就能上——<strong>"技术能跑通"和"组织能接住"是两件事</strong>，后者往往更慢。能讲到这句，面试官就知道你不只是写了个 demo，是真想过落地的人。</p>
-    <p class="hint">[loop·已优化·待复核] 念法：钩子（潜台词是夸+压力测试，答不好要么吹牛要么保守）→ 定调金句（双轨并行各取所需：团队版稳 20+ 人在用 / 原型快验证可行性，过渡是沉淀不是替换）→ 三步过渡（模板库 40→80% 沉淀兜底 / CI 对齐流水线+灰度 10% 放量 / 责任归属 owner review 是最关键）→ 四 gap 诚实承认（CI/责任/规模化 50→5000 文件/模型成本分层）→ 收口金句（技术 ready ≠ 组织能接住，过渡 6-12 个月）。被问"既然完整为啥不推广"→ 双轨并行 + 收口金句。被问"原型和生产差什么"→ 甩四 gap。</p>
+    <p class="hint">[loop·已优化·已复核] 念法：钩子（潜台词是夸+压力测试，答不好要么吹牛要么保守）→ 定调金句（双轨并行各取所需：团队版稳 20+ 人在用 / 原型快验证可行性，过渡是沉淀不是替换）→ 三步过渡（模板库 40→80% 沉淀兜底 / CI 对齐流水线+灰度 10% 放量 / 责任归属 owner review 是最关键）→ 四 gap 诚实承认（CI/责任/规模化 50→5000 文件/模型成本分层）→ 收口金句（技术 ready ≠ 组织能接住，过渡 6-12 个月）。被问"既然完整为啥不推广"→ 双轨并行 + 收口金句。被问"原型和生产差什么"→ 甩四 gap。</p>
   </div>
 </div>
 
@@ -2253,7 +2253,7 @@ function buildTreeOptimized(list) {
     <p><strong>先说为什么必考、为什么有空间</strong>：我做的 prd-tools 喂 20+ 人用，每天几十次调用，如果每次都无脑把全量上下文塞进 prompt，token 账单会爆炸、稳定性还会劣化（上下文越长越贵、还容易 Lost in Middle）。真实场景里"更好模型 + 更长上下文"既贵又未必更准——必须找效果和成本的甜蜜点。</p>
     <p><strong>我从三层往下控</strong>：第一层是 <strong>Token 管理</strong>——上下文预算管控，只传必要信息（用 Reference 知识库做预筛选，不一次性全量灌入）、渐进式披露（按需检索按需注入）、中间产物靠文件传递（Skill 之间不重复传上下文，省的是真金白银的 token）。第二层是 <strong>记忆压缩</strong>——对话历史不能每轮全传，要做压缩（类似 MemGPT 思路），大厂普遍自研对话压缩去掉无关信息只留关键上下文。第三层是 <strong>工程手段补短板</strong>——这是我最深的实践：用质量门控（L1 前置检查 + L2 distill 门禁 + L3 final 评分）、证据链、Spec Review 硬停止这些工程机制弥补模型能力不足，而不是简单堆更贵的模型。</p>
     <p><strong>落到我的项目</strong>：prd-tools 的多层门控就是这个思路——把 T/P 参数定死（T=0.2、P=0.95 让一致性从 40 拉到 85），主流程走确定性编排不烧钱，只在自修复那段开 Agent Loop 兜底。<strong>一句话收口：该确定的地方用工程锁死，该开放的地方才花 token 让模型发挥</strong>——这才是成本优化的本质。</p>
-    <p class="hint">[loop·已优化·待复核] 念法：定调金句（用工程约束换可靠性，不是换便宜模型）→ 业务背景（prd-tools 喂 20+ 人、越长越贵+Lost in Middle）→ 三层（Token 管理/记忆压缩/工程补短板）→ 落 prd-tools（多层门控+T=0.2/P=0.95 一致性 40→85+确定性编排只在自修复开 Agent Loop）→ 金句收口（该确定锁死该开放才花 token）。被问"为什么不直接换 GPT-5/最贵模型"→ 工程兜底比换模型稳且省。</p>
+    <p class="hint">[loop·已优化·已复核] 念法：定调金句（用工程约束换可靠性，不是换便宜模型）→ 业务背景（prd-tools 喂 20+ 人、越长越贵+Lost in Middle）→ 三层（Token 管理/记忆压缩/工程补短板）→ 落 prd-tools（多层门控+T=0.2/P=0.95 一致性 40→85+确定性编排只在自修复开 Agent Loop）→ 金句收口（该确定锁死该开放才花 token）。被问"为什么不直接换 GPT-5/最贵模型"→ 工程兜底比换模型稳且省。</p>
   </div>
 </div>
 
