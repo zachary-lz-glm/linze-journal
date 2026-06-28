@@ -2188,11 +2188,14 @@ function buildTreeOptimized(list) {
   <div class="card-head"><span class="tag proj">架构</span><div class="card-title">端到端原型：自验证+自修复循环怎么实现？</div></div>
   <div class="core">4 类校验 + 3 次重试 + 震荡检测（A→B→A 切整段重写），修正历史全程可追溯</div>
   <div class="card-body">
-    <p>这是端到端原型 prd2code-gen 的核心工程化难点，应对"AI 生成代码出错了怎么办 / Harness 怎么落地"的追问。</p>
-    <p><strong>4 类校验（按顺序跑）</strong>：① 语法——TypeScript 编译 tsc --noEmit + AST 完整性 + 残留 <code>{{</code> 占位符检查；② 字段双向——蒸馏字段 ⊆ 生成字段（不遗漏）+ 生成字段 ⊆ 蒸馏字段（不幻觉）；③ 规则——i18n key 格式、enum 白名单、命名规范、反模式逐条检查；④ 集成——import 路径、类型兼容、不破坏已有代码（diff 检查）。</p>
-    <p><strong>自修复循环</strong>：验证 fail → 差异修正（只改报错字段/行，非全量重写）→ 全量重验（不只验修复项）→ 最多 3 次重试 → 仍 fail 暂停交人工。</p>
-    <p><strong>震荡检测（核心创新）</strong>：识别 history 里 A→B→A 模式（第一次改成 B，第二次又改回 A）→ 切换为整段重写策略，避免无限循环。修正历史全程记录到 validation.json 的 history 数组（attempt / strategy / errors_fixed / new_errors / changes）。</p>
-    <p class="hint">被问"出码后怎么保证质量" / "Harness 怎么落地" / "Agent 自修复怎么实现" → 翻这张卡。震荡检测是亮点，能讲出来直接体现工程深度。</p>
+    <p><strong>这道题我答四个字——"出错兜底"。AI 生成代码不可能一次就对，真正体现工程深度的不是生成多准，而是错了之后系统能不能自己兜回来、还兜得明白。</strong></p>
+    <p><strong>先说为什么这块对我特别重要</strong>：我独立设计的端到端原型 prd2code-gen，目标是从 PRD 一路生成到能跑的代码。这种场景下"错了怎么办"不是边界 case，是主路径——一个需求可能动几十个文件，每一处都可能编译不过、字段对不上、破坏已有逻辑。所以我必须有一套自动化兜底，不能靠人肉看 diff。</p>
+    <p><strong>我分三块来讲。</strong></p>
+    <p>第一块是 <strong>四类校验，按顺序跑，前一层过了才进下一层</strong>：① <strong>语法层</strong>——tsc --noEmit 编译 + AST 完整性 + 残留 <code>{{</code> 占位符检查，先把"根本不能跑的"拦掉；② <strong>字段双向对齐</strong>——蒸馏出来的字段必须 ⊆ 生成的（不能漏），生成的字段也必须 ⊆ 蒸馏的（不能幻觉编出来），双向都查；③ <strong>规则层</strong>——i18n key 格式、enum 白名单、命名规范、反模式逐条过；④ <strong>集成层</strong>——import 路径对不对、类型兼容不兼容、有没有破坏已有代码（diff 检查）。从最便宜到最贵，层层过滤。</p>
+    <p>第二块是 <strong>自修复循环——验证失败不是直接重写，是"差异修正"</strong>：只改报错的那几行那几个字段，不是把整个文件重写一遍；改完做的是 <strong>全量重验</strong>，不是只验刚修的那一项（否则会修 A 坏 B）；最多重试 3 次，还过不了就 <strong>暂停交人工</strong>，不无限循环烧 token。</p>
+    <p>第三块是 <strong>震荡检测，这是我自己的核心创新，也是面试杀手锏</strong>：朴素重试有个坑——第一次把 A 改成 B，第二次又改回 A，无限横跳。我的做法是读 validation.json 的 history 数组，识别出 A→B→A 这种来回横跳的模式，一旦命中就 <strong>切换策略：整段重写</strong>，跳出局部最优。每一次修正的 attempt、用了什么 strategy、修了哪些 error、又冒出什么 new_error 全程记进 history，事后能复盘。</p>
+    <p><strong>落到我的项目收口</strong>：这套不是 PPT，是 prd2code-gen 里真跑的——validation.json 的 history 数组就是证据，每一次自修复都可追溯。一句话：<strong>工程化的核心不是"AI 多准"，是"错了之后能在有限的预算里可控地兜回来"</strong>——震荡检测这块能讲出来，面试官就知道你真做过 Harness，不是只调过 API。</p>
+    <p class="hint">[loop·已优化·待复核] 念法：钩子四字"出错兜底"（错的不是边界是主路径）→ 业务背景（prd2code-gen 几十文件、错了不能人肉看 diff）→ 三块（四类校验层层过滤/自修复差异修正+全量重验+3 次封顶交人工/震荡检测 A→B→A 整段重写是杀手锏）→ 收口（validation.json 可追溯，工程化核心是有限预算内可控兜回）。被问"出码后怎么保证质量 / Harness 怎么落地 / Agent 自修复怎么实现"翻这张卡，主动甩震荡检测显深度。</p>
   </div>
 </div>
 
