@@ -215,7 +215,7 @@ body{overscroll-behavior-y:contain}
     <p>② <strong>yarn.lock 锁死第三方版本</strong>（事故逼出来的）——踩过一次：解析器从 rc.31 自动升到 rc.48，Node 16 构建全挂。从此 yarn.lock 加 git 保护，CI 加 lockfile diff 检测，依赖升级走 staging 验证。</p>
     <p>③ <strong>resolutions 强制统一公共依赖</strong>——React、TypeScript 这些公共依赖强制同版本，避免不同模块装不同版本导致 Hooks 报错。</p>
     <p><strong>收口</strong>：Monorepo 依赖管理的核心就一句话——<strong>版本碎片化是最常见的隐性 bug 源</strong>，三道防线（workspace 引用 + lock 锁版本 + resolutions 统一）缺一不可。</p>
-    <p class="hint">[loop·已优化·待复核] 念法：三道防线开场（事故逼出来的）→ 背景（15+模块版本碎片化）→ 逐条（workspace/lock事故/resolutions）→ 收口（版本碎片化是隐性bug源）。被问"踩过什么坑"甩解析器 rc.31→rc.48 事故。</p>
+    <p class="hint">[loop·已优化·已复核] 念法：三道防线开场（事故逼出来的）→ 背景（15+模块版本碎片化）→ 逐条（workspace/lock事故/resolutions）→ 收口（版本碎片化是隐性bug源）。被问"踩过什么坑"甩解析器 rc.31→rc.48 事故。</p>
   </div>
 </div>
 
@@ -229,7 +229,7 @@ body{overscroll-behavior-y:contain}
     <p><strong>两种联动类型</strong>：① <strong>State 型</strong>（纯前端）——用户改字段，本地 eval 联动表达式直接更新其他字段（如选城市 A，产品线下拉立即更新）；② <strong>FetchApi 型</strong>（要后端数据）——用户改字段后回调 BFF 重新生成 Schema 片段（如城市变化要从后端拿新价格策略）。靠 listener.on 监听字段变化，支持链式联动（A 变→B 变→C 变）。</p>
     <p><strong>16 个联动模板覆盖 95%</strong>：visible（显隐）、disable（禁用）、setValue（赋值）、setEnum（更新选项）、required（必填）等。剩下 5% 走自定义组件兜底。</p>
     <p><strong>收口</strong>：联动从"写代码"变成"配 DSL"，运营自助、前端零代码，这是 Schema 驱动能成立的关键基础设施。</p>
-    <p class="hint">[loop·已优化·待复核] 念法：八字核心（一次声明双重求值）→ 业务背景（活动联动复杂）→ 双重求值（BFF算初始+前端运行时）→ 两种类型（State/FetchApi）→ 16模板覆盖95% → 收口（联动从写代码变配DSL）。被追问链式联动甩 listener.on。</p>
+    <p class="hint">[loop·已优化·已复核] 念法：八字核心（一次声明双重求值）→ 业务背景（活动联动复杂）→ 双重求值（BFF算初始+前端运行时）→ 两种类型（State/FetchApi）→ 16模板覆盖95% → 收口（联动从写代码变配DSL）。被追问链式联动甩 listener.on。</p>
   </div>
 </div>
 
@@ -242,7 +242,7 @@ body{overscroll-behavior-y:contain}
     <p><strong>怎么处理</strong>：注册为<strong>自定义组件</strong>，组件内部自己管异步数据请求和级联逻辑。Schema 层只声明组件类型 + 必要配置（接口地址、级联层级），具体异步逻辑封装在组件代码里。</p>
     <p><strong>这和 Formily 处理远程数据组件本质一样</strong>——复杂异步组件都需要代码层介入，纯配置搞不定。这不是我的设计缺陷，是业界共识。</p>
     <p><strong>收口原则</strong>：<strong>Schema 管结构和联动，代码管复杂交互</strong>。98% 的表单场景 Schema 直接覆盖，剩下 2% 自定义组件兜底。诚实讲清边界，比硬说"Schema 万能"可信得多。</p>
-    <p class="hint">[loop·已优化·待复核] 念法：先识别追问陷阱（问边界）→ 结论（纯Schema闭环不了）→ 方案（自定义组件+Schema声明配置）→ 对标Formily（业界共识）→ 收口原则（Schema管结构/代码管交互，98%+2%）。</p>
+    <p class="hint">[loop·已优化·已复核] 念法：先识别追问陷阱（问边界）→ 结论（纯Schema闭环不了）→ 方案（自定义组件+Schema声明配置）→ 对标Formily（业界共识）→ 收口原则（Schema管结构/代码管交互，98%+2%）。</p>
   </div>
 </div>
 
@@ -1688,7 +1688,7 @@ function buildTreeOptimized(list) {
     <p>⑤ <strong>自我评估（Reflection）</strong>——执行完能判断"结果对不对、够不够"，不对就自我修正。没这层就是蒙着眼往前冲。</p>
     <p>⑥ <strong>人机协作（HITL）</strong>——关键决策点暂停等人确认、超出能力边界主动求助。纯自主 Agent 在复杂业务里风险太高，必须有人工兜底。</p>
     <p><strong>落到我的项目</strong>：prd-tools 六层都齐——感知靠 PRD 摄入解析、推理靠 Claude、行动靠两个 Skill 调脚本、记忆靠 reference 6 文件、自我评估靠 quality-gate.py 五维评分、人机协作靠 Spec Review Gate 硬停止。每层都有具体落地，不是背概念。</p>
-    <p class="hint">[loop·已优化·待复核] 念法：六层递进（基座四层+进阶两层）→ 每层一句 → 落 prd-tools 六层对应。金句："少一层要么是瞎子要么是莽夫"。</p>
+    <p class="hint">[loop·已优化·已复核] 念法：六层递进（基座四层+进阶两层）→ 每层一句 → 落 prd-tools 六层对应。金句："少一层要么是瞎子要么是莽夫"。</p>
   </div>
 </div>
 
@@ -3373,13 +3373,12 @@ function buildTreeOptimized(list) {
   <div class="card-head"><span class="tag ai">AI</span><div class="card-title">Agent Loop vs ReAct vs LangGraph</div></div>
   <div class="core">三种 Agent 架构：ReAct（推理+行动）、Agent Loop（固定循环）、LangGraph（图状态机）</div>
   <div class="card-body">
-    <p><strong>ReAct（Reasoning + Acting）</strong>：Thought → Action → Observation 循环。简单灵活，但可能陷入循环 + 上下文膨胀。</p>
-    <p><strong>Agent Loop（OpenAI 风格）</strong>：while not done: model.generate → if tool_call: execute → append result。可控可调试，不够灵活。</p>
-    <p><strong>LangGraph（图状态机）</strong>：节点=处理步骤，边=条件路由，状态=持久化。支持循环 + 分支 + Human-in-the-loop + 状态恢复。复杂工作流首选。</p>
-    <p><strong>关键纠正（腾讯一面）</strong>：LangGraph 不是全量灌入 skill！先把 skill description 拼到一起传一遍做意图匹配，AI 判断需要哪些才按需懒加载（progressive disclosure）。</p>
-    <p><strong>选型</strong>：简单问答→Function Calling；多步骤灵活推理→ReAct；固定流程可控→Agent Loop；复杂工作流+状态持久化→LangGraph；跨模型工具复用→MCP+任一。</p>
-    <p><strong>主流框架</strong>：LangGraph（最灵活）、OpenAI Agents SDK（轻量）、Claude Agent SDK（集成 MCP）、AutoGPT（早期 ReAct）。</p>
-    <p class="hint">追问：ReAct 和 CoT 区别？CoT 只推理不行动，ReAct 推理+行动。</p>
+    <p><strong>这道题我分三层答——先把三种架构分清，再讲选型分界，最后落我的项目。</strong></p>
+    <p><strong>第一层·三种架构的本质区别（顺着控制权讲）</strong>：① <strong>ReAct</strong>（Reasoning + Acting）是"边想边干"——Thought（想）→ Action（调工具）→ Observation（看结果）循环，LLM 在循环里自己决定下一步。它最灵活，是 GPT/Claude 默认的 Agent 模式，但风险也最高：可能陷入死循环、上下文越滚越大。② <strong>Agent Loop</strong>（OpenAI 风格）是"框架把循环固定住"——while not done: 跑模型 → 有 tool_call 就执行 → 把结果塞回上下文，循环结构是写死的，可控可调试，但灵活度不如 ReAct。③ <strong>LangGraph</strong> 是"图状态机"——节点是处理步骤、边是条件路由、状态全程持久化，能画循环+分支，还支持 Human-in-the-loop 和中断后恢复。复杂工作流的首选。一句话区分：ReAct 让 LLM 自由决定、Agent Loop 把循环框住、LangGraph 把整张图画出来。</p>
+    <p><strong>第二层·选型分界（面试官想听的取舍）</strong>：简单一问一答用 Function Calling 就够，别上 Agent；多步骤但每步都要灵活推理用 ReAct；流程固定、要可控可调试用 Agent Loop；工作流复杂、要状态持久化和人工介入用 LangGraph；要跨模型复用工具就加 MCP 配任一框架。关键是别一上来就上最重的——Anthropic 的建议是 Workflow 优先、Agent 兜底。</p>
+    <p><strong>第三层·落到我的项目</strong>：prd-tools 团队推广版（11 步蒸馏流水线）<strong>本质是 Agent Loop 思路</strong>——循环结构是预定义的，用证据链和 Readiness 门控把每步约束住，规避开放式 ReAct 的死循环风险。prd2code-gen 端到端原型里的<strong>自验证+自修复循环</strong>是个小 Agent Loop——验证 fail 让 LLM 自主决定怎么改，但加了三道保险：最多 3 次重试上限、震荡检测（识别 A→B→A 就切整段重写）、仍 fail 暂停交人工。诚实说：我没用 LangGraph，因为 prd-tools 步骤明确、没有复杂分支，上状态机是过度设计。</p>
+    <p><strong>关键纠正（腾讯一面踩过的坑）</strong>：被问 LangGraph 怎么挂 skill，别答"全量灌进去"——正确做法是 progressive disclosure：先把所有 skill description 拼一起传一遍做意图匹配，AI 判断需要哪些才按需懒加载，否则上下文直接炸。</p>
+    <p class="hint">[loop·已优化·待复核] 念法：钩子（分三层）→ 第一层三架构顺控制权讲（ReAct 自由/Agent Loop 固定/LangGraph 画图）→ 第二层选型分界（Workflow 优先 Agent 兜底）→ 第三层落 prd-tools（11 步是 Agent Loop 思路+自修复加三道保险）→ 腾讯踩坑收口（progressive disclosure）。被问"ReAct 和 CoT 区别"→ CoT 只推理不行动，ReAct 推理+行动。</p>
   </div>
 </div>
 
