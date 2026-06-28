@@ -3612,7 +3612,7 @@ function buildTreeOptimized(list) {
     <p><strong>Multi-Head Attention</strong>：把 Q/K/V 拆成 H 个头（如 32 头）各自做 Attention 再拼接。好处：不同头学不同语义关系（语法/共指/语义），并行度高。</p>
     <p><strong>位置编码（前端该懂）</strong>：Transformer 本身无位置感知（Attention 置换不变），必须额外注入位置。① sin/cos（原始论文，绝对位置）；② <strong>RoPE</strong>（旋转位置编码，主流，让 Q·K 自动反映相对位置，外推性好）；③ ALiBi（Attention 分数加位置偏置）。</p>
     <p><strong>收口金句</strong>："Transformer 核心是 Self-Attention——让每个 token 直接关注所有其他 token，绕过 RNN 递归瓶颈。Q/K/V 是同一输入的三个投影，分别承担'查什么/有什么/取什么'。"</p>
-    <p class="hint">[loop·已优化·待复核] 念法：前端钩子（懂Transformer解释LLM行为）→ 架构三类（Decoder-only主流）→ QKV本质（数据库类比+公式）→ 除√d_k细节 → Multi-Head → 位置编码（RoPE主流）→ 金句收口。</p>
+    <p class="hint">[loop·已优化·已复核] 念法：前端钩子（懂Transformer解释LLM行为）→ 架构三类（Decoder-only主流）→ QKV本质（数据库类比+公式）→ 除√d_k细节 → Multi-Head → 位置编码（RoPE主流）→ 金句收口。</p>
   </div>
 </div>
 
@@ -3629,7 +3629,7 @@ function buildTreeOptimized(list) {
     <p><strong>选型决策</strong>：显存瓶颈→GQA（主流）；训练速度瓶颈→Flash Attention v2/v3；长上下文→GQA+Flash Attention 组合；极致压榨→MQA+Flash Attention（牺牲一点效果）。</p>
     <p><strong>落到我的项目（桥接）</strong>：选 LLM 推理框架看是否支持这些优化——vLLM 用 PagedAttention（类 OS 虚拟内存分页）+ 默认开 GQA；SGLang 在多轮对话场景更优（KV Cache 复用率高）。</p>
     <p><strong>收口金句</strong>："MHA/MQA/GQA 是 KV Cache <strong>显存</strong>优化（多 head 共享 K/V 降显存）；Flash Attention 是<strong>计算</strong>优化（分块减 HBM 读写提速）。两者正交，可叠加。"</p>
-    <p class="hint">[loop·已优化·待复核] 念法：前端钩子（解释推理贵，自研大厂必问）→ 业务背景（MHA显存爆炸16GB）→ 三优化（MQA省8x/GQA折中主流/Flash Attention提速不省显存）→ 选型 → 桥接（vLLM PagedAttention+GQA）→ 金句（显存优化vs计算优化正交）。</p>
+    <p class="hint">[loop·已优化·已复核] 念法：前端钩子（解释推理贵，自研大厂必问）→ 业务背景（MHA显存爆炸16GB）→ 三优化（MQA省8x/GQA折中主流/Flash Attention提速不省显存）→ 选型 → 桥接（vLLM PagedAttention+GQA）→ 金句（显存优化vs计算优化正交）。</p>
   </div>
 </div>
 
@@ -3645,7 +3645,7 @@ function buildTreeOptimized(list) {
     <p><strong>CoT 是 ReAct/Plan-Execute 的底层（关键认知）</strong>：ReAct = CoT + Tool Use（Thought→Action→Observation 循环）；Plan-Execute = CoT + 任务拆分（先全盘想再分步做）。理解 CoT 才能解释为什么 ReAct 比"直接调 LLM"效果好。</p>
     <p><strong>局限（诚实说）</strong>：① 不是所有任务都受益（简单计算/事实问答反而变慢变贵）；② 推理路径可能错（CoT 不保证正确，可能"想错答对"或"想对答错"）；③ Token 成本翻倍（长 CoT 让 API 成本激增）；④ 黑盒不可解释（CoT 推理不真实反映内部决策，Self-Consistency 多采样投票更稳）。</p>
     <p><strong>收口金句</strong>："CoT 本质是用 token 换推理深度。简单任务不需要，复杂任务必用。ReAct/Plan-Execute 都是 CoT 的工程化扩展——加工具调用、加任务拆分。"</p>
-    <p class="hint">[loop·已优化·待复核] 念法：本质钩子（用token换推理深度，简单不用复杂必用）→ 业务背景（复杂推理直接问易错）→ 原理（竖式类比）→ 三触发 → 为啥有效（追问甩）→ CoT是ReAct底层（关键认知）→ 局限（诚实）→ 金句。</p>
+    <p class="hint">[loop·已优化·已复核] 念法：本质钩子（用token换推理深度，简单不用复杂必用）→ 业务背景（复杂推理直接问易错）→ 原理（竖式类比）→ 三触发 → 为啥有效（追问甩）→ CoT是ReAct底层（关键认知）→ 局限（诚实）→ 金句。</p>
   </div>
 </div>
 
@@ -3661,7 +3661,7 @@ function buildTreeOptimized(list) {
     <p><strong>落到我的项目（桥接）</strong>：prd-tools 蒸馏用 T=0.2 + Top-P=0.95——既要稳定（每次跑出近似 Spec/Plan，一致性 40→85%）又要一点发散（处理 PRD 用词差异）。Evals 评测用 T=0 保证可复现。</p>
     <p><strong>常见误区（被追问甩）</strong>：① "调高温度让模型更聪明"——错，温度只影响随机性不影响能力；② "Top-K 越大越多样"——错，K 太大引入噪声；③ "Agent 必须 T=0"——错，T=0 会让 Agent 陷入循环。</p>
     <p><strong>收口金句</strong>："温度控方差、Top-P 控范围、Top-K 控数量。Agent 我默认 T=0.3 P=0.9，既稳定又能跳出死循环。"</p>
-    <p class="hint">[loop·已优化·待复核] 念法：三参数定位钩子（控方差/范围/数量）→ 业务背景（调参影响稳定性，Agent T=0死循环）→ 三参数本质 → 各场景最佳值（背）→ 组合策略 → 落 prd-tools（T=0.2/P=0.95一致性40→85%）→ 常见误区 → 金句。</p>
+    <p class="hint">[loop·已优化·已复核] 念法：三参数定位钩子（控方差/范围/数量）→ 业务背景（调参影响稳定性，Agent T=0死循环）→ 三参数本质 → 各场景最佳值（背）→ 组合策略 → 落 prd-tools（T=0.2/P=0.95一致性40→85%）→ 常见误区 → 金句。</p>
   </div>
 </div>
 
