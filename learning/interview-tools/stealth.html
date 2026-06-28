@@ -446,15 +446,11 @@ body{overscroll-behavior-y:contain}
   <div class="card-head"><span class="tag bagu">#36</span><div class="card-title">HTTPS / TLS 握手 5 步</div></div>
   <div class="core">HTTP是TCP三次握手后直接传明文，HTTPS在TCP之上多一次TLS握手协商加密</div>
   <div class="card-body">
-    <p><strong>HTTP</strong>：TCP三次握手（SYN → SYN+ACK → ACK）→ 直接开始传HTTP报文（明文）。</p>
-    <p><strong>HTTPS</strong>：TCP三次握手 → <strong>TLS握手5步</strong> → 加密通道传输：</p>
-    <p>· <strong>1. ClientHello</strong>：客户端发送支持的TLS版本、加密套件列表、客户端随机数。</p>
-    <p>· <strong>2. ServerHello</strong>：服务端选定TLS版本、加密套件、返回服务端随机数。</p>
-    <p>· <strong>3. Certificate</strong>：服务端发送SSL证书（含公钥），客户端用CA公钥验证证书合法性。</p>
-    <p>· <strong>4. Key Exchange</strong>：客户端生成pre-master secret用服务端公钥加密发送（或ECDHE协商）→ 双方用三个随机数算出session key。</p>
-    <p>· <strong>5. Finished</strong>：双方用session key加密发送握手摘要，互相验证握手完整性。</p>
-    <p>之后所有HTTP报文用session key对称加密传输。<strong>TLS 1.3优化</strong>：合并步骤，1-RTT完成握手（甚至0-RTT恢复会话）。</p>
-    <p class="hint">千问一面被问到这块只答了"多一层密钥过程"——漏掉了ClientHello/ServerHello/Certificate/Key Exchange/Finished的具体步骤。</p>
+    <p><strong>先甩一句话定调：HTTP 和 HTTPS 的区别不是"多一层"，是 TCP 之上又加了 TLS 握手协商出一个对称密钥，之后所有报文都用这个密钥加密。</strong>HTTP 是 TCP 三次握手（SYN → SYN+ACK → ACK）之后就明文传报文；HTTPS 是三次握手之后、传业务数据之前，再多走一次 TLS 握手。我千问一面就栽在这——只答了"多一层密钥过程"，面试官追问"具体哪几步"接不住，所以这五步必须能背。</p>
+    <p><strong>TLS 握手五步（顺着数据流念）</strong>：① <strong>ClientHello</strong>——客户端先开口，把自己支持的 TLS 版本、加密套件列表、一个客户端随机数发给服务端；② <strong>ServerHello</strong>——服务端选定 TLS 版本和加密套件，回一个服务端随机数；③ <strong>Certificate</strong>——服务端把 SSL 证书（含公钥）发过来，客户端用 CA 公钥验证书合不合法，这一步是防中间人的核心；④ <strong>Key Exchange</strong>——客户端生成 pre-master secret，用服务端公钥加密发过去（或 ECDHE 协商），双方拿客户端随机数、服务端随机数、pre-master 三个一起算出 session key；⑤ <strong>Finished</strong>——双方用 session key 加密发一段握手摘要，互相验证握手没被篡改。握手结束，后面所有 HTTP 报文都用这个 session key 对称加密传输。</p>
+    <p><strong>这里有个常被追问的点：为什么前半段非对称、后半段对称？</strong>因为非对称加密慢、不能用来传大量业务数据，所以用非对称（公钥/私钥）安全地把 pre-master 送过去，换出一个共享的对称 session key，后续通信用对称加密快。一句话：<strong>非对称换密钥，对称传数据</strong>。这也是"为什么 HTTPS 比一握手多一次 RTT"的根因——这次额外的 TLS 握手就是成本。</p>
+    <p><strong>收口加分项（被问 TLS 1.3 再甩）</strong>：TLS 1.3 把五步合并了，1-RTT 就能完成握手，恢复会话时甚至 0-RTT，所以现在大厂都推 1.3。念到这里停一下——主动说"握手成本是 HTTPS 比 HTTP 多一跳的根本原因，所以才有 TLS 1.3 和 HTTP/3 在 QUIC 上把握手和传输合并的优化"，能直接接到 HTTP/3 那张卡。</p>
+    <p class="hint">[loop·已优化·待复核] 念法：钩子先甩（不是"多一层"，是协商出对称密钥+千问栽过）→ TLS 五步顺数据流念（ClientHello/ServerHello/Certificate/Key Exchange/Finished，验证书防中间人是重点）→ 常被追问（非对称换密钥对称传数据）→ 收口（TLS 1.3 1-RTT+接 HTTP/3）。被问"具体哪几步"必须能背五步。</p>
   </div>
 </div>
 
