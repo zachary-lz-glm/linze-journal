@@ -3544,7 +3544,7 @@ function buildTreeOptimized(list) {
     <p><strong>三个工程手段防止"切到一半丢语义"</strong>：① <strong>重叠窗口</strong>（Overlap）——相邻块重叠 50-100 token，边界信息两边都留一份；② <strong>句号/换行优先</strong>——遇到句号、感叹号、问号、换行就切，绝不把句子拦腰截断；③ <strong>层级切分</strong>——先切大块再切小块，检索时父子块一起返回（Parent-Child Chunking），既精准又上下文足。</p>
     <p><strong>落到我的项目（关键桥接，体现不是纸上谈兵）</strong>：prd-tools 没用向量 Chunking，但原理相通——Reference 六文件"每个文件只负责一个领域"就是结构化切分；BM25 检索粒度是文件级而非段落级，因为 PRD 改动通常以模块为单位，按模块切刚好对齐真实改动边界。</p>
     <p><strong>收口金句</strong>："Chunking 决定 RAG 的上限——切得不好检索再强也救不回来。我的判断标准是看文档结构：结构化文档（PRD、API 文档）按结构切，自由文本（用户输入、客服记录）按语义切，再加重叠窗口兜底。"</p>
-    <p class="hint">[loop·已优化·待复核] 念法：定调金句（Chunking决定上限）→ 三策略从糙到精（固定/语义/结构）→ 块大小取舍（256-512主流+Embedding硬约束）→ 三工程手段（重叠窗口/句号优先/层级切分）→ 落 prd-tools（Reference六文件=结构化切分，文件级检索对齐模块边界）→ 金句收口。被问"块多大合适"→ 看 Embedding 模型 max token + 文档类型。</p>
+    <p class="hint">[loop·已优化·已复核] 念法：定调金句（Chunking决定上限）→ 三策略从糙到精（固定/语义/结构）→ 块大小取舍（256-512主流+Embedding硬约束）→ 三工程手段（重叠窗口/句号优先/层级切分）→ 落 prd-tools（Reference六文件=结构化切分，文件级检索对齐模块边界）→ 金句收口。被问"块多大合适"→ 看 Embedding 模型 max token + 文档类型。</p>
   </div>
 </div>
 
@@ -3557,7 +3557,7 @@ function buildTreeOptimized(list) {
     <p><strong>选型四个维度</strong>：① <strong>MTEB 排行</strong>（标准基准，看 retrieval 任务得分）；② <strong>语言匹配</strong>（中文 BGE、英文 E5、多语言 mE5）；③ <strong>维度</strong>（768 够用、1024 主流、1536+ 高精但贵）；④ <strong>部署成本</strong>（开源本地 vs API，OpenAI $0.13/百万 token）。</p>
     <p><strong>三个常见坑</strong>：① 用英文模型检索中文——分数惨不忍睹；② 不做 query/document 区分——查询和文档要用不同编码方式（asymmetric）；③ 不评估就上线——必须用业务数据集跑 Recall@K，不能只看榜单。</p>
     <p><strong>落到我的项目（诚实）</strong>：prd-tools <strong>没用 embedding</strong>——我用 BM25+正则倒排索引替代。原因是代码场景的检索对象是离散符号（函数名、字段名、路径），精确匹配比语义近似更准更快（搜 getMembershipLevel 要精确命中，不要"语义相近"的 getLevel），还能 grep 调试。如果换成自然语言知识库（PRD 文档、用户问答），我才会考虑上 embedding，中文首选 BGE。</p>
-    <p class="hint">[loop·已优化·待复核] 念法：一句话本质 → 主流模型 → 四维度选型 → 三坑 → 落 prd-tools（为何不用 embedding，用 BM25 替代的真实决策）。</p>
+    <p class="hint">[loop·已优化·已复核] 念法：一句话本质 → 主流模型 → 四维度选型 → 三坑 → 落 prd-tools（为何不用 embedding，用 BM25 替代的真实决策）。</p>
   </div>
 </div>
 
@@ -3573,7 +3573,7 @@ function buildTreeOptimized(list) {
     <p>· <strong>第三看过滤多不多</strong>：元数据过滤密集（先按 metadata 过滤再向量检索），选 Qdrant（Rust 写、过滤能力强）；小规模原型验证，选 Chroma（轻量本地、Python 友好）。</p>
     <p><strong>项目桥接（这道题真正的加分项）</strong>：我会主动说——prd-tools <strong>没用向量库，用倒排索引 + BM25 替代</strong>。原因：代码实体是离散符号（函数名/字段名/路径），倒排精确命中比向量语义近似更快更准，还能 grep 调试。只有在换成自然语言知识库（PRD 文档、用户问答）时，向量库才有价值。这一句能体现我"不是技术堆砌，是按场景取舍"的工程判断。</p>
     <p><strong>收口金句</strong>：选型不是选最好，是选最匹配——规模决定能不能扛、运维决定养不养得起、过滤决定准不准，三问答完库就定了。</p>
-    <p class="hint">[loop·已优化·待复核] 念法：钩子（别背产品名，先点破 ANN 本质是召回/速度/运维三者取舍）→ 索引两类（HNSW 默认吃内存/IVF 省内存超大规模）→ 选型三维度（规模 Milvus 大 Chroma 小/运维 Pinecone 托管 pgvector 复用/过滤 Qdrant）→ 项目桥接（prd-tools 没用向量库用倒排+BM25，代码是离散符号精确命中更快，体现场景取舍）→ 金句收口（选型是按场景匹配不是选最好）。被问"你用过哪个"主动甩 prd-tools 倒排+BM25 的真实决策。</p>
+    <p class="hint">[loop·已优化·已复核] 念法：钩子（别背产品名，先点破 ANN 本质是召回/速度/运维三者取舍）→ 索引两类（HNSW 默认吃内存/IVF 省内存超大规模）→ 选型三维度（规模 Milvus 大 Chroma 小/运维 Pinecone 托管 pgvector 复用/过滤 Qdrant）→ 项目桥接（prd-tools 没用向量库用倒排+BM25，代码是离散符号精确命中更快，体现场景取舍）→ 金句收口（选型是按场景匹配不是选最好）。被问"你用过哪个"主动甩 prd-tools 倒排+BM25 的真实决策。</p>
   </div>
 </div>
 
@@ -3587,7 +3587,7 @@ function buildTreeOptimized(list) {
     <p><strong>融合用 RRF</strong>（Reciprocal Rank Fusion）：不看各路分数绝对值，只看排名，公式 score = Σ 1/(k+排名)，k 通常 60。简单稳定，是工业默认。</p>
     <p><strong>第三招·进阶范式</strong>：Self-RAG（模型自己决定要不要检索、检索几次）、Corrective RAG/CRAG（检索后评估结果质量，差的重新检索）、GraphRAG（用知识图谱增强，适合实体密集场景如医疗金融）。</p>
     <p><strong>落到我的项目</strong>：prd-tools 的检索就是多路召回的工程化——reference 的路由 playbook 做字段召回（先按业务模块过滤），Evidence Index 用 BM25 做关键词召回（按代码实体/路径匹配），context-pack 做 Query Rewrite（把 PRD 改写锚定到具体文件）。我没上向量检索，因为代码场景符号精确匹配比语义近似更准——这是一种主动的召回策略选择，不是不懂向量。</p>
-    <p class="hint">[loop·已优化·待复核] 念法：三招框架（改写→多路→自纠正）→ HyDE 亮点 → 三路召回+RRF → 落 prd-tools（路由+BM25+context-pack，为何不上向量）。</p>
+    <p class="hint">[loop·已优化·已复核] 念法：三招框架（改写→多路→自纠正）→ HyDE 亮点 → 三路召回+RRF → 落 prd-tools（路由+BM25+context-pack，为何不上向量）。</p>
   </div>
 </div>
 
