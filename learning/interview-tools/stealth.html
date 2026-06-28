@@ -2468,13 +2468,13 @@ function buildTreeOptimized(list) {
   <div class="card-head"><span class="tag ai">AI</span><div class="card-title">OpenClaw（小龙虾）是什么？能力和边界</div></div>
   <div class="core">开源、本地优先的 AI Agent 框架，通过聊天平台连接 LLM 执行真实任务</div>
   <div class="card-body">
-    <p><strong>是什么</strong>：开源、本地优先的AI Agent框架。核心思路是把LLM接入聊天平台（微信、钉钉、飞书等20+），让AI不只是聊天，而是能执行真实任务——发邮件、改文件、调API、定时任务。社区昵称"小龙虾"。</p>
-    <p><strong>核心能力</strong>：①文件驱动配置——Workspace中用文件定义人设、记忆和行为边界，不碰核心代码。②Skills+MCP扩展——100+技能插件，通过MCP协议接入外部工具。③持久记忆——跨会话记住用户偏好和历史上下文。④24/7后台运行+子代理任务委派。⑤ClawHub技能市场，社区贡献插件。</p>
-    <p><strong>能力边界</strong>：不提供默认安全沙箱，权限和操作范围需手动配置。灵活但上手门槛高——高级用户可以精细管控每一步权限，新手容易配错。定位是"你配置它执行"的工具型网关，不是自进化伙伴。</p>
-    <p><strong>vs Claude Code</strong>：Claude Code专注编码场景，深度集成终端和IDE。OpenClaw是通用Agent平台，连接聊天平台做各类任务。一个精专，一个广谱。</p>
-    <p><strong>vs 自定义Agent</strong>：OpenClaw是Agent的运行平台（操作系统），自定义Agent是在上面开发的应用。OpenClaw提供基础设施（消息连接、记忆管理、插件生态），你用Skills定义业务逻辑。类比：OpenClaw是手机，你的Skills是APP。</p>
-    <p><strong>适用场景</strong>：隐私敏感场景（数据不出本地）、长时间运行任务（24/7监控/定时检查）、需要连接多平台的工作流。不适合需要开箱即用安全沙箱的企业场景。</p>
-    <p><strong>面试一句话</strong>："OpenClaw本质是Agent的操作系统——提供消息连接、记忆管理、插件生态的基座，你的业务逻辑通过Skills定义。它不是Agent本身，是让你快速搭建Agent的平台。"</p>
+    <p><strong>这题面试官想听的不是"你会不会背 OpenClaw 的功能清单"，是你能不能一句话点透它的产品定位——笼统说"它是个 AI 框架"显得没判断，逐条念功能又显得没格局。我把它整理成"一句定位 + 一个能力组合 + 诚实边界 + 横向对比 + 落到我自己"，照念就能答得有判断又不飘。</strong></p>
+    <p><strong>先甩一句定位（这是全场骨架，必须先立住）</strong>：OpenClaw（社区昵称"小龙虾"）是<strong>开源、本地优先的通用 AI Agent 平台</strong>——核心思路是把 LLM 接进聊天平台（微信、钉钉、飞书等 20 多个），让 AI 不只聊天，而是能执行真实任务：发邮件、改文件、调 API、跑定时任务。一句话定位：<strong>它不是某个 Agent，是让你快速搭 Agent 的"操作系统"基座</strong>。这句先甩，后面是给它做支撑。</p>
+    <p><strong>能力组合顺一遍（每个都带一句"为什么"，不堆名词）</strong>：① <strong>文件驱动配置</strong>——Workspace 里用文件定义人设、记忆和行为边界，不碰核心代码，好处是配置即文档、能版本控制；② <strong>Skills + MCP 扩展</strong>——100 多个技能插件，通过 MCP 协议接外部工具，能力边界靠插件撑开；③ <strong>持久记忆</strong>——跨会话记住用户偏好和历史上下文；④ <strong>24/7 后台运行 + 子代理任务委派</strong>，长任务能挂后台跑、能拆给子 Agent；⑤ <strong>ClawHub 技能市场</strong>，社区贡献插件。这五个组合起来，本质是把"搭 Agent"从写代码降成配文件 + 装插件。</p>
+    <p><strong>诚实说边界（这句最显工程判断，别只夸）</strong>：OpenClaw <strong>不提供默认安全沙箱</strong>，权限和操作范围得手动配置——灵活但上手门槛高，高级用户能精细管控每一步，新手容易配错。所以它的定位是<strong>"你配置它执行"的工具型网关，不是自进化伙伴</strong>。主动说这句，比把它吹成银弹可信十倍。</p>
+    <p><strong>横向对比（被追问"和别的有啥区别"就甩这两组）</strong>：① <strong>vs Claude Code</strong>——Claude Code 专注编码场景、深度集成终端和 IDE，一个精专；OpenClaw 是通用 Agent 平台、连接聊天平台做各类任务，一个广谱。② <strong>vs 自定义 Agent</strong>——OpenClaw 是<strong>运行平台（操作系统）</strong>，自定义 Agent 是上面跑的<strong>应用</strong>：它提供消息连接、记忆管理、插件生态这些基础设施，你的业务逻辑用 Skills 定义。一个好记的类比：<strong>OpenClaw 是手机，你的 Skills 是 APP</strong>。</p>
+    <p><strong>收口落回我自己（桥接，证明不是背概念）</strong>：我自己做的 prd-tools，思路和 OpenClaw 的"文件驱动 + Skills 扩展"是同频的——我也用 SKILL.md + workflow.md 定义工作流、用 XML 约束行为边界、用质量门控卡产出，本质都是<strong>把 Agent 行为约束从硬编码降成可读、可版本控制的配置</strong>。差异我也主动说：OpenClaw 是通用平台、广谱；我做的是编码场景的窄而深。<strong>金句收口：2026 年搭 Agent 的趋势不是从零写循环，是选一个基座（OpenClaw/Claude Code/自研）+ 用配置定义行为——基座选错天花板低，配置做松就翻车。</strong></p>
+    <p class="hint">[loop·已优化·待复核] 念法：钩子（不是背功能清单，是一句话点透产品定位）→ 一句定位立骨架（开源本地优先通用 Agent 平台，不是某个 Agent 是搭 Agent 的"操作系统"基座）→ 能力组合顺一遍（文件驱动/Skills+MCP/持久记忆/24/7+子代理/ClawHub，本质=搭 Agent 从写代码降成配文件+装插件）→ 诚实边界（无默认安全沙箱=工具型网关不是自进化伙伴，主动说不夸银弹）→ 横向对比被追问甩（vs Claude Code 精专 vs 广谱 / vs 自定义 Agent = 操作系统 vs 应用，类比手机 vs APP）→ 落 prd-tools（SKILL.md+workflow.md+XML 约束=同频，差异=广谱 vs 编码窄而深）→ 金句（基座选错天花板低+配置做松翻车）。被问"OpenClaw 和 Claude Code 区别"甩 vs Claude Code 那段。</p>
   </div>
 </div>
 
