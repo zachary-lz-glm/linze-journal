@@ -3358,13 +3358,14 @@ function buildTreeOptimized(list) {
   <div class="card-head"><span class="tag proj">AI</span><div class="card-title">Harness 三种引擎（合并/通信/反思）</div></div>
   <div class="core">Agent = Model + Harness，三种核心引擎让 Agent 自进化</div>
   <div class="card-body">
-    <p><strong>合并引擎（Merge）</strong>：多 Agent 输出整合，基于优先级 + 置信度，冲突时人工介入。</p>
-    <p><strong>通信引擎（Communication）</strong>：Agent 间状态传递，通过中间文件（YAML/JSON），类似 OS 的 IPC，避免上下文重复加载。</p>
-    <p><strong>反思引擎（Reflection）</strong>：从失败提炼规则。四步：① 日志收集（决策 + 工具调用 + 评分）② 反思分析高频失败模式 → 生成候选规则 ③ 人工审批写入 AGENTS.md ④ golden sample 回归验证。</p>
-    <p><strong>KSG 链路</strong>：短期记忆 → 长期记忆 → 知识库 → 技能手册（逐步抽象）。</p>
-    <p><strong>项目桥接</strong>：prd-tools 是 Harness 雏形。L1 信息边界=SSOT，L2 工具=MCP，L3 编排=11 步，L4 记忆=Evidence Index，L5 评估=quality-gate.py，L6 约束=questions.md。最大缺口在 L4 反思引擎——目前人工回流，没有自动化。</p>
-    <p><strong>业界</strong>：OpenAI AGENTS.md（~100 行精炼）、Anthropic 三 Agent（Planner/Generator/Evaluator）、Stripe Minions（1300+ PR/周）、Ghostty AGENTS.md（每一行都是过去的失败）。</p>
-    <p class="hint">小红书二面失分点。核心是"错误即规则"的 ratchet 机制。</p>
+    <p><strong>钩子</strong>：小红书二面就是栽在这道题上——我当时只会背"Agent = Model + Harness"这句定义，没讲清 Harness 里到底有什么。后来想明白一句话：真正的护城河不在模型多强，在 Harness 能不能从自己的错误里长进。所以这三种引擎我直接甩框架再展开。</p>
+    <p><strong>先甩定义</strong>：Harness 就是不依赖模型能力、靠代码和工程机制兜底的那一层。三种核心引擎各管一摊——合并管"多 Agent 怎么合"，通信管"Agent 之间怎么传话"，反思管"失败怎么变成规则"。</p>
+    <p><strong>① 合并引擎（Merge）</strong>：多个 Agent 或多路输出要整合成一份，怎么定谁说了算？按优先级 + 置信度排序，冲突解不开的就抛给人工裁决，不硬编死规则——这是典型的"宁可慢一步，不要错一片"。</p>
+    <p><strong>② 通信引擎（Communication）</strong>：Agent 之间不靠"塞进同一个上下文对话"传状态（那样 token 爆炸还容易串味），而是把中间状态落到中间文件（YAML/JSON）里互相读。类比操作系统的 IPC——进程间不共享内存，靠管道和文件通信，互不污染。</p>
+    <p><strong>③ 反思引擎（Reflection）——这是最值钱的一个，也是 ratchet 机制的核心</strong>：让 Agent 从失败里提炼规则。四步闭环：① 先收集日志（每次决策 + 工具调用 + 评分）② 反思分析高频失败模式，生成候选规则 ③ 人工审批后写进 AGENTS.md ④ 用 golden sample 回归验证规则真的有效。关键在于<strong>"错误即规则，只进不退"</strong>——踩过的坑固化成规则，下次绕着走，系统只会越来越稳不会退化。</p>
+    <p><strong>项目桥接（这是我的落地证据）</strong>：prd-tools 本身就是 Harness 雏形，六层一层对应一个引擎能力——L1 信息边界是 SSOT、L2 工具是 MCP、L3 编排是 11 步、L4 记忆是 Evidence Index、L5 评估是 quality-gate.py、L6 约束是 questions.md。但我必须诚实交代一个缺口：最大短板就在反思引擎——现在 Mode E 的规则回流还是<strong>人工</strong>做的，没有自动化反思闭环，这是我下一步要补的。</p>
+    <p><strong>业界参照（被追问再甩）</strong>：OpenAI 的 AGENTS.md 就 ~100 行但极其精炼；Anthropic 的三 Agent 分工（Planner/Generator/Evaluator）就是合并引擎的范式；Stripe 的 Minions 一周跑 1300+ PR 靠的就是 Harness 兜底；Ghostty 的 AGENTS.md 最狠——每一行都是过去踩过的真实失败。这印证了"错误即规则"不是理念，是工程实践。</p>
+    <p class="hint">[loop·已优化·待复核] 念法：钩子先甩（小红书栽在这题，护城河是 Harness 自我长进）→ 定义一句 → 三引擎逐条（合并/通信/反思各 1-2 句，反思重点讲透 ratchet "错误即规则只进不退"）→ 项目桥接（prd-tools 六层对应+诚实说反思引擎还是人工）→ 业界参照被追问再甩。被问"Agent 怎么不退化"直接甩 ratchet 四步闭环。</p>
   </div>
 </div>
 
