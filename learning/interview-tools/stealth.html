@@ -1880,16 +1880,14 @@ function buildTreeOptimized(list) {
   <div class="card-head"><span class="tag proj">G4</span><div class="card-title">"5h→2h" 怎么度量？（早期简历曾用 60% 提效表述）</div></div>
   <div class="core">三层指标：L1 产物质量（OQ/IMP 锚点）+ L2 研发效率（端到端 + 返工率）+ L3 业务价值</div>
   <div class="card-body">
-    <p><strong>面试官追问</strong>（阿里一面34:14）："PRD 转化效率提升 60% 怎么度量？分母是什么？实验组用了 Claude Code，对照组是不是纯手写？"</p>
-    <p>⚠️ <strong>口径已收敛</strong>：现简历用 5h→2h（5 需求对照），60% 是当时表述。下方度量方法不变，被问"提效怎么算"时主指标答 5h→2h 即可。</p>
-    <p><strong>我当时的回答</strong>：弱——"写的比较粗""其实就是开发工时""应该没人不用 v0 coding"。工程化项目最致命的短板。</p>
-    <p><strong>升级版回答三层指标</strong>：</p>
-    <p>· <strong>L1 产物质量</strong>：Code Anchor 准确率（plan.md 里 anchor 真实被改的比例，目标≥85%）；OQ 命中率（Open Questions 真实阻塞率，目标≥60%）；IMP 执行率（Implementation 计划条目真实执行率，目标≥75%）。</p>
-    <p>· <strong>L2 研发效率</strong>：端到端开发耗时（实验组 vs 对照组，都用 Claude Code，目标提升≥40%）；QA 缺陷数（对照组 vs 实验组 bug 数，目标下降≥30%）；开发返工率（开发过程中发现 plan 错了的比例）。</p>
-    <p>· <strong>L3 业务价值</strong>：reference 飞轮增速（每月新增 playbook/术语数）；团队模式契约对齐度提升。</p>
-    <p><strong>严谨的 A/B 设计</strong>：实验组 = `/prd-distill` 全流程 + Claude Code 执行 plan；对照组 = Claude Code init + 直接给 PRD 让它自己分析。样本量 ≥ 30 个真实需求，pair-wise 对照。主指标 = plan 落地后的开发返工率。</p>
-    <p><strong>当前状态诚实</strong>：v2.19 已经有 readiness/final QG 内部评分，但 L2/L3 业务指标在 Sprint 3 排期。"现在没有硬 A/B，这是公认短板，正在补"。</p>
-    <p class="hint">不要说"就是工时提升"——回答必须有指标名 + 数字 + 对照组定义三件套。</p>
+    <p><strong>先甩个钩子定调</strong>：这题阿里一面 34:14 直接追到分母——"PRD 转化效率提升 60% 怎么度量？分母是什么？实验组用了 Claude Code，对照组是不是纯手写？"。我场上答得很弱，"写的比较粗""其实就是开发工时"——这是工程化项目最致命的短板，回答必须有指标名、数字、对照组定义三件套，不能只说"工时提升"。<strong>口径先收敛一句</strong>：现在简历用 5h→2h（5 个需求对照），60% 是当时表述，被问"提效怎么算"主指标答 5h→2h 即可。</p>
+    <p><strong>先讲业务背景，为什么这题难答</strong>：prd-tools 产出的是 plan.md，不是代码——它解决"写代码之前想清楚改哪里"的问题。这意味着收益不直接落在代码行数上，得绕一层去度量"想清楚"这件事带来的下游收益。所以我搭了三层指标，从产物质量、研发效率、业务价值三个维度兜住。</p>
+    <p><strong>L1 产物质量——直接量 plan 本身靠不靠谱</strong>：三个锚点——Code Anchor 准确率（plan.md 里标的 anchor 真实被改的比例，目标≥85%）、OQ 命中率（Open Questions 真实阻塞率，目标≥60%）、IMP 执行率（Implementation 计划条目真实执行率，目标≥75%）。这一层是 v2.19 已经能跑的，readiness 评分就是基于这套。</p>
+    <p><strong>L2 研发效率——量下游真省了多少</strong>：端到端开发耗时（实验组 vs 对照组，两组都用 Claude Code，只差有没有走 prd-tools 全流程，目标提升≥40%）、QA 缺陷数（目标下降≥30%）、开发返工率（开发过程中发现 plan 错了的比例，这是主指标）。注意对照组不是纯手写——是 Claude Code init 后直接喂 PRD 让它自己分析，这样变量单一，只验证 prd-tools 这层证据链的价值。</p>
+    <p><strong>L3 业务价值——量长期飞轮</strong>：reference 飞轮增速（每月新增 playbook/术语数）、团队模式契约对齐度提升。这层偏定性，是产品长期价值的佐证。</p>
+    <p><strong>严谨的 A/B 设计念给面试官</strong>：实验组 = `/prd-distill` 全流程 + Claude Code 执行 plan，对照组 = Claude Code init + 直接给 PRD，样本量 ≥ 30 个真实需求 pair-wise 对照，主指标锁定开发返工率。把"分母是什么""对照组怎么定义"两个最容易追穿的点一次性堵死。</p>
+    <p><strong>收个口，诚实交代进度</strong>：v2.19 已经有 readiness/final QG 内部评分（L1 能跑），但 L2/L3 业务指标在 Sprint 3 排期，现在没有硬 A/B——这是公认短板，正在补。"已经有内部评分、业务指标在排期"两层 roadmap 讲清，比说"暂时没考虑"强一百倍。<strong>核心一句</strong>：工程化项目最忌讳"我觉得有用"，得拿指标名+数字+对照组说话。</p>
+    <p class="hint">[loop·已优化·待复核] 念法：钩子（阿里一面追到分母，场上答弱）→ 口径收敛（5h→2h 主指标）→ 业务背景（产出是 plan 不是代码，收益绕一层）→ L1 产物质量三锚点（已能跑）→ L2 研发效率三指标（主指标返工率，对照组也用 Claude Code 变量单一）→ L3 业务价值（飞轮定性）→ A/B 设计（实验组/对照组/样本30/主指标返工率，堵分母和对照定义）→ 收口（v2.19 已有内部评分+L2L3 在 Sprint 3 排期，诚实说没硬 A/B）。三件套口诀：指标名+数字+对照组定义。</p>
   </div>
 </div>
 
