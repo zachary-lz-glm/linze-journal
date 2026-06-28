@@ -2986,11 +2986,14 @@ function buildTreeOptimized(list) {
   <div class="card-head"><span class="tag proj">Schema</span><div class="card-title">性能优化和懒加载怎么做的？</div></div>
   <div class="core">三层：Schema级按section分块渲染 + 组件级dynamic import + SDK级按业务线注册</div>
   <div class="card-body">
-    <p><strong>Schema渲染层——按section分块</strong>：一个活动配置页可能有50+字段，不是一次性渲染所有组件。渲染引擎把Schema按section（区域/步骤）分组，首屏只渲染可见section，其他section在用户滚动或切换tab时按需渲染。联动触发时只更新受影响的组件（通过依赖图精确定位），不重渲染整棵组件树。</p>
-    <p><strong>组件层——dynamic import按需加载</strong>：componentMap不是启动时全部import，是注册了组件的加载路径（factory函数），首次渲染某个组件类型时才dynamic import对应的React组件。通用组件（Input/Select/DatePicker）打包在主bundle里直接可用，业务定制组件（地图选择器/复杂权益配置面板）按需加载。这样首屏JS体积控制在合理范围。</p>
-    <p><strong>SDK层——按业务线注册</strong>：权益SDK的register机制天然支持按需——每个业务模块只register自己用到的权益组件，不会把8个业务的400+组件全加载进来。国际化业务可能只用30个通用组件+5个定制组件，打包体积只包含实际register的部分。</p>
-    <p><strong>监控指标</strong>：首屏FCP控制在1.5s以内（海外CDN加速），配置接口响应时间P99在800ms以内，联动触发到UI更新在100ms以内（State型本地计算）。</p>
-    <p class="hint">这道题考的是从框架设计到具体实现的完整链路。不要只说"用了lazy loading"，要说清楚在哪三层做了、为什么分层、每层解决什么问题。架构层面的性能优化比单纯的代码技巧更有价值。</p>
+    <p><strong>这道题考的是从架构层面做性能优化——不是"用了 lazy loading"，是"在哪三层做了、为什么分层、每层解决什么"。架构级优化比代码技巧有价值得多。</strong></p>
+    <p><strong>业务背景</strong>：活动配置页可能有 50+ 字段，一次性渲染+全量加载组件首屏会卡死。而且海外弱网，必须把首屏体积和渲染量压到最低。</p>
+    <p><strong>三层懒加载（自顶向下）</strong>：</p>
+    <p>① <strong>Schema 渲染层——按 section 分块</strong>：渲染引擎把 Schema 按 section（区域/步骤）分组，首屏只渲染可见 section，其他滚动或切 tab 时按需渲染。联动触发只更新受影响组件（依赖图精确定位），不重渲染整棵树。</p>
+    <p>② <strong>组件层——dynamic import 按需加载</strong>：componentMap 不启动时全 import，只注册加载路径（factory），首次渲染某类型才 dynamic import。通用组件（Input/Select/DatePicker）打进主 bundle，业务定制组件（地图选择器、复杂权益面板）按需加载，控制首屏 JS 体积。</p>
+    <p>③ <strong>SDK 层——按业务线注册</strong>：权益 SDK 的 register 天然按需——每个业务模块只 register 自己用到的组件，不会把 8 个业务 400+ 组件全加载。国际化业务可能只用 30 通用+5 定制，打包体积只含实际 register 部分。</p>
+    <p><strong>监控指标（收口，量化）</strong>：首屏 FCP < 1.5s（海外 CDN）、配置接口 P99 < 800ms、联动触发到 UI 更新 < 100ms（State 型本地计算）。有指标才有说服力。</p>
+    <p class="hint">[loop·已优化·待复核] 念法：钩子（架构级三层而非代码技巧）→ 业务背景（50+字段+海外弱网）→ 三层（Schema分块/组件dynamic import/SDK按业务线register）→ 监控指标量化收口。</p>
   </div>
 </div>
 
