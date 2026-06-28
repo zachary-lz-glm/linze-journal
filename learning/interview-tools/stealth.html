@@ -3622,14 +3622,15 @@ function buildTreeOptimized(list) {
   <div class="card-head"><span class="tag ai">AI</span><div class="card-title">Loopmaxxing：Loop Engineering 反模式</div></div>
   <div class="core">不是所有任务都该上 Loop——简单任务过度循环反而劣化，要克制</div>
   <div class="card-body">
-    <p><strong>什么是 Loopmaxxing</strong>：源自 BDTechtalks 2026 年 6 月博文，指"无脑给所有任务套 Loop"的反模式。表现形式：① 一次性任务也写循环（"我让它跑 10 次"）。② 简单确定性任务用 Loop（输出固定格式还跑循环验证）。③ Loop 嵌套 Loop（验证 Loop 里再套修复 Loop，无限套娃）。④ 不设最大迭代次数，让 Loop 跑到 token 烧光。</p>
-    <p><strong>为什么 Loopmaxxing 是反模式</strong>：① <strong>成本爆炸</strong>——每次循环都是一次完整 LLM 调用，10 次循环 = 10x 成本。② <strong>劣化风险</strong>——简单任务用 Loop 反而引入随机性（验证本来对的输出反而改坏）。③ <strong>调试地狱</strong>——Loop 里的错误难复现（每次跑可能不一样）。④ <strong>认知负担</strong>——人看不懂 Loop 在干什么，调试只能"听天由命"。</p>
-    <p><strong>什么时候该用 Loop</strong>：① <strong>任务有明确成功条件</strong>（编译通过、测试通过、产物符合 schema）。② <strong>失败原因可观察</strong>（编译错误、test 失败 log）。③ <strong>错误信息可注入</strong>（能让 Agent 看到错误自修复）。④ <strong>ROI 正</strong>（Loop 成本 < 人工成本）。典型场景：写测试循环（直到覆盖率达 80%）、修 bug 循环（直到测试通过）、文档生成循环（直到 lint 通过）。</p>
-    <p><strong>什么时候不该用 Loop</strong>：① <strong>创意性任务</strong>（写文案、设计 UI）——没有"对错"标准，Loop 会过度优化。② <strong>简单确定性任务</strong>（数据格式转换）——一次就够。③ <strong>探索性任务</strong>（调研、对比）——Loop 会陷入局部最优。④ <strong>高 cost-of-error 任务</strong>（生产部署、发版）——一次错误代价大，Loop 失败不可逆。</p>
-    <p><strong>防 Loopmaxxing 工程实践</strong>：① <strong>设最大迭代</strong>（max_iter=5 典型）。② <strong>成本预算</strong>（token 上限 + 美元上限）。③ <strong>质量阈值</strong>（达到阈值提前退出）。④ <strong>失败兜底</strong>（连续 N 次失败转人工）。⑤ <strong>可观测性</strong>（每轮产出可追溯，便于 debug）。</p>
-    <p><strong>项目桥接</strong>：prd-tools 的"自验证+自修复"循环设了 max_iter=3 + Readiness 阈值 + 失败兜底（降级人工审核）。简单任务（PRD 转 Spec）不进 Loop，复杂任务（双路径生成+交叉验证）才进。</p>
-    <p><strong>面试金句</strong>："Loop Engineering 不是'万物皆 Loop'。我的判断标准是四问：有明确成功条件吗？失败原因可观察吗？错误可注入吗？ROI 正吗？四问都 yes 才上 Loop，否则用确定性 Workflow 更稳。"</p>
-    <p class="hint">2026 年新概念。被问"Loop Engineering 有什么坑" → 翻这张卡。展现工程成熟度——不盲从新概念。</p>
+    <p><strong>这道题展现工程成熟度——不盲从新概念。Loop Engineering 火，但"无脑给所有任务套 Loop"是反模式，叫 Loopmaxxing。</strong></p>
+    <p><strong>什么是 Loopmaxxing</strong>（源自 BDTechtalks 2026 年 6 月博文）：无脑给所有任务套 Loop。表现：① 一次性任务也写循环（"让它跑 10 次"）；② 简单确定性任务用 Loop（输出固定格式还跑循环验证）；③ Loop 嵌套 Loop（验证里套修复，无限套娃）；④ 不设最大迭代，跑到 token 烧光。</p>
+    <p><strong>为什么是反模式</strong>：① <strong>成本爆炸</strong>（每次循环一次完整 LLM 调用，10 次=10x 成本）；② <strong>劣化风险</strong>（简单任务用 Loop 引入随机性，验证本来对的输出反而改坏）；③ <strong>调试地狱</strong>（Loop 错误难复现，每次跑可能不一样）；④ <strong>认知负担</strong>（人看不懂 Loop 干啥，调试听天由命）。</p>
+    <p><strong>什么时候该用 Loop（四条都满足）</strong>：① 任务有明确成功条件（编译通过/测试通过/产物符合 schema）；② 失败原因可观察（编译错误/test 失败 log）；③ 错误信息可注入（能让 Agent 看到错误自修复）；④ ROI 正（Loop 成本 < 人工成本）。典型：写测试循环（到覆盖率 80%）、修 bug 循环（到测试通过）、文档生成循环（到 lint 通过）。</p>
+    <p><strong>什么时候不该用</strong>：① 创意性任务（写文案/设计 UI，没"对错"标准，Loop 过度优化）；② 简单确定性任务（数据格式转换，一次就够）；③ 探索性任务（调研/对比，Loop 陷局部最优）；④ 高 cost-of-error 任务（生产部署/发版，一次错误代价大不可逆）。</p>
+    <p><strong>防 Loopmaxxing 工程实践</strong>：① 设最大迭代（max_iter=5 典型）；② 成本预算（token+美元上限）；③ 质量阈值（达标提前退出）；④ 失败兜底（连续 N 次失败转人工）；⑤ 可观测性（每轮产出可追溯便于 debug）。</p>
+    <p><strong>落到我的项目（桥接）</strong>：prd-tools 的"自验证+自修复"循环设了 max_iter=3 + Readiness 阈值 + 失败兜底（降级人工审核）。简单任务（PRD 转 Spec）不进 Loop，复杂任务（双路径生成+交叉验证）才进。</p>
+    <p><strong>收口金句</strong>："Loop Engineering 不是'万物皆 Loop'。我的判断标准是四问：有明确成功条件吗？失败原因可观察吗？错误可注入吗？ROI 正吗？四问都 yes 才上 Loop，否则用确定性 Workflow 更稳。"</p>
+    <p class="hint">[loop·已优化·待复核] 念法：工程成熟度钩子（不盲从新概念）→ 什么是Loopmaxxing（4表现）→ 为什么反模式（成本/劣化/调试/认知）→ 该用四条（追问甩）→ 不该用4类 → 防Loopmaxxing实践 → 落prd-tools（max_iter=3+阈值+兜底）→ 四问金句。</p>
   </div>
 </div>
 
