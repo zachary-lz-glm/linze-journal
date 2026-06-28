@@ -2014,15 +2014,14 @@ function buildTreeOptimized(list) {
   <div class="card-head"><span class="tag ai">AI</span><div class="card-title">AI Evals是什么？为什么评测体系是必需品？</div></div>
   <div class="core">没有Evals的AI系统就是"凭感觉开车"——Evals是AI系统的仪表盘和刹车</div>
   <div class="card-body">
-    <p><strong>Evals是什么</strong>：Systematic evaluation——用可重复、可量化的方法衡量AI系统质量。不是"感觉这次回答不错"，而是用定义好的测试集+评分标准，自动跑分，客观比较不同版本/配置/prompt的效果。</p>
-    <p><strong>为什么"凭感觉"不行</strong>：①不可重复——同一个prompt不同时间结果不同，人的主观判断也不稳定。②不可比较——换了prompt或模型，"感觉差不多"到底变好了还是变差了？说不清。③不可扩展——10条输出能人肉看，1000条怎么办？</p>
-    <p><strong>Evals三层体系</strong>：</p>
-    <p>· <strong>Benchmark（模型选型层）</strong>：用标准化数据集评测模型本身的能力（MMLU、HumanEval等），帮你在选模型时有据可依。</p>
-    <p>· <strong>Eval Suite（任务质量层）</strong>：针对你的具体任务（比如PRD分析、代码生成），构造专属测试集+评分标准，衡量你的prompt/workflow在这个任务上的表现。</p>
-    <p>· <strong>Production Monitor（生产监控层）</strong>：上线后持续监控实际产出的质量，发现退化及时告警。相当于线上的CI/CD测试。</p>
-    <p><strong>LLM-as-Judge</strong>：用LLM来评判LLM的输出质量——构造评分prompt，让GPT-4/Claude给输出打分。优点是可扩展（1000条也能自动评），缺点是评判本身也有误差。实践中必须先跟人工标注校准，确认Judge准确率够高才能信赖。Langfuse、Arize AI等工具都支持这个模式。</p>
-    <p><strong>项目桥接</strong>：prd-tools的Readiness Score就是Eval Suite的轻量版——定义评分维度、自动打分、达标才放行。未来扩展方向是构造标准PRD测试集，做版本间A/B对比。</p>
-    <p><strong>面试一句话</strong>："没有Evals的AI系统是不可信赖的——你不知道改了一个prompt是变好了还是变差了。Evals的本质是把AI质量从主观感受变成客观数据，跟传统软件的测试一个道理。"</p>
+    <p><strong>这道题先甩一个比喻：没有 Evals 的 AI 系统就是"凭感觉开车"——没有仪表盘也没刹车。改了个 prompt，根本不知道变好还是变差。</strong></p>
+    <p><strong>业务背景</strong>：prd-tools 给 20+ 人团队用，AI 产出的开发计划直接影响开发。质量靠"感觉这次不错"，改 prompt 后没法客观对比，等于盲改。所以必须有 Evals 把质量从主观感受变成客观数据。</p>
+    <p><strong>Evals 是什么</strong>：Systematic evaluation——用可重复、可量化的方法衡量 AI 质量。定义好的测试集+评分标准，自动跑分，客观比较不同版本/prompt/模型。本质和传统软件测试一个道理。</p>
+    <p><strong>"凭感觉"的三个硬伤</strong>：① 不可重复（同 prompt 不同时间结果不同，人的主观判断也不稳）；② 不可比较（换 prompt/模型，"感觉差不多"说不清好坏）；③ 不可扩展（10 条能人肉看，1000 条怎么办）。</p>
+    <p><strong>Evals 三层体系</strong>：① <strong>Benchmark</strong>（模型选型层，MMLU/HumanEval 评模型本身）；② <strong>Eval Suite</strong>（任务质量层，针对你的任务构造专属测试集+评分，评 prompt/workflow 表现）；③ <strong>Production Monitor</strong>（生产监控层，上线后持续监控，退化告警，相当于线上 CI/CD）。</p>
+    <p><strong>LLM-as-Judge</strong>：用 LLM 评判 LLM 输出——构造评分 prompt 让强模型打分。可扩展（1000 条自动评）但有误差，必须先跟人工标注校准。Langfuse/Arize 都支持。</p>
+    <p><strong>落到我的项目（桥接）</strong>：prd-tools 的 Readiness Score 是 Eval Suite 轻量版（定义评分维度、自动打分、达标才放行）。<strong>端到端原型 prd2code-gen 已跑通完整 eval/auto-tune 五模块闭环</strong>——case-loader 加载黄金集 → llm-judge 五维独立评分 → scorer 计分 → gap-analyzer 定位失分 → pattern-detector 跨 case 提炼 pattern 反哺 prompt。做过 R01/R02 对照（54→68 分，量化 reference 知识库 +14 分）。</p>
+    <p class="hint">[loop·已优化·待复核] 念法：比喻钩子（凭感觉开车）→ 业务背景（20+人盲改风险）→ 凭感觉三硬伤 → 三层体系 → LLM-as-Judge → 落 prd-tools（Readiness）+ prd2code-gen（eval/auto-tune 五模块，54→68）。</p>
   </div>
 </div>
 
