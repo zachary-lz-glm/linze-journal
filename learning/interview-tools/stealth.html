@@ -2295,10 +2295,12 @@ function buildTreeOptimized(list) {
   <div class="card-head"><span class="tag ai">AI</span><div class="card-title">AI API 图片传参方式</div></div>
   <div class="core">Base64编码通过content的image类型传入，也可传URL</div>
   <div class="card-body">
-    <p><strong>两种方式</strong>：①Base64编码放入API请求content的image类型消息；②传图片URL让模型自行下载。</p>
-    <p><strong>Claude API</strong>：content数组中用<code>{"type":"image","source":{"type":"base64","media_type":"image/png","data":"..."}}</code>。</p>
-    <p><strong>OpenAI API</strong>：content数组中用<code>{"type":"image_url","image_url":{"url":"data:image/png;base64,..."}}</code>。</p>
-    <p><strong>选型</strong>：本地图片用Base64（无需额外网络请求）；在线图片用URL。大图注意token消耗——prd-tools将图片按每8张一批开并行子Agent分析。</p>
+    <p><strong>这题面试官想听的不是"会调 API"，是你知不知道多模态传参的两种形态和各家差异——能脱口说出 Claude 和 OpenAI 两种 JSON 结构，就比 90% 候选人完整。我把它整理成"一个本质 + 两种方式 + 两家差异 + 选型落地"，照念就能答好。</strong></p>
+    <p><strong>先甩一个本质</strong>：多模态请求里，文本和图片都塞进同一个 content 数组，靠 type 字段区分——text 类型放文字，image/image_url 类型放图片。图片本质就是一段结构化数据，不是单独的接口。</p>
+    <p><strong>两种传参方式</strong>：① <strong>Base64 内联</strong>——把图片编码成 base64 字符串直接塞进请求体，模型当场就能看到，不用再发第二次网络请求；② <strong>传图片 URL</strong>——只给一个链接，让模型自己去下载。本地图片（截图、用户上传）走 Base64，在线图片（CDN 上已有的）走 URL。</p>
+    <p><strong>两家 API 结构要能脱口而出（这是加分点）</strong>：<strong>Claude API</strong> 用 <code>{"type":"image","source":{"type":"base64","media_type":"image/png","data":"..."}}</code>——source 里拆 type/media_type/data 三段；<strong>OpenAI API</strong> 用 <code>{"type":"image_url","image_url":{"url":"data:image/png;base64,..."}}</code>——把 base64 前缀拼进 url 字段。两家的字段名不一样，面试时说出差异说明你真写过。</p>
+    <p><strong>选型 + 落到我的项目（桥接收口）</strong>：本地图片用 Base64（省一次网络往返），在线图片用 URL（请求体小）。大图要盯 token 消耗——一张高分辨率图能烧掉上千 token。prd-tools 里把图片<strong>按每 8 张一批开并行子 Agent 分析</strong>，就是控 token 又提速的工程化做法：批量化压住单次上下文膨胀，并行化把串行等待摊平。<strong>金句：多模态不是新接口，是 content 数组里多一种 type——会传文本就会传图片，差异只在两家的字段命名。</strong></p>
+    <p class="hint">[loop·已优化·待复核] 念法：钩子（不是考会调API，是考两种形态+各家差异，能脱口 JSON 结构就比 90% 强）→ 一个本质（文本图片同塞 content 数组，靠 type 区分）→ 两种方式（Base64 内联/传 URL，本地 vs 在线）→ 两家结构（Claude source 三段/OpenAI url 前缀，差异=真写过）→ 选型 + 落 prd-tools（8 张一批并行=控 token 又提速）→ 金句（不是新接口，是 content 多一种 type）。被问"大图怎么处理"→ token 消耗 + 批量并行。</p>
   </div>
 </div>
 
