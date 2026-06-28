@@ -3562,12 +3562,15 @@ function buildTreeOptimized(list) {
   <div class="card-head"><span class="tag ai">AI</span><div class="card-title">LoRA / QLoRA：轻量微调原理</div></div>
   <div class="core">冻结原模型，只训练低秩矩阵 A·B，参数量降 100x，QLoRA 再加 4bit 量化</div>
   <div class="card-body">
-    <p><strong>LoRA 原理</strong>（Low-Rank Adaptation）：原模型权重 W（d×d）冻结不动，旁路加一个低秩矩阵 ΔW = A·B（A 是 d×r，B 是 r×d，r 远小于 d，典型 r=8）。前向：x·(W + A·B) = x·W + x·A·B。只训练 A 和 B，参数量从 d² 降到 2dr（典型降 100-1000x）。</p>
-    <p><strong>LoRA 的额外优势（不只是省参数）</strong>：① <strong>显存大幅下降</strong>——Adam 优化器状态只占 LoRA 参数的内存。Llama-7B 全量微调要 80GB 显存，LoRA 只要 16GB（一张 4090 能跑）。② <strong>训练快</strong>——反向传播只过 LoRA 层，速度提升 2-3x。③ <strong>多任务切换</strong>——每个任务一个 LoRA adapter，推理时 swap 不重载 base model。④ <strong>无推理延迟</strong>——训练后可把 A·B 合并回 W，零成本部署。⑤ <strong>防灾难性遗忘</strong>——base 不动，原能力不丢。</p>
-    <p><strong>QLoRA = Quantized LoRA</strong>：base model 4-bit 量化（NF4 算法）+ LoRA 16-bit 训练。Llama-65B 单卡 48GB 可训。代价：训练略慢（10-20%）但显存降 4x。是个人/小团队训练大模型的事实标准。</p>
-    <p><strong>选型对比</strong>：① <strong>全量微调</strong>——效果最好但需要 8x H100 起步。② <strong>LoRA</strong>——主流选择，覆盖 80% 场景。③ <strong>QLoRA</strong>——硬件受限时。④ <strong>Prefix Tuning / P-Tuning</strong>——更轻量但效果略差，2024 年后边缘化。</p>
-    <p><strong>关键超参</strong>：① <strong>rank r</strong>——通常 8/16/64。简单任务 r=8 够，复杂任务 r=64+。② <strong>alpha α</strong>——LoRA 缩放系数，α/r 是有效学习率倍率。经验值 α=2r。③ <strong>target_modules</strong>——通常只挂 q_proj/v_proj，全挂（q/k/v/o_proj）效果更好但参数多。</p>
-    <p><strong>面试金句</strong>："LoRA 不只是省参数，更是工程范式——一张 4090 微调 Llama-7B、多任务 adapter 切换、无推理延迟部署、防灾难性遗忘。这些优势让 LoRA 成了 SFT 的事实标准。"</p>
+    <p><strong>这道题前端岗懂 LoRA 能聊 SFT（监督微调），加分点。核心一句话：LoRA 不只是省参数，是一套工程范式——一张 4090 微调 Llama-7B。</strong></p>
+    <p><strong>业务背景</strong>：要让大模型适配业务（特定领域/风格/格式），要么 RAG（外挂知识）要么微调（内化能力）。全量微调成本爆炸（8x H100 起步），LoRA 是轻量微调的事实标准。</p>
+    <p><strong>LoRA 原理（Low-Rank Adaptation）</strong>：原模型权重 W（d×d）冻结不动，旁路加低秩矩阵 ΔW = A·B（A 是 d×r，B 是 r×d，r 远小于 d，典型 r=8）。前向 x·(W+A·B)。只训练 A 和 B，参数量从 d² 降到 2dr（典型降 100-1000x）。</p>
+    <p><strong>LoRA 额外优势（不只是省参数，这是亮点）</strong>：① <strong>显存大降</strong>（Llama-7B 全量 80GB，LoRA 只要 16GB，一张 4090 能跑）；② <strong>训练快</strong>（反向只过 LoRA 层，提速 2-3x）；③ <strong>多任务切换</strong>（每任务一个 adapter，推理 swap 不重载 base）；④ <strong>无推理延迟</strong>（训练后 A·B 合并回 W，零成本部署）；⑤ <strong>防灾难性遗忘</strong>（base 不动原能力不丢）。</p>
+    <p><strong>QLoRA = Quantized LoRA</strong>：base model 4-bit 量化（NF4）+ LoRA 16-bit 训练。Llama-65B 单卡 48GB 可训。代价：训练略慢（10-20%）但显存降 4x。个人/小团队训练大模型的事实标准。</p>
+    <p><strong>选型对比</strong>：全量微调（效果最好但 8x H100 起步）/ LoRA（主流，覆盖 80%）/ QLoRA（硬件受限时）/ Prefix Tuning（更轻但效果略差，2024 后边缘化）。</p>
+    <p><strong>关键超参（被追问甩）</strong>：① rank r（通常 8/16/64，简单 r=8 够复杂 r=64+）；② alpha α（缩放系数，经验 α=2r）；③ target_modules（通常挂 q_proj/v_proj，全挂效果更好但参数多）。</p>
+    <p><strong>收口金句</strong>："LoRA 不只是省参数，更是工程范式——一张 4090 微调 Llama-7B、多任务 adapter 切换、无推理延迟部署、防灾难性遗忘。这让 LoRA 成了 SFT 事实标准。"</p>
+    <p class="hint">[loop·已优化·待复核] 念法：加分钩子（前端懂LoRA能聊SFT）→ 业务背景（微调vs RAG/全量贵）→ 原理（低秩A·B降100x）→ 额外五优势（亮点）→ QLoRA（4bit量化）→ 选型 → 关键超参（追问甩）→ 金句。</p>
   </div>
 </div>
 
