@@ -3725,7 +3725,7 @@ function buildTreeOptimized(list) {
     <p><strong>工程实现（被追问甩）</strong>：Claude Code 的 /loop 命令、Cron+Agent Skill、自建编排器（监控事件→触发 Agent→验证→反馈）、Devin/Cursor Background Agent 都是产品化案例。</p>
     <p><strong>落到我的项目（桥接）</strong>：prd-tools 的"自验证+自修复循环"就是 Loop Engineering 雏形——PRD→Plan→Code→Verify 失败自动注入错误重新生成。端到端原型 prd2code-gen 的 eval/auto-tune 闭环也是（跑完→llm-judge→失败 pattern 反哺 prompt）。我的 Claude Code Skills + Cron 周期触发也是 Loop Engineering 实践。</p>
     <p><strong>收口金句</strong>："Prompt Engineering 是写好一句话，Loop Engineering 是设计好一个系统。2026 年价值重心从'会调 AI'转向'能设计让 AI 自驱的循环'——这是 Boris Cherny'我不再写 prompt'的真正含义。"</p>
-    <p class="hint">[loop·已优化·待复核] 念法：Boris名言钩子（不再写prompt）→ 核心转变（用AI→设计系统让AI自驱）→ 四要素（目标/行动/验证/反馈）→ vs Prompt Eng → vs Agentic Workflow → 工程实现 → 落 prd-tools（自验证自修复+eval闭环+Cron触发）→ 金句。2026加分点。</p>
+    <p class="hint">[loop·已优化·已复核] 念法：Boris名言钩子（不再写prompt）→ 核心转变（用AI→设计系统让AI自驱）→ 四要素（目标/行动/验证/反馈）→ vs Prompt Eng → vs Agentic Workflow → 工程实现 → 落 prd-tools（自验证自修复+eval闭环+Cron触发）→ 金句。2026加分点。</p>
   </div>
 </div>
 
@@ -3740,7 +3740,7 @@ function buildTreeOptimized(list) {
     <p><strong>4.0 Loop Engineering（2026-）</strong>：自治循环系统。事件/定时器触发，人不在循环里，粒度持续性项目级任务，价值是"AI 替代自己"做持续工作。代表：Claude Code /loop、Cursor Background Agent、Devin Sleep Mode。本质"自驱系统"。<strong>角色 = loop 设计师</strong>。</p>
     <p><strong>什么时候选哪个（不是后面就更好，是组合用）</strong>：1.0 单文件小改动补全；2.0 重构/debug/设计讨论；3.0 明确任务边界（写测试、改 bug、生成 demo）；4.0 持续性监控、自动化运维、issue-driven 开发。</p>
     <p><strong>收口金句（落项目）</strong>："AI 协作四次跃迁——Copilot 补全、Cursor 对话、Claude Code Agent、Loop Engineering。我项目 4 个范式都在用：日常编码 Copilot、重构讨论 Cursor、PRD 蒸馏 Claude Code Agent、自验证自修复是 Loop。"</p>
-    <p class="hint">[loop·已优化·待复核] 念法：核心规律钩子（人退层、靠系统设计）→ 四时代快速过（补全/对话/Agent/Loop 各一句+角色）→ 选型（组合非替代）→ 金句落项目（4范式都在用）。</p>
+    <p class="hint">[loop·已优化·已复核] 念法：核心规律钩子（人退层、靠系统设计）→ 四时代快速过（补全/对话/Agent/Loop 各一句+角色）→ 选型（组合非替代）→ 金句落项目（4范式都在用）。</p>
   </div>
 </div>
 
@@ -3756,7 +3756,7 @@ function buildTreeOptimized(list) {
     <p><strong>防 Loopmaxxing 工程实践</strong>：① 设最大迭代（max_iter=5 典型）；② 成本预算（token+美元上限）；③ 质量阈值（达标提前退出）；④ 失败兜底（连续 N 次失败转人工）；⑤ 可观测性（每轮产出可追溯便于 debug）。</p>
     <p><strong>落到我的项目（桥接）</strong>：prd-tools 的"自验证+自修复"循环设了 max_iter=3 + Readiness 阈值 + 失败兜底（降级人工审核）。简单任务（PRD 转 Spec）不进 Loop，复杂任务（双路径生成+交叉验证）才进。</p>
     <p><strong>收口金句</strong>："Loop Engineering 不是'万物皆 Loop'。我的判断标准是四问：有明确成功条件吗？失败原因可观察吗？错误可注入吗？ROI 正吗？四问都 yes 才上 Loop，否则用确定性 Workflow 更稳。"</p>
-    <p class="hint">[loop·已优化·待复核] 念法：工程成熟度钩子（不盲从新概念）→ 什么是Loopmaxxing（4表现）→ 为什么反模式（成本/劣化/调试/认知）→ 该用四条（追问甩）→ 不该用4类 → 防Loopmaxxing实践 → 落prd-tools（max_iter=3+阈值+兜底）→ 四问金句。</p>
+    <p class="hint">[loop·已优化·已复核] 念法：工程成熟度钩子（不盲从新概念）→ 什么是Loopmaxxing（4表现）→ 为什么反模式（成本/劣化/调试/认知）→ 该用四条（追问甩）→ 不该用4类 → 防Loopmaxxing实践 → 落prd-tools（max_iter=3+阈值+兜底）→ 四问金句。</p>
   </div>
 </div>
 
@@ -3771,7 +3771,7 @@ function buildTreeOptimized(list) {
     <p><strong>典型场景</strong>：跨厂商协作（我的 Claude Agent 调同事的 GPT Agent）、专精分工（前端 Agent + 后端 Agent + 测试 Agent 各干各的）、异构系统互通（企业内 Salesforce、SAP、自研 Agent 联动）、多模型协作（贵模型规划 + 便宜模型执行）。当前生态：谷歌 SDK 已发 Python/JS 版，50+ 厂商参与，和 LangChain/AutoGen/CrewAI 集成中，业界共识是 A2A 和 MCP 共存。</p>
     <p><strong>落到我的项目（桥接）</strong>：prd-tools 现在是单 Agent + MCP 架构——一个 Claude 做编排、调一批 MCP 工具和 Skill。但如果哪天要拆成"PRD 分析 Agent + 代码生成 Agent + 验证 Agent"多 Agent 协作，我会选 A2A 而不是 AutoGen——因为 A2A 是跨框架标准协议，每个 Agent 框架独立选型也不影响互通，AutoGen 那套还绑在自家生态里。这也是 2026 年 Agent 互联方向我会重点跟的事。</p>
     <p><strong>面试金句收口</strong>："MCP 解决 Agent 调工具，A2A 解决 Agent 调 Agent。两者互补——一个 Agent 通常同时用 MCP 接工具生态、用 A2A 接其他 Agent。2026 年这两个协议是 Agent 互联的基础设施。"</p>
-    <p class="hint">[loop·已优化·待复核] 念法：钩子（A2A 不是 MCP 替代是互补，一句话区分调工具/调 Agent）→ 是什么（谷歌 2025、HTTP+JSON-RPC+SSE、agent.json 名片）→ 四概念（Card/Task/Artifact/Streaming，被追问展开）→ vs MCP 四维度（关系/粒度/角色/组合，这题核心）→ 场景+生态一句带 → 落 prd-tools（单 Agent+MCP，未来拆多 Agent 选 A2A 不选 AutoGen 因为跨框架）→ 金句收口。被问"MCP 能解决多 Agent 协作吗"→ 不能，MCP 是工具协议不是 Agent 间协议。</p>
+    <p class="hint">[loop·已优化·已复核] 念法：钩子（A2A 不是 MCP 替代是互补，一句话区分调工具/调 Agent）→ 是什么（谷歌 2025、HTTP+JSON-RPC+SSE、agent.json 名片）→ 四概念（Card/Task/Artifact/Streaming，被追问展开）→ vs MCP 四维度（关系/粒度/角色/组合，这题核心）→ 场景+生态一句带 → 落 prd-tools（单 Agent+MCP，未来拆多 Agent 选 A2A 不选 AutoGen 因为跨框架）→ 金句收口。被问"MCP 能解决多 Agent 协作吗"→ 不能，MCP 是工具协议不是 Agent 间协议。</p>
   </div>
 </div>
 
