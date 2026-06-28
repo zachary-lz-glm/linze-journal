@@ -1742,13 +1742,14 @@ function buildTreeOptimized(list) {
   <div class="card-head"><span class="tag ai">AI</span><div class="card-title">Agent vs Workflow 权威定义（Anthropic）</div></div>
   <div class="core">Workflow 是"人编排 LLM"（预定义代码路径），Agent 是"LLM 编排自己"（动态自主控制）—— 决策控制权的归属是核心区别</div>
   <div class="card-body">
-    <p>基于 Anthropic《Building Effective Agents》权威定义，被问"Agent 和 Workflow 啥区别"必答。这也是大厂面试官最爱挖的"概念清晰度"考点。</p>
-    <p><strong>Anthropic 原文定义</strong>：① <strong>Workflow</strong>——LLM 和工具通过<em>预定义的代码路径</em>进行编排，开发者主导控制权，执行确定、可预测、易调试；② <strong>Agent</strong>——LLM <em>动态指导自身的流程和工具使用</em>，模型自主掌控完成任务的方式，灵活但可预测性低。</p>
-    <p><strong>一句话记忆</strong>：Workflow 是"人编排 LLM"，Agent 是"LLM 编排自己"。本质区别是<strong>决策控制权归属</strong>——开发者 vs 模型。</p>
-    <p><strong>Anthropic 选型建议</strong>：① 任务明确步骤固定 → Workflow；② 任务目标明确但路径不确定 → Agent；③ <strong>"从 Workflow 起步，确认不够用再升级 Agent"</strong>——这是 Anthropic 自己的官方建议。</p>
-    <p><strong>项目定位校准（重要，避免被问爆）</strong>：prd-tools 团队推广版（11 步蒸馏）<strong>本质是 Workflow + Skills 编排</strong>——步骤、依赖、门禁都是预定义的；prd2code-gen 端到端原型也是 Workflow 框架，但<strong>自验证+自修复循环里有 Agent Loop</strong>——LLM 在 fail 时自主决定修复策略。诚实表述："Workflow 为主，关键节点引入 Agent Loop"。</p>
-    <p><strong>核心公式（Lilian Weng / OpenAI）</strong>：<strong>Agent = LLM（大脑）+ Planning（规划）+ Memory（记忆）+ Tool Use（工具）</strong>——四组件缺一不可。Workflow 不要求四组件完整，所以更轻。</p>
-    <p class="hint">被问"你这算 Agent 吗" → 主动承认是 Workflow + Skills，自修复环节有 Agent Loop。被问"为啥不用纯 Agent" → "Anthropic 建议 Workflow 优先，prd-tools 任务步骤明确，Workflow 更可预测可调试"。被问"Agent 本质是什么" → 翻核心公式。</p>
+    <p><strong>这道题面试官不是想听你背名词，是想看你概念清不清楚——会不会把 Agent 和 Workflow 混着用、会不会为了显高级硬说自己是 Agent。我有一个权威定义打底、一句金句记忆，再落到项目校准。</strong></p>
+    <p><strong>业务背景（为什么这题对我特别重要）</strong>：我做 prd-tools——把 PRD 转成开发计划喂给二十多人团队推广用。团队最怕的就是"过程不确定"，AI 今天输出这套明天输出那套，认知偏差一放大返工成本很高。所以我每一步都得想清楚"这一步控制权交给谁"，必须能用这套 Workflow vs Agent 的定义讲清楚自己项目的定位，否则面试官一追问"你这到底算 Agent 吗"就会被问爆。</p>
+    <p><strong>Anthropic 权威定义（先甩出处，显不是瞎说）</strong>：来自 Anthropic《Building Effective Agents》原文——① <strong>Workflow</strong> 是 LLM 和工具通过<em>预定义的代码路径</em>编排，开发者主导控制权，执行确定、可预测、易调试；② <strong>Agent</strong> 是 LLM <em>动态指导自身的流程和工具使用</em>，模型自主掌控完成任务的方式，灵活但可预测性低。</p>
+    <p><strong>一句金句记忆（这是答题的钩子）</strong>：Workflow 是"人编排 LLM"，Agent 是"LLM 编排自己"。本质区别就一个——<strong>决策控制权归谁</strong>，开发者还是模型。这一句能压住后面所有追问。</p>
+    <p><strong>Anthropic 官方选型建议（被问"该怎么选"就甩）</strong>：任务明确步骤固定 → Workflow；任务目标明确但路径不确定 → Agent。Anthropic 自己的建议是<strong>"从 Workflow 起步，确认不够用再升级 Agent"</strong>——别一上来就 Agent，那是初级坑。</p>
+    <p><strong>项目定位校准（最关键，避免被问爆）</strong>：我诚实说——prd-tools 团队推广版的 11 步蒸馏流水线<strong>本质是 Workflow + Skills 编排</strong>，步骤、依赖、门禁全部预定义，开发者主导控制权；prd2code-gen 端到端原型也是 Workflow 框架，但<strong>自验证 + 自修复循环里嵌了一段 Agent Loop</strong>——代码跑挂了才让 LLM 自主决定怎么修。一句话定位："Workflow 为主，关键节点引入 Agent Loop"。</p>
+    <p><strong>核心公式（被问"Agent 本质是什么"翻这个）</strong>：来自 Lilian Weng / OpenAI 的经典公式——<strong>Agent = LLM（大脑）+ Planning（规划）+ Memory（记忆）+ Tool Use（工具）</strong>，四组件缺一不可。Workflow 不要求四组件完整，所以更轻、更适合步骤明确的场景。</p>
+    <p class="hint">[loop·已优化·待复核] 念法：钩子（不是背名词，是考概念清晰度）→ 业务背景（prd-tools 喂 20+ 人、最怕过程不确定、必须能讲清自己定位）→ Anthropic 权威定义（出处+Workflow/Agent 各一句）→ 金句记忆（控制权归谁）→ 官方选型建议（从 Workflow 起步）→ 项目校准（诚实说 11 步是 Workflow，自修复段是 Agent Loop）→ 核心公式（四组件）。被问"你这算 Agent 吗"→ 主动承认是 Workflow + Skills，自修复环节有 Agent Loop；被问"为啥不用纯 Agent"→ "Anthropic 建议 Workflow 优先，prd-tools 任务步骤明确，Workflow 更可预测可调试"；被问"Agent 本质是什么"→ 翻核心公式。</p>
   </div>
 </div>
 
