@@ -1756,12 +1756,13 @@ function buildTreeOptimized(list) {
   <div class="card-head"><span class="tag ai">AI</span><div class="card-title">Agent Memory 机制：短期 vs 长期</div></div>
   <div class="core">短期靠 Context Window（Chat History），长期靠 RAG + 向量数据库；进阶三层：工作/情景/语义记忆</div>
   <div class="card-body">
-    <p>应对"Agent 记忆怎么设计"的高频追问。Agent 核心公式：<strong>Agent = LLM + Planning + Memory + Tool Use</strong>，Memory 是四大组件之一。</p>
-    <p><strong>短期记忆（Short-Term）</strong>：① 载体——Context Window；② 内容——当前会话 Chat History、工具调用中间结果、当前任务即时状态；③ 限制——受 Token 上限约束，会话结束即丢失；④ 管理——滑动窗口截断、摘要压缩（Summarization）。</p>
-    <p><strong>长期记忆（Long-Term）</strong>：① 核心——RAG（检索增强生成）；② 流程——历史经验/知识编码为 Embedding 存入向量数据库（Chroma/Pinecone/Milvus），执行任务前用 query 做相似度检索，召回相关记忆注入 Prompt；③ <strong>写入策略</strong>——不是所有对话都值得存，需要设计<strong>重要性评分</strong>决定哪些记忆长期保留。</p>
-    <p><strong>进阶三层（类人记忆）</strong>：① <strong>工作记忆</strong>（Working）≈ 短期记忆；② <strong>情景记忆</strong>（Episodic）= 具体事件经历（如"上次用户让我写报告失败了"）；③ <strong>语义记忆</strong>（Semantic）= 抽象知识/事实。</p>
-    <p><strong>项目桥接</strong>：prd-tools 的<strong>Reference 六文件 SSOT</strong> 本质是<strong>长期语义记忆</strong>——把项目知识蒸馏成可检索的事实库；每次蒸馏的产物（Spec/Plan）是<strong>情景记忆</strong>——具体需求的执行历史。eval/auto-tune 反哺就是<strong>写入策略</strong>——只把高评分的执行模式沉淀回知识库。</p>
-    <p class="hint">被问"Agent 记忆怎么设计" → 翻这张卡。被问"你的工作流有记忆吗" → "Reference 六文件是长期语义记忆，蒸馏产物是情景记忆，eval 反哺是写入策略——三层都有"。被问"上下文窗口炸了怎么办" → 滑动窗口+摘要压缩+长期记忆外置到 RAG。</p>
+    <p><strong>这道题被问"Agent 记忆怎么设计"，我先把一句话定调甩出来：Agent 的记忆不是单一的东西，是分层的——短期靠上下文窗口、长期靠检索，进阶还能类比人的三种记忆。讲清这三层比堆"RAG + 向量库"的名词更能体现深度。</strong></p>
+    <p><strong>先把框架立住</strong>：Agent 的核心公式是 <strong>Agent = LLM（大脑）+ Planning（规划）+ Memory（记忆）+ Tool Use（工具）</strong>，Memory 是四大组件之一，不能缺。没有记忆，Agent 每一步都从零开始，跟普通 Chat 没区别。</p>
+    <p><strong>第一层·短期记忆</strong>：载体就是 Context Window，里面装当前会话的 Chat History、工具调用的中间结果、任务的即时状态。两个特点——一是受 Token 上限约束，会话一长就被截断；二是会话结束即丢失。所以管理靠两手：滑动窗口截断旧的、摘要压缩把长对话压成一段。</p>
+    <p><strong>第二层·长期记忆，核心是 RAG</strong>：流程是历史经验或知识先编码成 Embedding 存进向量数据库（Chroma、Pinecone、Milvus 这些），执行任务前用 query 做相似度检索，把召回的相关记忆拼进 Prompt。这里有个容易被追问的点——<strong>写入策略</strong>：不是所有对话都值得存，得设计重要性评分决定哪些长期保留，否则向量库会被垃圾记忆污染。</p>
+    <p><strong>第三层·进阶，类比人的三种记忆，这是加分项</strong>：① <strong>工作记忆</strong>≈ 短期记忆；② <strong>情景记忆</strong>（Episodic）= 具体事件经历，比如"上次这个需求让我写报告失败了"；③ <strong>语义记忆</strong>（Semantic）= 抽象知识或事实。能讲出这三层，面试官就知道你不是背的。</p>
+    <p><strong>收口落到我的项目</strong>：prd-tools 这套三层我都做了——<strong>Reference 六文件 SSOT 是长期语义记忆</strong>，把项目知识蒸馏成可检索的事实库；每次蒸馏产出的 Spec/Plan 是<strong>情景记忆</strong>，记录具体需求的执行历史；eval/auto-tune 的反哺就是<strong>写入策略</strong>，只把高评分的执行模式沉淀回知识库。金句："Reference 是语义记忆、蒸馏是情景记忆、eval 反哺是写入策略——三层一个不落。"</p>
+    <p class="hint">[loop·已优化·待复核] 念法：先甩定调金句（记忆不是单一的是分层的）→ 立框架（Memory 是核心公式四组件之一）→ 短期（Context Window+滑动窗口/摘要）→ 长期（RAG+向量库+写入策略亮点）→ 进阶三层（工作/情景/语义，加分项）→ 收口 prd-tools（Reference=语义/蒸馏=情景/eval=写入策略，三层都做了）。被问"上下文窗口炸了怎么办" → 滑动窗口+摘要压缩+长期记忆外置到 RAG。</p>
   </div>
 </div>
 
