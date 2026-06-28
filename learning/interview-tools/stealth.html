@@ -3510,16 +3510,15 @@ function buildTreeOptimized(list) {
   <div class="card-head"><span class="tag ai">AI</span><div class="card-title">RAG 向量数据库怎么选？</div></div>
   <div class="core">小规模 Chroma/pgvector，大规模 Milvus，托管图省事 Pinecone——核心是 ANN 索引</div>
   <div class="card-body">
-    <p><strong>核心能力：ANN 近似最近邻</strong>。不精确找最近的（O(N) 太慢），用索引结构快速找"足够近"的。主流两类索引：① <strong>HNSW</strong>（分层小世界图）——查询快、召回高，但内存占用大，是当前默认选择。② <strong>IVF</strong>（倒排聚类）——先聚类再在类内搜，内存省但查询稍慢，适合超大规模。</p>
-    <p><strong>选型对比（按场景）</strong>：</p>
-    <p>· <strong>Milvus</strong>：分布式、可水平扩展、支持十亿级向量。大规模生产首选，但部署运维重（依赖 etcd/MinIO）。</p>
-    <p>· <strong>Pinecone</strong>：全托管 SaaS，零运维，贵。适合不想养 DBA 的团队。</p>
-    <p>· <strong>Chroma</strong>：轻量本地、Python 友好。原型验证和中小规模首选。</p>
-    <p>· <strong>pgvector</strong>：PostgreSQL 插件，复用现有 PG 的运维/事务/SQL 生态。已有 PG 栈的团队首选，向量+结构化混合查询方便。</p>
-    <p>· <strong>Qdrant</strong>：Rust 写、过滤能力强（先按 metadata 过滤再向量检索）。元数据过滤密集的场景首选。</p>
-    <p><strong>选型三问</strong>：① 数据规模（百万级 Chroma/pgvector 够，亿级上 Milvus）；② 要不要自己运维（省事选 Pinecone，已有 PG 用 pgvector）；③ 过滤多不多（多就 Qdrant）。</p>
-    <p><strong>项目桥接</strong>：prd-tools 没用向量库——用倒排索引 + BM25 替代。代码实体是离散符号（函数名/字段名/路径），倒排精确命中比向量语义近似更快更准，还能 grep 调试。只有换成自然语言知识库（PRD 文档/用户问答）时，向量库才有价值。</p>
-    <p class="hint">补盲卡。被问"向量库怎么选"答规模（Milvus 大/Chroma 小）+ 运维（Pinecone 托管/pgvector 复用）+ 过滤（Qdrant）三维度。</p>
+    <p><strong>钩子先甩</strong>：被问"向量库怎么选"，别上来就背产品名——先点破本质：向量库的命门是<strong>ANN 近似最近邻检索</strong>（不是精确找最近的，O(N) 太慢，用索引结构快速找"足够近"的），选型本质是在"召回精度、速度、运维成本"三者间做取舍。把这句立住，后面所有产品对比都是这句话的展开。</p>
+    <p><strong>核心能力先讲透（被追问索引原理再展开）</strong>：主流两类索引——① <strong>HNSW</strong>（分层小世界图），查询快、召回高，但吃内存，是当前默认选择；② <strong>IVF</strong>（倒排聚类），先聚类再在类内搜，内存省但查询稍慢，适合超大规模。这一句能挡住"你懂不懂底层"的追问。</p>
+    <p><strong>选型分三个维度，顺着业务约束走（这是答题骨架）</strong>：</p>
+    <p>· <strong>第一看数据规模</strong>：百万级 Chroma、pgvector 就够；亿级、要水平扩展，上 Milvus（分布式、支持十亿级，但部署运维重，依赖 etcd/MinIO）。</p>
+    <p>· <strong>第二看要不要自己运维</strong>：想零运维、不养 DBA，选 Pinecone（全托管 SaaS，贵但省心）；已经有 PG 技术栈，选 pgvector（PG 插件，复用现成运维/事务/SQL 生态，向量+结构化混合查询方便）。</p>
+    <p>· <strong>第三看过滤多不多</strong>：元数据过滤密集（先按 metadata 过滤再向量检索），选 Qdrant（Rust 写、过滤能力强）；小规模原型验证，选 Chroma（轻量本地、Python 友好）。</p>
+    <p><strong>项目桥接（这道题真正的加分项）</strong>：我会主动说——prd-tools <strong>没用向量库，用倒排索引 + BM25 替代</strong>。原因：代码实体是离散符号（函数名/字段名/路径），倒排精确命中比向量语义近似更快更准，还能 grep 调试。只有在换成自然语言知识库（PRD 文档、用户问答）时，向量库才有价值。这一句能体现我"不是技术堆砌，是按场景取舍"的工程判断。</p>
+    <p><strong>收口金句</strong>：选型不是选最好，是选最匹配——规模决定能不能扛、运维决定养不养得起、过滤决定准不准，三问答完库就定了。</p>
+    <p class="hint">[loop·已优化·待复核] 念法：钩子（别背产品名，先点破 ANN 本质是召回/速度/运维三者取舍）→ 索引两类（HNSW 默认吃内存/IVF 省内存超大规模）→ 选型三维度（规模 Milvus 大 Chroma 小/运维 Pinecone 托管 pgvector 复用/过滤 Qdrant）→ 项目桥接（prd-tools 没用向量库用倒排+BM25，代码是离散符号精确命中更快，体现场景取舍）→ 金句收口（选型是按场景匹配不是选最好）。被问"你用过哪个"主动甩 prd-tools 倒排+BM25 的真实决策。</p>
   </div>
 </div>
 
