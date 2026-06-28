@@ -3607,13 +3607,14 @@ function buildTreeOptimized(list) {
   <div class="card-head"><span class="tag ai">AI</span><div class="card-title">从 Prompt 到 Loop：四次范式跃迁</div></div>
   <div class="core">补全(2020)→对话(2022)→Agent(2024)→Loop(2026)，每次跃迁人的角色都退一层</div>
   <div class="card-body">
-    <p><strong>1.0 补全时代（2020-2021）</strong>：GitHub Copilot 为代表。AI 在 IDE 里补全下一行代码。特征：① <strong>触发方式</strong>——开发者打字时被动触发。② <strong>粒度</strong>——单行/小函数。③ <strong>价值</strong>——减少打字量。④ <strong>代表工具</strong>——Copilot、CodeWhisperer、Tabnine。本质是"高级语法糖"。</p>
-    <p><strong>2.0 对话/增强开发（2022-2023）</strong>：Cursor、ChatGPT 为代表。AI 参与代码讨论和重构。特征：① <strong>触发方式</strong>——开发者主动 chat。② <strong>粒度</strong>——整个文件/函数。③ <strong>价值</strong>——辅助思考、重构、debug。④ <strong>代表工具</strong>——Cursor、GitHub Copilot Chat、JetBrains AI。本质是"配对编程"。</p>
-    <p><strong>3.0 Agent 化执行（2024-2025）</strong>：Claude Code、OpenAI Codex 为代表。AI 自主完成多步骤任务。特征：① <strong>触发方式</strong>——人给 prompt，Agent 自主规划执行。② <strong>粒度</strong>——跨文件、跨模块、跨工具。③ <strong>价值</strong>——任务级自动化。④ <strong>代表工具</strong>——Claude Code、Codex、Devin、OpenHands。本质是"任务外包"。</p>
-    <p><strong>4.0 Loop Engineering（2026-）</strong>：自治循环系统。特征：① <strong>触发方式</strong>——事件/定时器触发，人不在循环里。② <strong>粒度</strong>——持续性、项目级任务。③ <strong>价值</strong>——"AI 替代自己"，工程师做系统设计而非操作。④ <strong>代表工具</strong>——Claude Code /loop、Cursor Background Agent、Devin Sleep Mode。本质是"自驱系统"。</p>
-    <p><strong>工程师角色变化</strong>：1.0 时代 = "打字员"；2.0 时代 = "对话者"；3.0 时代 = "prompt 工程师"；4.0 时代 = "loop 设计师"。每次跃迁，工程师的手离代码远一层，离系统设计近一层。</p>
-    <p><strong>什么时候选哪个范式</strong>：① 1.0 适合：单文件小改动、补全常规代码。② 2.0 适合：重构、debug、设计讨论。③ 3.0 适合：明确任务边界（写测试、改 bug、生成 demo）。④ 4.0 适合：持续性监控、自动化运维、issue-driven 开发。不是后面的就更好——是组合使用。</p>
-    <p><strong>面试金句</strong>："AI 协作的四次跃迁——Copilot 补全、Cursor 对话、Claude Code Agent、Loop Engineering。我项目里 4 个范式都在用：日常编码 Copilot、重构讨论 Cursor、PRD 蒸馏 Claude Code Agent、自验证自修复是 Loop。"</p>
+    <p><strong>这道题讲 AI 协作的四次范式跃迁——核心规律：每次跃迁，人的手离代码远一层，离系统设计近一层。</strong></p>
+    <p><strong>1.0 补全时代（2020-2021）</strong>：GitHub Copilot 代表。AI 补全下一行，打字时被动触发，粒度单行/小函数，价值是减少打字量。本质"高级语法糖"。<strong>工程师角色 = 打字员</strong>。</p>
+    <p><strong>2.0 对话/增强开发（2022-2023）</strong>：Cursor、ChatGPT 代表。开发者主动 chat，AI 参与代码讨论和重构，粒度整个文件/函数，价值辅助思考/debug。本质"配对编程"。<strong>角色 = 对话者</strong>。</p>
+    <p><strong>3.0 Agent 化执行（2024-2025）</strong>：Claude Code、Codex 代表。人给 prompt，Agent 自主规划执行多步骤任务，粒度跨文件跨模块，价值任务级自动化。本质"任务外包"。<strong>角色 = prompt 工程师</strong>。</p>
+    <p><strong>4.0 Loop Engineering（2026-）</strong>：自治循环系统。事件/定时器触发，人不在循环里，粒度持续性项目级任务，价值是"AI 替代自己"做持续工作。代表：Claude Code /loop、Cursor Background Agent、Devin Sleep Mode。本质"自驱系统"。<strong>角色 = loop 设计师</strong>。</p>
+    <p><strong>什么时候选哪个（不是后面就更好，是组合用）</strong>：1.0 单文件小改动补全；2.0 重构/debug/设计讨论；3.0 明确任务边界（写测试、改 bug、生成 demo）；4.0 持续性监控、自动化运维、issue-driven 开发。</p>
+    <p><strong>收口金句（落项目）</strong>："AI 协作四次跃迁——Copilot 补全、Cursor 对话、Claude Code Agent、Loop Engineering。我项目 4 个范式都在用：日常编码 Copilot、重构讨论 Cursor、PRD 蒸馏 Claude Code Agent、自验证自修复是 Loop。"</p>
+    <p class="hint">[loop·已优化·待复核] 念法：核心规律钩子（人退层、靠系统设计）→ 四时代快速过（补全/对话/Agent/Loop 各一句+角色）→ 选型（组合非替代）→ 金句落项目（4范式都在用）。</p>
   </div>
 </div>
 
