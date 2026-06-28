@@ -3446,11 +3446,13 @@ function buildTreeOptimized(list) {
   <div class="card-head"><span class="tag ai">AI</span><div class="card-title">RAG Chunking：文档怎么切才不丢语义</div></div>
   <div class="core">固定大小最糙、按语义分段中规中矩、按文档结构（章节/段落）最准</div>
   <div class="card-body">
-    <p><strong>三种切分策略</strong>：① <strong>固定大小</strong>（Fixed-Size）——按 token 数硬切（如每 512 token 一块），简单但可能切断句子。适合快速 demo。② <strong>按语义分段</strong>（Semantic）——基于句子/段落边界切，保留完整语义单元。主流方案。③ <strong>按文档结构</strong>（Structural）——按 Markdown 标题、HTML 标签、PDF 段落切，最精准但依赖文档格式。</p>
-    <p><strong>块大小选择</strong>：太小（128-）召回精准但上下文不足；太大（1024+）上下文足但召回噪声多。主流 256-512 token，长文档场景可以到 1024。Embedding 模型本身也有 max token 限制（OpenAI ada-002 是 8192，BGE-large-zh 是 512）。</p>
-    <p><strong>语义切断的工程手段</strong>：① <strong>重叠窗口</strong>（Overlap）——相邻块重叠 50-100 token，防止边界信息丢失。② <strong>句号/换行优先</strong>——遇到。！？等终结符就切，避免切断句子。③ <strong>层级切分</strong>——先切大块再切小块，检索时父子块一起返回（Parent-Child Chunking）。</p>
-    <p><strong>项目桥接</strong>：prd-tools 没用向量 Chunking，但原理相通——Reference 六文件的"每个文件只负责一个领域"就是结构化切分；BM25 检索的粒度是文件级而非段落级，因为 PRD 改动通常以模块为单位。</p>
-    <p><strong>面试金句</strong>："Chunking 决定 RAG 的上限——切得不好检索再强也救不回来。我的判断标准是看文档结构：结构化文档（PRD、API 文档）按结构切，自由文本（用户输入、客服记录）按语义切，再加重叠窗口兜底。"</p>
+    <p><strong>这道题先甩一句定调——Chunking 决定 RAG 的上限，切得不好检索再强也救不回来。所以这道题答得好不好，不在背几个策略，而在能不能讲清"怎么根据文档选切法"。</strong></p>
+    <p><strong>先讲三种切分策略，从糙到精</strong>：① <strong>固定大小</strong>（Fixed-Size）——按 token 数硬切（比如每 512 token 一块），简单粗暴但可能把一句话切两半，只适合快速 demo。② <strong>按语义分段</strong>（Semantic）——基于句子、段落边界切，保留完整语义单元，是主流方案。③ <strong>按文档结构</strong>（Structural）——按 Markdown 标题、HTML 标签、PDF 段落切，最精准但依赖文档格式规整。</p>
+    <p><strong>块大小有个取舍（这是面试官爱追问的）</strong>：太小（128 以下）召回精准但上下文不足，模型看不到全貌；太大（1024 以上）上下文足但召回噪声多，检索把不相关的也带进来。主流 256-512 token，长文档可以到 1024。还有个容易漏的硬约束——Embedding 模型本身有 max token 限制（OpenAI ada-002 是 8192，BGE-large-zh 只有 512），块再大也塞不进去。</p>
+    <p><strong>三个工程手段防止"切到一半丢语义"</strong>：① <strong>重叠窗口</strong>（Overlap）——相邻块重叠 50-100 token，边界信息两边都留一份；② <strong>句号/换行优先</strong>——遇到句号、感叹号、问号、换行就切，绝不把句子拦腰截断；③ <strong>层级切分</strong>——先切大块再切小块，检索时父子块一起返回（Parent-Child Chunking），既精准又上下文足。</p>
+    <p><strong>落到我的项目（关键桥接，体现不是纸上谈兵）</strong>：prd-tools 没用向量 Chunking，但原理相通——Reference 六文件"每个文件只负责一个领域"就是结构化切分；BM25 检索粒度是文件级而非段落级，因为 PRD 改动通常以模块为单位，按模块切刚好对齐真实改动边界。</p>
+    <p><strong>收口金句</strong>："Chunking 决定 RAG 的上限——切得不好检索再强也救不回来。我的判断标准是看文档结构：结构化文档（PRD、API 文档）按结构切，自由文本（用户输入、客服记录）按语义切，再加重叠窗口兜底。"</p>
+    <p class="hint">[loop·已优化·待复核] 念法：定调金句（Chunking决定上限）→ 三策略从糙到精（固定/语义/结构）→ 块大小取舍（256-512主流+Embedding硬约束）→ 三工程手段（重叠窗口/句号优先/层级切分）→ 落 prd-tools（Reference六文件=结构化切分，文件级检索对齐模块边界）→ 金句收口。被问"块多大合适"→ 看 Embedding 模型 max token + 文档类型。</p>
   </div>
 </div>
 
