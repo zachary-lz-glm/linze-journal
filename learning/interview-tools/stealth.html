@@ -3532,12 +3532,16 @@ function buildTreeOptimized(list) {
   <div class="card-head"><span class="tag ai">AI</span><div class="card-title">温度 / Top-P / Top-K 怎么调？</div></div>
   <div class="core">温度控发散、Top-P 控累计概率、Top-K 控候选数；Agent 默认 T=0.3 P=0.9</div>
   <div class="card-body">
-    <p><strong>三个参数的本质</strong>：① <strong>温度（T）</strong>——logits 除以 T 再 softmax。T<1 锐化分布（更确定）；T>1 平滑分布（更发散）；T=0 退化成贪心。② <strong>Top-K</strong>——只保留 logits 最大的 K 个候选，其他设 -∞。OpenAI 早期主流。③ <strong>Top-P</strong>（nucleus sampling）——按概率从大到小累加，到 P 停止，只保留这些候选。自适应（概率集中的时候候选少，分散时候选多），现代主流。</p>
-    <p><strong>各场景最佳值</strong>：① <strong>代码生成/Agent</strong>——T=0.2-0.3，Top-P=0.9（要稳定）。② <strong>客服/知识问答</strong>——T=0.3-0.5，Top-P=0.85（小范围创新）。③ <strong>创意写作/营销文案</strong>——T=0.7-1.0，Top-P=0.95（鼓励发散）。④ <strong>数据抽取/JSON 输出</strong>——T=0，Top-P=1（最确定）。⑤ <strong>多轮对话</strong>——T=0.6，Top-P=0.9（平衡一致性和生动）。</p>
-    <p><strong>组合策略</strong>：① Top-P + Temperature 是现代主流（OpenAI/Claude/通义默认），Top-K 退居二线。② Top-P=1 + Temperature=T 等价于纯温度采样。③ Top-P=0 等价于贪心。④ Top-K=1 等价于贪心。</p>
-    <p><strong>项目桥接</strong>：prd-tools 的蒸馏任务用 T=0.2 + Top-P=0.95——既要稳定（每次跑出近似的 Spec/Plan）又要一点点发散（处理 PRD 用词差异）。Evals 评测时用 T=0 保证可复现。</p>
-    <p><strong>常见误区</strong>：① "调高温度让模型更聪明"——错，温度只影响随机性不影响能力。② "Top-K 越大越多样"——错，K 太大反而引入噪声。③ "Agent 必须用 T=0"——错，T=0 会让 Agent 陷入循环（同样输入同样输出，无法跳出）。</p>
-    <p><strong>面试金句</strong>："温度控方差、Top-P 控范围、Top-K 控数量——三个参数叠加控制采样的'发散-确定'光谱。Agent 我默认 T=0.3 P=0.9，既稳定又能跳出死循环。"</p>
+    <p><strong>这道题先甩三个参数的定位：温度控方差、Top-P 控范围、Top-K 控数量——叠加控制采样的"发散-确定"光谱。调对参数直接影响输出稳定性和成本。</strong></p>
+    <p><strong>业务背景</strong>：AI 应用调参很关键——代码生成要稳定（低温度），创意文案要发散（高温度），调错要么飘忽要么死板。而且 Agent 用 T=0 会陷入死循环（同样输入同样输出无法跳出），这是坑。</p>
+    <p><strong>三个参数的本质</strong>：① <strong>温度（T）</strong>——logits 除以 T 再 softmax。T<1 锐化分布（更确定），T>1 平滑（更发散），T=0 退化成贪心。② <strong>Top-K</strong>——只保留 logits 最大的 K 个候选，其他设 -∞（OpenAI 早期主流）。③ <strong>Top-P</strong>（nucleus sampling）——按概率从大到小累加到 P 停止。<strong>自适应</strong>（概率集中候选少、分散候选多），现代主流。</p>
+    <p><strong>各场景最佳值（背下来直接用）</strong>：① <strong>代码/Agent</strong>——T=0.2-0.3, Top-P=0.9（要稳定）；② <strong>客服/问答</strong>——T=0.3-0.5, Top-P=0.85（小创新）；③ <strong>创意写作</strong>——T=0.7-1.0, Top-P=0.95（鼓励发散）；④ <strong>数据抽取/JSON</strong>——T=0, Top-P=1（最确定）；⑤ <strong>多轮对话</strong>——T=0.6, Top-P=0.9（平衡一致和生动）。</p>
+    <p><strong>组合策略</strong>：Top-P + Temperature 是现代主流（OpenAI/Claude/通义默认），Top-K 退二线。Top-P=1+T 等价纯温度采样；Top-P=0 或 Top-K=1 等价贪心。</p>
+    <p><strong>落到我的项目（桥接）</strong>：prd-tools 蒸馏用 T=0.2 + Top-P=0.95——既要稳定（每次跑出近似 Spec/Plan，一致性 40→85%）又要一点发散（处理 PRD 用词差异）。Evals 评测用 T=0 保证可复现。</p>
+    <p><strong>常见误区（被追问甩）</strong>：① "调高温度让模型更聪明"——错，温度只影响随机性不影响能力；② "Top-K 越大越多样"——错，K 太大引入噪声；③ "Agent 必须 T=0"——错，T=0 会让 Agent 陷入循环。</p>
+    <p><strong>收口金句</strong>："温度控方差、Top-P 控范围、Top-K 控数量。Agent 我默认 T=0.3 P=0.9，既稳定又能跳出死循环。"</p>
+    <p class="hint">[loop·已优化·待复核] 念法：三参数定位钩子（控方差/范围/数量）→ 业务背景（调参影响稳定性，Agent T=0死循环）→ 三参数本质 → 各场景最佳值（背）→ 组合策略 → 落 prd-tools（T=0.2/P=0.95一致性40→85%）→ 常见误区 → 金句。</p>
+  </div>
   </div>
 </div>
 
