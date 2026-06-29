@@ -1928,6 +1928,66 @@ function buildTreeOptimized(list) {
   </div>
 </div>
 
+<div class="card" data-c="ai" data-kw="Agent Loop 主循环 ReAct Read Think Act Observe stop_reason tool_use tool_result 配对 end_turn harness 单次调用 区别 Claude Code 怎么跑">
+  <div class="card-head"><span class="tag ai">G7</span><div class="card-title">Agent Loop 主循环：Claude Code 怎么一步步干活？</div></div>
+  <div class="core">Read→Think→Act→Observe 的 ReAct 循环；停止靠 stop_reason；tool_use/tool_result 必须配对，是模型决定停不是开发者写 if</div>
+  <div class="card-body">
+    <p><strong>这题字节一面问"你说用过 Claude Code，那它内部到底是个什么循环？跟直接调一次 API 啥区别？"——很多人卡在"它就是不停调模型"。具体怎么停、怎么知道要不要调工具、消息怎么拼，要讲清五件事：ReAct 范式、一次 Loop 四步、停止条件、工具配对、和单次调用的本质区别。</strong></p>
+    <p><strong>第一·ReAct 范式</strong>：Thought→Action→Observation，模型边推理边调工具，每轮把工具结果塞回上下文继续推理。区别于 CoT 纯思维链（只推理不行动）。ReAct 论文 2022 年 Yao 提出，是当前主流 Agent 范式——Claude Code、Cursor Composer、AutoGPT 都是它的工程化变体。</p>
+    <p><strong>第二·一次 Loop 的四步</strong>：① 模型读 system prompt + tools schema + messages（对话历史）；② 模型输出（可能是文本回复，可能是 tool_use 调用）；③ 如果是 tool_use，harness 执行工具拿到 tool_result；④ 把 tool_result 拼回 messages，进入下一轮 Loop。</p>
+    <p><strong>第三·停止条件 stop_reason</strong>：模型自己说"我没工具要调了"→ <code>stop_reason: end_turn</code> → 循环退出。其他取值：<code>tool_use</code>（要继续调）、<code>max_tokens</code>（超长截断）、<code>stop_sequence</code>（命中停止词）。<strong>关键点：是模型决定停，不是开发者写 if 判断</strong>——这点和传统脚本天差地别。</p>
+    <p><strong>第四·tool_use / tool_result 必须配对</strong>：Anthropic API 强制要求——上一轮 messages 里有 tool_use block，下一轮必须给对应 tool_result block，否则 422 报错。这是新手最容易踩的坑，自己拼 messages 容易漏。<strong>harness 框架（Agent SDK / Claude Code）的价值之一就是把这套配对帮你管好</strong>。</p>
+    <p><strong>第五·和直接调 API 的本质区别</strong>：单次 API 是一问一答（无状态）；Agent Loop 是 harness 包裹的多轮自主循环（有状态、有工具、有停止判断）。<strong>金句：API 是"算一次"，Loop 是"算到任务完成"——差的不是模型，是外层那层 harness 控制循环</strong>。</p>
+    <p><strong>落到我的项目</strong>：prd2code-gen 端到端原型里那段"自验证 + 自修复循环"就是手写的 Agent Loop——跑代码→读 stderr→判断错→调修复工具→重跑，循环到通过或达上限。当时没用 Claude Agent SDK 是想自己摸清 Loop 边界，做完才理解 SDK 帮你封装的就是这套配对 + 停止 + 重试逻辑。</p>
+    <p class="hint">[loop·已优化·已复核] 念法：钩子（字节一面"内部什么循环"）→ ReAct 范式（Thought/Action/Observation，区别 CoT，2022 Yao）→ 一次 Loop 四步（读/输出/执行/拼回）→ 停止条件（stop_reason，模型决定停不是 if 判断）→ tool_use/tool_result 配对（422 新手坑，harness 帮你管）→ 和 API 区别（金句：API 算一次，Loop 算到完成，差在外层 harness）。落 prd2code-gen（自修复段是手写 Loop）。被问"和直接调 API 区别"→ 甩金句。</p>
+  </div>
+</div>
+
+<div class="card" data-c="ai" data-kw="Tool Use 全流程 Function Calling 区别 tools schema input_schema tool_use tool_result 并行 forced tool_use 强制工具 OpenAI Anthropic JSON Schema">
+  <div class="card-head"><span class="tag ai">G8</span><div class="card-title">Tool Use 全流程：和 Function Calling 区别在哪？</div></div>
+  <div class="core">本质同范式（model-as-tool-caller），Anthropic 强 schema + 强制配对 + 原生并行是工程亮点；不是 FC 换名字</div>
+  <div class="card-body">
+    <p><strong>这题腾讯二面问"你说 Cursor 调工具，那 Function Calling 和 Tool Use 到底啥区别？是不是一个东西换了名字？"——陷阱是答成"一样"或"FC 是 OpenAI 的、TU 是 Anthropic 的"就完了。要讲清三层：协议演进、API 设计、工程能力差异。</strong></p>
+    <p><strong>第一·协议演进</strong>：OpenAI 2023 年先推 Function Calling（函数名 + 参数 JSON 字符串），Anthropic 同期推 Tool Use。2024 年两家都升级——OpenAI 把 FC 整合进 Tools API，Anthropic 增强 TU（支持并行、forced tool use）。<strong>两者本质都是 model-as-tool-caller 范式</strong>，不是不同东西，是同一思想的不同实现。</p>
+    <p><strong>第二·Anthropic Tool Use 三件套</strong>：① <code>tools</code> 参数——声明工具的 name + <code>input_schema</code>（JSON Schema）+ description；② 模型响应 <code>tool_use</code> block——含 tool 名 + 入参（<strong>已 parse 的对象，不是字符串</strong>）；③ 应用层执行后回 <code>tool_result</code> block——必须配对。<strong>强 schema 校验是亮点</strong>——参数类型错模型自己拒绝。</p>
+    <p><strong>第三·并行调用（Anthropic 2024 新增）</strong>：模型可以在一轮里输出多个 tool_use block，应用层并行执行后<strong>按顺序回多个 tool_result</strong>，进入下一轮。这对应"读文件 + 跑命令 + 查 API"可以一轮并发，节省 round-trip 时间。</p>
+    <p><strong>第四·forced tool use（强制工具）</strong>：<code>tool_choice: {type:"tool", name:"xxx"}</code> 强制调某个工具，或 <code>tool_choice: {type:"any"}</code> 必须调任意一个。场景：路由强制走某工具、防止模型空答绕过工具。</p>
+    <p><strong>第五·三个工程差异（被追问就甩）</strong>：① FC 返回参数是 JSON 字符串要自己 parse，TU 返回结构化对象开箱即用；② TU 强制 stop_reason=tool_use 时必须配对 tool_result，FC 没这么严；③ TU 原生支持并行多工具，FC 早期单工具（后期 OpenAI 才加 parallel_function_calls）。</p>
+    <p><strong>落到我的项目</strong>：prd-tools 里那个内部 MCP Server 暴露的飞书 PRD 抓取工具，就是按 Anthropic Tool Use 的 input_schema 声明的——参数是 PRD 文档 ID（string）+ 格式（enum），Claude Code 和 Cursor 接上都能用，因为两家都遵循"tools schema + tool_use + tool_result"这套范式，只是字段名略不同。<strong>这也是 MCP 协议能在两家客户端复用的底层原因</strong>。</p>
+    <p class="hint">[loop·已优化·已复核] 念法：钩子（腾讯二面"FC 和 TU 啥区别"）→ 协议演进（OpenAI FC 先推，Anthropic TU 同源，本质同范式 model-as-tool-caller）→ Anthropic TU 三件套（tools/tool_use/tool_result，强 schema，入参直接是对象）→ 并行调用（2024 新增，多 tool_use 一轮并发）→ forced tool use（强制工具场景）→ 三差异（字符串 vs 对象/强制配对/原生并行）。落 MCP Server（飞书抓 PRD 两家复用）。被问"是不是一样"→ 本质同范式，工程细节三差异。</p>
+  </div>
+</div>
+
+<div class="card" data-c="ai" data-kw="Subagent Task 工具 子代理 主线程 派发 上下文隔离 worktree 工具权限白名单 最小权限 Explore Plan 结果摘要 通信成本 Multi-Agent">
+  <div class="card-head"><span class="tag ai">G9</span><div class="card-title">Subagent / Task 架构：主线程怎么派活不串味？</div></div>
+  <div class="core">主线程派子代理（独立 context + 工具白名单 + worktree），结果摘要回流不污染主上下文；通信成本最小化</div>
+  <div class="card-body">
+    <p><strong>这题阿里二面问"你说 Claude Code 能拆活给子代理，那子代理的上下文和主线程共享吗？怎么保证不串味？"——很多人卡在"独立"两个字。具体怎么独立、为什么独立、产物怎么回流，要讲清五层：派发机制、上下文隔离、工具权限隔离、worktree 文件隔离、结果回流只摘要。</strong></p>
+    <p><strong>第一·派发机制</strong>：主线程调用 Task / Agent 工具，传入子代理类型（general-purpose / explore / plan 等）+ 任务描述 + 可用工具白名单。子代理启动后<strong>用自己的 system prompt + 自己的 messages</strong> 跑，主线程只等结果。</p>
+    <p><strong>第二·上下文隔离（最核心）</strong>：子代理有独立的 context window，主线程读过的文件、对话历史，子代理<strong>看不到</strong>。这解决了"主上下文被低价值搜索结果污染"——比如让子代理去 50 个文件里找符号，结果摘要只回主线程一两句，<strong>原始 50 文件内容不进主上下文</strong>。这是 Subagent 存在的最大价值。</p>
+    <p><strong>第三·工具权限隔离</strong>：子代理可以被限制工具集——比如 Explore 子代理只给读工具（Read/Grep/Glob），不给 Edit/Write，避免误改。<strong>这是最小权限原则在 Agent 架构的落地</strong>。</p>
+    <p><strong>第四·worktree 文件隔离（进阶）</strong>：Claude Code 的 worktree 模式让子代理在 git worktree 副本里改代码，主线程的工作树不受影响——子代理改完确认有用才合并回去，改废了直接 discard。<strong>这是防止子代理搞坏主分支的工程兜底</strong>。</p>
+    <p><strong>第五·结果回流只摘要</strong>：子代理跑完返回的不是完整对话历史，是一段结构化摘要（text 块）。主线程把这段摘要当 tool_result 拼进自己的上下文。<strong>金句：通信成本最小化——子代理干完活回主线程一句话，不是把整个上下文搬过来</strong>。这也是 Multi-Agent 通信引擎设计的核心原则。</p>
+    <p><strong>落到我的项目</strong>：prd-tools 没用 Subagent（任务步骤确定、上下文需求集中，主上下文够用），但 PRD 摄入环节未来可以拆一个 Explore 子代理专门做"扫文档 + 提炼术语"，主线程只收"术语表"摘要，避免长 PRD 全文进主上下文。这对应 Anthropic 那套"单 Agent + 多 Skill 够用，复杂场景才拆 Multi-Agent"的工程判断。</p>
+    <p class="hint">[loop·已优化·已复核] 念法：钩子（阿里二面"上下文共享吗、怎么不串味"）→ 派发机制（Task 工具 + 子代理类型 + 工具白名单）→ 上下文隔离（子代理独立 window，主线程看不到子读的文件，Subagent 最大价值）→ 工具权限隔离（最小权限，Explore 只读）→ worktree 文件隔离（git 副本，改废 discard）→ 结果回流（只回摘要，金句=通信成本最小化）。落 prd-tools（未来 PRD 摄入可拆 Explore 子代理）。</p>
+  </div>
+</div>
+
+<div class="card" data-c="ai" data-kw="Hooks Permission 四层 settings.json PreToolUse PostToolUse UserPromptSubmit Stop SessionStart allow deny ask enterprise user project local 拦截 危险命令 团队推广 约束 rm -rf AGENTS.md 软规则 硬约束">
+  <div class="card-head"><span class="tag ai">G10</span><div class="card-title">Hooks + Permission 四层：怎么给 Agent Loop 上工程化约束？</div></div>
+  <div class="core">Hooks 是动态拦截（事件触发），Permission 是静态规则（allow/deny/ask 四层合并），双层防御才扛得住 20+ 人天天用</div>
+  <div class="card-body">
+    <p><strong>这题蚂蚁一面问"你怎么保证团队用 Claude Code 不出事？比如不让它乱删文件、乱跑 rm -rf？"——很多人答"靠人盯着"或"靠 AGENTS.md 写规则"就完了。真正工程化的答案是 Hooks + Permission 双层防御：Hooks 是动态拦截（事件触发），Permission 是静态规则（allow/deny/ask）。<strong>两层一起才扛得住团队天天用</strong>。</strong></p>
+    <p><strong>第一·Hooks 五个关键节点</strong>：① <code>PreToolUse</code>——工具调前拦截（最常用，可阻断危险命令）；② <code>PostToolUse</code>——工具调后回调（日志/校验/格式化）；③ <code>UserPromptSubmit</code>——用户输入时（注入提醒/拦敏感词）；④ <code>Stop</code>——Agent 想结束时（强制继续或追问）；⑤ <code>SessionStart</code>——会话启动时（注入上下文/恢复状态）。Hooks 在 settings.json 里配，是 shell 命令，输出会作为反馈注入 Agent。</p>
+    <p><strong>第二·Hook 拦截机制</strong>：退出码 0=放行、2=阻断（错误反馈给 Agent）、其他=非阻塞 stderr 警告。<strong>关键点：hook 不是建议，是硬约束</strong>——PreToolUse 退出 2，Agent 立刻收到"被拦截"反馈，会调整策略。这比 AGENTS.md 的"软规则"可靠得多。</p>
+    <p><strong>第三·Permission 三态 + 四层来源</strong>：每个工具有 <code>allow</code>（自动放行）/ <code>deny</code>（拒绝）/ <code>ask</code>（弹窗确认）三态。来源四层：① <code>enterprise</code>（公司管理策略，最高优先）；② <code>user</code>（<code>~/.claude/settings.json</code>）；③ <code>project</code>（<code>.claude/settings.json</code>，跟仓库走）；④ <code>local</code>（<code>.claude/settings.local.json</code>，不入 git）。<strong>优先级从上到下，enterprise 一票否决</strong>。</p>
+    <p><strong>第四·典型工程实践</strong>：① 团队推 Claude Code 必配 PreToolUse hook 拦 <code>rm -rf</code>、<code>git push --force</code>、<code>git reset --hard</code> 这类破坏命令；② project settings 锁 <code>allow</code> 白名单（读文件、跑测试），写操作走 <code>ask</code>；③ local settings 让个人保留调试空间（临时 allow 某工具）。<strong>这是为什么 settings 有四层——团队约束 + 个人灵活并存</strong>。</p>
+    <p><strong>第五·金句收口</strong>：<strong>Agent 工程 = 模型能力 × Harness 约束</strong>。模型再聪明没有约束出事是迟早的；Hooks + Permission 是给 Loop 上"刹车 + 仪表盘"，AGENTS.md 是"驾驶手册"，三者缺一不可。</p>
+    <p><strong>落到我的项目</strong>：prd-tools 团队推广版如果未来要让 20+ 人用 Claude Code，我会配两层防御——project settings 写死 <code>deny: ["Bash(rm -rf *)", "Bash(git push --force:*)"]</code> 硬约束；PreToolUse hook 在执行 quality-gate.py 前自动备份 plan.md，跑挂了能回滚。这比"靠大家自觉"靠谱十倍。</p>
+    <p class="hint">[loop·已优化·已复核] 念法：钩子（蚂蚁一面"怎么保证团队不出事"）→ Hooks 五节点（Pre/Post/UserPromptSubmit/Stop/SessionStart）→ Hook 拦截机制（退出码 0/2，硬约束不是软建议）→ Permission 三态 + 四层（allow/deny/ask × enterprise/user/project/local，enterprise 一票否决）→ 工程实践（团队 deny 危险命令、project allow 白名单、local 留调试）→ 金句（Agent 工程 = 模型 × Harness 约束）。落 prd-tools（推 Claude Code 必配 deny+PreToolUse 备份）。被问"AGENTS.md 够吗"→ 软规则不够，hook 是硬约束。</p>
+  </div>
+</div>
+
 <div class="card" data-c="proj" data-kw="Schema 引擎 性能 量化 基线 SPA 微前端 插槽 损耗 Web Worker Service Worker 包体积">
   <div class="card-head"><span class="tag proj">G6</span><div class="card-title">Schema 引擎 + 插槽 + 微前端性能损失多少？</div></div>
   <div class="core">三大瓶颈：包体积膨胀（多版本并存）+ 联动接口重复调用 + 长列表渲染</div>
