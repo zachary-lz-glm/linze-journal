@@ -11,3 +11,6 @@
 
 - **工具**
   - [面试速查板](learning/interview-tools/stealth.html)
+  - 金牌项目深挖稿
+    - [PRD 工具](learning/interview-tools/deepdive-prd-tools.md)
+    - [loop 系统](learning/interview-tools/deepdive-loop-system.md)
