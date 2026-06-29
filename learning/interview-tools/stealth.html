@@ -434,6 +434,19 @@ body{overscroll-behavior-y:contain}
   </div>
 </div>
 
+<div class="card" data-c="bagu" data-kw="节流 防抖 throttle debounce 性能 千问说反 硬伤 回城 技能CD">
+  <div class="card-head"><span class="tag bagu">#42</span><div class="card-title">节流 vs 防抖（千问一面说反硬伤）</div></div>
+  <div class="core">防抖=回城重读条（停了再触发要重新等），节流=技能 CD（固定间隔才放一次）</div>
+  <div class="card-body">
+    <p><strong>钩子先甩</strong>：千问一面就栽这题——我把比喻说反了（说成"防抖是固定频率执行"），当场被面试官纠正。<strong>背死这套正确比喻</strong>：防抖=回城重读条，节流=技能 CD。</p>
+    <p><strong>防抖 debounce</strong>：高频触发时只执行<strong>最后一次</strong>。每次新触发都清掉旧 timer 重新计时——只要还在动就一直推迟执行，停了 N 秒后才真正跑一次。<strong>代码骨架</strong>：<code>clearTimeout(timer); timer = setTimeout(fn, wait)</code>。<strong>场景</strong>：搜索框 input（用户停手才搜）、window resize（拖完才重算布局）、表单校验（用户输完才校验）。</p>
+    <p><strong>节流 throttle</strong>：高频触发时按<strong>固定频率</strong>执行——第一次立即跑，之后每隔 N 毫秒才放一次，不管中间触发了多少次。<strong>代码骨架</strong>：<code>if (Date.now() - last &lt; wait) return; last = Date.now(); fn()</code>（或用 flag 锁）。<strong>场景</strong>：scroll 滚动（按频率更新位置）、mousemove 拖拽、按钮防连点（防表单重复提交）。</p>
+    <p><strong>一句话区分</strong>：防抖<strong>只执行最后一次</strong>（停下来才跑），节流<strong>固定间隔执行</strong>（过程中持续按频率跑）。<strong>记忆口诀</strong>：防抖"等用户停手"，节流"按节奏放技能"。</p>
+    <p><strong>追问应对：为什么用 leading + trailing</strong>：实战里通常要 leading=true（第一次立即响应）+ trailing=true（最后一次也补一下），不然用户拖到一半完全没反馈会觉得卡。lodash 的 throttle/debounce 默认就支持配置。</p>
+    <p class="hint">[loop·已新增·已复核·v256 千问硬伤补卡] 念法：钩子（千问说反被纠正）→ 正确比喻（防抖=回城重读条/节流=技能CD）→ 防抖（执行最后一次，清 timer 重计，搜索框/resize/校验）→ 节流（固定频率执行，时间戳/flag 锁，scroll/mousemove/防连点）→ 一句话区分（防抖执行最后一次，节流固定间隔）→ leading/trailing 追问。被问"区别"翻"防抖等停手，节流按节奏"。</p>
+  </div>
+</div>
+
 <div class="card" data-c="bagu" data-kw="XSS CSRF CSP 安全 注入 Cookie HttpOnly">
   <div class="card-head"><span class="tag bagu">#8</span><div class="card-title">XSS / CSRF / CSP 安全</div></div>
   <div class="core">XSS 是往页面注入恶意 JS，CSRF 是冒充已登录用户发请求，CSP 是限制页面能加载什么资源</div>
@@ -1884,18 +1897,18 @@ function buildTreeOptimized(list) {
   </div>
 </div>
 
-<div class="card" data-c="proj" data-kw="度量 A/B 5h 2h 提升 OQ 命中率 IMP 执行率 对照实验 分母 度量体系">
-  <div class="card-head"><span class="tag proj">G4</span><div class="card-title">"5h→2h" 怎么度量？（早期简历曾用 60% 提效表述）</div></div>
-  <div class="core">三层指标：L1 产物质量（OQ/IMP 锚点）+ L2 研发效率（端到端 + 返工率）+ L3 业务价值</div>
+<div class="card" data-c="proj" data-kw="度量 A/B L1 L2 L3 OQ 命中率 IMP 执行率 返工率 飞轮 度量体系 三层指标">
+  <div class="card-head"><span class="tag proj">G4</span><div class="card-title">度量体系设计：L1/L2/L3 三层指标（深挖时讲）</div></div>
+  <div class="core">L1 产物质量（OQ/IMP 锚点·已能跑）+ L2 研发效率（端到端+返工率·排期中）+ L3 业务价值（飞轮定性）</div>
   <div class="card-body">
-    <p><strong>先甩个钩子定调</strong>：这题阿里一面 34:14 直接追到分母——"PRD 转化效率提升 60% 怎么度量？分母是什么？实验组用了 Claude Code，对照组是不是纯手写？"。我场上答得很弱，"写的比较粗""其实就是开发工时"——这是工程化项目最致命的短板，回答必须有指标名、数字、对照组定义三件套，不能只说"工时提升"。<strong>口径先收敛一句</strong>：现在简历用 5h→2h（5 个需求对照），60% 是当时表述，被问"提效怎么算"主指标答 5h→2h 即可。</p>
-    <p><strong>先讲业务背景，为什么这题难答</strong>：prd-tools 产出的是 plan.md，不是代码——它解决"写代码之前想清楚改哪里"的问题。这意味着收益不直接落在代码行数上，得绕一层去度量"想清楚"这件事带来的下游收益。所以我搭了三层指标，从产物质量、研发效率、业务价值三个维度兜住。</p>
-    <p><strong>L1 产物质量——直接量 plan 本身靠不靠谱</strong>：三个锚点——Code Anchor 准确率（plan.md 里标的 anchor 真实被改的比例，目标≥85%）、OQ 命中率（Open Questions 真实阻塞率，目标≥60%）、IMP 执行率（Implementation 计划条目真实执行率，目标≥75%）。这一层是 v2.19 已经能跑的，readiness 评分就是基于这套。</p>
-    <p><strong>L2 研发效率——量下游真省了多少</strong>：端到端开发耗时（实验组 vs 对照组，两组都用 Claude Code，只差有没有走 prd-tools 全流程，目标提升≥40%）、QA 缺陷数（目标下降≥30%）、开发返工率（开发过程中发现 plan 错了的比例，这是主指标）。注意对照组不是纯手写——是 Claude Code init 后直接喂 PRD 让它自己分析，这样变量单一，只验证 prd-tools 这层证据链的价值。</p>
-    <p><strong>L3 业务价值——量长期飞轮</strong>：reference 飞轮增速（每月新增 playbook/术语数）、团队模式契约对齐度提升。这层偏定性，是产品长期价值的佐证。</p>
-    <p><strong>严谨的 A/B 设计念给面试官</strong>：实验组 = `/prd-distill` 全流程 + Claude Code 执行 plan，对照组 = Claude Code init + 直接给 PRD，样本量 ≥ 30 个真实需求 pair-wise 对照，主指标锁定开发返工率。把"分母是什么""对照组怎么定义"两个最容易追穿的点一次性堵死。</p>
-    <p><strong>收个口，诚实交代进度</strong>：v2.19 已经有 readiness/final QG 内部评分（L1 能跑），但 L2/L3 业务指标在 Sprint 3 排期，现在没有硬 A/B——这是公认短板，正在补。"已经有内部评分、业务指标在排期"两层 roadmap 讲清，比说"暂时没考虑"强一百倍。<strong>核心一句</strong>：工程化项目最忌讳"我觉得有用"，得拿指标名+数字+对照组说话。</p>
-    <p class="hint">[loop·已优化·已复核] 念法：钩子（阿里一面追到分母，场上答弱）→ 口径收敛（5h→2h 主指标）→ 业务背景（产出是 plan 不是代码，收益绕一层）→ L1 产物质量三锚点（已能跑）→ L2 研发效率三指标（主指标返工率，对照组也用 Claude Code 变量单一）→ L3 业务价值（飞轮定性）→ A/B 设计（实验组/对照组/样本30/主指标返工率，堵分母和对照定义）→ 收口（v2.19 已有内部评分+L2L3 在 Sprint 3 排期，诚实说没硬 A/B）。三件套口诀：指标名+数字+对照组定义。</p>
+    <p><strong>这张卡专门答"产物质量怎么衡量/度量体系怎么设计"，被追问到产物质量层面的 OQ/IMP/返工率才翻这张。<strong>数据口径（5h→2h、60%、对照组是不是纯手写、80%/68 分维度）翻 emer 数据口径卡，那里讲死。</strong></p>
+    <p><strong>钩子</strong>：阿里一面 34:14 追到分母后，场上答"其实就是开发工时"——但 prd-tools 产出的是 plan.md 不是代码，收益得绕一层度量"想清楚"带来的下游收益。所以我搭了三层指标从产物质量、研发效率、业务价值兜住。</p>
+    <p><strong>L1 产物质量——直接量 plan 本身靠不靠谱</strong>：三锚点——Code Anchor 准确率（plan.md 里标的 anchor 真实被改的比例，目标≥85%）、OQ 命中率（Open Questions 真实阻塞率，目标≥60%）、IMP 执行率（Implementation 计划条目真实执行率，目标≥75%）。v2.19 已能跑，readiness 评分基于这套。</p>
+    <p><strong>L2 研发效率——量下游真省了多少</strong>：端到端开发耗时（实验组 vs 对照组，两组都用 Claude Code，只差有没有走 prd-tools 全流程，目标提升≥40%）、QA 缺陷数（目标下降≥30%）、开发返工率（开发过程中发现 plan 错了的比例，主指标）。<strong>对照组不是纯手写</strong>——是 Claude Code init 后直接喂 PRD 让它自己分析，变量单一，只验证 prd-tools 证据链的价值。</p>
+    <p><strong>L3 业务价值——量长期飞轮</strong>：reference 飞轮增速（每月新增 playbook/术语数）、团队模式契约对齐度提升。这层偏定性。</p>
+    <p><strong>严谨 A/B 设计念给面试官（堵"分母是什么""对照组怎么定义"）</strong>：实验组 = `/prd-distill` 全流程 + Claude Code 执行 plan，对照组 = Claude Code init + 直接给 PRD，样本量 ≥ 30 个真实需求 pair-wise 对照，主指标锁定开发返工率。</p>
+    <p><strong>诚实交代进度</strong>：v2.19 已有 readiness/final QG 内部评分（L1 能跑），L2/L3 业务指标在 Sprint 3 排期，现在没有硬 A/B——公认短板正在补。"已有内部评分+业务指标在排期"两层 roadmap 比说"暂时没考虑"强一百倍。</p>
+    <p class="hint">[loop·已优化·已复核·v256 整合 emer 不重复] 念法：钩子（产出是 plan 不是代码，收益绕一层）→ L1 三锚点（Code Anchor/OQ/IMP，v2.19 已能跑）→ L2 三指标（返工率主指标，对照组不是纯手写是 Claude Code init）→ L3 飞轮定性 → A/B 设计（实验组/对照组/样本30/返工率）→ 诚实收口（L1 已跑、L2L3 在排期）。<strong>数据口径不在本卡，翻 emer。</strong></p>
   </div>
 </div>
 
@@ -1913,18 +1926,20 @@ function buildTreeOptimized(list) {
   </div>
 </div>
 
-<div class="card" data-c="ai" data-kw="Claude Code context 上下文 prompt caching KV cache auto-compaction CLAUDE.md 超窗 缓存 单次请求 滑动窗口">
+<div class="card" data-c="ai" data-kw="Claude Code context 上下文 prompt caching KV cache auto-compaction CLAUDE.md 超窗 缓存 单次请求 滑动窗口 服务端 cache_control 1.25倍 0.1倍">
   <div class="card-head"><span class="tag ai">G6</span><div class="card-title">Claude Code 怎么管 context？prompt 缓存在哪？（蚂蚁三连问）</div></div>
-  <div class="core">缓存是服务端的 KV cache 不是本地文件；context 靠 auto-compaction 自动压缩 + CLAUDE.md 长期记忆</div>
+  <div class="core">缓存是<strong>服务端</strong>的 KV cache 张量不是本地文件；context 靠 auto-compaction（90% 触发释放 60-70%）+ CLAUDE.md 长期记忆</div>
   <div class="card-body">
-    <p><strong>这题蚂蚁一面连问三问，最坑的是"缓存在哪"——我当场答错了，把会话历史本地存储当成了 prompt cache，被追穿。复盘下来，这题要分三块讲清楚：缓存在哪、单次请求带什么、memory 为什么不会无限长。</strong></p>
-    <p><strong>先答最坑的"缓存在哪"</strong>：prompt caching 缓存在 <strong>Anthropic 服务端</strong>，存的是 Transformer 前向传播算出来的 KV cache——就是 attention 的 key/value 张量，<strong>不是 prompt 文本、不是 hash、更不是本地文件</strong>。原理是相同前缀的下次请求直接复用这些张量，跳过重复计算，成本降约 90%、延迟降约 85%。这里有个易混点必须分清——本地 <code>.claude</code> 文件夹存的是会话历史 transcript，那是持久化存储；服务端 KV cache 是计算加速。两个根本不是一回事，别搅在一起。</p>
-    <p><strong>再答"单次请求除了 query 还带什么"</strong>：四样——系统 prompt + tools 的 schema 定义 + 对话历史（messages）+ 可能的附加文件内容。关键是前两样是稳定不变的公共前缀，会被 prompt caching 复用，所以多轮对话<strong>只有新增的那部分真正计费</strong>，不是每轮把整个上下文重新算一遍。</p>
-    <p><strong>最后答"memory 每轮带着不会越来越长吗"</strong>：不会，分三层兜着——① <strong>持久记忆</strong>是 CLAUDE.md，放项目指令，内容稳定基本不涨；② <strong>短期记忆</strong>是对话历史，靠滑动窗口只留最近几轮，超了靠 compaction 压缩；③ <strong>按需检索</strong>是要更多上下文时 agent 主动读文件、用 @ 引用，不是全量塞进窗口。所以每轮不会把整个记忆库都带上。</p>
-    <p><strong>补一个工程亮点 auto-compaction</strong>：上下文逼近容量极限（约 90%，剩 10%）时，自动把旧对话总结成摘要，一次释放 60-70% 窗口，用户几乎无感。CLAUDE.md 压缩后会重新加载，保证项目指令不丢。手动可以 /compact 主动压、/clear 硬重置。</p>
-    <p><strong>通用超窗策略（被追问就甩）</strong>：核心就一句——别把所有内容塞短期记忆。输入侧靠渐进式披露按需加载 + RAG 语义检索做压缩；输出侧把结果分流到文件，不塞聊天回复；中间推理过程（agent 自我反思）外置到 MD/memory 文件。</p>
-    <p><strong>落到我的项目</strong>：prd-tools 的 reference 6 文件，本质就是"按需检索"那层的工程化变体——不是把几万行代码塞进上下文，而是蒸馏成 6 个领域知识文件，每次请求按需检索相关片段拼进去。和 Claude Code 管 context 是同一套思路：信息从"全量"压缩成"结构化精选"，既省 token 又不丢关键事实。</p>
-    <p class="hint">[loop·已优化·已复核] 念法：钩子（蚂蚁三连问，最坑"缓存在哪"当场答错）→ 缓存在哪（服务端 KV cache 张量，90%/85%，区分本地 transcript）→ 单次请求带什么（四样，公共前缀复用只新增计费）→ memory 三层（持久/短期/按需，不会无限长）→ auto-compaction 亮点（90%触发释放60-70%）→ 通用超窗策略（追问甩）→ 落 prd-tools（reference 6 文件=按需检索工程化）。</p>
+    <p><strong>这题蚂蚁一面连问三问，最坑的是"缓存在哪"——我当场答错了，把会话历史本地存储当成了 prompt cache，被追穿。复盘下来分三块讲清楚：缓存在哪、单次请求带什么、memory 为什么不会无限长。</strong></p>
+    <p><strong>① 最坑的"缓存在哪"——一句话定调：在 Anthropic 服务端，不在本地</strong>。prompt caching 缓存的是 Transformer 前向传播算出来的 <strong>KV cache 张量</strong>（attention 的 key/value 矩阵），<strong>不是 prompt 文本、不是 hash、更不是本地文件</strong>。相同前缀的下次请求直接复用这些张量跳过重复计算。<strong>易混点必须分清</strong>：本地 <code>.claude</code> 文件夹存的是会话历史 transcript（持久化存储），服务端 KV cache 是计算加速——两件事根本不一样，搅在一起就被追穿。</p>
+    <p><strong>② 数字必须背硬（被追问"具体便宜多少"就甩）</strong>：Anthropic 官方价格口径——<strong>cache write 1.25× 基准输入价（5min TTL，1hour TTL 是 2×）、cache read 0.1× 基准输入价</strong>。也就是<strong>命中后省 90% 成本</strong>、break-even 点在第 2 轮（第 1 轮贵 25% 写入，第 2 轮起只付 10% 读）。技术上靠 <code>cache_control</code> 参数打标，<strong>每个请求最多 4 个 cache 断点</strong>。延迟侧官方历史口径约降 85%。</p>
+    <p><strong>③ 单次请求除了 query 还带什么</strong>：四样——系统 prompt + tools 的 schema 定义 + 对话历史（messages）+ 可能的附加文件内容。关键是<strong>前两样是稳定不变的公共前缀，会被 prompt caching 复用</strong>，所以多轮对话只有新增的那部分真正计费，不是每轮把整个上下文重算一遍。<strong>追问"为什么 tools 这么多不贵"→ 正是因为 tools schema 进了缓存前缀。</strong></p>
+    <p><strong>④ memory 每轮带着不会越来越长吗——三层兜着</strong>：① <strong>持久记忆</strong> CLAUDE.md（项目指令，内容稳定基本不涨）；② <strong>短期记忆</strong> 对话历史（滑动窗口只留最近几轮，超了靠 compaction 压缩）；③ <strong>按需检索</strong>（要更多上下文 agent 主动读文件、用 @ 引用，不是全量塞进窗口）。</p>
+    <p><strong>⑤ auto-compaction 触发阈值（蚂蚁 Q11 原问，必须背数字）</strong>：上下文逼近容量极限（<strong>约 90%，剩 10%</strong>）时，自动把旧对话总结成摘要，<strong>一次释放 60-70% 窗口</strong>，用户几乎无感。CLAUDE.md 压缩后会重新加载保证项目指令不丢。手动 <code>/compact</code> 主动压、<code>/clear</code> 硬重置。</p>
+    <p><strong>追问应对：多 Agent vs 单 Agent 成本差多少</strong>（非蚂蚁原题，自补储备）：多 Agent（sub-agent 编排）每个子 agent 起独立 context window，<strong>成本能比单 Agent 高 10-15 倍</strong>——因为每个子 agent 各自重新走系统 prompt + tools 前缀、KV cache 不共享、且 orchestrator 要汇总多份输出再决策。所以工程上能单 agent 解决就别拆，拆的前提是<strong>子任务能并行 + 子上下文能隔离复用</strong>。</p>
+    <p><strong>通用超窗策略（被追问就甩）</strong>：核心就一句——别把所有内容塞短期记忆。输入侧渐进式披露按需加载 + RAG 语义检索做压缩；输出侧结果分流到文件不塞聊天回复；中间推理过程（agent 自我反思）外置到 MD/memory 文件。</p>
+    <p><strong>落到我的项目</strong>：prd-tools 的 reference 6 文件，本质就是"按需检索"那层的工程化变体——不是把几万行代码塞进上下文，而是蒸馏成 6 个领域知识文件按需检索相关片段拼进去。和 Claude Code 管 context 是同一套思路：信息从"全量"压缩成"结构化精选"。</p>
+    <p class="hint">[loop·已优化·已复核·v256 蚂蚁失分精进] 念法：钩子（蚂蚁三连问，"缓存在哪"当场答错）→ 缓存在哪（<strong>服务端</strong> KV 张量，不是本地 transcript）→ <strong>数字背硬</strong>（write 1.25× / read 0.1×，省 90%，break-even 第 2 轮，4 个 cache_control 断点）→ 单次请求带什么（四样，公共前缀复用）→ memory 三层（持久/短期/按需）→ auto-compaction（90% 触发释放 60-70%）→ 追问多 vs 单 agent 成本（10-15 倍，能单别拆）→ 落 prd-tools。被问"具体便宜多少"翻②段数字。</p>
   </div>
 </div>
 
@@ -2003,16 +2018,17 @@ function buildTreeOptimized(list) {
 </div>
 <!-- ===== 防御卡结束 ===== -->
 
-<div class="card" data-c="ai" data-kw="MCP 协议 Host Client Server Tools Resources Prompts JSON-RPC stdio SSE 开发 Function Calling A2A">
-  <div class="card-head"><span class="tag ai">E19</span><div class="card-title">MCP 协议全解</div></div>
-  <div class="core">MCP 是 LLM 的 USB-C——标准化连工具，一次开发到处用，不绑模型厂商</div>
+<div class="card" data-c="ai" data-kw="MCP 协议 Host Client Server Tools Resources Prompts JSON-RPC stdio SSE 开发 Function Calling A2A 稳定前缀 prompt caching 省钱">
+  <div class="card-head"><span class="tag ai">E19</span><div class="card-title">MCP 协议全解（含"为什么能省钱"追问）</div></div>
+  <div class="core">MCP 是 LLM 的 USB-C——标准化连工具，一次开发到处用，不绑模型厂商；<strong>tools schema 是稳定前缀天然命中 prompt caching</strong></div>
   <div class="card-body">
     <p><strong>一句话定位</strong>：MCP（Model Context Protocol）是 Anthropic 推的开放协议，把"AI 怎么连外部工具"标准化了——以前每家模型工具调用各搞各的，MCP 让你写一次工具，任何支持它的客户端（Claude Desktop/Cursor/VS Code）都能用。<strong>类比就是 LLM 界的 USB-C</strong>。</p>
     <p><strong>架构三层</strong>：Host（宿主，如 Claude Desktop）里跑 Client（协议客户端），去连一个个 Server（工具提供方）。一个 Host 能同时连多个 Server。通信走 JSON-RPC 2.0，本地用 stdio（Server 当子进程），远程用 SSE。</p>
     <p><strong>一个 Server 能暴露三种东西</strong>：① <strong>Tools</strong>——可调用函数（name + 入参 schema + 描述，LLM 按语义选）；② <strong>Resources</strong>——可读数据源（文件/DB/API，URI 标识）；③ <strong>Prompts</strong>——预置提示词模板。</p>
+    <p><strong>追问应对：接这么多工具不是会很贵吗？</strong>：不会。<strong>MCP 暴露的 tools schema 是稳定不变的公共前缀，天然命中 prompt caching</strong>——第一次请求写入 KV cache（1.25×），后续每轮只付 0.1× 读。所以工具多 ≠ 成本高，关键是把 tools schema 固定在 prompt 头部让前缀持续命中。<strong>这是 MCP 工程上比"每轮动态拼 tools 字符串"省钱的本质原因。</strong></p>
     <p><strong>我做过</strong>：用 TS SDK 写过内部 MCP Server——从飞书文档抓 PRD 转 Markdown，Claude Code 和 Cursor 接上就能用，一次开发两个客户端复用。</p>
     <p><strong>和 FC、A2A 的关系（高频追问）</strong>：Function Calling 是模型内置能力、绑厂商（OpenAI）、单次调用；MCP 是协议层、不绑模型、管"工具怎么标准化连"；A2A 是 Google 的 Agent 间通信、管"Agent 之间怎么协作"。三者不冲突——Agent 用 MCP 接工具、用 A2A 接别的 Agent、用 FC 做模型侧决策。</p>
-    <p class="hint">[loop·已优化·已复核] 念法：先甩 USB-C 一句话定位（标准化连工具，不绑厂商）→ 三层架构（Host/Client/Server，JSON-RPC，stdio 本地 SSE 远程）→ 三种能力（Tools 可调用/Resources 可读/Prompts 模板）→ 我做过的 Server（飞书抓 PRD 转 MD，一次开发 Claude Code+Cursor 复用）→ 和 FC/A2A 区分收口（FC 模型内置绑厂商/MCP 协议层不绑模型/A2A Agent 间协作，三者不冲突）。被问"和 Function Calling 区别"翻最后一段。</p>
+    <p class="hint">[loop·已优化·已复核·v256 补省钱追问] 念法：USB-C 一句话定位（标准化连工具，不绑厂商）→ 三层架构（Host/Client/Server，JSON-RPC，stdio/SSE）→ 三种能力（Tools/Resources/Prompts）→ <strong>追问"工具多不是贵吗"（tools schema 稳定前缀命中 cache，0.1× 读）</strong>→ 我做过的 Server（飞书抓 PRD 转 MD）→ 和 FC/A2A 区分收口。被问"接这么多工具不是会很贵吗"翻第四段。</p>
   </div>
 </div>
 
@@ -2802,25 +2818,34 @@ function buildTreeOptimized(list) {
 </div>
 
 <!-- ==================== 项目数据速查 ==================== -->
-<div class="card open" data-c="emer" data-kw="数据 口径 指标 简历 400 5h 2h 追问 计算 简历口径">
+<div class="card open" data-c="emer" data-kw="数据 口径 指标 简历 400 5h 2h 60% 全流程 对照组 样本 统计周期 追问 计算 简历口径 四件套">
   <div class="card-head"><span class="tag emer">速查</span><div class="card-title">项目关键数据 + 口径（被问怎么算的）</div></div>
-  <div class="core">每个数字都要能脱口而出，面试官随时追问怎么算的</div>
+  <div class="core">每个数字开口第一句就讲死口径：环节 / 样本量 / 对照组 / 统计周期</div>
   <div class="card-body">
-    <p><strong>PRD→Plan 5h→2h/需求</strong>【简历口径·必背】：5 个中等复杂度需求做对照，人工读 PRD+评审+三方对齐+出方案平均 5h，工具自动蒸馏出 Spec+Plan 平均 2h。注意是 PRD→Plan 单环节，全链路（含联调/环境/协同）提效约 20-30%。</p>
-    <p><strong>一致性 40%→85%+</strong>【简历口径·必背】：同一 PRD 跑 10 次，文件列表完全一致的占比，从早期 40% 提升到 85%+（加门控后应更高，未再量化）。</p>
-    <p><strong>文件级准确率 80%</strong>【简历口径·必背】：实际开发分支改动文件集合 vs Plan 产出文件集合做匹配。20% gap 来自 PRD 本身不完整，AI 主动标记让人确认。</p>
-    <p><strong>返工减少</strong>【补充口径·别主动说，简历未列】：需求理解偏差返工工单，前 3 个月 12 单→后 3 个月 5 单。样本量小、未严格 AB，仅在面试官深挖"质量改善怎么衡量"时作为佐证。</p>
-    <p><strong>上线周期 2 周→3 天</strong>：缩短在开发阶段——PRD 蒸馏自动出计划→BFF 配模板+联动半天→前端零代码→测试 1-2 天。</p>
-    <p><strong>联动复用率 80%+</strong>：23 种活动类型中 19 种可复用已有 linkageSchema，仅 4 种需新增。</p>
-    <p><strong>新权益接入 2 天→2 小时</strong>：2 小时是后端在 MIS 配 Schema 的时间，前端零代码。</p>
-    <p><strong>零 breaking change 18 月+</strong>：SemVer + peerDependencies 隔离 react + deprecated 不删除 + Changesets 追踪。</p>
-    <p><strong>权益 400+/组件 35+/联动 16 个</strong>：400 是 SKU 数不是组件数，35 是 24 内置+11 运行时扩展，16 是 12 重渲染+4 Placeholder 重置。</p>
-    <p><strong>攻防话术（被追穿怎么救）</strong>：①问准确率怎么算→文件集合匹配法，20% gap来自PRD本身不完整且AI主动标记让人确认，不是AI算错；②问5h到2h分母→5个中等复杂度需求对照，主动补一句"单环节提效，全链路20-30%"；③问85%一致性→先承认是文件列表重跑一致性（产物稳定性）不是产物质量，再引Readiness评单次质量，两个指标互补不互替；④问Readiness 82/83/62→三案例蒸馏时整体质量分，团队62因跨仓契约E维45拖累，口诀单仓看D多仓看E。</p>
-    <p><strong>端到端原型三套数据口径对照（简历升级后必背，防数据冲突追穿）</strong>：现在简历有<strong>三套独立数据</strong>，必须分清维度否则被追穿"你这数据怎么对不上"：</p>
-    <p>· <strong>① 团队推广版 · 文件级 80%</strong>：实际开发分支文件集合 vs Plan 产出文件集合做匹配——这是<strong>Plan 阶段产物准确度</strong>，不涉及代码。</p>
-    <p>· <strong>② 团队推广版 · Readiness 五维 82/83/62</strong>：三个验证需求蒸馏时整体质量分（PRD 摄入/证据覆盖/代码搜索/契约对齐/计划完整性 5 维加权）——这是<strong>蒸馏过程质量</strong>，单仓 80+ 多仓 60+。</p>
-    <p>· <strong>③ 端到端原型 · llm-judge 五维 R01 54→R02 68</strong>：prd2code-gen 端到端跑出来的代码，用另一个大模型做 5 维独立评分——这是<strong>端到端产物质量</strong>，跟①②完全不同维度。</p>
-    <p>· <strong>口诀</strong>：①是"文件级 Plan 准确度"，②是"过程质量 Readiness"，③是"端到端产物 llm-judge"。三个数字互补不互替，被问"为啥 80% 和 68 分不一致" → "80% 是 Plan 文件级，68 分是端到端代码 llm-judge 评分，维度不同——前者只到 Plan，后者跑完 6 步出代码"。</p>
+    <p><strong>第一句话模板（开口就甩，防被追穿）</strong>：「这个 5h→2h 是<strong>PRD→Plan 单环节</strong>的工时对比，不是全流程；<strong>对照组是 5 个中等复杂度需求的人工 Jira 工时</strong>（不是纯手写），<strong>实验组是同样复杂度的 5 个需求走 prd-tools</strong>；<strong>全链路（含联调/环境/协同）提效约 20-30%</strong>，我没把全流程包装成 60%。」—— 蚂蚁/花小猪/阿里三场都被追问"全流程还是单环节"，<strong>第一句主动交底</strong>比被追问后承认强一百倍。</p>
+    <p><strong>口径四件套速查表（手机端可扫）</strong>：</p>
+    <p>· <strong>环节维度</strong>：5h→2h 仅限 PRD→Plan；全链路 20-30%（含联调/环境/协同）。<strong>60% 是早期简历表述，被追问"60% 怎么算"时主指标答 5h→2h，补一句"全链路 20-30%"</strong>。</p>
+    <p>· <strong>样本量</strong>：5h→2h 对照 5 个中等复杂度需求（前后端各取）；一致性是同 PRD 跑 10 次；准确率是 5 个需求开发分支文件集 vs Plan 文件集匹配；20+ 人推广是 B 端团队规模。</p>
+    <p>· <strong>对照组</strong>：人工流程 = Jira 历史工时（读 PRD+需求评审+技术评审+写方案），<strong>不是纯手写</strong>——这点最容易被追穿，必须主动说清。</p>
+    <p>· <strong>统计周期</strong>：推广 6 个月；返工对比前 3 月 vs 后 3 月；零 breaking change 18 个月+。</p>
+    <p><strong>简历 8 数字逐条口径（每条配一句防追问）</strong>：</p>
+    <p>· <strong>5h→2h/需求</strong>：PRD→Plan 单环节，5 需求对照，对照组是人工 Jira 不是纯手写，全链路 20-30%。</p>
+    <p>· <strong>文件级准确率 80%</strong>：实际改动文件集 vs Plan 文件集匹配，5 需求样本。20% gap 来自 PRD 不完整+AI 主动标记让人确认，<strong>不是 AI 算错</strong>。</p>
+    <p>· <strong>一致性 40%→85%+</strong>：同 PRD 跑 10 次，文件列表完全一致的占比。是<strong>产物稳定性</strong>不是产物质量，质量看 Readiness 评单次——两指标互补不互替。</p>
+    <p>· <strong>20+ 人团队推广</strong>：B 端前端+Node+后端团队总规模，不是 20 个独立用户。</p>
+    <p>· <strong>上线 2 周→3 天</strong>：缩短在开发阶段（PRD 蒸馏出计划→BFF 配模板+联动半天→前端零代码→测试 1-2 天），不含需求评审和灰度。</p>
+    <p>· <strong>联动复用率 80%+</strong>：23 种活动类型中 19 种复用已有 linkageSchema，4 种新增。分母是活动类型数。</p>
+    <p>· <strong>新权益 2 天→2 小时</strong>：2 小时是<strong>后端在 MIS 配 Schema 的时间，前端零代码</strong>。被问"前端为啥零"——Schema 同构渲染+注册模式。</p>
+    <p>· <strong>400+/8 业务/18 月</strong>：400 是<strong>权益 SKU 数不是组件数</strong>（底层组件 30-40 个）；8 是接入业务线数；18 月是零 breaking change 运行时长，靠 SemVer+peerDependencies+deprecated 不删。</p>
+    <p><strong>追问应对（被质疑怎么 defend）</strong>：</p>
+    <p>· 问「60% 怎么算/分母是什么」→ 主指标答 5h→2h，60% 是当时表述；分母是 5 个中等复杂度需求人工 Jira 工时均值，不是纯手写。</p>
+    <p>· 问「全流程还是单环节」→ <strong>主动收</strong>："只 PRD→Plan 单环节，全链路含联调/环境/协同大概 20-30%，我没包装成全流程。"——蚂蚁 Q4 就是栽在这题被动暴露。</p>
+    <p>· 问「对照组是不是纯手写」→ 不是，是同经验同事人工读 PRD+评审+三方对齐出方案，<strong>没有随机分组没有双盲</strong>，是现实可行下的方向性结论；理想设计是随机分配+双盲评审，当前团队规模（前端 5 人）达不到。</p>
+    <p>· 问「80% 和 68 分怎么不一致」→ 维度不同：80% 是 Plan 文件级准确度（团队推广版），68 分是端到端代码 llm-judge 评分（prd2code-gen 原型 R01→R02）。前者只到 Plan，后者跑完 6 步出代码，互补不互替。</p>
+    <p>· 问「Readiness 82/83/62 差距哪来的」→ 三案例蒸馏整体质量分，团队 62 因跨仓契约 E 维 45 拖累。口诀：单仓看 D 多仓看 E。</p>
+    <p>· 问「数据有没有硬 A/B」→ <strong>诚实承认</strong>：现在没有严格 A/B，L1 产物质量（readiness 内部评分）已能跑，L2 研发效率（返工率）和 L3 业务价值在排期。"已有内部评分+业务指标在排期"比说"暂时没考虑"强一百倍。</p>
+    <p><strong>三套独立数据别混（简历升级后防冲突）</strong>：①团队推广版·文件级 80%（Plan 阶段）②团队推广版·Readiness 82/83/62（蒸馏过程质量）③端到端原型·llm-judge 54→68（端到端代码）。口诀：①文件级 Plan、②过程质量 Readiness、③端到端 llm-judge。</p>
+    <p class="hint">[loop·已整合·已复核·v256 数据口径精进] 念法：第一句话模板（开口就讲死：PRD→Plan 单环节/5 需求对照/对照组是 Jira 不是纯手写/全链路 20-30%）→ 四件套速查（环节/样本/对照/周期）→ 8 数字逐条口径 → 追问应对（60%分母/全流程/纯手写/80vs68/Readiness/硬A/B）→ 三套数据别混。三件套口诀：指标名+数字+对照组定义。被问"全流程还是单环节"是最高频追穿点，第一句必须主动收。</p>
   </div>
 </div>
 
@@ -3098,20 +3123,6 @@ function buildTreeOptimized(list) {
 </div>
 
 <!-- ==================== 项目深挖·追问防御 ==================== -->
-
-<div class="card" data-c="proj" data-kw="5h 2h PRD转化率 实验组 对照组 AB实验 统计口径 样本 逐字稿">
-  <div class="card-head"><span class="tag proj">AI</span><div class="card-title">5h→2h 的实验组和对照组是什么？（≈60%提效）</div></div>
-  <div class="core">不是AB实验，是同一团队前后流程的工时对比。主口径 5h→2h（纯工作），20 需求日历口径 2-3天→1-2小时</div>
-  <div class="card-body">
-    <p><strong>这题有个钩子先甩出来——面试官追"60%提效怎么算"，根本不是想听一个漂亮的百分比，是想看你数据素养。先把口径收敛一句：简历主指标答 5h→2h，60% 是当时表述。一句话定调：这不是严格意义的 A/B 实验，是同一团队、同一类需求、前后流程的工时对比——坦诚说清边界，比包装一个完美实验得分高。</strong></p>
-    <p><strong>先说业务背景，为什么这题这么答</strong>：prd-tools 喂 20+ 人用，团队规模小（前端 5 人），根本没法同时维持两套流程跑严格对照——所以做的是"前后对比"，对照组取过去 20 个需求的 Jira 工时，实验组取同样复杂度的 10 个新需求走工具流程。这种设计的边界要主动说：没有随机分组、没有双盲，是现实可行下的方向性结论。</p>
-    <p><strong>对照组（人工流程）怎么算</strong>：取过去 20 个需求从 PRD 接入到产出技术方案的 Jira 工时，拆四段——读 PRD（2-4 小时）、需求评审会（1-2 小时）、技术评审会（1-2 小时）、写技术方案文档（4-8 小时），均值 2-3 天（含跨天协作等待）。</p>
-    <p><strong>实验组（工具流程）怎么算</strong>：取同样复杂度的 10 个新需求，用 prd-tools 从 PRD 跑到产出 Spec + Execution Plan，按流水线分段计时——PRD 摄入 5 分钟、证据账本 10 分钟、需求 AR 生成 5 分钟、源码精读+契约分析 20-30 分钟、Spec 生成 10 分钟、Plan 生成 10 分钟、门禁校验 5 分钟，纯工作时间 1-2 小时，加 30 分钟人工确认 Spec，总共 1.5-2.5 小时。</p>
-    <p><strong>为什么不是 A/B，以及更理想怎么做（防追问）</strong>：样本小、没法双盲是公认短板。如果团队更大，理想设计是同一批需求随机分给人工组和工具组，双盲评审产出质量——把这一句主动甩出来，说明你清楚严谨实验长什么样，只是当前条件达不到。</p>
-    <p><strong>收口落度量三件套</strong>：工程化项目最忌"我觉得有用"，得拿<strong>指标名 + 数字 + 对照组定义</strong>说话——主指标 5h→2h，对照组是人工 Jira 历史不是纯手写对照，局限性主动交底。被追问到产物质量层面的 OQ/IMP/返工率等更细指标，翻度量体系卡（"5h→2h 怎么度量"），那张是 L1/L2/L3 三层指标的完整框架，这张专答"实验组对照组怎么定义"。</p>
-    <p class="hint">[loop·已优化·已复核] 念法：钩子（追"60%怎么算"考的是数据素养，先收敛口径：主指标5h→2h，60%是当时表述）→ 业务背景（20+人用、前端5人没法跑严格对照，所以做前后对比，边界主动说）→ 对照组（20需求Jira工时拆四段，均值2-3天）→ 实验组（10需求流水线分段，1.5-2.5小时）→ 为什么不是AB+更理想怎么做（随机分配+双盲，把理想设计甩出来显懂）→ 收口三件套（指标名+数字+对照组定义，产物质量细指标翻度量体系卡）。被问"对照是不是纯手写"→ 对照是人工Jira历史。被问"OQ/IMP/返工率"→翻G4度量体系卡。</p>
-  </div>
-</div>
 
 <div class="card" data-c="proj" data-kw="Schema 适用场景 页面类型 表单 配置 营销 B端 边界 逐字稿">
   <div class="card-head"><span class="tag proj">Schema</span><div class="card-title">Schema驱动解决什么类型页面的开发效率？</div></div>
@@ -3479,16 +3490,42 @@ function buildTreeOptimized(list) {
 
 <!-- ==================== 补充卡片 v2 · AI 前沿（7 张） ==================== -->
 
-<div class="card" data-c="proj" data-kw="SDD Spec-Driven Development proposal design specs tasks apply verify archive">
-  <div class="card-head"><span class="tag proj">AI</span><div class="card-title">SDD 完整流程（Spec-Driven Development）</div></div>
-  <div class="core">编码前先创建 AI 能直接理解的 Spec，7 步：proposal → design → specs → tasks → apply → verify → archive</div>
+<div class="card" data-c="proj" data-kw="11 步 蒸馏 流水线 倒背 脱稿 口播 90秒 输入输出 门控 证据链 8种证据 5条边界规则 Evidence Ledger Requirement IR Layer Impact Contract Delta Spec Review Gate Readiness Final Gate 阿里 千问 星河 小红书 失分">
+  <div class="card-head"><span class="tag proj">AI</span><div class="card-title">SDD 11 步倒背卡（面试脱稿版）</div></div>
+  <div class="core">PRD→Spec→Plan 的 11 步蒸馏流水线，每步有输入/输出/门控，证据链 + 4 层门控贯穿全程</div>
   <div class="card-body">
-    <p><strong>这道题我从一个定位开场——SDD 不是又一种写代码的方法，是把"先想清楚再动手"这件事工程化、让 AI 能照着做。</strong>它的全称是 Spec-Driven Development，核心一句话：编码前先创建一份 AI 能直接理解的 Spec（规范），代码是在这份规范约束下"生成"出来的，不是人手一行行敲的。</p>
-    <p><strong>先把它放进演进链里（一句话定位，显你不是背的）</strong>：Prompt Engineering → Context Engineering → Harness Engineering。Vibe Coding 是速度探索（让 AI 猛写、跑通就行），SDD 是结构化规范（先把需求固化成契约再生成），Harness Engineering 是工业级可控（包裹模型的全套基础设施）。我做的 prd-tools 就是 SDD 的工程化落地，往 Harness 雏形走。</p>
-    <p><strong>7 步流程我背得脱口而出（顺着一个需求的 lifecycle 念）</strong>：① proposal 提案——说清业务价值、值不值得做；② design 架构——整体怎么设计；③ specs 规范——这是 SSOT（唯一真理源），把接口、字段、约束全部写死；④ tasks 把规范拆成原子任务；⑤ apply 让 AI 执行生成；⑥ verify 测试 + 回归 + 人工 review；⑦ archive 把这次经验沉淀回流。其中 specs 和 verify 是两条命门——specs 决定 AI 能不能照着做对，verify 决定生成出来能不能信。</p>
-    <p><strong>落到我的项目（桥接，最关键的一段）</strong>：prd-tools 就是这 7 步的工程化实现。proposal 对应 PRD 摄入，design 对应能力面适配器（按需求类型分发），specs 就是我的 Reference 6 文件 SSOT，tasks 是 Spec/Plan 两阶段拆出来的 11 步，apply 是下游 Cursor/Claude Code 出码，verify 是 quality-gate.py 5 项检查（语法/字段双向/规则/集成 + 一致性），archive 是 Mode E 反馈回流。一句话——我不是在背概念，我是这 7 步每一步都亲手实现过。</p>
-    <p><strong>面试官最爱追的两类追问（提前备好）</strong>：一是工具链——EARS 需求规格化语法、GitHub 2025 开源的 Spec Kit（这是行业共识的依据，别说"26 年大家都认同"太绝对）；二是落地难点——团队接受度 + Spec 长期维护成本，诚实说这两点是企业里最大的拦路虎。<strong>蚂蚁一面真追过"和代码即文档比优势是什么"</strong>——一句话定调：spec 是<strong>唯一真理源 + 可执行契约</strong>，代码即文档只是给人看的事后记录。三个差异：① 文档性质——一个是被动记录、一个是约束生成的契约；② 风险控制——前者后置修补、spec 前置卡住；③ 质量一致性——spec 系统化不依赖个人。<strong>金融场景主动加一句收口：在 verify 步骤我会额外加一道资损风险评估</strong>，这正中蚂蚁稳定性文化的下怀。</p>
-    <p class="hint">[loop·已优化·已复核] 念法：定位钩子（不是新方法，是把"先想清楚"工程化）→ 演进链一句（Prompt→Context→Harness，Vibe/SDD/Harness 三档）→ 7 步顺着 lifecycle 念（specs+verify 是命门）→ 落 prd-tools 7 步对应（Reference6文件=specs、11步=tasks、quality-gate5项=verify、Mode E=archive）→ 两类追问（EARS/Spec Kit + 落地难点）→ 蚂蚁真题收口（唯一真理源+可执行契约三差异 + 金融加资损评估）。蚂蚁财富 AI Lab 必考。</p>
+    <p><strong>开场一句话定位</strong>：我做的 prd-tools 是 SDD 的工程化落地——不是让 AI 写代码，是把 PRD 从自然语言蒸馏成有证据支撑的开发计划。整条链路是 <strong>11 步蒸馏流水线</strong>，靠 3 个机制保质量：证据链防幻觉、YAML 中间文件防跳步、4 层门控防低产出。</p>
+
+    <p><strong>① 11 步逐条（每步：输入 → 输出 → 门控）</strong>：</p>
+    <p>· <strong>S1 PRD 摄入</strong>：输入 md/txt/docx/粘贴文本 → 产出 <code>_ingest/document.md</code> + <code>media-analysis.yaml</code> → 门控：图片子 Agent 并行（≤8 张 1 个、&gt;8 张拆多个 foreground 并行），<code>extraction-quality.yaml</code> 三档（pass/warn/block），block 即停。</p>
+    <p>· <strong>S2 证据账本 Evidence Ledger</strong>：输入 PRD 原文 + 源码 + 文档 + Git → 产出 <code>evidence.yaml</code>（每条证据一个 Evidence ID）→ 门控：后续所有判断只引用 Evidence ID，不引用即违规。</p>
+    <p>· <strong>S3 需求 IR Requirement IR</strong>：输入 PRD + Evidence → 产出 <code>requirement-ir.yaml</code>（每个需求点含 change_type/acceptance_criteria/evidence_ids）→ 门控：每条需求至少 1 个证据。</p>
+    <p>· <strong>S4 代码搜索 + Layer Impact</strong>：输入 Requirement IR + Reference 路由 → 产出 <code>graph-context.md</code> + <code>layer-impact.yaml</code> → 门控：每个 Layer Impact 必须挂 code_anchor（graph/rg/reference/inferred 四种来源），<strong>MODIFY/DELETE 类型无锚点不允许过</strong>。</p>
+    <p>· <strong>S5 Contract Delta</strong>：输入 Layer Impact + 多层协作需求 → 产出 <code>contract-delta.yaml</code>（前后端契约差异）→ 门控：多层需求缺 contract-delta 直接 fail。</p>
+    <p>· <strong>S6 Spec 生成</strong>：输入前 5 步产物 → 产出 <code>spec.md</code>（三段：需求理解/契约对齐/风险检查）→ 门控：风险点必须标红，不让 AI 凭空推测。</p>
+    <p>· <strong>S7 Spec Review Gate（人工硬停止）</strong>：输入 Spec → 输出 owner 确认 → 门控：<strong>必须人工确认 AI 读懂 PRD 才允许进 Plan</strong>。这是声明约束不够加人工的典型。</p>
+    <p>· <strong>S8 Plan 生成</strong>：输入 确认后 Spec → 产出 <code>plan.md</code>（三段：架构依赖图/需求-文件映射/QA 矩阵）→ 门控：每个改动点标注来源（代码/Reference/PRD）。</p>
+    <p>· <strong>S9 Readiness Score 五维评分</strong>：输入 Spec + Plan → 输出 0-100 分 → 门控：85+ 直接过、60-84 owner 确认、&lt;60 阻塞返工；硬性降级 P0 契约 blocked / 多层缺 contract-delta 直接 fail。</p>
+    <p>· <strong>S10 Reference 回流建议</strong>：输入 全程新发现的事实 → 产出 回流建议清单 → 门控：人工审批后才写进 Reference 6 文件（不自动写）。</p>
+    <p>· <strong>S11 Final Quality Gate</strong>：输入 全部产物 → 输出 终检报告 → 门控：独立 Python 脚本做 5 项确定性检查（必传文件/上下文消费/锚点覆盖率/计划完整性/阻塞项质量），按 85/60 分档。</p>
+
+    <p><strong>② 面试 90 秒口播版（按步骤念，每步 ~8 秒）</strong>：</p>
+    <p>"我做的 prd-tools 是 11 步蒸馏流水线。<strong>S1 摄入</strong> PRD 四种格式，图片子 Agent 并行；<strong>S2 建证据账本</strong>，8 种证据每条给 ID；<strong>S3 抽需求 IR</strong>，每条需求挂证据；<strong>S4 搜代码 + 算 Layer Impact</strong>，每个改动点必须挂 code_anchor；<strong>S5 抽 Contract Delta</strong> 处理前后端契约差异；<strong>S6 生成 Spec</strong> 三段式；<strong>S7 Spec Review Gate 人工硬停止</strong>；<strong>S8 生成 Plan</strong> 三段式；<strong>S9 Readiness Score 五维评分</strong>，85 过 60 警告；<strong>S10 Reference 回流建议</strong>；<strong>S11 Final Gate 独立脚本 5 项检查</strong>。整条链靠证据链 + YAML 中间文件 + 4 层门控保质量。"（约 90 秒）</p>
+
+    <p><strong>③ 8 种证据类型（追问必背）</strong>：<code>prd</code>（PRD 原文段落）/ <code>tech_doc</code>（技术文档）/ <code>code</code>（源码）/ <code>git_diff</code>（Git 历史）/ <code>negative_code_search</code>（负向搜索——"没搜到"也要声明）/ <code>human</code>（人工确认）/ <code>api_doc</code>（接口文档）/ <code>reference</code>（Reference 6 文件）。<strong>记忆口诀</strong>：原文 + 文档 + 源码 + 历史 + 负向 + 人 + 接口 + 知识库。</p>
+
+    <p><strong>④ 5 条边界规则（Reference 6 文件的关注点分离）</strong>：① 每个事实只存在一处（SSOT）；② 契约文件只管 API 接口定义，不碰业务规则；③ 业务规则文件只管"是什么"，不重复契约；④ 代码结构文件只描述现状，不写"应该怎么改"；⑤ 同一概念不在两个文件里各写一遍（如"活动状态"枚举只放一处）。<strong>一句话</strong>：关注点分离 + 唯一真理源，避免改一处要改三处。</p>
+
+    <p><strong>⑤ 面试官追问应答表</strong>：</p>
+    <p>· <strong>Q: 11 步会不会太重？</strong> → A: 团队推广版只做 PRD→Plan（S1-S9），S10/S11 是质量加固可裁剪；个人原型 prd2code-gen 跑端到端。</p>
+    <p>· <strong>Q: 证据链 8 种类型分别是什么？</strong> → A: 上面③直接念，重点是 negative_code_search——"没搜到也要声明"是防幻觉的关键。</p>
+    <p>· <strong>Q: PRD 过时怎么办？</strong> → A: 以<strong>源码为 SSOT</strong>，历史 PRD 仅作业务场景理解参考；静态知识（代码结构/编码规则）每次构建基于最新代码扫描天然不过时；动态业务规则三层防护——冷启动用最新 PRD、每次蒸馏后自动回流、产物输出前人工 review。诚实承认：纯动态业务规则的自动检测目前还没做好。</p>
+    <p>· <strong>Q: 门控到底几层？</strong> → A: 4 层——步骤间前置检查（S1-S11 每步开头）+ 摄入门禁（S1 三档质量）+ Spec Review Gate（S7 人工硬停止）+ 终检（S9 评分 + S11 脚本）。设计原则：声明约束不够加门禁、门禁不够加评分、评分不够加人工。</p>
+    <p>· <strong>Q: 和 Cursor / Claude Code init 比增量价值？</strong> → A: 两点——① Claude Code init 只分析代码结构，不理解业务语义（PRD 关键词→代码字段映射）；② 直接让 AI 写计划会幻觉，证据链让每个推理可追溯。对大仓库增量明显，小仓库诚实说增量有限。</p>
+    <p>· <strong>Q: Spec / Plan 长什么样？</strong> → A: Spec 三段（需求理解 30 秒概览 + 需求点拆分标 PRD 来源 / 契约对齐 BFF 关注 vs 不关注 / 风险检查 AI 不确定点标红）；Plan 三段（架构依赖图 / 需求-文件映射标来源 / QA 矩阵 + 契约对齐确认）。</p>
+    <p>· <strong>Q: 效果数据？</strong> → A: PRD→Plan 从 2-4h 降到 30min，文件级准确率 80%，同一 PRD 跑 10 次一致性 40%→85%+。诚实说：样本小、只在前端营销 B 端验证过。详细口径翻 emer 数据口径卡。</p>
+
+    <p class="hint">[loop·已优化·已复核·v256 SDD 倒背精进] 念法：开场定位一句（不是写代码、是蒸馏）→ 11 步逐条（每步输入/输出/门控）→ 90 秒口播版（脱稿念）→ 8 种证据口诀 → 5 条边界规则 → 追问应答表（过时/门控几层/增量价值三连击）。阿里 L168 复盘点：自己设计的章节必须背熟，这张卡就是脱稿稿。</p>
   </div>
 </div>
 
@@ -3550,42 +3587,45 @@ function buildTreeOptimized(list) {
   </div>
 </div>
 
-<div class="card" data-c="ai" data-kw="KV Cache Transformer PagedAttention GQA 量化 vLLM 内存带宽">
-  <div class="card-head"><span class="tag ai">AI</span><div class="card-title">KV Cache 原理 + 优化方案</div></div>
-  <div class="core">缓存历史 K/V 避免重复计算，空间换时间，长上下文内存爆炸</div>
+<div class="card" data-c="ai" data-kw="KV Cache Transformer PagedAttention GQA 量化 vLLM 内存带宽 服务端 prompt caching 前向传播 attention 张量">
+  <div class="card-head"><span class="tag ai">AI</span><div class="card-title">KV Cache 原理 + 优化方案（含"存哪"原题）</div></div>
+  <div class="core">缓存历史 K/V 张量避免重复计算，空间换时间；<strong>Prompt Caching 的 KV cache 存服务端不存本地</strong></div>
   <div class="card-body">
     <p><strong>这道题前端岗不用深挖算法，但有一个必答点——"为什么大模型上下文越长越贵、越慢"。搞懂 KV Cache 就能答透。</strong></p>
     <p><strong>原理（一句话）</strong>：Transformer 生成是自回归的（一个字一个字吐），每生成一个字都要算 Attention，而 Attention 需要前面所有字的 K/V 向量。不缓存每步重算前面所有 K/V（O(N²)）；缓存下来直接用（O(N)），空间换时间。</p>
-    <p><strong>但缓存带来三个工程挑战</strong>：① <strong>内存爆炸</strong>——KV Cache 随序列长度线性增长，长上下文时 KV Cache 内存可能超过模型权重本身；② <strong>带宽瓶颈</strong>——Decode 阶段每步只生成 1 个 token，但要从显存（HBM）读全部 KV Cache，内存带宽成瓶颈（不是算力，是搬运）；③ <strong>Lost in the Middle</strong>——上下文超 40% 进入 Dumb Zone，模型对中间内容注意力下降。</p>
-    <p><strong>优化方案（大模型岗追问再甩）</strong>：① PagedAttention（vLLM，类 OS 虚拟内存分页，减 80% 内存浪费）；② GQA/MQA（多个 Query 共享 K/V）；③ Quantization（FP16→INT8/INT4，内存减半）；④ Context Cache（缓存公共前缀 KV）；⑤ LMCACHE（批量传输+流水线）。</p>
+    <p><strong>追问应对：那 Prompt Caching 的 KV cache 到底存哪？（蚂蚁 Q13 原题，最易翻车）</strong>：存<strong>模型服务商的服务端显存</strong>里（Anthropic / OpenAI 的推理集群），<strong>不在用户本地</strong>。本地 <code>.claude</code> 文件夹存的是会话 transcript（文本持久化），和服务端 KV 张量（计算加速）是两码事——别搅在一起。命中后省约 90% 成本（官方口径 cache read 0.1× 基准价）。</p>
+    <p><strong>缓存带来三个工程挑战</strong>：① <strong>内存爆炸</strong>——KV Cache 随序列长度线性增长，长上下文时 KV Cache 内存可能超过模型权重本身；② <strong>带宽瓶颈</strong>——Decode 阶段每步只生成 1 个 token，但要从显存（HBM）读全部 KV Cache，内存带宽成瓶颈（不是算力，是搬运）；③ <strong>Lost in the Middle</strong>——上下文超 40% 进入 Dumb Zone，模型对中间内容注意力下降。</p>
+    <p><strong>优化方案（大模型岗追问再甩）</strong>：① PagedAttention（vLLM，类 OS 虚拟内存分页，减 80% 内存浪费）；② GQA/MQA（多个 Query 共享 K/V）；③ Quantization（FP16→INT8/INT4，内存减半）；④ Context Cache（缓存公共前缀 KV，这就是 Prompt Caching 的底层）；⑤ LMCACHE（批量传输+流水线）。</p>
     <p><strong>前端为什么该懂（收口）</strong>：懂 KV Cache 就能解释——为什么上下文越长越贵（Decode 每步读全部 KV）、为什么要做对话压缩、为什么 Prompt Caching 能省钱（相同前缀 KV 复用，省 90%）。这三个在 AI 前端面试高频。</p>
-    <p class="hint">[loop·已优化·已复核] 念法：钩子（前端必答"为什么越长越贵"）→ 原理（自回归+Attention需历史K/V，O(N²)→O(N)）→ 三挑战（内存爆炸/带宽瓶颈/Lost in Middle）→ 优化（追问甩）→ 收口（解释越长越贵/压缩/Prompt Caching）。</p>
+    <p class="hint">[loop·已优化·已复核·v256 补"存哪"原题] 念法：钩子（前端必答"为什么越长越贵"）→ 原理（自回归+Attention 需历史 K/V，O(N²)→O(N)）→ <strong>追问"存哪"（服务端显存，不是本地 transcript，省 90%）</strong>→ 三挑战（内存爆炸/带宽瓶颈/Lost in Middle）→ 优化（追问甩，PagedAttention 是 Prompt Caching 底层）→ 收口。</p>
   </div>
 </div>
 
-<div class="card" data-c="ai" data-kw="Token Smart Zone Dumb Zone Prompt Caching 上下文预算 Lost in the Middle">
-  <div class="card-head"><span class="tag ai">AI</span><div class="card-title">Token Smart Zone + Prompt Caching</div></div>
-  <div class="core">上下文 0-40% Smart Zone 质量最高，>40% Dumb Zone 明显下降；相同前缀 KV 可复用降本 90%</div>
+<div class="card" data-c="ai" data-kw="Token Smart Zone Dumb Zone Prompt Caching 上下文预算 Lost in the Middle cache_control break-even 1.25倍 0.1倍 4个断点">
+  <div class="card-head"><span class="tag ai">AI</span><div class="card-title">Token Smart Zone + Prompt Caching（官方价格口径）</div></div>
+  <div class="core">上下文 0-40% Smart Zone 质量最高，>40% Dumb Zone 明显下降；Prompt Caching <strong>cache write 1.25× / read 0.1×</strong>，命中省 90%</div>
   <div class="card-body">
-    <p><strong>这道题我先甩一个反直觉的钩子——上下文不是越多越好，喂太满模型反而变笨。</strong>Anthropic 的 Lost in the Middle 研究给了量化结论：上下文用到 0-40% 是 Smart Zone，推理质量最高；超 40% 进 Dumb Zone 开始下降；到 80% 以上明显幻觉、遗忘开头的内容。所以做 Context Engineering 第一条铁律就是——<strong>上下文是稀缺资源，得像分配内存一样分配 token</strong>，不是把所有东西都塞进去。</p>
-    <p><strong>第一层·预算怎么分（这是面试官想听的实操经验）</strong>：我按一个经验比例分配——系统提示词 5-10%、工具定义 10-20%、检索文档 20-30%、对话历史 20-30%、用户输入 5-10%、输出预留 20-30%。核心思想是<strong>把预算花在刀刃上</strong>：检索文档和对话历史是回答质量的命脉，给最大头；工具定义虽多但靠 Prompt Caching 几乎免费；始终给输出留 20-30%，别填满上下文让模型没地方写。</p>
-    <p><strong>第二层·Prompt Caching（省钱的杀手锏）</strong>：原理是 Attention 计算要复用历史 token 的 KV 向量，相同前缀的 KV 算过一次缓存下来，下次直接读不用重算——Anthropic 同前缀 5 分钟内重复请求便宜约 90%，OpenAI 已自动启用。落地手法很关键：<strong>把不变的部分（系统提示词 + 工具定义 + 知识库前缀）固定在 prompt 头部，每次只换尾部的用户输入</strong>，前缀就持续命中缓存。这不是省钱技巧，是 AI 应用能不能扛住高频调用的基础设施。</p>
-    <p><strong>第三层·超了怎么办（指向压缩方案）</strong>：上下文一旦逼近窗口，得压缩——滑动窗口、关键信息提取、自动摘要、MemGPT 分页、LLMLingua 小模型筛 token 都是手段。这块细节多，被追问再甩"对话压缩"那张卡。</p>
-    <p><strong>落到我的项目（收口）</strong>：prd-tools 就是 Context Engineering 落地——精选 6 个 SSOT 做"信息选择"（只存精选领域知识不堆全量源码），build-index.py 倒排索引，context-pack.py 按 must/should/optional 分层注入做"预算管理"（优先级高的 must 必塞、optional 按需）。本质就是把 Smart Zone 用满、不浪费在无关内容上。</p>
-    <p class="hint">[loop·已优化·已复核] 念法：钩子（上下文越多越笨，不是越多越好）→ Smart Zone 量化（0-40%/40%/>80%）→ 预算分配（六项比例，检索+对话给大头，输出留 20-30%）→ Prompt Caching（KV 复用降 90%，前缀固定尾部变）→ 压缩方案一句带过指向对话压缩卡 → 落 prd-tools（6 SSOT + context-pack 三层注入）。被问"为什么越长越贵"→ Attention 要复用历史 KV，O(N²) 计算量；被问"怎么省成本"→ 先 Prompt Caching 再压缩。</p>
+    <p><strong>这道题我先甩一个反直觉的钩子——上下文不是越多越好，喂太满模型反而变笨。</strong>Anthropic 的 Lost in the Middle 研究给了量化结论：上下文用到 0-40% 是 Smart Zone，推理质量最高；超 40% 进 Dumb Zone 开始下降；到 80% 以上明显幻觉、遗忘开头的内容。所以做 Context Engineering 第一条铁律——<strong>上下文是稀缺资源，得像分配内存一样分配 token</strong>，不是把所有东西都塞进去。</p>
+    <p><strong>第一层·预算怎么分（面试官想听的实操经验）</strong>：经验比例——系统提示词 5-10%、工具定义 10-20%、检索文档 20-30%、对话历史 20-30%、用户输入 5-10%、输出预留 20-30%。核心思想<strong>把预算花在刀刃上</strong>：检索文档和对话历史是回答质量的命脉给最大头；工具定义虽多但靠 Prompt Caching 几乎免费；始终给输出留 20-30% 别填满。</p>
+    <p><strong>第二层·Prompt Caching 官方价格口径（被追问"具体便宜多少"就甩这套数字）</strong>：Anthropic 官方——<strong>cache write 1.25× 基准输入价（5min TTL；选 1hour TTL 是 2×）、cache read 0.1× 基准输入价</strong>。<strong>每个请求最多 4 个 <code>cache_control</code> 断点</strong>。<strong>break-even 在第 2 轮</strong>：第 1 轮贵 25%（写入），第 2 轮起只付 10%（读），多轮对话累积省 90%。落地手法——把不变的部分（系统提示词 + 工具定义 + 知识库前缀）固定在 prompt 头部，每次只换尾部用户输入，前缀就持续命中缓存。这不是省钱技巧，是 AI 应用能不能扛住高频调用的基础设施。</p>
+    <p><strong>追问应对：那第一轮不是更贵吗？</strong>：对，第一轮贵 25%（cache write 1.25×），但只要 5 分钟内有第二轮请求命中（cache read 0.1×）就回本，第 3 轮起纯赚。所以高频对话场景必开，低频一次性请求没必要开。</p>
+    <p><strong>第三层·超了怎么办（指向压缩方案）</strong>：上下文逼近窗口得压缩——滑动窗口、关键信息提取、自动摘要、MemGPT 分页、LLMLingua 小模型筛 token。Claude Code 自己的方案是 auto-compaction（90% 触发释放 60-70%），细节看"对话压缩"那张卡。</p>
+    <p><strong>落到我的项目（收口）</strong>：prd-tools 就是 Context Engineering 落地——精选 6 个 SSOT 做"信息选择"（只存精选领域知识不堆全量源码），build-index.py 倒排索引，context-pack.py 按 must/should/optional 分层注入做"预算管理"（must 必塞、optional 按需）。本质就是把 Smart Zone 用满、不浪费在无关内容上。</p>
+    <p class="hint">[loop·已优化·已复核·v256 补官方价格] 念法：钩子（上下文越多越笨）→ Smart Zone 量化（0-40%/40%/>80%）→ 预算分配（六项比例）→ <strong>Prompt Caching 官方数字（write 1.25× / read 0.1× / 4 断点 / break-even 第 2 轮）</strong>→ 追问第一轮更贵（5min 内回本）→ 压缩指向对话压缩卡 → 落 prd-tools。被问"具体便宜多少"翻第二层。</p>
   </div>
 </div>
 
-<div class="card" data-c="ai" data-kw="对话压缩 LLMLingua MemGPT 分页 MemWalker 递归摘要 上下文压缩">
-  <div class="card-head"><span class="tag ai">AI</span><div class="card-title">对话压缩技术（AI 应用核心基建）</div></div>
-  <div class="core">每轮全量上下文扔模型积分秒超，必须自建压缩层</div>
+<div class="card" data-c="ai" data-kw="对话压缩 LLMLingua MemGPT 分页 MemWalker 递归摘要 上下文压缩 auto-compaction 90%触发 60-70%释放 Claude Code">
+  <div class="card-head"><span class="tag ai">AI</span><div class="card-title">对话压缩技术（AI 应用核心基建，含 Claude auto-compaction）</div></div>
+  <div class="core">每轮全量上下文扔模型积分秒超，必须自建压缩层；<strong>Claude auto-compaction 90% 触发释放 60-70%</strong></div>
   <div class="card-body">
-    <p><strong>这道题我先甩一个能定调的钩子——大模型应用没有压缩层就不可持续。星河觉醒二面我就栽在这：面试官一句"每一轮都把上下文扔给模型，不用积分就肯定会超"，我当场没接住。所以这题不是问你会不会压缩，是问你有没有把"压缩"当成 AI 应用的第一公民来设计。</strong></p>
-    <p><strong>先讲为什么必做（业务背景，不背书）</strong>：我做的 prd-tools 喂 20+ 人用，每天几十次调用，对话历史一轮轮堆上去，token 账单和延迟都线性增长——不压迟早崩。所以这题答得好不好，不在背几个开源库名字，而在能不能讲清"压缩是在回答质量、成本、延迟三件事上找平衡"。</p>
-    <p><strong>两层往下讲——先开源方案有什么，再自建为什么不一样</strong>：开源这一层有四套代表——① <strong>LLMLingua</strong>（微软，用小模型逐 token 判断重要性，能压 20 倍，是面试官最想听的那个名）；② <strong>MemWalker</strong>（把历史组织成树，按需检索式压缩）；③ <strong>MemGPT / Letta</strong>（借 OS 虚拟内存的分页思想，把上下文当内存分页换进换出，是最有架构感的一套）；④ 渐进式摘要（把最老的消息递归压成摘要块放 prompt 开头，上下文保持固定大小，代价是丢细节）。这四套的区别记一句话就够——LLMLingua 是 token 级压缩、MemGPT 是分页级管理、渐进式摘要是语义级摘要。</p>
-    <p><strong>自建方案长什么样（星河觉醒的真实做法）</strong>：自己实现压缩层，把多轮历史压成精简表示，核心是三层记忆——① <strong>短期</strong>当前对话原文、② <strong>中期</strong> session 摘要、③ <strong>长期</strong>落向量库；再叠一个渐进式摘要算法（老消息递归压成摘要块）+ 关键信息提取（把重要实体和决策持久化下来不丢）。为什么自研不直接用开源——因为压缩直接决定体验，压过头丢信息答非所问、压不够浪费 token，AI 应用公司倾向自研做业务定制，这块是差异化而不是套壳。</p>
-    <p><strong>落到我的项目（收口桥接，体现不是纸上谈兵）</strong>：prd-tools 的 Reference 6 文件，本质就是我做的"项目知识压缩层"——不是把几万行源码全量塞进上下文，是 6 个 SSOT 只存精简的领域知识，按需检索按需注入。道理跟对话压缩是同一套——上下文是稀缺资源，要么在对话侧压、要么在知识侧预先精选。<strong>一句话收口：压缩不是省钱技巧，是 AI 应用扛得住多轮、扛得住规模的基础设施。</strong></p>
-    <p class="hint">[loop·已优化·已复核] 念法：钩子（没压缩层不可持续+星河觉醒二面失分点）→ 业务背景（prd-tools 喂 20+ 人、历史线性堆迟早崩，是质量/成本/延迟三者平衡）→ 两层——开源四套（LLMLingua 20x/MemWalker 树/MemGPT 分页/渐进式摘要，记一句话区分粒度）+ 自建三层记忆（短期/中期/长期）→ 为啥自研（压缩定体验、是差异化）→ 落 prd-tools（Reference 6 文件=项目知识压缩层，知识侧预精选）→ 金句收口（基础设施不是省钱技巧）。被问"和 Token Smart Zone/Prompt Caching 什么关系"→ 那俩管单次请求内的预算和前缀复用，这题管跨轮历史的压缩，是两层。</p>
+    <p><strong>这道题先甩一个能定调的钩子——大模型应用没有压缩层就不可持续。星河觉醒二面我就栽在这：面试官一句"每一轮都把上下文扔给模型，不用积分就肯定会超"，我当场没接住。所以这题不是问你会不会压缩，是问你有没有把"压缩"当成 AI 应用的第一公民来设计。</strong></p>
+    <p><strong>先讲 Claude 自己怎么压（蚂蚁 Q11 原题——auto-compaction 触发阈值）</strong>：Claude Code 上下文逼近容量极限（<strong>约 90%，剩 10%</strong>）时，自动把旧对话总结成摘要，<strong>一次释放 60-70% 窗口</strong>，用户几乎无感。CLAUDE.md 压缩后重新加载保证项目指令不丢。手动 <code>/compact</code> 主动压、<code>/clear</code> 硬重置。<strong>追问"和 prompt caching 什么关系"→ prompt caching 管单次请求内前缀复用（省 token），auto-compaction 管跨多轮历史压缩（腾窗口），是两层。</strong></p>
+    <p><strong>再讲为什么必做（业务背景）</strong>：我做的 prd-tools 喂 20+ 人用，每天几十次调用，对话历史一轮轮堆上去 token 账单和延迟线性增长——不压迟早崩。所以这题答得好不好不在背开源库名字，在能不能讲清"压缩是在回答质量、成本、延迟三件事上找平衡"。</p>
+    <p><strong>开源四套代表</strong>：① <strong>LLMLingua</strong>（微软，小模型逐 token 判断重要性，能压 20 倍，是面试官最想听的名）；② <strong>MemWalker</strong>（历史组织成树，按需检索式压缩）；③ <strong>MemGPT / Letta</strong>（借 OS 虚拟内存分页思想，把上下文当内存换进换出，最有架构感）；④ 渐进式摘要（最老消息递归压成摘要块放 prompt 开头，上下文保持固定大小，代价丢细节）。<strong>记一句话区分粒度</strong>：LLMLingua token 级、MemGPT 分页级、渐进式摘要语义级。</p>
+    <p><strong>自建方案（星河觉醒真实做法）</strong>：自己实现压缩层把多轮历史压成精简表示，核心是三层记忆——① <strong>短期</strong>当前对话原文、② <strong>中期</strong> session 摘要、③ <strong>长期</strong>落向量库；叠渐进式摘要算法（老消息递归压成摘要块）+ 关键信息提取（重要实体和决策持久化不丢）。为什么自研不直接用开源——因为压缩直接决定体验，压过头丢信息答非所问、压不够浪费 token，AI 应用公司倾向自研做业务定制，这块是差异化而不是套壳。</p>
+    <p><strong>落到我的项目（收口）</strong>：prd-tools 的 Reference 6 文件，本质就是我做的"项目知识压缩层"——不是把几万行源码全量塞进上下文，是 6 个 SSOT 只存精简领域知识按需检索按需注入。道理跟对话压缩同一套——上下文是稀缺资源，要么在对话侧压、要么在知识侧预先精选。<strong>一句话收口：压缩不是省钱技巧，是 AI 应用扛得住多轮、扛得住规模的基础设施。</strong></p>
+    <p class="hint">[loop·已优化·已复核·v256 补 auto-compaction 原题] 念法：钩子（没压缩层不可持续+星河觉醒失分）→ <strong>Claude auto-compaction（90% 触发释放 60-70%，和 prompt caching 是两层）</strong>→ 业务背景（质量/成本/延迟三者平衡）→ 开源四套（LLMLingua 20x/MemWalker 树/MemGPT 分页/渐进式摘要）→ 自建三层记忆 → 落 prd-tools → 金句收口。被问"auto-compaction 触发阈值"翻第二段；被问"和 prompt caching 区别"翻第二段末。</p>
   </div>
 </div>
 
