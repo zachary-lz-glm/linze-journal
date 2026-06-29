@@ -4628,7 +4628,7 @@ const catNames={all:'全部',open:'开场',proj:'项目',bagu:'基础',code:'手
 const subOrder={
   'Schema 项目':1,'AI 总览':2,'AI 架构':3,'AI 质量':4,'AI 端到端':5,'AI 工具':6,'产品思维':7,
   'React':1,'JS 核心':2,'CSS':3,'网络':4,'浏览器/性能':5,'TypeScript':6,'工程化':7,'框架扩展':8,
-  'Agent 基础':1,'RAG 检索':2,'LLM 工程':3,'工具协议':4,'AI 评测':5,'Loop 工程':6,'AI 前端':7,'行业视野':8,'追问':9,
+  'Agent 基础':1,'RAG 检索':2,'LLM 工程':3,'工具协议':4,'AI 评测':5,'Loop 工程':6,'AI 工程化':7,'AI 前端':8,'行业视野':9,'追问':10,
   '速查':0,'手写 API':1,'数组/双指针':2,'链表':3,'树/BFS/DFS':4,'回溯':5,'排序/TopK':6,'DP/贪心':7,'栈':8,'二分':9,'综合':10,
   '项目数据':1,'大麦专属':2,'TikTok专属':3,'蚂蚁专属':4,'软技能':5,'HR面':6,'反问':7,'话术急救':8
 };
@@ -4706,6 +4706,8 @@ function getGroup(c){
     if(/双插件|BMAD|能力面适配器|PRD 摄入|多格式|Spec.*Plan|Spec.*长什么样|代码.*定位|reference.*过时|知识库.*本质|SSOT|PRD.*质量卡口|PRD过时|PRD 改动|AI 怎么理解|打爆 ?[Cc]ontext/.test(t))return 'AI 架构';
     if(/最有技术挑战|完整链路|可靠性|4个王牌|5h→2h|准确率.*损耗|Claude Code init|Cursor 的区别|团队.*落地|工作流.*介绍|PRD 到代码最难/.test(t))return 'AI 总览';
     if(/Skill|Tools|自定义Agent|识别率|死循环|设计稿|Harness|前端Agent|传统工程|迭代|SDD 完整流程/.test(t)&&!/联动/.test(t))return 'AI 工具';
+    if(/金字塔|能力地图/.test(t))return 'AI 总览';
+    if(/loop 自动化|AI 工程含量/.test(t))return 'AI 工具';
     return 'Schema 项目';
   }
   if(cat==='bagu'){
@@ -4733,6 +4735,7 @@ function getGroup(c){
   }
   if(cat==='ai'){
     const t=(c.querySelector('.card-title')||{}).textContent||'';
+    if(/L3 AI 工程化|工程化 12 题|Prompt 注入|AI 安全|成本控制/.test(t))return 'AI 工程化';
     if(/Evals|Benchmark|评测|量化|防污染|不被污染/.test(t))return 'AI 评测';
     if(/Loop Engineering|Harness|自进化|Agent Loop|循环工程|Prompt.*Loop|maxxing/i.test(t))return 'Loop 工程';
     if(/MCP|Function Calling|A2A|Tools vs|Skills 调用|Skills 原理|工具协议/.test(t))return '工具协议';
