@@ -464,7 +464,7 @@ body{overscroll-behavior-y:contain}
     <p><strong>TLS 握手五步（顺着数据流念）</strong>：① <strong>ClientHello</strong>——客户端先开口，把自己支持的 TLS 版本、加密套件列表、一个客户端随机数发给服务端；② <strong>ServerHello</strong>——服务端选定 TLS 版本和加密套件，回一个服务端随机数；③ <strong>Certificate</strong>——服务端把 SSL 证书（含公钥）发过来，客户端用 CA 公钥验证书合不合法，这一步是防中间人的核心；④ <strong>Key Exchange</strong>——客户端生成 pre-master secret，用服务端公钥加密发过去（或 ECDHE 协商），双方拿客户端随机数、服务端随机数、pre-master 三个一起算出 session key；⑤ <strong>Finished</strong>——双方用 session key 加密发一段握手摘要，互相验证握手没被篡改。握手结束，后面所有 HTTP 报文都用这个 session key 对称加密传输。</p>
     <p><strong>这里有个常被追问的点：为什么前半段非对称、后半段对称？</strong>因为非对称加密慢、不能用来传大量业务数据，所以用非对称（公钥/私钥）安全地把 pre-master 送过去，换出一个共享的对称 session key，后续通信用对称加密快。一句话：<strong>非对称换密钥，对称传数据</strong>。这也是"为什么 HTTPS 比一握手多一次 RTT"的根因——这次额外的 TLS 握手就是成本。</p>
     <p><strong>收口加分项（被问 TLS 1.3 再甩）</strong>：TLS 1.3 把五步合并了，1-RTT 就能完成握手，恢复会话时甚至 0-RTT，所以现在大厂都推 1.3。念到这里停一下——主动说"握手成本是 HTTPS 比 HTTP 多一跳的根本原因，所以才有 TLS 1.3 和 HTTP/3 在 QUIC 上把握手和传输合并的优化"，能直接接到 HTTP/3 那张卡。</p>
-    <p class="hint">念法：钩子先甩（不是"多一层"，是协商出对称密钥+千问栽过）→ TLS 五步顺数据流念（ClientHello/ServerHello/Certificate/Key Exchange/Finished，验证书防中间人是重点）→ 常被追问（非对称换密钥对称传数据）→ 收口（TLS 1.3 1-RTT+接 HTTP/3）。被问"具体哪几步"必须能背五步。</p>
+    <p class="hint">念法：钩子先甩（不是"多一层"，是协商出对称密钥）→ TLS 五步顺数据流念（ClientHello/ServerHello/Certificate/Key Exchange/Finished，验证书防中间人是重点）→ 常被追问（非对称换密钥对称传数据）→ 收口（TLS 1.3 1-RTT+接 HTTP/3）。被问"具体哪几步"必须能背五步。</p>
   </div>
 </div>
 
@@ -1569,7 +1569,7 @@ function buildTreeOptimized(list) {
 // → {'a.b.c': 1, 'a.d': 2}</div>
 </div>
 
-<!-- ===== 手撕真题补充：正则题 + 字节真题 ===== -->
+<!-- ===== 手撕真题补充：正则题 ===== -->
 
 <div class="card" data-c="code" data-kw="正则 千分位 逗号 格式化 replace">
   <div class="card-head"><span class="tag code">真题</span><div class="card-title">正则手撕：千分位逗号</div></div>
@@ -2087,7 +2087,7 @@ function buildTreeOptimized(list) {
     <p>② <strong>上下文预算管理</strong>——窗口要分配。经验是 <strong>0-40% 是 Smart Zone</strong>（质量最高），超 40% 进 Dumb Zone（质量下降），超 80% 明显幻觉。系统提示、工具定义、检索文档、对话历史各占多少要规划好。</p>
     <p>③ <strong>渐进式披露</strong>——不一次把所有信息灌进去，按需加载。类似前端懒加载，用到才取。</p>
     <p><strong>落到我的项目</strong>：prd-tools 就是 Context Engineering 的落地——reference 6 文件 SSOT 做"信息选择"（只存精选领域知识），context-pack 分层注入做"预算管理"（按 must/should/optional 分配），按需匹配做"渐进披露"（只加载涉及的层）。Cursor 的 @file、CLAUDE.md 都是 Context Eng 的产品形态。</p>
-    <p class="hint">念法：先区分 Prompt vs Context Eng → 三维度（选择/预算/披露）→ Lost in the Middle 坑 → 落 prd-tools。小红书失分点。</p>
+    <p class="hint">念法：先区分 Prompt vs Context Eng → 三维度（选择/预算/披露）→ Lost in the Middle 坑 → 落 prd-tools。</p>
   </div>
 </div>
 
@@ -2100,7 +2100,7 @@ function buildTreeOptimized(list) {
     <p><strong>核心突破是自进化（KSG，小红书面试官补充）</strong>：传统 Agent 三段式（接收→规划→执行）是无状态的，每个上下文窗口独立、不积累。Harness 的突破是 KSG（Knowledge-Skill-Growth）——把短期记忆抽象成长期记忆、知识库、技能手册，让 Agent 能自我迭代。靠三类引擎：合并引擎整合多 Agent 输出、通信引擎传状态、<strong>反思引擎从失败提炼规则</strong>。</p>
     <p><strong>最重要的习惯：Ratchet 机制（错误即规则）</strong>——每次 Agent 犯错，提炼成一条永久约束，不让它犯第二次。比如 Agent 注释了测试，就在 AGENTS.md 加"永远不要注释测试"；执行了破坏命令，就加 hook 拦截。每一行规则都要能追溯到一次具体失败。</p>
     <p><strong>落到我的项目</strong>：prd-tools 整个架构就是 Harness——reference=L1、MCP+Skill=L2、11 步流水线=L3、Evidence Index=L4、quality-gate=L5、置信度+questions.md=L6。诚实说，我缺 KSG 自进化闭环（现在靠人工回流，没自动化反思引擎），这是后续方向。</p>
-    <p class="hint">念法：发动机比喻 → 六层 → KSG 自进化（反思引擎）→ Ratchet 错误即规则 → 落 prd-tools（诚实说缺自进化闭环）。小红书失分点。</p>
+    <p class="hint">念法：发动机比喻 → 六层 → KSG 自进化（反思引擎）→ Ratchet 错误即规则 → 落 prd-tools（诚实说缺自进化闭环）。</p>
   </div>
 </div>
 
@@ -2132,7 +2132,7 @@ function buildTreeOptimized(list) {
     <p>② <strong>Golden Sample 回归（更新后）</strong>——编一批基准案例（典型需求的 PRD + 预期输出），每次知识库更新后用这些 case 重跑。代码改了要跑单元测试，知识库改了也要跑回归测试，逻辑一模一样。</p>
     <p>③ <strong>多维评分对比（上线前）</strong>——评分维度包括证据链覆盖率、代码搜索锚点准确性、plan 与实际开发的文件覆盖率。更新后评分下降就说明可能引入了污染，立即回滚分析原因，绝不带病上线。</p>
     <p><strong>落到我的项目（桥接）</strong>：prd-tools 的 Mode E 回流就跑着这套轻量版——人工审核后才回流（对应①），用 golden case 回归对比评分（对应②③，消融实验去掉证据链层 Readiness 从 82 掉到 54 就是回归验证的实例）。诚实补一句：我没做全量决策链采集，只采了产出质量评分，这是下一步要补的。</p>
-    <p class="hint">念法：定调金句（不靠模型靠机制，和发版一个逻辑）→ 业务背景（20+人团队、污染就塌信任）→ 三层防线（人工check/golden回归/多维评分，写入→验证→上线）→ 落 prd-tools（Mode E回流 + 消融82→54验证实例）→ 诚实补缺（缺全量决策链采集）。小红书追问真题。</p>
+    <p class="hint">念法：定调金句（不靠模型靠机制，和发版一个逻辑）→ 业务背景（20+人团队、污染就塌信任）→ 三层防线（人工check/golden回归/多维评分，写入→验证→上线）→ 落 prd-tools（Mode E回流 + 消融82→54验证实例）→ 诚实补缺（缺全量决策链采集）。</p>
   </div>
 </div>
 
@@ -2277,12 +2277,12 @@ function buildTreeOptimized(list) {
   </div>
 </div>
 
-<div class="card" data-c="ai" data-kw="Skill MCP 优先 中转方案 IDE 渐进式披露 上下文占用 选型 腾讯电竞 Function Calling">
+<div class="card" data-c="ai" data-kw="Skill MCP 优先 中转方案 IDE 渐进式披露 上下文占用 选型 Function Calling">
   <div class="card-head"><span class="tag ai">E30</span><div class="card-title">Skill 优先于 MCP</div></div>
   <div class="core">MCP 固定占上下文+工具不可灵活选配+数量过多影响效果——中转方案 IDE→SKILL Script→MCP Server</div>
   <div class="card-body">
     <p><strong>这道题答出来直接对上候选人 prd-tools 双 Skill 体系的选型逻辑——面试官如果前沿一定听过这个判断。</strong></p>
-    <p><strong>核心结论（腾讯电竞明确指出）</strong>：使用 Skill 而不是 MCP 作为 Agent 工具接入的主路径。</p>
+    <p><strong>核心结论（业界公开实践）</strong>：使用 Skill 而不是 MCP 作为 Agent 工具接入的主路径。</p>
     <p><strong>MCP 的四大问题</strong>：</p>
     <p>· <strong>固定占用上下文</strong>——MCP server 启动后所有工具描述常驻 system prompt，几十个工具一挂就吃掉数千 token</p>
     <p>· <strong>工具不可灵活选配</strong>——MCP 是"全挂或全不挂"，无法按场景动态组合</p>
@@ -2291,7 +2291,7 @@ function buildTreeOptimized(list) {
     <p><strong>Skill 的优势（解决 MCP 全部痛点）</strong>：① <strong>渐进式披露</strong>——三级访问（skills_list 元数据 → skill_view 完整内容 → skill_view+file 支撑文件），把"技能成本"从 O(N) 降到 O(被实际用到的)；② <strong>按需加载</strong>——只在相关时才进 prompt，不相关时零成本；③ <strong>灵活组合</strong>——每个 Skill 独立，可按项目/角色任意搭配；④ <strong>低门槛</strong>——一个 Markdown 文件就是 Skill，团队人人能写。</p>
     <p><strong>中转方案（关键设计）</strong>：<strong>IDE → SKILL Script → MCP Server</strong>。Skill 是 Agent 的主入口（管"什么时候用什么"），但 Skill 内部可以调 MCP（管"标准化工具暴露"）。两者职责分离——Skill 管"语义调度"，MCP 管"协议接入"。这就是"Skill 优先"而非"Skill 替代"。</p>
     <p><strong>落到我的项目（关键加分项）</strong>：prd-tools 双 Skill 体系就是这个判断的实战——一开始用 MCP（Function Calling），调优两周准确率提不上去（MCP 单次调用本质，无多轮上下文）；转向 Skill+Agent 工作流，自研 Reference SSOT + 多轮证据链设计，效果立竿见影。这是亲自验证过的"Skill 优先于 MCP"。</p>
-    <p class="hint">[腾讯电竞 Harness Engineering·2026-06] 念法：钩子（Skill 优先于 MCP 不是 Skill 替代 MCP）→ MCP 四大问题（占上下文/不可选配/影响效果/配置繁琐）→ Skill 四大优势（渐进披露是核心，O(N)→O(used)）→ 中转方案（IDE→Skill→MCP，职责分离）→ 落 prd-tools（双 Skill 体系是亲自验证）。被问"Skill vs MCP 怎么选""为什么用 Skill 不用 MCP""Function Calling 局限"翻这张卡。</p>
+    <p class="hint">念法：钩子（Skill 优先于 MCP 不是 Skill 替代 MCP）→ MCP 四大问题（占上下文/不可选配/影响效果/配置繁琐）→ Skill 四大优势（渐进披露是核心，O(N)→O(used)）→ 中转方案（IDE→Skill→MCP，职责分离）→ 落 prd-tools（双 Skill 体系是亲自验证）。被问"Skill vs MCP 怎么选""为什么用 Skill 不用 MCP""Function Calling 局限"翻这张卡。</p>
   </div>
 </div>
 
@@ -2526,7 +2526,7 @@ function buildTreeOptimized(list) {
     <p><strong>第三层·用户侧AI交互（最前端特色，加分点）</strong>：对话式UI、智能表单、个性化推荐这些需要前端和AI结合的新交互形态。前端的价值从"实现页面"变成<strong>"设计人机协作的系统"</strong>。这层是前端工程师独占的地盘——模型再强，最终和用户交互的还是前端。</p>
     <p><strong>接着甩一个"不可替代"对冲（显得你想过边界）</strong>：模型能力越强工作流越轻，但有一样 AI 从外部拿不到——<strong>业务知识库、历史踩坑经验、跨团队协作上下文</strong>。这些必须靠人持续沉淀。所以模型越强，反而知识越重，不是越轻。这句能堵住"前端会不会消失"的追问。</p>
     <p><strong>再补一个"前端Agent方向"显格局（腾讯+Booster+面试官三源佐证）</strong>：腾讯团队产品都在用AI写代码、工程师从"写代码"转为"把控质量"；Booster 认为前端需要自己的 Agent 去做能力补充；面试官也提出"前端自有 Agent 给协同团队和用户提供能力"。三源一交叉指向同一句——<strong>前端工程师的未来是构建前端 Agent，让AI在前端领域自主执行复杂任务</strong>。这句是金句，背下来。</p>
-    <p><strong>最后必须接"C端AI渗透的实际路径"（涂虎面试官亲口校正，最防飘）</strong>：面试时千万别扯太远的愿景（比如"AI直接操作APP"），面试官会立刻追问"现在怎么做"。务实答三个层面：① <strong>设计还原</strong>——Design Token + 组件 Schema + 视觉回归测试三层约束，现有 Locofy/Builder.io 这类工具对简单页面准确率不错，复杂页面仍需人工微调；② <strong>H5优先落地</strong>——国内APP生态封闭，AI 没法自动化操作APP，但 H5 和小程序能做对话式导购、个性化推荐；③ <strong>辅助开发者提效</strong>——代码生成、自动化测试、视觉走查这些已经成熟。结论要诚实：UI界面短期不会消失，百分百AI生产是目标，但还在路上。</p>
+    <p><strong>最后必须接"C端AI渗透的实际路径"（业界共识校正，最防飘）</strong>：面试时千万别扯太远的愿景（比如"AI直接操作APP"），面试官会立刻追问"现在怎么做"。务实答三个层面：① <strong>设计还原</strong>——Design Token + 组件 Schema + 视觉回归测试三层约束，现有 Locofy/Builder.io 这类工具对简单页面准确率不错，复杂页面仍需人工微调；② <strong>H5优先落地</strong>——国内APP生态封闭，AI 没法自动化操作APP，但 H5 和小程序能做对话式导购、个性化推荐；③ <strong>辅助开发者提效</strong>——代码生成、自动化测试、视觉走查这些已经成熟。结论要诚实：UI界面短期不会消失，百分百AI生产是目标，但还在路上。</p>
     <p><strong>收口落回我的项目（桥接，证明不是空谈）</strong>：我自己做的 prd-tools 就在走第二层——不是替人写代码，而是<strong>设计 Agent 的行为约束和质量门控</strong>：用 Skill 固定流水线、用证据链锁事实、用 quality-gate 五维评分卡住质量。这正是"前端工程师从写代码转向设计 Agent 行为"的真实落地。一句话收口：<strong>模型能力在涨，但把模型变成靠谱系统的能力，是前端工程师在AI时代最值钱的护城河。</strong></p>
     <p class="hint">念法：钩子（不是考会不会用Cursor，是考未来判断）→ 一句定调（三层递进：编码自动化→工程Agentic→用户侧AI，越往上越值钱）→ 三层逐条（第一层成熟是起点别停/第二层核心角色转变"写代码→设计Agent行为+质量门控"/第三层前端独占地盘）→ 不可替代对冲（业务知识越重不是越轻，堵"会不会消失"）→ 前端Agent方向三源佐证（腾讯+Booster+面试官，金句=构建前端Agent）→ C端路径防飘（业界常见拆法三层：设计还原/H5优先/辅助提效，UI短期不消失）→ 落 prd-tools（Skill+证据链+quality-gate=设计Agent行为的真实落地）→ 金句（把模型变系统的能力=护城河）。被问"前端会不会被取代"→ 甩不可替代段+金句。</p>
   </div>
@@ -2726,7 +2726,7 @@ function buildTreeOptimized(list) {
     <p><strong>再甩一个角色转变（这是真正的考点，务必主动说）</strong>：腾讯那边连产品经理都在用 AI 直接写代码提 issue，前端工程师的角色正从<strong>"写代码的人"转成"把控质量的人"</strong>。这跟另一张卡（前端在 AI 时代能做什么）是同一个信号——未来核心竞争力不是写代码速度，是<strong>架构设计和技术判断力</strong>。这一句能堵住"前端会不会消失"的追问：消失的是纯写代码的工种，留下来的是设计 Agent 行为和质量门控的人。</p>
     <p><strong>补一个行业格局（显你跟过前沿，被追问再甩）</strong>：通用办公 Agent 是巨头必争之地——腾讯元宝和 ima、字节豆包、OpenAI Codex 都在转向"口袋式 Agent"模式，把编码、文档、沟通、调度全塞进一个 Agent。业界共识级别的判断：不做可能都会被吃掉所有入口。说明 Agent 正在重塑所有软件的入口形态，前端在这个方向有天然的交互和工程化优势。</p>
     <p><strong>收口·诚实地落到我自己（这道题的真正加分项）</strong>：我做的 prd-tools 是 PRD 自动转开发计划喂给 20+ 人团队——走的是<strong>人机协作</strong>路线，关键节点人兜底。腾讯的 issue 驱动更激进，是接近全托管的形态。<strong>差异要主动说、别装：他们到了第二阶段后半段，我还在第二阶段前半段——不是弱，是信任还没攒够、团队还没准备好全托管。</strong>见过最前沿的、知道自己在哪一档、知道下一档要补什么——这比背趋势值钱。<strong>一句话收口：AI 编码的未来不是"会不会替代"，是"你在三阶段里站在哪一档"——往质量门控和 Agent 行为设计这边站，就越站越稳。</strong></p>
-    <p class="hint">念法：钩子（被问"AI 编码未来"别站队，要答判断力：三阶段框架+issue 驱动佐证+落到自己）→ 一句定调（三阶段演进：辅助写代码→自主编码人审核→全流程自动化，头部公司在第二阶段）→ issue 驱动讲透（腾讯面试官亲口：人提 issue，Agent 自主调研编码，人只 CR+合并，甚至可能没 PRD 像开源，金句=issue 是新入口 PRD 非必经）→ 角色转变（PM 也在用 AI 写代码，前端从"写代码"转"把控质量"，核心竞争力=架构设计+技术判断力，堵"会不会消失"）→ 行业格局被追问再甩（通用办公 Agent 巨头必争：腾讯元宝/ima、豆包、Codex 口袋式，不做被吃所有入口）→ 落 prd-tools（人机协作 vs 腾讯接近全托管，诚实说自己第二阶段前半段因信任未攒够）→ 金句（不是会不会替代，是你在哪一档，往质量门控站越站越稳）。被问"前端会不会消失"→ 甩角色转变那段。</p>
+    <p class="hint">念法：钩子（被问"AI 编码未来"别站队，要答判断力：三阶段框架+issue 驱动佐证+落到自己）→ 一句定调（三阶段演进：辅助写代码→自主编码人审核→全流程自动化，头部公司在第二阶段）→ issue 驱动讲透（业界公开案例：人提 issue，Agent 自主调研编码，人只 CR+合并，甚至可能没 PRD 像开源，金句=issue 是新入口 PRD 非必经）→ 角色转变（PM 也在用 AI 写代码，前端从"写代码"转"把控质量"，核心竞争力=架构设计+技术判断力，堵"会不会消失"）→ 行业格局被追问再甩（通用办公 Agent 巨头必争：腾讯元宝/ima、豆包、Codex 口袋式，不做被吃所有入口）→ 落 prd-tools（人机协作 vs 业界接近全托管的实践，诚实说自己第二阶段前半段因信任未攒够）→ 金句（不是会不会替代，是你在哪一档，往质量门控站越站越稳）。被问"前端会不会消失"→ 甩角色转变那段。</p>
   </div>
 </div>
 
@@ -2911,7 +2911,7 @@ function buildTreeOptimized(list) {
     <p><strong>主动横向对比四款产品（这是加分钩子，显真用过）</strong>：问一问嵌在小红书搜索心智里、学习成本几乎为零，结果页直接出结构化摘要、又快又整齐，短板是引用源不够丰富；Perplexity 信息密度最高、每条都带可逐条验证的引用源，可信度拉满，但中文场景弱；百度 AI 搜索中文理解强、跟搜索框深度整合，可惜广告干扰、摘要质量忽高忽低；豆包搜索字节生态、响应快、能出图文混排的多模态结果，但深度不够。对比时我会明确说"我用问一问最多"，把真实体验摆出来——面试官一眼能看出你是不是真用过。</p>
     <p><strong>落到前端架构，三个关键点逐条讲</strong>：第一是<strong>流式渲染（SSE）</strong>——AI 回答是逐 token 生成的，前端用 Server-Sent Events 做流式展示，关键是增量渲染性能，绝不能用 innerHTML 全量替换，长回答会卡，得用 DOM diff 增量追加；第二是<strong>引用溯源</strong>，回答里每个论点都要标来源、能点跳原文，技术上要在流式生成的同时做实体标记（类似 Annotation 机制），后端配合返回结构化的引用块而不是纯文本；第三是<strong>结构化摘要</strong>，不是甩一大段文字，而是分点分块渲染——标题、要点、对比表、引用列表，这也要后端配合结构化输出。这三点串起来，就是 AI 搜索前端和传统搜索前端最不一样的地方。</p>
     <p><strong>PE 工程师视角收一层——搜索不是纯前端岗</strong>：得理解检索排序逻辑，才能设计合理的摘要 UI 和引用展示；得理解模型推理成本，才能做合理的流式策略和缓存设计；得理解用户搜索意图，才能设计追问、相关推荐这些交互形态。一句话，PE = 产品 sense + 全栈技术，不是"写页面的"。这点说出来，面试官就知道你 grasp 到了岗位本质。</p>
-    <p><strong>最后甩一个洞察显格局（小红书面试官亲口说的）</strong>：搜索正在从"提供答案"进化到"提供服务"——结果里藏着可执行的服务，不只是信息。更远期搜索本身会被泛化：从"用户输入指令→拿结果"，变成"AI 无时无刻理解用户需求、主动推送服务"。抖音和谷歌把"猜你喜欢"做到了极致，下一步就是 AI 在用户无感知的情况下主动服务。讲到这里面试官通常会接话，说明方向对上了。</p>
+    <p><strong>最后甩一个洞察显格局（业界公开趋势）</strong>：搜索正在从"提供答案"进化到"提供服务"——结果里藏着可执行的服务，不只是信息。更远期搜索本身会被泛化：从"用户输入指令→拿结果"，变成"AI 无时无刻理解用户需求、主动推送服务"。抖音和谷歌把"猜你喜欢"做到了极致，下一步就是 AI 在用户无感知的情况下主动服务。讲到这里面试官通常会接话，说明方向对上了。</p>
     <p class="hint">念法：先甩定位（考产品判断不是考技术）→ 四产品横向对比（问一问/Perplexity/百度/豆包各一句优缺点，强调自己真用过）→ 前端三关键点（SSE 增量渲染/引用溯源/结构化摘要）→ PE 视角收层（产品 sense+全栈）→ 进化洞察甩格局（答案→服务→主动推送）。被问"和传统搜索前端区别"翻三关键点。</p>
   </div>
 </div>
@@ -3537,16 +3537,6 @@ function buildTreeOptimized(list) {
     <p>· 咱们在做PRD→代码全链路，目前最大卡点是PRD结构化、设计稿标准化，还是代码生成质量管控？</p>
     <p>· 前端Agent想覆盖的协同场景，更偏内部提效（自动化回归、契约比对），还是偏用户侧（智能表单、对话式配置）？</p>
     <p>· 新人加入后是先跟一个已有方向，还是可以直接开拓新方向？</p>
-    <p><strong>小红书AI搜索PE（二面/技术负责人）</strong>：</p>
-    <p>· PE岗要求产品sense+全栈，进来后前半年最重要的1-2件事是什么？偏搜索产品体验还是偏AI工程基建？</p>
-    <p>· 问一问目前AI摘要的流式渲染和引用溯源，前端架构上最大的挑战是什么？</p>
-    <p>· 团队80-90%代码AI生成的工作方式，新人上手最大的适应难点是什么？Skill/Tool体系是怎么设计的？</p>
-    <p>· 搜索场景下Agent的落地机会在哪里？比如用户追问、多轮对话理解、个性化摘要？</p>
-    <p><strong>千问业务运营对（阿里）一面</strong>：</p>
-    <p>· 这个岗位具体的team是哪个？JD提到业务运营对，前端在其中的角色定位是什么？</p>
-    <p>· 近半年团队最核心的一个前端项目是什么？这个岗位进来后预期会重点参与哪个？</p>
-    <p>· 千问在做活动运营中台，会不会遇到类似Schema驱动配置化、动态表单这类需求？目前是怎么解决的？</p>
-    <p>· 团队对AI代码生成的接受度怎么样？Code Review流程里AI辅助的边界在哪里？</p>
     <p class="hint"><strong>选 2-3 个问，别全问</strong>。优先问和岗位工作内容直接相关的——展现你对岗位的认真思考。<strong>⚠️ 常见翻车点：避免问宏大问题</strong>（"千问的核心痛点""后续规划方向""业务线重点"），面试官明确反馈"这种问题跟你关系不大，就算我回答很好跟你个人也没关系"。一定要问<strong>个人强相关</strong>的（岗位做什么、团队用什么技术、进来后做什么），不要问<strong>业务战略级</strong>的。面试前必须做完岗位调研。</p>
   </div>
 </div>
@@ -3604,7 +3594,7 @@ function buildTreeOptimized(list) {
 
 <!-- ==================== 补充卡片 v2 · AI 前沿（7 张） ==================== -->
 
-<div class="card" data-c="proj" data-kw="11 步 蒸馏 流水线 倒背 脱稿 口播 90秒 输入输出 门控 证据链 8种证据 5条边界规则 Evidence Ledger Requirement IR Layer Impact Contract Delta Spec Review Gate Readiness Final Gate 阿里 千问 星河 小红书 失分">
+<div class="card" data-c="proj" data-kw="11 步 蒸馏 流水线 倒背 脱稿 口播 90秒 输入输出 门控 证据链 8种证据 5条边界规则 Evidence Ledger Requirement IR Layer Impact Contract Delta Spec Review Gate Readiness Final Gate">
   <div class="card-head"><span class="tag proj">AI</span><div class="card-title">SDD 11 步倒背卡（面试脱稿版）</div></div>
   <div class="core">PRD→Spec→Plan 的 11 步蒸馏流水线，每步有输入/输出/门控，证据链 + 4 层门控贯穿全程</div>
   <div class="card-body">
@@ -3654,7 +3644,7 @@ function buildTreeOptimized(list) {
     <p><strong>③ 反思引擎（Reflection）——这是最值钱的一个，也是 ratchet 机制的核心</strong>：让 Agent 从失败里提炼规则。四步闭环：① 先收集日志（每次决策 + 工具调用 + 评分）② 反思分析高频失败模式，生成候选规则 ③ 人工审批后写进 AGENTS.md ④ 用 golden sample 回归验证规则真的有效。关键在于<strong>"错误即规则，只进不退"</strong>——踩过的坑固化成规则，下次绕着走，系统只会越来越稳不会退化。</p>
     <p><strong>项目桥接（这是我的落地证据）</strong>：prd-tools 本身就是 Harness 雏形，六层一层对应一个引擎能力——L1 信息边界是 SSOT、L2 工具是 MCP、L3 编排是 11 步、L4 记忆是 Evidence Index、L5 评估是 quality-gate.py、L6 约束是 questions.md。但我必须诚实交代一个缺口：最大短板就在反思引擎——现在 Mode E 的规则回流还是<strong>人工</strong>做的，没有自动化反思闭环，这是我下一步要补的。</p>
     <p><strong>业界参照（被追问再甩）</strong>：OpenAI 的 AGENTS.md 就 ~100 行但极其精炼；Anthropic 的三 Agent 分工（Planner/Generator/Evaluator）就是合并引擎的范式；Stripe 的 Minions 一周跑 1300+ PR 靠的就是 Harness 兜底；Ghostty 的 AGENTS.md 最狠——每一行都是过去踩过的真实失败。这印证了"错误即规则"不是理念，是工程实践。</p>
-    <p class="hint">念法：钩子先甩（小红书栽在这题，护城河是 Harness 自我长进）→ 定义一句 → 三引擎逐条（合并/通信/反思各 1-2 句，反思重点讲透 ratchet "错误即规则只进不退"）→ 项目桥接（prd-tools 六层对应+诚实说反思引擎还是人工）→ 业界参照被追问再甩。被问"Agent 怎么不退化"直接甩 ratchet 四步闭环。</p>
+    <p class="hint">念法：钩子先甩（这道题常见的失分是只背定义不讲 Harness，护城河是 Harness 自我长进）→ 定义一句 → 三引擎逐条（合并/通信/反思各 1-2 句，反思重点讲透 ratchet "错误即规则只进不退"）→ 项目桥接（prd-tools 六层对应+诚实说反思引擎还是人工）→ 业界参照被追问再甩。被问"Agent 怎么不退化"直接甩 ratchet 四步闭环。</p>
   </div>
 </div>
 
@@ -3697,7 +3687,7 @@ function buildTreeOptimized(list) {
     <p><strong>第二层·选型分界（面试官想听的取舍）</strong>：简单一问一答用 Function Calling 就够，别上 Agent；多步骤但每步都要灵活推理用 ReAct；流程固定、要可控可调试用 Agent Loop；工作流复杂、要状态持久化和人工介入用 LangGraph；要跨模型复用工具就加 MCP 配任一框架。关键是别一上来就上最重的——Anthropic 的建议是 Workflow 优先、Agent 兜底。</p>
     <p><strong>第三层·落到我的项目</strong>：prd-tools 团队推广版（11 步蒸馏流水线）<strong>本质是 Agent Loop 思路</strong>——循环结构是预定义的，用证据链和 Readiness 门控把每步约束住，规避开放式 ReAct 的死循环风险。prd2code-gen 端到端原型里的<strong>自验证+自修复循环</strong>是个小 Agent Loop——验证 fail 让 LLM 自主决定怎么改，但加了三道保险：最多 3 次重试上限、震荡检测（识别 A→B→A 就切整段重写）、仍 fail 暂停交人工。诚实说：我没用 LangGraph，因为 prd-tools 步骤明确、没有复杂分支，上状态机是过度设计。</p>
     <p><strong>关键纠正（常见坑）</strong>：被问 LangGraph 怎么挂 skill，别答"全量灌进去"——正确做法是 progressive disclosure：先把所有 skill description 拼一起传一遍做意图匹配，AI 判断需要哪些才按需懒加载，否则上下文直接炸。</p>
-    <p class="hint">念法：钩子（分三层）→ 第一层三架构顺控制权讲（ReAct 自由/Agent Loop 固定/LangGraph 画图）→ 第二层选型分界（Workflow 优先 Agent 兜底）→ 第三层落 prd-tools（11 步是 Agent Loop 思路+自修复加三道保险）→ 腾讯踩坑收口（progressive disclosure）。被问"ReAct 和 CoT 区别"→ CoT 只推理不行动，ReAct 推理+行动。</p>
+    <p class="hint">念法：钩子（分三层）→ 第一层三架构顺控制权讲（ReAct 自由/Agent Loop 固定/LangGraph 画图）→ 第二层选型分界（Workflow 优先 Agent 兜底）→ 第三层落 prd-tools（11 步是 Agent Loop 思路+自修复加三道保险）→ progressive disclosure 收口。被问"ReAct 和 CoT 区别"→ CoT 只推理不行动，ReAct 推理+行动。</p>
   </div>
 </div>
 
@@ -3707,7 +3697,7 @@ function buildTreeOptimized(list) {
   <div class="card-body">
     <p><strong>这道题前端岗不用深挖算法，但有一个必答点——"为什么大模型上下文越长越贵、越慢"。搞懂 KV Cache 就能答透。</strong></p>
     <p><strong>原理（一句话）</strong>：Transformer 生成是自回归的（一个字一个字吐），每生成一个字都要算 Attention，而 Attention 需要前面所有字的 K/V 向量。不缓存每步重算前面所有 K/V（O(N²)）；缓存下来直接用（O(N)），空间换时间。</p>
-    <p><strong>追问应对：那 Prompt Caching 的 KV cache 到底存哪？（蚂蚁 Q13 原题，最易翻车）</strong>：存<strong>模型服务商的服务端显存</strong>里（Anthropic / OpenAI 的推理集群），<strong>不在用户本地</strong>。本地 <code>.claude</code> 文件夹存的是会话 transcript（文本持久化），和服务端 KV 张量（计算加速）是两码事——别搅在一起。命中后省约 90% 成本（官方口径 cache read 0.1× 基准价）。</p>
+    <p><strong>追问应对：那 Prompt Caching 的 KV cache 到底存哪？（高频追问，最易翻车）</strong>：存<strong>模型服务商的服务端显存</strong>里（Anthropic / OpenAI 的推理集群），<strong>不在用户本地</strong>。本地 <code>.claude</code> 文件夹存的是会话 transcript（文本持久化），和服务端 KV 张量（计算加速）是两码事——别搅在一起。命中后省约 90% 成本（官方口径 cache read 0.1× 基准价）。</p>
     <p><strong>缓存带来三个工程挑战</strong>：① <strong>内存爆炸</strong>——KV Cache 随序列长度线性增长，长上下文时 KV Cache 内存可能超过模型权重本身；② <strong>带宽瓶颈</strong>——Decode 阶段每步只生成 1 个 token，但要从显存（HBM）读全部 KV Cache，内存带宽成瓶颈（不是算力，是搬运）；③ <strong>Lost in the Middle</strong>——上下文超 40% 进入 Dumb Zone，模型对中间内容注意力下降。</p>
     <p><strong>优化方案（大模型岗追问再甩）</strong>：① PagedAttention（vLLM，类 OS 虚拟内存分页，减 80% 内存浪费）；② GQA/MQA（多个 Query 共享 K/V）；③ Quantization（FP16→INT8/INT4，内存减半）；④ Context Cache（缓存公共前缀 KV，这就是 Prompt Caching 的底层）；⑤ LMCACHE（批量传输+流水线）。</p>
     <p><strong>前端为什么该懂（收口）</strong>：懂 KV Cache 就能解释——为什么上下文越长越贵（Decode 每步读全部 KV）、为什么要做对话压缩、为什么 Prompt Caching 能省钱（相同前缀 KV 复用，省 90%）。这三个在 AI 前端面试高频。</p>
@@ -3734,7 +3724,7 @@ function buildTreeOptimized(list) {
   <div class="core">每轮全量上下文扔模型积分秒超，必须自建压缩层；<strong>Claude auto-compaction 90% 触发释放 60-70%</strong></div>
   <div class="card-body">
     <p><strong>这道题先甩一个能定调的钩子——大模型应用没有压缩层就不可持续。硬追问是"每一轮都把上下文扔给模型，不用积分就肯定会超"，接不住就暴露。所以这题不是问你会不会压缩，是问你有没有把"压缩"当成 AI 应用的第一公民来设计。</strong></p>
-    <p><strong>先讲 Claude 自己怎么压（蚂蚁 Q11 原题——auto-compaction 触发阈值）</strong>：Claude Code 上下文逼近容量极限（<strong>约 90%，剩 10%</strong>）时，自动把旧对话总结成摘要，<strong>一次释放 60-70% 窗口</strong>，用户几乎无感。CLAUDE.md 压缩后重新加载保证项目指令不丢。手动 <code>/compact</code> 主动压、<code>/clear</code> 硬重置。<strong>追问"和 prompt caching 什么关系"→ prompt caching 管单次请求内前缀复用（省 token），auto-compaction 管跨多轮历史压缩（腾窗口），是两层。</strong></p>
+    <p><strong>先讲 Claude 自己怎么压（高频追问——auto-compaction 触发阈值）</strong>：Claude Code 上下文逼近容量极限（<strong>约 90%，剩 10%</strong>）时，自动把旧对话总结成摘要，<strong>一次释放 60-70% 窗口</strong>，用户几乎无感。CLAUDE.md 压缩后重新加载保证项目指令不丢。手动 <code>/compact</code> 主动压、<code>/clear</code> 硬重置。<strong>追问"和 prompt caching 什么关系"→ prompt caching 管单次请求内前缀复用（省 token），auto-compaction 管跨多轮历史压缩（腾窗口），是两层。</strong></p>
     <p><strong>再讲为什么必做（业务背景）</strong>：我做的 prd-tools 喂 20+ 人用，每天几十次调用，对话历史一轮轮堆上去 token 账单和延迟线性增长——不压迟早崩。所以这题答得好不好不在背开源库名字，在能不能讲清"压缩是在回答质量、成本、延迟三件事上找平衡"。</p>
     <p><strong>开源四套代表</strong>：① <strong>LLMLingua</strong>（微软，小模型逐 token 判断重要性，能压 20 倍，是面试官最想听的名）；② <strong>MemWalker</strong>（历史组织成树，按需检索式压缩）；③ <strong>MemGPT / Letta</strong>（借 OS 虚拟内存分页思想，把上下文当内存换进换出，最有架构感）；④ 渐进式摘要（最老消息递归压成摘要块放 prompt 开头，上下文保持固定大小，代价丢细节）。<strong>记一句话区分粒度</strong>：LLMLingua token 级、MemGPT 分页级、渐进式摘要语义级。</p>
     <p><strong>自建方案（星河觉醒真实做法）</strong>：自己实现压缩层把多轮历史压成精简表示，核心是三层记忆——① <strong>短期</strong>当前对话原文、② <strong>中期</strong> session 摘要、③ <strong>长期</strong>落向量库；叠渐进式摘要算法（老消息递归压成摘要块）+ 关键信息提取（重要实体和决策持久化不丢）。为什么自研不直接用开源——因为压缩直接决定体验，压过头丢信息答非所问、压不够浪费 token，AI 应用公司倾向自研做业务定制，这块是差异化而不是套壳。</p>
@@ -4016,7 +4006,7 @@ function buildTreeOptimized(list) {
   </div>
 </div>
 
-<div class="card" data-c="emer" data-kw="四段式 表达 角色 做事 难点 效果 STAR 千问 失分">
+<div class="card" data-c="emer" data-kw="四段式 表达 角色 做事 难点 效果 STAR">
   <div class="card-head"><span class="tag emer">表达</span><div class="card-title">四段式表达公式（千问血泪）</div></div>
   <div class="core">角色-做事-难点-效果，每段不超 30 秒，结论先行</div>
   <div class="card-body">
@@ -4108,7 +4098,7 @@ function buildTreeOptimized(list) {
 </div>
 
 <div class="card" data-c="emer" data-kw="大麦 国际 团队画像 组织 新部门 C端 港澳台 海外 APP原生 内嵌 反问情报 高速发展">
-  <div class="card-head"><span class="tag emer">大麦</span><div class="card-title">大麦国际团队画像（反问一手情报）</div></div>
+  <div class="card-head"><span class="tag emer">大麦</span><div class="card-title">大麦国际团队画像（反问情报）</div></div>
   <div class="core">去年成立的新部门，无具体业务线，所有业务都做，C 端为主，主要做港澳台+海外不做国内</div>
   <div class="card-body">
     <p><strong>反问环节获取的一手情报。下一轮聊团队匹配直接用，反问环节也能问得更精准。</strong></p>
@@ -4323,7 +4313,7 @@ function buildTreeOptimized(list) {
   <div class="card-body">
     <p><strong>场景识别</strong>：反问环节面试官主动说"我们也在用 XX"，说明他做的是同方向工作。这是面试中获取同方向交流机会的稀缺点。</p>
     <p><strong>正确动作</strong>：立即接住——"你们用 OpenSpec 跑下来感觉最大的痛点是什么？" 或 "你们的 code review skill 是用 LLM 跑还是规则引擎跑？" 这种具体技术问题。同方向交流会让面试官把你当自己人，比单方面推销自己的方案有效得多。</p>
-    <p><strong>错误动作</strong>：听到面试官说完不接住，跳到下一个无关问题。比如网易这场面试官说"我们也用 spec-driven"，应该深挖但他们跳到了 Code Review 问题——这是失分。</p>
+    <p><strong>错误动作</strong>：听到面试官说"我们也用 spec-driven"这种同方向信号后不接住，跳到下一个无关问题——这是失分。</p>
     <p class="hint">常见洞察：反问环节面试官可能主动说"我们应该就是采用 spec-driven 开发方式"，这是同方向信号，必须接住深挖。下次反问环节先听完面试官回答，识别同方向信号再追问。</p>
   </div>
 </div>
@@ -4448,7 +4438,7 @@ function buildTreeOptimized(list) {
     <p>· <strong>加载顺序控制</strong>：用 <code>content-visibility: auto</code> 让屏幕外组件延迟渲染。按拓扑排序加载有依赖关系的组件。图片用 <code>loading="lazy"</code> 配合显式 width/height。</p>
     <p><strong>transform vs top/left</strong>：动画用 transform 不会触发布局偏移，用 top/left 会触发回流。优先 transform。</p>
     <p><strong>测量</strong>：web-vitals 库 + PerformanceObserver + Layout Shift Attribution API。</p>
-    <p class="hint">涂虎养车一面问过。C 端场景必备。</p>
+    <p class="hint">C 端视觉还原场景高频。C 端场景必备。</p>
   </div>
 </div>
 
@@ -4491,7 +4481,7 @@ function buildTreeOptimized(list) {
     <p>· 定时器未清理（setInterval 没 clearInterval）</p>
     <p>· 数据库连接未关闭（连接池泄漏）</p>
     <p><strong>工具</strong>：clinic.js（CPU/内存/事件循环延迟综合分析）、heapdump（生成堆快照文件）、v8-profiler-next（CPU profile）。</p>
-    <p><strong>快手二面原题</strong>："Node 层内存泄漏怎么排查"——你答"不太理解"。正确思路：从 --inspect + Chrome DevTools 切入，再说具体泄漏场景。</p>
+    <p><strong>典型题</strong>："Node 层内存泄漏怎么排查"。正确思路：从 --inspect + Chrome DevTools 切入，再说具体泄漏场景。</p>
     <p class="hint">所有讲 BFF 的场合都用得上。能讲清 clinic.js + 堆快照对比显得专业。</p>
   </div>
 </div>
