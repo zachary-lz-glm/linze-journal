@@ -1,4 +1,4 @@
-const CACHE_NAME = 'kb-v256';
+const CACHE_NAME = 'kb-v257';
 const TIMEOUT = 3000;
 
 self.addEventListener('install', () => self.skipWaiting());

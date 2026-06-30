@@ -229,7 +229,8 @@ body{overscroll-behavior-y:contain}
     <p><strong>两种联动类型</strong>：① <strong>State 型</strong>（纯前端）——用户改字段，本地 eval 联动表达式直接更新其他字段（如选城市 A，产品线下拉立即更新）；② <strong>FetchApi 型</strong>（要后端数据）——用户改字段后回调 BFF 重新生成 Schema 片段（如城市变化要从后端拿新价格策略）。靠 listener.on 监听字段变化，支持链式联动（A 变→B 变→C 变）。</p>
     <p><strong>16 个联动模板覆盖 95%</strong>：visible（显隐）、disable（禁用）、setValue（赋值）、setEnum（更新选项）、required（必填）等。剩下 5% 走自定义组件兜底。</p>
     <p><strong>收口</strong>：联动从"写代码"变成"配 DSL"，运营自助、前端零代码，这是 Schema 驱动能成立的关键基础设施。</p>
-    <p class="hint">[loop·已优化·已复核] 念法：八字核心（一次声明双重求值）→ 业务背景（活动联动复杂）→ 双重求值（BFF算初始+前端运行时）→ 两种类型（State/FetchApi）→ 16模板覆盖95% → 收口（联动从写代码变配DSL）。被追问链式联动甩 listener.on。</p>
+    <p><strong>[大麦一面教训·2026-06-30] 表达从场景开始，不从概念开始</strong>：这场面试官两次说"没听清"——根本原因是先讲"自研联动语法"这种抽象概念，面试官脑里没画面。改进念法：开口先甩具体场景（"运营在后台配活动时，选了'订单奖'类型，下一行才出现'奖励规则'字段——这就是联动"），面试官立刻有画面，再讲语法和分类（State/FetchApi）。</p>
+    <p class="hint">[loop·已优化·已复核·大麦教训已补] 念法：八字核心（一次声明双重求值）→ <strong>场景举例先甩（运营选订单奖→奖励规则出现）</strong>→ 业务背景（活动联动复杂）→ 双重求值（BFF算初始+前端运行时）→ 两种类型（State/FetchApi）→ 16模板覆盖95% → 收口（联动从写代码变配DSL）。被追问链式联动甩 listener.on。<strong>忌开口就讲"自研语法"，面试官听不懂。</strong></p>
   </div>
 </div>
 
@@ -513,6 +514,20 @@ body{overscroll-behavior-y:contain}
   </div>
 </div>
 
+<div class="card" data-c="bagu" data-kw="Modal Portal Focus Trap a11y aria z-index 基础组件 封装 dropdown 弹窗 大麦真题">
+  <div class="card-head"><span class="tag bagu">#57</span><div class="card-title">基础组件封装：Modal/Portal/Focus Trap/a11y（大麦真题）</div></div>
+  <div class="core">没从零写过 Modal 也能答全——Portal 渲染、Focus Trap、a11y、z-index 栈管理是核心 4 件套</div>
+  <div class="card-body">
+    <p><strong>大麦一面栽在这题——直接答"没做过"太断头。即使没从零写过 Modal，API 设计的 5 个核心点必须背下来。</strong></p>
+    <p><strong>① Portal 渲染</strong>：弹窗用 ReactDOM.createPortal 渲染到 document.body，避免父级 overflow:hidden / transform / z-index 截断。直接 render 在组件树里会被父级样式干扰，弹窗位置和层级都对不上。</p>
+    <p><strong>② Focus Trap（焦点陷阱）</strong>：Tab 键循环聚焦在弹窗内，不能跑出去——a11y 必备。实现：监听 keydown Tab，到达最后一个可聚焦元素时跳回第一个；进弹窗时记住之前的 activeElement，关闭时还原焦点（盲人用户不会被弹窗"丢"在外面）。</p>
+    <p><strong>③ a11y 无障碍</strong>：role="dialog"、aria-modal="true"、aria-labelledby 指向标题、Esc 键关闭、点遮罩关闭（可选）。屏幕阅读器靠这些 ARIA 属性识别弹窗边界。</p>
+    <p><strong>④ z-index 栈管理</strong>：不要写死 z-index: 9999——多个弹窗叠加会乱。用 Context 维护层级栈，每次开弹窗 push 一个递增的 zIndex，关闭时 pop。antd 的 ConfigProvider 全局 zIndex 管理就是这个思路。</p>
+    <p><strong>⑤ 动画</strong>：CSSTransition（react-transition-group）或 framer-motion 控制入/出场。坑：动画结束才 unmount，否则突然消失体验差——用 timeout 或 Transition 的 onExited 回调。</p>
+    <p class="hint">[大麦一面真题·2026-06-30] 念法：先诚实定位"没从零写过 Modal"，立刻补"但 API 设计 5 个核心点我清楚"，然后甩 Portal→Focus Trap→a11y→z-index→动画。<strong>不要只说"没做过"放弃</strong>——这是这场最被放弃的考察点之一。</p>
+  </div>
+</div>
+
 <div class="card" data-c="bagu" data-kw="Service Worker 生命周期 离线缓存 install activate fetch PWA">
   <div class="card-head"><span class="tag bagu">#25</span><div class="card-title">Service Worker 生命周期</div></div>
   <div class="core">install → wait → activate → fetch，控制页面必须先注册再刷新</div>
@@ -757,6 +772,20 @@ body{overscroll-behavior-y:contain}
     <p><strong>④ 自绘引擎</strong>：Flutter（Skia/Impeller）/ Dart。一套代码渲染到所有平台，性能最强但包体积大、生态独立。</p>
     <p><strong>兜底话术</strong>（候选人无深度实战）：跨端没做过原生容器，但 qiankun 微前端 + 权益组件库三种接入形态（组件/函数/微前端）的抽象思路可迁移；JSBridge 调过客户端能力（定位/支付回调）。</p>
     <p class="hint">大麦真题。阿里系答 Rax + mPaaS 显对口；候选人这块是薄弱点，背兜底句不硬编。</p>
+  </div>
+</div>
+
+<div class="card" data-c="bagu" data-kw="国际化 业务差别 国内 多时区 多币种 多税率 RTL 合规 文化禁忌 i18n 大麦真题">
+  <div class="card-head"><span class="tag bagu">#58</span><div class="card-title">国际化业务 vs 国内：4 维度差别（大麦真题）</div></div>
+  <div class="core">国际化比国内多 4 个工程维度——语言/排版、合规、本地化体验、基础设施（含多时区币种税率）</div>
+  <div class="card-body">
+    <p><strong>大麦一面真题。原答案漏了"多时区/多币种/多税率"——这是国际化业务最独特的工程难点，必背。</strong></p>
+    <p><strong>① 语言与排版</strong>：28 万字 i18n 文案基建；埃及/中东 RTL 从右到左排版（dir="rtl"，flex 方向反转，图标镜像）；不同国家主题色差异（墨西哥/巴西各有品牌色）。</p>
+    <p><strong>② 数据合规</strong>：拉美 LGPD、欧洲 GDPR、加州 CCPA——用户数据存储、跨境传输、删除权都要适配。当地法务变更要立即跟进（如某国出新规限制数据出境，代码要支持本地化存储）。</p>
+    <p><strong>③ 本地化体验</strong>：颜色/手势/敏感词的文化禁忌（紫色在巴西代表哀悼不能做主色；OK 手势在巴西是侮辱性手势）；通讯差异（拉美用 WhatsApp/Facebook，国内用短信微信）；支付习惯（巴西 Pix 实时支付、东南亚电子钱包）。</p>
+    <p><strong>④ 基础设施（最容易被漏掉，原答案就漏了）</strong>：<strong>多时区</strong>（活动开始时间跨时区展示，dayjs + Intl API）、<strong>多币种</strong>（金额+汇率+小数位规则，巴西雷亚尔 2 位小数 vs 日元 0 位）、<strong>多税率</strong>（巴西州税 17%、埃及 VAT 14%）。这三个国内业务没有，但国际化必须有方案。</p>
+    <p><strong>工程实践</strong>：i18n 用 i18next + 自研文案提取平台，CI 卡文案覆盖率（缺翻译 PR 直接挂）；时区/币种/税率走配置化按国家路由。</p>
+    <p class="hint">[大麦一面真题·2026-06-30] 念法：4 维度框架（语言排版/合规/本地化/基础设施）→ 每维度给 1-2 个具体例子 → <strong>主动甩"多时区币种税率"显深度（原答案漏的点）</strong>→ 工程实践收口。</p>
   </div>
 </div>
 
@@ -3990,6 +4019,22 @@ function buildTreeOptimized(list) {
     <p>· <strong>RTL 布局</strong>：中东地区 → 滴滴中东 RTL 实战</p>
     <p><strong>行动</strong>：自我介绍把"滴滴国际化 ↔ 国际票务"作为<strong>第一锚点</strong>，排在 Schema 中台之前。开场主动提国际票务对口。</p>
     <p class="hint">最大认知纠偏。之前把国际化当弱项，真 JD 出来是核心王牌。务必主打。</p>
+  </div>
+</div>
+
+<div class="card" data-c="emer" data-kw="大麦 国际 团队画像 组织 新部门 C端 港澳台 海外 APP原生 内嵌 反问情报 高速发展">
+  <div class="card-head"><span class="tag emer">大麦</span><div class="card-title">大麦国际团队画像（反问一手情报）</div></div>
+  <div class="core">去年成立的新部门，无具体业务线，所有业务都做，C 端为主，主要做港澳台+海外不做国内</div>
+  <div class="card-body">
+    <p><strong>2026-06-30 大麦一面反问环节获取的一手情报。下一轮聊团队匹配直接用，反问环节也能问得更精准。</strong></p>
+    <p><strong>① 组织结构</strong>：大麦国际是<strong>去年成立的新部门</strong>，团队规模不大，<strong>没有具体业务线划分</strong>——不像国内大厂按"营销/AI/C 端"细分，这里所有业务线都做，每个人 cover 多个方向，作为单一或多个基础项的 owner。</p>
+    <p><strong>② 业务定位</strong>：<strong>C 端业务为主，B 端相对少</strong>。主要做<strong>港澳台 + 海外业务，不做国内</strong>。涉及 Web 端、H5、小程序、APP——APP 用原生或跨平台开发，<strong>前端主要做内嵌 H5 处理页面</strong>，要懂 WebView + JSBridge + 跨端通信。</p>
+    <p><strong>③ 工作节奏</strong>：高速发展期，<strong>大批量业务需求</strong>，迭代快。没有清晰的"前半年规划"——来了之后根据业务情况和个人所长再定，需要较强自适应能力。</p>
+    <p><strong>④ 对我下一轮的指导</strong>：</p>
+    <p>· <strong>优势放大</strong>：滴滴国际化背景 1:1 对口（多国家/RTL/合规实战过），AI 工作流提效项目正好对上"大批量需求"的痛点——这两点要在自我介绍和优势题里打透。</p>
+    <p>· <strong>风险防御</strong>：C 端为主，B 端配置化经验虽然加分但不能直接复用——要主动讲"配置化思路能复用到 C 端 SKU 配置"；前端主要做内嵌 H5，要突击 WebView/JSBridge 知识（已有卡 #45 + Hybrid 兜底卡可复用）。</p>
+    <p>· <strong>反问话术升级</strong>：不能问"我具体做哪块"——他们会觉得你没看懂业务。改问：① "团队高速发展期最大的工程提效挑战是什么？" ② "前端在内嵌 H5 和原生容器的协作模式是怎样的？" ③ "AI 工程化在团队当前阶段的优先级如何？"</p>
+    <p class="hint">[大麦一面反问情报·2026-06-30] 这张卡是公司情报不是知识点——下一轮面试前必念。新部门+C端海外+APP原生为主前端做内嵌，这三条决定怎么聊匹配度。</p>
   </div>
 </div>
 
