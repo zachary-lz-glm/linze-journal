@@ -2210,6 +2210,91 @@ function buildTreeOptimized(list) {
   </div>
 </div>
 
+<div class="card" data-c="ai" data-kw="脚手架 模型 投入回报 反直觉 升级 成本 效果 Harness 选型">
+  <div class="card-head"><span class="tag ai">E26</span><div class="card-title">脚手架 &gt; 模型（反直觉金句）</div></div>
+  <div class="core">模型升级成本+300%效果+20%，脚手架升级成本+50%效果+200%——优先投脚手架不追最新模型</div>
+  <div class="card-body">
+    <p><strong>这是 AI 工程最反直觉的判断之一，能讲出来面试官就知道你真做过实战不是背概念。</strong></p>
+    <p><strong>金句先甩</strong>：模型升级成本 +300% 效果 +20%；脚手架升级成本 +50% 效果 +200%。结论：优先投资脚手架，而不是追最新最贵的模型。</p>
+    <p><strong>为什么是这样</strong>：LLM 是概率模型，能力有天花板；脚手架（流程、约束、记忆、评估）是把概率输出固化成可靠产出的工程层。一个设计精良的系统让弱模型发挥惊人性能，反过来烂系统完全浪费掉顶级模型的能力——<strong>垃圾的思考乘以强大的模型，等于精美的垃圾</strong>。</p>
+    <p><strong>实战支撑（腾讯 10 年老开发经验）</strong>：24h 打工人 Agent 系统用的不是最贵的模型——codex 配额用完切 gemini，gemini 挂了切 claude，都不是顶配。但有 SDD 流程 + 调度层 + 失败切换 + constitution.md，效果远好于直接用一次性的顶级模型。</p>
+    <p><strong>落到我的项目（关键判断）</strong>：prd-tools 选 Sonnet 不选 Opus，省下来的预算投在 Reference 六文件 SSOT + 证据链 + 三级门控这些脚手架上，整体效果比"用 Opus 但没脚手架"强得多。</p>
+    <p class="hint">[腾讯程序员·2026-06] 念法：金句先甩（300% vs 50% 的反差）→ 原因（LLM 概率输出，脚手架兜底）→ 实战支撑（24h 打工人换模型不换系统）→ 落 prd-tools（选 Sonnet 省预算投脚手架）。被问"为啥不用最新模型""模型选型""AI 工程化最关键的判断是什么"翻这张卡。</p>
+  </div>
+</div>
+
+<div class="card" data-c="ai" data-kw="决策层级 目标 代码 CLI Prompt Agent 80/20 Bash 工程素养 什么时候用AI 选型">
+  <div class="card-head"><span class="tag ai">E27</span><div class="card-title">AI 决策层级（80/20 法则）</div></div>
+  <div class="core">80% 的"AI 需求"10 行 Bash 就够了——决策层级目标→代码→CLI→Prompt→Agent，能在下层解决的绝不上推</div>
+  <div class="card-body">
+    <p><strong>这道题考的是工程素养——不是"会不会用 AI"，是"知道什么时候不该用 AI"。</strong></p>
+    <p><strong>核心反常识</strong>：80% 的"AI 需求"根本不需要 AI。自动拉代码跑测试？Bash。定时检查服务健康？cron+curl。JSON 日志格式化？jq+awk。文件变更触发构建？inotifywait+shell。<strong>10 行脚本搞定的事别折腾 LangChain</strong>。</p>
+    <p><strong>决策层级（每往上一层不确定性 + 一个量级，成本 + 一个量级）</strong>：</p>
+    <p>· <strong>目标层</strong>——想清楚到底要解决什么（最低不确定性，常常想清楚后发现不需要写代码）</p>
+    <p>· <strong>代码层</strong>——确定性逻辑（if/else、正则、模板引擎）</p>
+    <p>· <strong>CLI 层</strong>——组合现有工具（grep + jq + curl 串流程）</p>
+    <p>· <strong>Prompt 层</strong>——需要语义理解和判断（需求翻译、文案生成）</p>
+    <p>· <strong>Agent 层</strong>——多步推理、动态决策、循环执行（自动修 bug、端到端流程，最高不确定性）</p>
+    <p><strong>工程铁律</strong>：<strong>能在下层解决的，绝不上推</strong>。市面上多少项目一个 cron+curl 能搞定的定时数据采集，非要套一层 LangChain + Agent Loop + Tool Calling，最后效果还不如写死脚本稳定。</p>
+    <p><strong>落到我的项目</strong>：prd-tools 用 Skill（Prompt/Agent 层）做 PRD 蒸馏因为确实需要语义理解；但证据链检索用 grep+BM25（代码层）不用向量 RAG——精确匹配够了不上推。这是分清楚"什么需要 AI / 什么不需要"的实战。</p>
+    <p class="hint">[腾讯程序员·2026-06] 念法：反常识钩子（80% 不需要 AI）→ 五层决策层级（每层 1 句话）→ 工程铁律（能在下层解决绝不上推）→ 落 prd-tools（Skill 管语义，grep 管精确，分层选择）。被问"什么时候用 Agent""为啥不用 LangChain""如何选型"翻这张卡。</p>
+  </div>
+</div>
+
+<div class="card" data-c="ai" data-kw="Agent 评测 eval 评分器 pass@k pass^k Rubric 确定性 用例 基线 容忍">
+  <div class="card-head"><span class="tag ai">E28</span><div class="card-title">AI Agent 评测体系（三类评分器 + pass^k）</div></div>
+  <div class="core">三类评分器（确定性&gt;Rubric&gt;人工）+ pass^k 测稳定性 vs pass@k 测峰值能力 + 五维度全覆盖</div>
+  <div class="card-body">
+    <p><strong>eval 是 Agent 从 Demo 走向生产的那道门槛——答好这道题体现你不是只会调 API 是真做过落地。</strong></p>
+    <p><strong>三类评分器（选择优先级）</strong>：</p>
+    <p>· <strong>确定性评分器</strong>（脚本/断言/Lint/AST）——快、便宜、客观、可复现。负责"能用代码判断"的事（文件存在、构建通过、测试通过、调用日志断言）。<strong>日常主力</strong>。</p>
+    <p>· <strong>Rubric 评分器</strong>（LLM-as-Judge + Prompt + Schema）——灵活、可扩展。负责"代码搞不定但能结构化描述"（回答质量、推理合理性、是否存在幻觉）。</p>
+    <p>· <strong>人工评分器</strong>（专家）——昂贵、慢、黄金标准。60% 时间花在校准 LLM 评委，30% 诊断异常。<strong>不进门禁，做采样审查</strong>。</p>
+    <p><strong>核心金句</strong>：<strong>能自动化的坚决不找专家，能用代码判断的绝不用模型</strong>。</p>
+    <p><strong>pass^k vs pass@k（最容易混淆的术语）</strong>：</p>
+    <p>· <strong>pass@k</strong>：k 次试验中<strong>至少 1 次</strong>通过的概率——衡量<strong>峰值能力</strong>（最好成绩）</p>
+    <p>· <strong>pass^k</strong>：k 次试验中<strong>每次都</strong>通过的概率——衡量<strong>稳定性</strong>（一致可靠）</p>
+    <p>· 关键差异：pass@1=95% 但 pass^5=60% 完全可能——<strong>峰值能力高 ≠ 稳定可靠</strong>。生产环境看 pass^k。</p>
+    <p><strong>五维度（评什么）</strong>：① 功能正确性（做对了吗，P0）→ ② 过程质量（过程合理吗，Rubric）→ ③ 效率成本（Token/调用次数，划得来吗）→ ④ 鲁棒性安全（pass^k/异常恢复/抗对抗，靠谱吗，P0）→ ⑤ 体验对齐（用户愿意用吗，P2）。</p>
+    <p><strong>用例设计四场景（每场景正负向都要）</strong>：触发（该触发吗）→ 核心逻辑（过程对吗）→ 产物质量（产物好吗）→ 异常容错（出错扛得住吗）。</p>
+    <p><strong>容忍阈值（按 Agent 类型）</strong>：关键决策类 0% 容忍（N/N 全过）、辅助分析类 ≤10%、创意生成类 ≤40%。</p>
+    <p><strong>能力测评 vs 回归测评（毕业机制）</strong>：能力测评（新能力）通过率 = 100% 后毕业到回归测评（已掌握），CI 每次跑。回归用例集<strong>只加不减</strong>。</p>
+    <p class="hint">[腾讯 TEG 万字长文·2026-06] 念法：钩子（eval 是 Demo→生产的门槛）→ 三类评分器（确定性&gt;Rubric&gt;人工，金句=能用代码绝不用模型）→ pass^k vs pass@k（稳定性 vs 峰值，关键差异）→ 五维度（P0/P1/P2 优先级）→ 用例四场景（正负向都要）→ 容忍阈值（按类型 0/10/40）→ 能力 vs 回归（毕业机制）。被问"怎么评估 Agent""怎么做 eval""pass^k 是什么"翻这张卡。</p>
+  </div>
+</div>
+
+<div class="card" data-c="ai" data-kw="上下文焦虑 Context Rot 35分钟 80K 退化 Transformer 注意力 Anthropic Chroma 长任务失败">
+  <div class="card-head"><span class="tag ai">E29</span><div class="card-title">上下文焦虑症 / Context Rot（长任务失败根因）</div></div>
+  <div class="core">Transformer 架构级缺陷——上下文每增长 10 倍每个 token 注意力权重减 10 倍，35 分钟/80-150K tokens 开始退化</div>
+  <div class="card-body">
+    <p><strong>这道题答出来直接体现持续学习前沿研究——长任务失败的根因不是模型不够强，是 Transformer 的物理常数。</strong></p>
+    <p><strong>Anthropic 发现（工程视角）</strong>：长周期任务失败的首要原因不是模型能力不足，而是<strong>上下文焦虑症（Context Anxiety）</strong>。Agent 在单次会话连续运行数小时后产生三种典型症状：① <strong>信息丢失</strong>（早期关键决策被遗忘或边缘化）；② <strong>注意力崩溃</strong>（无法关联先前上下文，设计一致性丧失）；③ <strong>提前收工倾向</strong>（感知到上下文接近极限就下意识结束任务，即使工作远未完成）。</p>
+    <p><strong>Chroma Research 实证（架构视角，2025.07）</strong>：Context Rot 是 Transformer 注意力机制的<strong>架构级属性</strong>，非训练可解决。对 18 个前沿模型（含 GPT-4.1、Claude Opus 4、Gemini 2.5 Pro）实测：<strong>1M 窗口的模型在 50K 时仍出现退化</strong>；Agent 在约 <strong>35 分钟 / 80-150K tokens</strong> 时形成"噪声→错误→修复→更多噪声"的自我强化退化循环。</p>
+    <p><strong>本质解释</strong>：Transformer 是 softmax 注意力——上下文每增长 10 倍，每个 token 获得的注意力权重减少 10 倍。这是<strong>物理常数</strong>，不是"窗口不够大"——所以"加大窗口"解决不了问题。</p>
+    <p><strong>解法（Anthropic 上下文重置）</strong>：① <strong>预防性轮换</strong>（两阶段 session 轮换，60-70% 触发记忆同步，80% 优雅 Handoff 切新 session，不等 overflow）；② <strong>结构化 Handoff</strong>（不是简单摘要，是 5 层结构：状态快照/叙事上下文/决策日志/优先队列/警告陷阱）；③ <strong>Context Reset</strong>（彻底起新 Agent 通过结构化工件交接，不等焦虑症出现主动重置）；④ <strong>对抗性验证</strong>（Evaluator 用 Playwright 跑运行中的应用，用物理现实锚定评估，而非让 LLM 想象）。</p>
+    <p><strong>金句</strong>：<strong>解法不是更大的窗口或更强的模型，是预防性的上下文重置 + 对抗性验证 + 显式验收契约</strong>。</p>
+    <p class="hint">[Anthropic + Chroma Research·2025-2026] 念法：钩子（长任务失败根因不是模型是物理常数）→ Anthropic 三症状（信息丢失/注意力崩溃/提前收工）→ Chroma 实证（35 分钟/80K 退化，1M 窗口 50K 退化）→ 本质（softmax 注意力是架构级）→ 四解法（预防性轮换/结构化 Handoff/Context Reset/对抗性验证）→ 金句。被问"长任务为啥会失败""为什么不能全靠长上下文""Context Engineering 解决什么"翻这张卡。</p>
+  </div>
+</div>
+
+<div class="card" data-c="ai" data-kw="Skill MCP 优先 中转方案 IDE 渐进式披露 上下文占用 选型 腾讯电竞 Function Calling">
+  <div class="card-head"><span class="tag ai">E30</span><div class="card-title">Skill 优先于 MCP（腾讯电竞实战）</div></div>
+  <div class="core">MCP 固定占上下文+工具不可灵活选配+数量过多影响效果——中转方案 IDE→SKILL Script→MCP Server</div>
+  <div class="card-body">
+    <p><strong>这道题答出来直接对上候选人 prd-tools 双 Skill 体系的选型逻辑——面试官如果前沿一定听过这个判断。</strong></p>
+    <p><strong>核心结论（腾讯电竞明确指出）</strong>：使用 Skill 而不是 MCP 作为 Agent 工具接入的主路径。</p>
+    <p><strong>MCP 的四大问题</strong>：</p>
+    <p>· <strong>固定占用上下文</strong>——MCP server 启动后所有工具描述常驻 system prompt，几十个工具一挂就吃掉数千 token</p>
+    <p>· <strong>工具不可灵活选配</strong>——MCP 是"全挂或全不挂"，无法按场景动态组合</p>
+    <p>· <strong>数量过多影响模型效果</strong>——工具列表越长，模型选错的概率越高（注意力被稀释）</p>
+    <p>· <strong>手动配置繁琐</strong>——每个 MCP server 要单独配 IDE 端配置，团队推广成本高</p>
+    <p><strong>Skill 的优势（解决 MCP 全部痛点）</strong>：① <strong>渐进式披露</strong>——三级访问（skills_list 元数据 → skill_view 完整内容 → skill_view+file 支撑文件），把"技能成本"从 O(N) 降到 O(被实际用到的)；② <strong>按需加载</strong>——只在相关时才进 prompt，不相关时零成本；③ <strong>灵活组合</strong>——每个 Skill 独立，可按项目/角色任意搭配；④ <strong>低门槛</strong>——一个 Markdown 文件就是 Skill，团队人人能写。</p>
+    <p><strong>中转方案（关键设计）</strong>：<strong>IDE → SKILL Script → MCP Server</strong>。Skill 是 Agent 的主入口（管"什么时候用什么"），但 Skill 内部可以调 MCP（管"标准化工具暴露"）。两者职责分离——Skill 管"语义调度"，MCP 管"协议接入"。这就是"Skill 优先"而非"Skill 替代"。</p>
+    <p><strong>落到我的项目（关键加分项）</strong>：prd-tools 双 Skill 体系就是这个判断的实战——一开始用 MCP（Function Calling），调优两周准确率提不上去（MCP 单次调用本质，无多轮上下文）；转向 Skill+Agent 工作流，自研 Reference SSOT + 多轮证据链设计，效果立竿见影。这是亲自验证过的"Skill 优先于 MCP"。</p>
+    <p class="hint">[腾讯电竞 Harness Engineering·2026-06] 念法：钩子（Skill 优先于 MCP 不是 Skill 替代 MCP）→ MCP 四大问题（占上下文/不可选配/影响效果/配置繁琐）→ Skill 四大优势（渐进披露是核心，O(N)→O(used)）→ 中转方案（IDE→Skill→MCP，职责分离）→ 落 prd-tools（双 Skill 体系是亲自验证）。被问"Skill vs MCP 怎么选""为什么用 Skill 不用 MCP""Function Calling 局限"翻这张卡。</p>
+  </div>
+</div>
+
 <div class="card" data-c="proj" data-kw="能力面 适配器 目录 项目 可复用 surface">
   <div class="card-head"><span class="tag proj">架构</span><div class="card-title">能力面适配器怎么设计？</div></div>
   <div class="core">目录结构千差万别，但研发协作的能力面是稳定的——按能力面描述，不按目录</div>
