@@ -149,16 +149,16 @@ body{overscroll-behavior-y:contain}
   </div>
 </div>
 
-<div class="card" data-c="proj" data-kw="Schema 驱动 架构 BFF 生成 渲染 injectDActions">
+<div class="card" data-c="proj" data-kw="Schema 驱动 架构 BFF 生成 渲染 injectDActions 联动 有向图 双重求值">
   <div class="card-head"><span class="tag proj">A2</span><div class="card-title">Schema 驱动架构怎么设计？</div></div>
-  <div class="core">BFF 生成 Schema，前端消费 Schema，新增活动零代码</div>
+  <div class="core">运营配 Schema 上新活动前端零代码；联动的本质是字段间有向图依赖</div>
   <div class="card-body">
     <p><strong>先讲业务背景</strong>：我做的营销中台，运营要在后台配各种活动（拉新、促活、转化），活动类型 20+，每个活动字段多、联动复杂（选了城市才显示产品线、选了券类型才显示面额）。原来的痛点是——每新增一种活动，前端就得写代码、走发版，慢的话两周。所以我设计了 Schema 驱动架构，目标是<strong>运营配 Schema 就能上新活动，前端零代码、不发版</strong>。</p>
-    <p><strong>架构三层（顺数据流讲）</strong>：① 后端 API 给原始数据；② BFF 用模板引擎生成 Schema（活动配置的结构化描述）；③ 前端按 Schema 渲染页面。Schema 是前后端共享的唯一真相源。</p>
-    <p><strong>最核心是 injectDActions（联动声明+双重求值）</strong>：联动关系在 Schema 里声明一次，但求值两次——BFF 先 safeEval 算初始状态（决定首屏展示什么），序列化给前端；前端运行时再求值（响应用户操作）。联动分两类：fetchApi 型（依赖字段变化调接口拿新数据，如选城市拉产品线）、state 型（纯前端本地算，如显隐/禁用）。沉淀了 16 个联动模板覆盖常见场景。</p>
-    <p><strong>前端两个关键机制（源码细节）</strong>：① <strong>路径拍平</strong>——嵌套表单（step→card→row→field）拍成 dot 路径，联动能精确定位任意字段；② <strong>发布订阅</strong>——字段变化时通知依赖方，只更新受影响组件，不重渲染整棵树。组件两种匹配：基础组件 switch-case、业务组件 Register 动态注册，目前 35 个动态渲染组件。</p>
+    <p><strong>架构三层（顺数据流讲）</strong>：① 后端 API 给原始数据；② BFF 用模板引擎生成 Schema（活动配置的结构化描述）；③ 前端渲染引擎按 Schema 声明式出组件。Schema 是前后端共享的唯一真相源。</p>
+    <p><strong>核心难点一句话点出（钩子，详细留 A7）</strong>：联动表面看是"A 影响 B"的 if-else，<strong>本质是字段间的有向图依赖</strong>——A 影响 B、B 影响 C、甚至循环。所以引擎底层要解决依赖图建模、拓扑排序求值、循环检测三个图论问题，不是写一堆 if-else 能搞定的。这是整个架构最有技术含量的部分，详细机制见 A7。</p>
+    <p><strong>双重求值一句话带过（详细留 A7）</strong>：联动关系在 Schema 里声明一次，BFF 先 safeEval 算初始状态（决定首屏展示），前端运行时再求值（响应用户操作）。这样 SSR 出来的页面初始状态就是对的，不用等前端 JS 加载完再联动，避免首屏闪烁。</p>
     <p><strong>业务成果（收口）</strong>：新增活动类型前端基本零代码，上线从 2 周→几小时；同一套引擎服务活动表单和权益 SDK 两个业务，维护成本降一半。从"读代码理解业务"变成"看 Schema 理解业务"。</p>
-    <p class="hint">念法：先业务背景（营销活动痛点+目标）→ 三层架构 → injectDActions 核心（双重求值+两类联动）→ 前端两机制（路径拍平+发布订阅）→ 业务成果收口。</p>
+    <p class="hint">念法：业务背景（活动痛点+目标）→ 三层架构 → <strong>核心难点点出（联动是有向图不是 if-else，留钩子给 A7）</strong> → 双重求值一句带过 → 成果收口。<strong>被追问"联动怎么实现"立刻切 A7，不要在 A2 展开</strong>。</p>
   </div>
 </div>
 
@@ -219,18 +219,23 @@ body{overscroll-behavior-y:contain}
   </div>
 </div>
 
-<div class="card" data-c="proj" data-kw="联动引擎 injectDActions 双重求值 fetchApi state">
+<div class="card" data-c="proj" data-kw="联动引擎 injectDActions 双重求值 fetchApi state 依赖图 邻接表 拓扑排序 循环检测 visited 有向图">
   <div class="card-head"><span class="tag proj">A7</span><div class="card-title">联动引擎怎么设计？</div></div>
-  <div class="core">injectDActions一次声明双重求值——BFF端先算初始状态，前端运行时再算联动，16个联动模板覆盖95%场景</div>
+  <div class="core">联动是字段间有向图——依赖图建模+拓扑排序求值+循环检测兜底，一次声明双重求值</div>
   <div class="card-body">
-    <p><strong>这道题的核心是八个字：一次声明、双重求值。这是整个联动引擎的灵魂。</strong></p>
-    <p><strong>业务背景</strong>：营销活动表单字段多、联动复杂——选了城市才显示产品线，选了券类型才显示面额，而且每个活动联动规则都不一样。如果靠写代码处理，每新增活动都得改代码。所以设计联动引擎，让运营在 Schema 里声明联动规则，不用写代码。</p>
-    <p><strong>核心机制：一次声明、双重求值</strong>：开发者在 Schema 里用 dAction DSL 声明联动规则（比如"城市=北京时显示产品线 A 和 C"）。<strong>第一遍求值在 BFF</strong>——injectDActions 用 safeEval 算出当前用户的初始状态（哪些字段可见/禁用/默认值），这样 SSR 出来的页面初始状态就是对的，不用等前端 JS 加载完再联动（避免首屏闪烁）。<strong>第二遍求值在前端运行时</strong>——处理用户交互触发的联动。</p>
-    <p><strong>两种联动类型</strong>：① <strong>State 型</strong>（纯前端）——用户改字段，本地 eval 联动表达式直接更新其他字段（如选城市 A，产品线下拉立即更新）；② <strong>FetchApi 型</strong>（要后端数据）——用户改字段后回调 BFF 重新生成 Schema 片段（如城市变化要从后端拿新价格策略）。靠 listener.on 监听字段变化，支持链式联动（A 变→B 变→C 变）。</p>
+    <p><strong>表达关键：从场景开始，不从概念开始</strong>。开口别先甩"自研联动语法"——面试官脑里没画面。先甩具体场景，面试官立刻有画面再展开。</p>
+    <p><strong>场景切入（30 秒，给画面）</strong>：运营在后台配活动时，选了"订单奖"类型，下一行才出现"奖励规则"字段；选了"城市=北京"，"产品线"下拉才显示北京可用产品——这就是联动。一个活动 20+ 字段，联动规则可能 30+ 条，每个活动规则都不一样。</p>
+    <p><strong>业务背景</strong>：如果靠写代码处理这些联动，每新增活动都得改代码、走发版，两周起步。所以设计联动引擎，让运营在 Schema 里声明联动规则，不用写代码。</p>
+    <p><strong>核心八字：一次声明、双重求值</strong>：开发者用 dAction DSL 在 Schema 里声明一次联动规则，<strong>第一遍 BFF 求值</strong>——safeEval 算出初始状态（哪些字段可见/禁用/默认值），SSR 出来的页面初始状态就是对的，不用等前端 JS 加载完再联动（避免首屏闪烁）；<strong>第二遍前端运行时求值</strong>——响应用户交互触发的联动。</p>
+    <p><strong>🌟 工程本质：联动是字段间的有向图依赖（这是整个引擎最硬的部分，必讲）</strong>。联动表面看是"A 影响 B"，实际是多跳有向图——A 影响 B，B 影响 C，甚至循环（A 影响 B 又被 B 反向影响）。所以引擎底层做了三件事：</p>
+    <p>① <strong>依赖图建模</strong>：用邻接表存字段依赖关系，change 事件触发时 O(V+E) 找出受影响的字段集合，不是 O(n) 全表扫描。</p>
+    <p>② <strong>拓扑排序求值</strong>：多跳联动按拓扑序依次求值，避免"还没算 B 就用了 B 的结果"的竞态——这是图论保证，不是测试出来的。</p>
+    <p>③ <strong>循环检测</strong>：编译期静态扫描依赖图，有环就直接报错不让上线；运行期再用 visited Set 做兜底防护，万一漏网也最多回环 3 跳强制中断。</p>
+    <p>这三件事保证了：运营配再复杂的联动 DSL，引擎都能稳定求值，不会死循环或竞态。</p>
+    <p><strong>两种联动类型</strong>：① <strong>State 型</strong>（纯前端）——本地 eval 联动表达式直接更新（如选城市 A，产品线下拉立即更新）；② <strong>FetchApi 型</strong>（要后端数据）——回调 BFF 重新生成 Schema 片段（如城市变化要从后端拿新价格策略）。靠 listener.on 监听字段变化，支持链式联动（A 变→B 变→C 变）。</p>
     <p><strong>16 个联动模板覆盖 95%</strong>：visible（显隐）、disable（禁用）、setValue（赋值）、setEnum（更新选项）、required（必填）等。剩下 5% 走自定义组件兜底。</p>
     <p><strong>收口</strong>：联动从"写代码"变成"配 DSL"，运营自助、前端零代码，这是 Schema 驱动能成立的关键基础设施。</p>
-    <p><strong>表达关键：从场景开始，不从概念开始</strong>。开口别先甩"自研联动语法"这种抽象概念——面试官脑里没画面、容易听不进去。正确念法是先甩具体场景（"运营在后台配活动时，选了'订单奖'类型，下一行才出现'奖励规则'字段——这就是联动"），面试官立刻有画面，再讲语法和分类（State/FetchApi）。</p>
-    <p class="hint">念法：八字核心（一次声明双重求值）→ <strong>场景举例先甩（运营选订单奖→奖励规则出现）</strong>→ 业务背景（活动联动复杂）→ 双重求值（BFF算初始+前端运行时）→ 两种类型（State/FetchApi）→ 16模板覆盖95% → 收口（联动从写代码变配DSL）。被追问链式联动甩 listener.on。<strong>忌开口就讲"自研语法"，抽象概念容易让面试官没画面。</strong></p>
+    <p class="hint">念法：<strong>场景切入先甩（运营选订单奖→奖励规则出现）</strong>→ 业务背景 → 八字核心（一次声明双重求值）→ <strong>🌟 工程本质（有向图+依赖图建模+拓扑排序+循环检测，这是硬度核心必讲）</strong> → 两种类型（State/FetchApi）→ 16 模板 → 收口。<strong>忌开口就讲"自研语法"让面试官没画面；也忌跳过"工程本质"段直接讲分类，会失去硬度。</strong></p>
   </div>
 </div>
 
@@ -272,29 +277,34 @@ body{overscroll-behavior-y:contain}
 </div>
 
 <!-- ==================== 项目追问 ==================== -->
-<div class="card" data-c="proj" data-kw="大表单 性能 200字段 虚拟滚动 精确订阅 重渲染 依赖收集 dot path 字段改动">
+<div class="card" data-c="proj" data-kw="大表单 性能 200字段 虚拟滚动 精确订阅 重渲染 依赖图 路径拍平 发布订阅 dot path 字段改动">
   <div class="card-head"><span class="tag proj">追问</span><div class="card-title">大表单 200+ 字段性能 + 字段改动重渲染</div></div>
-  <div class="core">分步渲染+精确订阅+虚拟滚动+SW缓存；字段改动不会全表单重渲染</div>
+  <div class="core">分步渲染+按 dot path 精确订阅（路径拍平+依赖图）+虚拟滚动+SW缓存；一个字段改动不会全表单重渲染</div>
   <div class="card-body">
     <p><strong>这道题先给结论</strong>：一个字段改动<strong>不会</strong>全表单重渲染。这正是 Schema 驱动架构最常被追问的点，考的不是会不会用，是懂不懂底层为什么快。</p>
     <p><strong>业务背景</strong>：营销活动配置页动辄 200+ 字段，海外还在弱网环境。如果改一个字段整张表单重渲染，首屏卡死、操作也卡。所以性能得从架构层提前设计，不是上线了再调。</p>
     <p><strong>分四层讲（顺着从渲染到接口）</strong>：</p>
     <p>· <strong>渲染层——分步渲染</strong>：表单按步骤分组，当前步骤全量渲染，前后步骤只渲染摘要。用户一次只看一步，没必要全画。实测首屏从 1.2s 降到 300ms。</p>
-    <p>· <strong>更新层——按 dot path 精确订阅（这是最核心的一层）</strong>：原理类似 Redux selector——每个组件不监听整棵 Schema 树，而是按 dot 路径（比如 <code>page1.form2.field3</code>）精确订阅自己关心的字段。字段一变，引擎通过依赖映射表找到受影响的联动目标，只通知这些组件更新，其余组件完全不渲染。所以"改一个字段全表单重渲染"在这个架构里根本不会发生。</p>
+    <p>· <strong>更新层——按 dot path 精确订阅（这是最核心的一层，靠两个机制支撑）</strong>：</p>
+    <p>  <strong>① 路径拍平</strong>——嵌套表单（step→card→row→field）拍成 dot 路径（如 <code>page1.form2.field3</code>），联动能精确定位任意字段，不用递归查找；</p>
+    <p>  <strong>② 发布订阅 + 依赖图</strong>——每个组件不监听整棵 Schema 树，按 dot 路径精确订阅自己关心的字段；字段一变，引擎查<strong>依赖图</strong>（A7 讲过的邻接表）找到受影响的联动目标，只通知这些组件更新，其余完全不渲染。原理类似 Redux selector 但更精细。"改一个字段全表单重渲染"在这个架构里根本不会发生。</p>
     <p>· <strong>组件层——长列表虚拟滚动</strong>：选项特别多的字段（比如城市选择）用虚拟滚动，只渲染可视区域。</p>
     <p>· <strong>联动接口层——真正的瓶颈在这里</strong>：渲染已经不是问题了，真正的瓶颈是 fetchApi 型联动——用户改一个配置项可能触发 1-2 个联动接口调用，每个接口返回几十 KB 配置，海外弱网下要 2-3s。解法是 Service Worker 做 network-first 缓存，3 秒超时就回退缓存让用户继续操作（详见 SW 缓存专项卡）。</p>
-    <p><strong>收口</strong>：性能优化不是堆技巧，是分层——渲染层分步、更新层精确订阅、组件层虚拟滚动、接口层 SW 缓存。被问"大表单性能怎么做"就按这四层答，被问"字段改动会不会全表单重渲染"就重点讲第二层 dot path 精确订阅。</p>
-    <p class="hint">念法：钩子（先甩结论：一个字段改动不会全表单重渲染）→ 业务背景（200+字段+海外弱网，性能要架构层提前设计）→ 四层快速过（渲染层分步/更新层 dot path 精确订阅是核心/组件层虚拟滚动/接口层 SW 缓存）→ 收口（分层不是堆技巧）。被问"字段改动会不会全表单重渲染"重点讲第二层。</p>
+    <p><strong>收口</strong>：性能优化不是堆技巧，是分层——渲染层分步、更新层精确订阅（路径拍平 + 依赖图）、组件层虚拟滚动、接口层 SW 缓存。被问"大表单性能怎么做"就按这四层答，被问"字段改动会不会全表单重渲染"就重点讲第二层。</p>
+    <p class="hint">念法：钩子（先甩结论：一个字段改动不会全表单重渲染）→ 业务背景（200+字段+海外弱网）→ 四层快速过（渲染层分步 / <strong>更新层是核心：路径拍平 + 发布订阅 + 依赖图</strong> / 组件层虚拟滚动 / 接口层 SW 缓存）→ 收口（分层不是堆技巧）。被问"字段改动会不会全表单重渲染"重点讲第二层。</p>
   </div>
 </div>
 
 
-<div class="card" data-c="proj" data-kw="循环依赖 死循环 联动 循环 拓扑 max depth">
+<div class="card" data-c="proj" data-kw="循环依赖 死循环 联动 循环 拓扑 max depth 清值 防御">
   <div class="card-head"><span class="tag proj">追问</span><div class="card-title">联动会不会循环依赖导致死循环？</div></div>
-  <div class="core">设计上约束联动只做清值不做赋值，架构层面断开循环链路</div>
+  <div class="core">业务层约束（只清值不赋值）+ 引擎层兜底（拓扑检测+max depth），两层防御</div>
   <div class="card-body">
-    <p>两层防御。第一层：联动规则只能做清值操作——A 改了导致 B 的选项更新，B 之前的值清掉。不会出现"A 赋值给 B，B 又赋值给 A"的循环。需要默认值时用独立字段存储，不走联动路径。</p>
-    <p>第二层：引擎层做 max depth 限制，联动链超过 3 层就中断并报警。如果追问"更系统的方案"，可以说拓扑排序检测依赖图中的环，有环就编译报错不让上线。</p>
+    <p><strong>这道题是 A7 的边界追问——面试官想验证你对循环依赖的防御是否成体系。答两层就够，不要重复 A7 的拓扑检测细节。</strong></p>
+    <p><strong>第一层·业务约束（源头断开）</strong>：联动规则设计上<strong>只能做清值，不做赋值</strong>——A 改了导致 B 的选项更新，B 之前的值清掉，但 A 不会反向被 B 改。需要默认值时用独立字段存储，不走联动路径。从源头断开"A 赋 B、B 赋 A"的循环链路。</p>
+    <p><strong>第二层·引擎兜底（last line of defense）</strong>：依赖图的循环检测在 A7 已经讲了——编译期拓扑排序扫到环就直接报错不让上线；运行期再加 max depth 限制（默认 3 层），联动链超深强制中断并告警，是兜底的兜底。</p>
+    <p><strong>收口</strong>：业务层不让循环产生，引擎层兜底万一产生也能拦住——两层防御缺一不可。</p>
+    <p class="hint">念法：识别这是 A7 边界追问 → 业务层（只清值不赋值，源头断开）→ 引擎层（拓扑检测+max depth 兜底，已在 A7 讲过这里点到为止）→ 收口（两层防御）。<strong>不要重复 A7 的拓扑检测算法细节，否则显得啰嗦</strong>。</p>
   </div>
 </div>
 
