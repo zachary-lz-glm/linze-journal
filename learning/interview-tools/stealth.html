@@ -158,28 +158,23 @@ body{overscroll-behavior-y:contain}
     <p><strong>核心难点一句话点出（钩子，详细留 A7）</strong>：联动表面看是"A 影响 B"的 if-else，<strong>本质是字段间的有向图依赖</strong>——A 影响 B、B 影响 C、甚至循环。所以引擎底层要解决依赖图建模、拓扑排序求值、循环检测三个图论问题，不是写一堆 if-else 能搞定的。这是整个架构最有技术含量的部分，详细机制见 A7。</p>
     <p><strong>双重求值一句话带过（详细留 A7）</strong>：联动关系在 Schema 里声明一次，BFF 先 safeEval 算初始状态（决定首屏展示），前端运行时再求值（响应用户操作）。这样 SSR 出来的页面初始状态就是对的，不用等前端 JS 加载完再联动，避免首屏闪烁。</p>
     <p><strong>业务成果（收口）</strong>：新增活动类型前端基本零代码，上线从 2 周→几小时；同一套引擎服务活动表单和权益 SDK 两个业务，维护成本降一半。从"读代码理解业务"变成"看 Schema 理解业务"。</p>
-    <p><strong>架构复用（业务背书，被追问再展开）</strong>：这套 Schema 引擎还复用到权益 SDK——30+ 个权益组件走 Register 注册模式接入（通用组件 SDK 内置、业务定制组件按命名约定独立注册，避免 fork 改源码），覆盖国际化多国家多业务线的权益配置场景，和营销活动表单共享同一套联动 / 渲染 / 性能机制。维护一套引擎两个业务消费。组件库打包发布（Rollup 双模 + Changesets + yalc 本地验证）见 A8。</p>
-    <p class="hint">念法：业务背景（活动痛点+目标）→ 三层架构 → <strong>核心难点点出（联动是有向图不是 if-else，留钩子给 A7）</strong> → 双重求值一句带过 → 成果收口 → <strong>架构复用背书（权益 SDK 共享引擎，被追问 Register 模式展开）</strong>。<strong>被追问"联动怎么实现"立刻切 A7，不要在 A2 展开</strong>。</p>
+    <p><strong>架构复用（一句话背书，详见 A3）</strong>：这套 Schema 引擎还复用到权益组件库——30+ 个权益组件覆盖国际化多国家多业务线，<strong>维护一套引擎两个业务消费，维护成本降一半</strong>。详细设计见 A3。</p>
+    <p class="hint">念法：业务背景（活动痛点+目标）→ 三层架构 → <strong>核心难点点出（联动是有向图不是 if-else，留钩子给 A7）</strong> → 双重求值一句带过 → 成果收口 → 架构复用背书一句话（指向 A3）。<strong>被追问"联动怎么实现"立刻切 A7；被追问"权益组件库"立刻切 A3；不要在 A2 展开</strong>。</p>
   </div>
 </div>
 
-<div class="card" data-c="proj" data-kw="loop AI Agent 流水线 Claude Code cron subagent worker reviewer 状态机 独立上下文 竞态 风格漂移 硬规则 个人探索 prd-tools 迁移">
-  <div class="card-head"><span class="tag proj">A3</span><div class="card-title">loop 系统 · AI Agent 自动化流水线</div></div>
-  <div class="core">用 Claude Code 原生机制造 AI 流水线——个人探索原型，worker-reviewer 状态机已迁移到团队 prd-tools</div>
+<div class="card" data-c="proj" data-kw="组件库 benefit SDK 权益 Register Rollup 多国家 30组件 配置组合 架构复用">
+  <div class="card-head"><span class="tag proj">A3</span><div class="card-title">权益组件库怎么设计？</div></div>
+  <div class="core">Schema 渲染引擎的第二个消费者 + Register 注册模式 + 30+ 组件覆盖国际化多国家多业务线</div>
   <div class="card-body">
-    <p><strong>核心定位：个人探索原型 + 团队项目落地验证。诚实承认边界比包装成产品更强——包装成产品会被 dismiss 成玩具，主动承认反而显成熟。</strong></p>
-    <p><strong>钩子三件套（30 秒电梯演讲，主动聊用）</strong>：我最近在做的一个项目叫 loop——<strong>用 Claude Code 自带的 cron + subagent 机制，自研了一条 AI Agent 流水线</strong>。它把我面试速查页 100+ 张题卡自动优化成"照念就能答好"的可念答案，从 v233 跑到 v251，自动产出 18 个版本。<strong>最有工程含量的不是用 AI，是把 AI 串成可无人值守、能自纠错、不污染主上下文的流水线</strong>。</p>
-    <p><strong>诚实定位段（必讲，先发制人）</strong>：这个项目目前是<strong>个人探索原型，没有团队用户</strong>，严格说不是生产系统。但它让我对 Agent 工程化的核心问题有了完整实战体感——这些问题我在团队项目 prd-tools 上也碰到，只是规模不同。正因为规模小，<strong>我能完整探索整个问题空间</strong>——架构选型、硬规则绕过、风格漂移防御、结构自检、worker-reviewer 解耦，全链路都能摸到。</p>
-    <p><strong>5 个 Agent 工程化核心问题（每个都有具体机制，不是堆名词）</strong>：</p>
-    <p>① <strong>架构级消除竞态</strong>：v1 是双 cron 并行撞车（git index.lock 冲突 / push non-fast-forward），解法不是加锁，是<strong>改单 cron 串行从架构上消除竞态</strong>——消除竞态的正确方式不是加锁，是从架构上消除。</p>
-    <p>② <strong>独立上下文隔离</strong>：每轮派 subagent 在自己的 context window 跑，主会话只收 1 行简报——跑 100 轮和跑 1 轮对主会话负担一样，<strong>长跑不爆</strong>（这是 Anthropic 官方推荐的 Agent 设计原则）。</p>
-    <p>③ <strong>Claude Code 硬规则绕过</strong>：两条安全硬规则（cd + 重定向 / cd + git）强制人工审批、白名单都绕不过，无人值守必卡死。系统化对策：Grep 工具替代 bash grep、git -C 替代 cd+git、awk 用绝对路径——<strong>这是 Claude Code 工程化的隐藏知识，没几个人踩过</strong>。</p>
-    <p>④ <strong>结构自检 + 自动回滚</strong>：HTML 嵌套结构，subagent 多写或少写一个 div 整页就崩。commit 前 awk 自检 div 平衡，不是 0 立即 git checkout 撤销，<strong>绝不提交不平衡的改动</strong>。</p>
-    <p>⑤ <strong>worker-reviewer 状态机</strong>：同一个 AI 既改又审会"自证无误"，解法是 worker 改写加待复核标记、reviewer 独立复核——<strong>产出/审核解耦，多一层防线</strong>。</p>
-    <p><strong>桥接段（必讲，关键防御）</strong>：loop 探索出的 worker-reviewer 状态机，<strong>已迁移到团队项目 prd-tools</strong>（20+ 人在用的生产系统）。所以 loop 是探索场，prd-tools 是落地，两个一起讲才完整——<strong>loop 提供思路深度，prd-tools 提供团队规模</strong>。</p>
-    <p><strong>量化收口（真实在跑，不是 PPT）</strong>：v233→v251，18 个 git 版本真实运行；节省约 90% 人工时间（100+ 张卡从 50-100 小时降到 5 个夜间跑完）；主会话上下文长跑不爆。</p>
-    <p><strong>主动说短板（先发制人的延伸）</strong>：loop 目前的短板是<strong>没有 token 消耗监控、改写质量评分、用户反馈闭环</strong>——下一步是从"流水线"升级成"可观测的流水线"。这就是 prd-tools 早期走过的路。</p>
-    <p class="hint">念法：钩子三件套（用 Claude Code 自带机制造流水线 + 18 版本真实在跑 + 工程创新）→ <strong>诚实定位段必讲（个人探索先发制人）</strong> → 5 个核心问题（架构消除竞态 / 独立上下文 / 硬规则 / 结构自检 / worker-reviewer）→ <strong>桥接 prd-tools 必讲（团队项目背书）</strong> → 量化收口 → 主动说短板。<strong>忌包装成产品；忌跳过诚实定位段直接讲亮点（会被 dismiss 成玩具）；忌每个亮点都展开（90 秒讲不完）</strong>。</p>
+    <p><strong>先讲定位（一句话核心）</strong>：权益组件库是 Schema 渲染架构的第二个消费者——和营销活动表单共享同一套引擎，30+ 个权益组件走 Register 注册模式接入，覆盖国际化多国家多业务线场景。核心价值是<strong>维护一套引擎，两个业务消费，维护成本降一半</strong>。</p>
+    <p><strong>业务背景</strong>：国际化权益系统要支持多国家（滴滴 10+ 国家）、多业务线，每个组合的权益展示不一样。如果每个组合写一套独立组件，维护不动。所以设计了 Register 注册模式 + 配置化覆盖组合。</p>
+    <p><strong>Register 注册模式（核心机制）</strong>：SDK 内置 20+ 个通用组件（文本、图片、按钮、倒计时这些），业务方运行时用 register 方法注册自己的权益组件。通用组件注册一次所有业务复用，业务定制组件按命名约定独立注册。<strong>好处是业务定制不用 fork SDK 改源码</strong>（避免分叉），新业务接入只注册不改内核。</p>
+    <p><strong>组件构成（被追问"具体有哪些"答这段）</strong>：Common 通用 20 个 + 业务定制（ForDLP / ForWang / ForUserCamp 等）10+ 个，实际 30+ 个组件目录。其中比较复杂的几个：PriceTableCmp（远端 schema 拉取 + 防抖 + 跨字段依赖联动）、TimeRangeCmp（时间区间选择 + 校验）、DiscountInput（折扣输入 + 多国家格式）。</p>
+    <p><strong>多国家多业务线配置（被追问"怎么覆盖"答这段）</strong>：组件靠<strong>配置组合</strong>覆盖不同国家业务场景，不是为每个国家写一套独立组件。国家/业务线的差异化通过 Schema 配置项注入（校验规则、筛选项、文案、币种格式），组件内核统一。<strong>关键洞察：组件靠配置化覆盖组合，不是堆组件数量</strong>。</p>
+    <p><strong>工程化细节（被追问再甩，详见 A8）</strong>：Rollup 双模（ESM + CJS + d.ts 三份产物）+ peerDependencies 声明 React 避免重复打包 + Changesets 管版本 + alpha/release 双环境 + yalc 本地验证替代 npm link。详细见 A8 组件库版本管理卡。</p>
+    <p><strong>诚实边界（被追到深处答这段）</strong>：早期版本说过"400+ 组合数 / 18 个月零线上问题"，<strong>这两个数字没有代码级证据</strong>。被追问口径时建议改说"30+ 组件靠配置覆盖国际化多国家多业务线组合场景"——更稳、可证伪、经得起追问。</p>
+    <p class="hint">念法：定位（Schema 第二个消费者）→ 业务背景（多国家多业务线）→ Register 模式（通用+定制不 fork）→ 组件构成（30+ 组件分类）→ 多国家配置（配置组合）→ 工程化细节指向 A8 → 诚实边界防御。<strong>忌主动说"400+ 组合"或"零事故"；忌把权益讲得和 A2 Schema 中台完全割裂，要强调"第二个消费者"的架构复用关系</strong>。</p>
   </div>
 </div>
 
@@ -378,6 +373,26 @@ body{overscroll-behavior-y:contain}
 </div>
 
 <!-- ==================== 项目扩展 ==================== -->
+<div class="card" data-c="proj" data-kw="loop AI Agent Claude Code cron subagent 最近在做 个人探索 轻聊 钩子 流水线">
+  <div class="card-head"><span class="tag proj">扩展</span><div class="card-title">loop 系统 · 最近在做的轻聊话题</div></div>
+  <div class="core">用 Claude Code 自带机制造 AI 流水线——个人探索，主动聊钩子，被追问选 1-2 个亮点简述，不作为主讲点</div>
+  <div class="card-body">
+    <p><strong>这张卡定位：不是讲点级主项目，是"最近在做什么"的轻聊话题。30-60 秒钩子版，不深入展开，被追问再选 1-2 个亮点简述，主动收尾指向 prd-tools。</strong></p>
+    <p><strong>触发场景（什么时候主动聊）</strong>：被问"最近在做什么" / "你怎么看 AI 工具链" / "你用过 Claude Code 吗"——这三种场景主动抛 loop。其他场景不主动提。</p>
+    <p><strong>30 秒电梯版（必背）</strong>：我最近在做的一个项目叫 loop——<strong>用 Claude Code 自带的 cron + subagent 机制，自研了一条 AI 流水线</strong>，把我自己用的面试速查页 100+ 张题卡自动优化成"照念就能答好"的答案。从 v233 跑到 v251，自动产出 18 个版本。<strong>最有意思的不是用 AI，是把 AI 串成可无人值守、能自纠错的流水线</strong>。</p>
+    <p><strong>诚实定位一句话（必带）</strong>：这个项目目前是<strong>个人探索，严格说不是生产系统</strong>——但让我对 Agent 工程化的核心问题（竞态、上下文、风格漂移、幻觉）有了完整实战体感，这些体感直接反哺了我做团队项目 prd-tools 的思路。</p>
+    <p><strong>被追问时的展开储备（选 1-2 个，不全部讲）</strong>：</p>
+    <p>· <strong>架构级消除竞态</strong>：v1 双 cron 撞车，解法不是加锁是改单 cron 串行从架构上消除</p>
+    <p>· <strong>独立上下文隔离</strong>：subagent 在自己的 context window 跑，主会话只收 1 行简报，长跑不爆</p>
+    <p>· <strong>硬规则绕过</strong>：Claude Code 两条安全硬规则（cd+重定向 / cd+git），系统化规避（Grep 工具 / git -C / 绝对路径）</p>
+    <p>· <strong>结构自检</strong>：commit 前 awk 校验 div 平衡，不平衡自动回滚</p>
+    <p>· <strong>worker-reviewer 状态机</strong>：产出/审核解耦，多一层防线</p>
+    <p><strong>主动收尾（关键防御，必讲）</strong>：讲完 30-60 秒主动收——"这个目前是个人探索，<strong>我重点想讲的是 Schema 中台 / prd-tools 这两个生产项目</strong>。"不要让面试官追到深处。</p>
+    <p><strong>核心忌讳</strong>：① 忌包装成产品（没团队没用户，深聊必翻车）；② 忌每个亮点都展开（暴露场景小众）；③ <strong>忌说"已迁移到 prd-tools"</strong>（prd-tools 有自己的状态机，不是真的迁移，只是思路相通，深挖会穿）；④ 忌主动报"节省 90% 人工"这种数字（听上去像营销）；⑤ 忌主动报"8 个工程亮点"（数字虚，听上去像凑数）。</p>
+    <p class="hint">念法：触发场景识别 → 30 秒电梯版（钩子三件套）→ 诚实定位一句话（必带）→ 被追问选 1-2 个亮点（不展开细节）→ <strong>主动收尾指向 Schema 中台/prd-tools</strong>。<strong>核心是"主动聊但不深聊"，保持轻量话题定位。loop 是开胃菜，主菜是 Schema 中台和 prd-tools</strong>。</p>
+  </div>
+</div>
+
 <!-- ==================== 项目扩展（原） ==================== -->
 <div class="card" data-c="proj" data-kw="Rollup 打包 tree-shaking ESM CJS 为什么不用Webpack">
   <div class="card-head"><span class="tag proj">扩展</span><div class="card-title">为什么用 Rollup 不用 Webpack？</div></div>
