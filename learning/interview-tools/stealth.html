@@ -4930,7 +4930,7 @@ const catNames={all:'全部',open:'开场',proj:'项目',bagu:'基础',code:'手
 const subOrder={
   'Schema 项目':1,'AI 总览':2,'AI 架构':3,'AI 质量':4,'AI 端到端':5,'AI 工具':6,'产品思维':7,
   'React':1,'JS 核心':2,'CSS':3,'网络':4,'浏览器/性能':5,'TypeScript':6,'工程化':7,'框架扩展':8,
-  'Agent 基础':1,'RAG 检索':2,'LLM 工程':3,'工具协议':4,'AI 评测':5,'Loop 工程':6,'AI 工程化':7,'AI 前端':8,'行业视野':9,'追问':10,
+  'Agent 基础':1,'RAG 检索':2,'LLM 工程':3,'工具协议':4,'AI 评测':5,'Loop 工程':6,'AI 工程化':7,'AI 前端':8,'行业视野':9,'追问':10,'AI Coding 实践':0,
   '速查':0,'手写 API':1,'数组/双指针':2,'链表':3,'树/BFS/DFS':4,'回溯':5,'排序/TopK':6,'DP/贪心':7,'栈':8,'二分':9,'综合':10,
   '项目数据':1,'大麦专属':2,'TikTok专属':3,'蚂蚁专属':4,'软技能':5,'HR面':6,'反问':7,'话术急救':8
 };
@@ -5037,6 +5037,7 @@ function getGroup(c){
   }
   if(cat==='ai'){
     const t=(c.querySelector('.card-title')||{}).textContent||'';
+    if(/AI Coding 实操/.test(t))return 'AI Coding 实践';
     if(/L3 AI 工程化|工程化 12 题|Prompt 注入|AI 安全|成本控制/.test(t))return 'AI 工程化';
     if(/Evals|Benchmark|评测|量化|防污染|不被污染/.test(t))return 'AI 评测';
     if(/Loop Engineering|Harness|自进化|Agent Loop|循环工程|Prompt.*Loop|maxxing/i.test(t))return 'Loop 工程';
