@@ -280,21 +280,6 @@ body{overscroll-behavior-y:contain}
 </div>
 
 <!-- ==================== 项目追问 ==================== -->
-<div class="card" data-c="proj" data-kw="权益 benefit SDK 组件库 Register 注册 30组件 多国家 老简历 配置 组合 快速复习">
-  <div class="card-head"><span class="tag proj">追问</span><div class="card-title">权益组件库 · 快速复习（老简历追问防御）</div></div>
-  <div class="core">Schema 引擎第二个消费者 + Register 注册模式 + 30+ 组件 + 多国家配置；A2 末尾已含核心背书</div>
-  <div class="card-body">
-    <p><strong>这张卡是防御老简历的——如果面试官拿着旧版简历问权益组件库，按这张卡核心点快速复习即可。A2 末尾已有"架构复用"段作为主推口径。</strong></p>
-    <p><strong>一句话定位（最稳的开场）</strong>：权益组件库是 Schema 渲染架构的第二个消费者——和营销活动表单共享同一套引擎，30+ 个权益组件走 Register 注册模式接入，覆盖国际化多国家多业务线场景。详细架构见 A2 末尾。</p>
-    <p><strong>Register 注册模式（被追问"怎么实现的"答这段）</strong>：SDK 内置 20+ 个通用组件（文本、图片、按钮、倒计时这些），业务方运行时用 register 方法注册自己的权益组件。通用组件注册一次所有业务复用，业务定制组件按命名约定独立注册。<strong>好处是业务定制不用 fork SDK 改源码</strong>（避免分叉），新业务接入只注册不改内核。</p>
-    <p><strong>组件构成（被追问"具体有哪些"答这段）</strong>：Common 通用 20 个 + 业务定制（ForDLP / ForWang / ForUserCamp 等）10+ 个，实际 30+ 个组件目录。比较复杂的几个：PriceTableCmp（远端 schema 拉取 + 防抖 + 跨字段依赖联动）、TimeRangeCmp（时间区间选择 + 校验）、DiscountInput（折扣输入 + 多国家格式）。</p>
-    <p><strong>多国家多业务线配置（被追问"怎么覆盖"答这段）</strong>：组件靠<strong>配置组合</strong>覆盖不同国家业务场景，不是为每个国家写一套独立组件。国家/业务线的差异化通过 Schema 配置项注入（校验规则、筛选项、文案、币种格式），组件内核统一。<strong>关键洞察：组件靠配置化覆盖组合，不是堆组件数量</strong>。</p>
-    <p><strong>工程化细节（被追问"打包/发布"指向 A8）</strong>：Rollup 双模（ESM + CJS + d.ts 三份产物）+ peerDependencies 声明 React 避免重复打包 + Changesets 管版本 + alpha/release 双环境 + yalc 本地验证替代 npm link。详见 A8 组件库版本管理卡。</p>
-    <p><strong>诚实边界（被追到深处答这段）</strong>：早期版本说过"400+ 组合数 / 18 个月零线上问题"，<strong>这两个数字没有代码级证据</strong>。被追问口径时建议改说"30+ 组件靠配置覆盖国际化多国家多业务线组合场景"——更稳、可证伪、经得起追问。</p>
-    <p class="hint">念法：识别老简历追问 → 一句话定位（Schema 第二个消费者）→ 按追问方向展开（Register 模式 / 组件构成 / 多国家配置）→ 工程化细节指向 A8。<strong>忌主动说"400+ 组合"或"零事故"，被追穿风险大；忌把权益作为主讲点，A2 一句话背书已足够</strong>。</p>
-  </div>
-</div>
-
 <div class="card" data-c="proj" data-kw="大表单 性能 200字段 虚拟滚动 精确订阅 重渲染 依赖图 路径拍平 发布订阅 dot path 字段改动">
   <div class="card-head"><span class="tag proj">追问</span><div class="card-title">大表单 200+ 字段性能 + 字段改动重渲染</div></div>
   <div class="core">分步渲染+按 dot path 精确订阅（路径拍平+依赖图）+虚拟滚动+SW缓存；一个字段改动不会全表单重渲染</div>
