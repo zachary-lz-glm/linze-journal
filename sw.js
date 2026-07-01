@@ -1,4 +1,4 @@
-const CACHE_NAME = 'kb-v264';
+const CACHE_NAME = 'kb-v265';
 const TIMEOUT = 3000;
 
 self.addEventListener('install', () => self.skipWaiting());
