@@ -1748,7 +1748,12 @@ function buildTreeOptimized(list) {
   <div class="card-head"><span class="tag proj">架构</span><div class="card-title">PRD 到代码最难的一步？</div></div>
   <div class="core">判断PRD每句话对应代码是新增、修改还是删除，难在不知道项目现状就无法判断</div>
   <div class="card-body">
-    <p>判断每句话对应代码是新增/修改/删除。难在不知道项目现状就无法判断，PRD 描述模糊，跨模块影响难预估。解法：reference 路由匹配 + BM25 + context-pack 锚定 + Review Gate 硬停止。</p>
+    <p><strong>这题是 prd-tools 的硬核追问——"PRD 到代码这么多步，你觉得最难的一步是哪步"。笼统答"生成代码"会显得没想过，真正的难点是<strong>变更分类</strong>：判断 PRD 每一句话对应的代码是新增、修改还是删除。这步做不对，后面全是错。我把它整理成"先讲透为什么难，再讲我怎么破"，照念就能答得有深度。</strong></p>
+    <p><strong>先讲业务背景（这步为什么值钱）</strong>：prd-tools 喂的是 20+ 人的 B 端团队，PRD 到 Spec/Plan 这段从 5h 压到 2h。但提效的前提是<strong>产物可信</strong>——如果 AI 把一个"修改"误判成"新增"，凭空多出一个文件，开发照着写就引入重复代码；把"删除"漏掉，旧逻辑残留就是 bug。所以变更分类不是个技术细节，是<strong>整个产物可信度的地基</strong>。</p>
+    <p><strong>再讲为什么这步是真难点（三层难）</strong>：① <strong>难在不知道项目现状</strong>——AI 没"见过"这个项目，不知道哪些能力已有、哪些没有，脱离现状就无从判断是新增还是修改；② <strong>难在 PRD 描述模糊</strong>——PRD 写的是需求语言（"支持会员等级折扣"），代码是结构化实体（哪个文件、哪个函数），中间有语义鸿沟；③ <strong>难在跨模块影响难预估</strong>——改一处契约可能波及前后端多个层，AI 不做全量扫描就会漏。</p>
+    <p><strong>我的解法是四件套层层兜（这是工程深度的核心）</strong>：① <strong>reference 路由匹配先定位</strong>——蒸馏前用 <code>04-routing-playbooks.yaml</code> 里的路由信号（key_files / prd_keywords / structural_signals）判断这条需求落在哪一层、该读哪些 Reference 文件，先缩小搜索范围；② <strong>BM25 索引查代码实体</strong>——reference 的 Evidence Index 把代码实体建成倒排索引和 BM25 索引，PRD 关键词一查就能定位到具体文件和符号，"项目里到底有没有这个东西"就有了事实依据；③ <strong>context-pack 锚定上下文</strong>——把命中的相关代码实体精简成一份 context-pack，只把相关片段喂给 AI，既控 token 又防它脱离证据瞎猜；④ <strong>Review Gate 硬停止兜底</strong>——Spec/Report 生成后硬停，必须人工确认变更明细表（变更明细表就是变更分类的产物）才允许出 Plan，AI 判错的地方人来拦。</p>
+    <p><strong>收口金句 + 落项目</strong>：变更分类难，本质是<strong>"AI 不知道项目现状"</strong>——破法不是让 AI 更聪明，是给它<strong>项目现状的事实依据</strong>（reference 路由 + BM25 检索 + context 锚定）再叠一层人工门控。这正是 prd-tools 把 PRD→Plan 这段从 5h 压到 2h 还能保住信任的核心机制——<strong>不是靠模型，是靠把不确定的判断锚定到可审计的证据上</strong>。被问"那准确率多少"翻 emer 数据卡答口径（文件级 80%，gap 是 PRD 不完整+AI 主动标记，不是算错）。</p>
+    <p class="hint">念法：钩子（硬核追问"最难一步"，笼统答"生成代码"显没想过，真难点是变更分类）→ 业务背景（20+人/5h→2h 前提是产物可信，变更分类是地基）→ 为什么难三层（不知项目现状/PRD 模糊/跨模块影响）→ 解法四件套（reference 路由匹配定位 + BM25 查实体 + context-pack 锚定 + Review Gate 硬停止）→ 金句（难在不知现状，破法是锚定证据不是靠模型）→ 落 prd-tools。被问"准确率多少"翻 emer 答口径。[loop·已优化·待复核]</p>
   </div>
 </div>
 
