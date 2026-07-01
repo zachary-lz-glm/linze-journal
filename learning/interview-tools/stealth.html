@@ -2900,6 +2900,42 @@ function buildTreeOptimized(list) {
   </div>
 </div>
 
+<div class="card" data-c="ai" data-kw="AI Coding 实操 现场 操作 剧本 屏幕共享 录制 录屏 快手 电商 步骤 流程 边做边讲 复述 验收 prompt 边收边审 实操环节 明天 面试">
+  <div class="card-head"><span class="tag ai">实操</span><div class="card-title">AI Coding 实操 · 现场 7 步剧本（明天用这个）</div></div>
+  <div class="core">面试官打分的不是代码本身，是"边做边讲 + 边收边审"的工程节奏——7 步照念稳上 80 分</div>
+  <div class="card-body">
+    <p><strong>钩子先甩</strong>：实操环节哑巴写代码 = 0 分、盲信 AI 翻车 = 低分、<strong>边做边讲 + 边收边审 = 高分</strong>。套路是死的——复述需求 → 喂上下文 → 分步 prompt → 边收边审 → 跑验证 → 加边界 → 收口讲取舍。每一步都伴随"我在做什么 + 为什么"，<strong>把思考过程暴露给面试官</strong>，这是屏幕共享环节真正的考点。</p>
+    <p><strong>① 复述需求 + 列验收标准（30 秒，买时间 + 立判断）</strong>：开口先讲——"这题的关键点是 X、Y、Z；我的验收标准是 A、B、C；我打算先用 AI 起骨架再填肉。"作用是<strong>立判断 + 给自己 30 秒组织思路 + 让面试官知道你听懂题</strong>。复述完再开始动 AI，<strong>不要上来就 prompt</strong>。</p>
+    <p><strong>② 喂上下文（不是"帮我写个 X"）</strong>：差的 prompt 出烂代码。<strong>反例</strong>："帮我写个登录页"；<strong>正例</strong>："Vite + React + TS 项目，参考 src/components/Login 现有风格，写一个 Register 组件，要求 TS 类型完整 + 复用现有 form hook"。把<strong>技术栈 / 参考文件 / 命名约定 / 复用模块</strong>喂进去，AI 才能贴着项目写而不是凭空瞎编。</p>
+    <p><strong>③ 分步 prompt（先骨架 → 再填肉 → 再测试，不要一锅炖）</strong>：第一轮"先给 Register 组件骨架，含 props 类型和基础 JSX" → 第二轮"加表单校验" → 第三轮"写测试用例"。<strong>不要让 AI 一次性写完一坨你看不懂的代码</strong>——分步是你能 review 的前提，也是显你工程节奏。</p>
+    <p><strong>④ 边接受边改（不盲信，关键逻辑必看）</strong>：AI 输出后扫一眼——<strong>类型对不对 / 有没有幻觉 API（编造不存在的库）/ 有没有重复造轮子（项目里其实已经有了）</strong>。改的地方大声说："AI 这里用了 X，我改成 Y，原因是 Z。"这一句话就能拉开和"哑巴接受者"的差距。</p>
+    <p><strong>⑤ 跑起来验证（跑通 70 分，跑不通主动调试加分）</strong>：<code>npm run dev</code> 启服务 / <code>npm test</code> 跑测试。跑通就演示功能；跑不通别慌，<strong>边读报错边讲排查思路</strong>——"先看是不是 import 路径错 → 再看类型 → 再看运行时"。展示调试能力比答案正确更值钱。</p>
+    <p><strong>⑥ 补边界 / 异常（拉满到 90 分）</strong>：主动加至少 2 个——<strong>空输入 / 超长 / 并发 / 错误兜底</strong>。开口："我再补一个边界 case——用户输入超长字符串时应该 truncate 不是 crash。"这一步很多候选人会漏，做了立马显工程化意识。</p>
+    <p><strong>⑦ 收口讲取舍（拉开到 95+ 的关键）</strong>：结尾必须有一段——"这次 X 用 AI 快了 5 倍，Y 我手写更稳因为 Z。<strong>AI 的边界在 W，过度依赖会 R</strong>。"显你对 AI 边界的判断，这是<strong>高级工程师 vs CRUD 工具人</strong>的核心分野。</p>
+    <p><strong>落到我的项目</strong>：我做的 prd-tools 跑在 Claude Code 上，整套流水线就是把这 7 步工程化——PRD 输入（复述）→ Reference 喂模型（喂上下文）→ 6 步生成 + 自检（分步 + 边收边审）→ benchmark 验证（跑验证）→ golden sample 回归（加边界）。<strong>金句：实操考的不是会不会用 AI，是能不能驾驭 AI 当工程用</strong>。</p>
+    <p class="hint">念法：钩子（哑巴 0 分、盲信低分、边做边讲边审高分，屏幕共享真正考点）→ 7 步顺一遍（复述/喂上下文/分步/边收边审/跑验证/加边界/讲取舍）→ 每步一句点透（复述 30 秒立判断 / 喂上下文反例正例 / 分步是 review 前提 / 边收边审改的地方大声说 / 跑不通展示调试 / 边界主动加 2 个 / 收口讲 AI 边界）→ 落 prd-tools 收口（金句=实操考的不是用 AI 是驾驭 AI 当工程）。被问"实操怎么准备"或现场卡壳翻这张。</p>
+  </div>
+</div>
+
+<div class="card" data-c="ai" data-kw="AI Coding 实操 prompt 模板 题型 实现功能 找bug 修bug 重构 写测试 避坑 死法 救场 话术 翻车 卡壳 胡编 幻觉">
+  <div class="card-head"><span class="tag ai">实操</span><div class="card-title">AI Coding 实操 · 4 类题型 prompt 模板 + 5 条避坑话术</div></div>
+  <div class="core">4 类题型各有 prompt 模板照抄；5 个常见死法各有话术救场——卡壳翻这张</div>
+  <div class="card-body">
+    <p><strong>用这张的方式</strong>：被点到题型先在脑子里选 A/B/C/D，套 prompt 模板开口；遇到 AI 输出错乱 / 反复改不对 / 被反问"为什么这么写"——翻底部 5 条话术救场。</p>
+    <p><strong>题型 A · 实现 X 功能（最常见，30 分钟级）</strong>：<br><strong>prompt 模板</strong>："项目是 [技术栈]，参考 [文件路径] 的风格；任务：实现 [具体功能]；要求：① TS 类型完整 ② 含 [边界] ③ 不引入新依赖。"<br><strong>套路</strong>：复述 → 骨架 → 填肉 → 测试 → 边界（就是 7 步剧本）。<strong>别犯的错</strong>：上来"帮我写个完整 X"——AI 写一坨你看不懂，无法 review。</p>
+    <p><strong>题型 B · 找 / 修 Bug</strong>：<br><strong>prompt 模板</strong>："报错信息：[完整 stderr]；复现步骤：[步骤]；期望行为：[预期]；请帮我定位 + 给修复方案。"<br><strong>套路</strong>：让 AI 读报错 → 给定位假设 → 给 diff 修复 → <strong>自己验证 diff</strong>（AI 改 bug 最容易"改对了表象改错了根因"）。<strong>加分动作</strong>：让 AI 先讲根因再讲修复——"为什么会触发这个错"。</p>
+    <p><strong>题型 C · 重构现有代码</strong>：<br><strong>prompt 模板</strong>："这是 [文件名]，目前 [问题：可读性差 / 性能低 / 重复多]；要求：① <strong>保持外部接口不变</strong> ② 提取 [X] 公共逻辑 ③ <strong>给出 diff 让我能 review</strong>，不要整体重写。"<br><strong>套路</strong>：让 AI 先讲原代码逻辑 → 给重构方案 → 对比 diff → 跑现有测试不破。<strong>红线</strong>：不让 AI 整体重写——你 review 不了、回归风险大。</p>
+    <p><strong>题型 D · 写测试</strong>：<br><strong>prompt 模板</strong>："为 [函数/组件] 写测试；<strong>先列用例清单让我确认</strong>，再写代码；覆盖：正常路径 + 边界 + 异常。"<br><strong>套路</strong>：让 AI 先列 → 你筛 / 补 → AI 写 → 加边界。<strong>关键</strong>：分两轮（先清单再代码），不然 AI 会自己决定覆盖度，漏的正是面试官要考的。</p>
+    <p><strong>━━━ 5 条避坑话术（卡壳救场用）━━━</strong></p>
+    <p><strong>死法 1 · AI 输出错乱 / 胡编 API</strong>：<br><strong>话术</strong>："这里 AI 给的方案有个问题——它假设了 X，但我们项目里是 Y。我手改成 Y，原因是 [具体]。"<strong>价值</strong>：显你 review 了 AI 输出，没盲信。</p>
+    <p><strong>死法 2 · AI 反复改不对</strong>：<br><strong>话术</strong>："AI 改不动说明 prompt 没说清——我重新组织下需求，关键约束是 [X]，先把约束讲清楚再让它写。"<strong>价值</strong>：把锅从"AI 笨"转成"我没说清"，体现 prompt 工程意识。</p>
+    <p><strong>死法 3 · 被问"为什么这么写"</strong>：<br><strong>话术</strong>："AI 给了 3 个选项（即便它没给也这么构造），我选了 X，因为 [权衡：性能 vs 可读性 / 兼容性 vs 简洁]；其他两个的劣势是 Y。"<strong>价值</strong>：把"AI 决定的"翻译成"我决策的"，关键技巧。</p>
+    <p><strong>死法 4 · 被问"不用 AI 你怎么写"</strong>：<br><strong>话术</strong>（哪怕短也要能答）："不用 AI 我会先 [骨架步骤 X] → 再 [逻辑 Y] → 最后 [边界 Z]；AI 加速的是 X 步，Y/Z 我自己来更稳。"<strong>价值</strong>：显你不依赖 AI，AI 是加速器不是拐杖。</p>
+    <p><strong>死法 5 · 屏幕共享卡顿 / 操作过快</strong>：<br><strong>话术</strong>："我慢一点，每步讲一下：现在我打开 X 文件，目的是 Y；下一步要 Z。"<strong>价值</strong>：节奏放慢既照顾面试官跟不上，也给自己思考时间。</p>
+    <p class="hint">念法：先选题型（A 实现功能 / B 找修 bug / C 重构 / D 写测试）→ 套 prompt 模板（必含约束：技术栈 / 接口不变 / diff 可 review / 先列用例）→ 死法翻底部 5 条话术（错乱改 Y / 改不动重组 prompt / 被问为什么构造对比 / 被问不用 AI 答骨架 / 卡顿放慢节奏）。被点到具体题型先翻这张。</p>
+  </div>
+</div>
+
 <div class="card" data-c="ai" data-kw="AI基础设施 GPU集群 训练调度 K8s 推理框架 资产管理 工单 MiniMax 基础架构 SRE">
   <div class="card-head"><span class="tag ai">AI</span><div class="card-title">AI基础设施领域知识速查（前端面试前置知识）</div></div>
   <div class="core">训练=用数据调参数(吃GPU)，推理=用模型做预测(要低延迟)，K8s管调度，前端做可视化</div>
