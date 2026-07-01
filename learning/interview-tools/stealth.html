@@ -1753,7 +1753,7 @@ function buildTreeOptimized(list) {
     <p><strong>再讲为什么这步是真难点（三层难）</strong>：① <strong>难在不知道项目现状</strong>——AI 没"见过"这个项目，不知道哪些能力已有、哪些没有，脱离现状就无从判断是新增还是修改；② <strong>难在 PRD 描述模糊</strong>——PRD 写的是需求语言（"支持会员等级折扣"），代码是结构化实体（哪个文件、哪个函数），中间有语义鸿沟；③ <strong>难在跨模块影响难预估</strong>——改一处契约可能波及前后端多个层，AI 不做全量扫描就会漏。</p>
     <p><strong>我的解法是四件套层层兜（这是工程深度的核心）</strong>：① <strong>reference 路由匹配先定位</strong>——蒸馏前用 <code>04-routing-playbooks.yaml</code> 里的路由信号（key_files / prd_keywords / structural_signals）判断这条需求落在哪一层、该读哪些 Reference 文件，先缩小搜索范围；② <strong>BM25 索引查代码实体</strong>——reference 的 Evidence Index 把代码实体建成倒排索引和 BM25 索引，PRD 关键词一查就能定位到具体文件和符号，"项目里到底有没有这个东西"就有了事实依据；③ <strong>context-pack 锚定上下文</strong>——把命中的相关代码实体精简成一份 context-pack，只把相关片段喂给 AI，既控 token 又防它脱离证据瞎猜；④ <strong>Review Gate 硬停止兜底</strong>——Spec/Report 生成后硬停，必须人工确认变更明细表（变更明细表就是变更分类的产物）才允许出 Plan，AI 判错的地方人来拦。</p>
     <p><strong>收口金句 + 落项目</strong>：变更分类难，本质是<strong>"AI 不知道项目现状"</strong>——破法不是让 AI 更聪明，是给它<strong>项目现状的事实依据</strong>（reference 路由 + BM25 检索 + context 锚定）再叠一层人工门控。这正是 prd-tools 把 PRD→Plan 这段从 5h 压到 2h 还能保住信任的核心机制——<strong>不是靠模型，是靠把不确定的判断锚定到可审计的证据上</strong>。被问"那准确率多少"翻 emer 数据卡答口径（文件级 80%，gap 是 PRD 不完整+AI 主动标记，不是算错）。</p>
-    <p class="hint">念法：钩子（硬核追问"最难一步"，笼统答"生成代码"显没想过，真难点是变更分类）→ 业务背景（20+人/5h→2h 前提是产物可信，变更分类是地基）→ 为什么难三层（不知项目现状/PRD 模糊/跨模块影响）→ 解法四件套（reference 路由匹配定位 + BM25 查实体 + context-pack 锚定 + Review Gate 硬停止）→ 金句（难在不知现状，破法是锚定证据不是靠模型）→ 落 prd-tools。被问"准确率多少"翻 emer 答口径。[loop·已优化·待复核]</p>
+    <p class="hint">念法：钩子（硬核追问"最难一步"，笼统答"生成代码"显没想过，真难点是变更分类）→ 业务背景（20+人/5h→2h 前提是产物可信，变更分类是地基）→ 为什么难三层（不知项目现状/PRD 模糊/跨模块影响）→ 解法四件套（reference 路由匹配定位 + BM25 查实体 + context-pack 锚定 + Review Gate 硬停止）→ 金句（难在不知现状，破法是锚定证据不是靠模型）→ 落 prd-tools。被问"准确率多少"翻 emer 答口径。[loop·已优化·已复核]</p>
   </div>
 </div>
 
@@ -3200,7 +3200,7 @@ function buildTreeOptimized(list) {
     <p><strong>第二本账·单需求收益（指标要带样本和口径）</strong>：PRD→Plan 单环节每个需求省 2-3 小时人工评审（口径是 5 个中等复杂度需求对照，对照组是人工 Jira 不是纯手写）。摊到 5 个团队、月均 50 需求、每需求 2.5 小时，<strong>月省 125 小时</strong>。纯开发环节一周能从原来缩到 1-2 天。<strong>主动交代这是单环节不是全链路</strong>——这一句最能堵住"那 60% 怎么算"的追穿。</p>
     <p><strong>第三本账·全链路修正（最防吹，业务面必听的诚实段）</strong>：单环节好看但不能拿去当全链路成绩——联调、环境搭建、合作方依赖这些 AI 替代不了的部分要扣回来，<strong>整体提效 20-30%</strong>，排期 10 天的需求现在 7-8 天。主动给这个务实口径比被面试官追问出来强十倍：说明你算过真实账，不是只看自己那段最优。<strong>金句：单环节提效是技术指标，全链路提效才是经营指标——后者才有决策价值。</strong></p>
     <p><strong>收口·推广路径（落回经营动作）</strong>：先找 1-2 个意愿高、痛点最大的团队试点 → 拿前后对比数据（不是文档）→ 内部分享 → 逐步扩大。<strong>核心经验：试点数据比文档管用——"隔壁团队省了多少"比"这工具多好"有说服力</strong>，这跟组件库从 1 到 8 那套是同一个打法。别跟业务面说"写个 README 就行"，他们不吃这套。</p>
-    <p class="hint">念法：钩子（业务面考经营意识不是技术指标，要算清投入产出比）→ 一句定调（三本账：建库成本/单需求收益/全链路扣协同）→ 成本（1-2天建库+半天学习，自动回流不重复建，边际成本递减）→ 收益（5h→2h 单环节，5 需求对照对照组 Jira，5 团队月省 125h，主动交代是单环节不是全链路）→ 全链路修正（20-30%，排期 10 天→7-8 天，最防吹）→ 金句（单环节是技术指标全链路才是经营指标）→ 推广收口（试点数据比文档管用，别写 README）。被问"60% 怎么算"翻 emer 数据口径卡；被问"全流程还是单环节"主动收全链路 20-30%。[loop·已优化·待复核]</p>
+    <p class="hint">念法：钩子（业务面考经营意识不是技术指标，要算清投入产出比）→ 一句定调（三本账：建库成本/单需求收益/全链路扣协同）→ 成本（1-2天建库+半天学习，自动回流不重复建，边际成本递减）→ 收益（5h→2h 单环节，5 需求对照对照组 Jira，5 团队月省 125h，主动交代是单环节不是全链路）→ 全链路修正（20-30%，排期 10 天→7-8 天，最防吹）→ 金句（单环节是技术指标全链路才是经营指标）→ 推广收口（试点数据比文档管用，别写 README）。被问"60% 怎么算"翻 emer 数据口径卡；被问"全流程还是单环节"主动收全链路 20-30%。[loop·已优化·已复核]</p>
   </div>
 </div>
 
@@ -4543,17 +4543,13 @@ function buildTreeOptimized(list) {
   <div class="card-head"><span class="tag bagu">基础</span><div class="card-title">RSC vs SSR 深度对比</div></div>
   <div class="core">RSC 组件级无 hydration，SSR 页面级需 hydration</div>
   <div class="card-body">
-    <p><strong>本质区别</strong>：</p>
-    <p>· <strong>SSR</strong>：服务端把整个页面 renderToString 成 HTML，浏览器下载后<strong>必须 hydration</strong>（React 在内存重建 vDOM，对比 SSR 的 DOM，匹配则复用，不匹配报 Hydration Mismatch）。</p>
-    <p>· <strong>RSC</strong>：服务端渲染后<strong>不需要 hydration</strong>，因为 RSC 输出的是"组件已渲染的描述"，客户端直接消费，不重新执行 JS。</p>
-    <p><strong>性能对比</strong>：</p>
-    <p>· <strong>首屏</strong>：RSC 更快（无 hydration JS 执行）</p>
-    <p>· <strong>TTFB</strong>：RSC 稍慢（服务端要算）</p>
-    <p>· <strong>Bundle</strong>：RSC 减少 40%+ client bundle（静态部分不打进 client）</p>
-    <p><strong>适用场景</strong>：静态内容 + 动态数据混合页面（如博客、电商详情页）。完全交互的 SPA 不适合。</p>
-    <p><strong>Next.js 15 App Router</strong>：默认 RSC，'use client' 切换 Client Component。</p>
-    <p><strong>Hydration Mismatch 常见原因</strong>：用了 Date.now()、Math.random()、window.innerWidth。解决：useEffect 里设置或 typeof window !== 'undefined' 判断。</p>
-    <p class="hint">阿里系高频。能讲清"RSC 不需要 hydration"是关键加分点。</p>
+    <p><strong>这题先把钩子甩出来——一句话定调：SSR 是页面级的"服务端拼 HTML、客户端还得 hydrate 一遍"，RSC 是组件级的"服务端渲染完就不需要 hydration"，这是最大的本质区别，能讲清这层比 90% 候选人强。</strong></p>
+    <p><strong>第一层先把 SSR 怎么回事顺一遍</strong>：服务端把整个页面 renderToString 成 HTML 字符串直接返回，用户不等 JS 下载就能看到首屏，这是它快的原因。但代价是浏览器拿到 HTML 之后<strong>必须做 hydration</strong>——React 在内存里重新构建一份 virtual DOM，拿它和 SSR 那份 DOM 节点逐个对比，匹配的就复用、不匹配的就报 Hydration Mismatch。这一步要重新执行一遍组件 JS，是 SSR 最大的性能成本。</p>
+    <p><strong>第二层讲 RSC 为什么不需要 hydration（这是这道题的真正考点）</strong>：RSC 输出的不是"等客户端再跑一遍的组件"，而是<strong>"组件已经渲染好的描述"</strong>——服务端把渲染结果序列化成一种可序列化的 payload，客户端直接消费这个 payload、不再重新执行组件的 JS。所以 RSC 组件根本没有"再执行一次"的概念，自然不需要 hydration。这就是"组件级 vs 页面级"的根本差异，能讲到"RSC 输出的是描述不是代码"这层才算过。</p>
+    <p><strong>第三层是性能对比，用三个维度顺口念就行</strong>：① <strong>首屏</strong>RSC 更快，因为少了 hydration 那一轮 JS 执行；② <strong>TTFB</strong>RSC 稍慢，因为服务端要把组件算一遍才返回；③ <strong>client bundle</strong>RSC 能减少 40% 以上，因为组件的静态部分根本不会被打进客户端 bundle。三句话念完，面试官就知道你不是只会背概念。</p>
+    <p><strong>落到工程怎么用</strong>：Next.js 15 的 App Router 默认就是 RSC，遇到需要交互或浏览器 API 的组件，加一个 'use client' 指令就切换成 Client Component。适用场景是"静态内容 + 动态数据混合"的页面，比如博客、电商详情页——纯交互 SPA 不适合上 RSC。</p>
+    <p><strong>主动甩一个坑显深度——Hydration Mismatch</strong>（这个在 SSR 卡 #24 也讲过）：如果组件里用了 Date.now()、Math.random()、window.innerWidth 这种"服务端和客户端结果注定不一样"的值，两边 DOM 对不上，React 会直接丢弃 SSR 的 HTML 重渲染、性能收益归零。解法两条——要么把这些值放进 useEffect 里（只跑一次、只跑客户端），要么用 typeof window !== 'undefined' 做判断。能主动带这个坑、说明你踩过，加分。</p>
+    <p class="hint">念法：钩子先甩（SSR 页面级要 hydrate / RSC 组件级不用 hydrate，一句定调）→ 第一层顺 SSR 怎么回事（renderToString + hydration 复用节点+不匹配报错）→ 第二层讲透 RSC 为什么不需要 hydration（输出"描述"不是"代码"，核心考点别漏）→ 第三层三维度性能（首屏 RSC 快/TTFB 稍慢/bundle 减 40%+）→ 落 Next.js 15 App Router（默认 RSC，'use client' 切换）→ 主动甩 Hydration Mismatch 坑+两条解法收口。被问"RSC 和 SSR 到底差在哪"翻第二层——别只答"快一点"，要答"描述 vs 重执行"。<strong>能讲清"RSC 不需要 hydration"是阿里系关键加分点，必带。</strong> [loop·已优化·待复核]</p>
   </div>
 </div>
 
