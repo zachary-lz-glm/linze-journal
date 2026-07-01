@@ -7,6 +7,7 @@
     - [TikTok SEP](learning/interview/定向/TikTok-SEP.md)
     - [蚂蚁财富AI Lab](learning/interview/定向/蚂蚁财富AI-Lab.md)
     - [拼多多](learning/interview/定向/拼多多.md)
+    - [快手电商（演练报告）](learning/interview/定向/快手-演练.md)
   - [简历v3](learning/interview/简历/v3.md)
 
 - **工具**
