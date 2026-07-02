@@ -3408,6 +3408,21 @@ function buildTreeOptimized(list) {
   </div>
 </div>
 
+<div class="card" data-c="proj" data-kw="联动 引擎 设计哲学 通用属性 抽象 Event Bus Pub-Sub 解耦 微前端 组件 规范 标准契约 visible disabled value loading 快手 失分补救 契约lint">
+  <div class="card-head"><span class="tag proj">联动</span><div class="card-title">联动引擎设计哲学 · 通用属性抽象 + Event Bus 解耦</div></div>
+  <div class="core">组件之间只通过标准契约（visible/disabled/value/loading）联动，业务字段由组件内部消化</div>
+  <div class="card-body">
+    <p><strong>钩子先甩</strong>：被深挖联动设计时，不能只讲"字段有向图依赖+发布订阅"——会被追问"靠人为勾兑很难保障两个组件"。答案是<strong>通用属性抽象层</strong>，所有组件遵守统一契约，引擎只调度契约属性，业务字段组件内部消化。快手电商面试官明确指出这块短板。</p>
+    <p><strong>核心设计 · 通用属性抽象</strong>：基础组件都遵守统一契约——visible（显隐）/ disabled（禁用）/ loading（加载态）/ value（值）等标准属性。引擎层只调度这些通用属性，组件之间不暴露具体业务字段。具体业务字段由组件内部处理并暴露成标准事件输出（onChange/onSelect/onError）。</p>
+    <p><strong>解耦模式 · Event Bus / Pub-Sub</strong>：这是 Thoughtworks、AWS 微前端架构都推荐的标准做法。事件总线只传通用事件类型，不传具体业务字段名。组件 A 不知道组件 B 的具体值是什么，只订阅标准事件类型。这样组件 A 改了具体业务字段（比如城市名→城市 ID），组件 B 不受影响。</p>
+    <p><strong>反面案例（面试官指出）</strong>：如果组件 A 让组件 B 监听某个具体业务字段（比如"用户选的城市名"），稍微一变化——A 改成传城市 ID 而不是城市名——B 立刻失效。这是<strong>业务字段硬耦合</strong>，是设计反模式。多个组件这么耦合，引擎就退化成"靠人为文档约束保障"，改一个组件就要查所有依赖它的组件。</p>
+    <p><strong>我们目前的差距（诚实承认）</strong>：引擎层做了通用属性的发布订阅，但<strong>业务字段的契约规范还不够强</strong>——靠文档约束，容易被新组件破坏（尤其新人写组件时不知道有哪些通用契约要遵守）。这块正在补一份组件契约规范，把 visible/disabled/value/loading 等通用属性和业务事件输出格式固化下来，新组件必须通过 lint 校验才能合入。</p>
+    <p><strong>追问防御</strong>：被问"具体业务属性怎么办（比如表格行数据）"——答：组件内部消化，对外暴露标准 onChange 事件 + value 字段；引擎不感知具体业务字段。被问"组件间复杂联动怎么办"——答：通过事件总线接力（A 发 onChange → 引擎转 → B 接收），引擎不感知业务语义。</p>
+    <p><strong>金句</strong>："联动引擎的核心是通用属性抽象——visible/disabled/value/loading 是组件契约，引擎只调度这些；业务字段组件内部消化，对外暴露标准事件。这是 Event Bus / Pub-Sub 解耦的标准模式。"</p>
+    <p class="hint">念法：钩子（不能只讲依赖图+发布订阅，会被追问人为勾兑难保障）→ 核心设计（通用属性抽象 visible/disabled/value/loading）→ Event Bus 解耦（Thoughtworks/AWS 标准，不传业务字段名）→ 反面案例（业务字段硬耦合是反模式）→ 我们差距（业务契约规范不够强，正在补 lint 校验）→ 追问防御（具体业务属性内部消化+事件总线接力）→ 金句。被深挖联动设计翻这张。</p>
+  </div>
+</div>
+
 <!-- ==================== 项目深挖·追问防御 ==================== -->
 
 <div class="card" data-c="proj" data-kw="Schema 适用场景 页面类型 表单 配置 营销 B端 边界 逐字稿">
@@ -3960,6 +3975,87 @@ function buildTreeOptimized(list) {
   </div>
 </div>
 
+<div class="card" data-c="proj" data-kw="AI 工作流 开场 自我介绍 双轨定位 团队推广版 端到端原型 PRD Plan 6步闭环 主动展示 快手 价值定位 核心失分">
+  <div class="card-head"><span class="tag proj">AI</span><div class="card-title">AI 工作流开场介绍 · 双轨定位必须主动展示</div></div>
+  <div class="core">单纯讲团队推广版 PRD→Plan 会被判"价值不大"，开场就讲双轨——团队推广版 + 端到端原型</div>
+  <div class="card-body">
+    <p><strong>钩子先甩</strong>：这是快手电商一面的<strong>核心失分</strong>——只讲了团队推广版（PRD→Plan），被面试官明确说"单纯 PRD 到开发计划价值不大"。下次开场必须主动展示<strong>双轨定位</strong>，让面试官 30 秒内听到完整闭环。</p>
+    <p><strong>双轨定位（开场一句话）</strong>：我做的 AI 工程工作流分两轨——<strong>① 团队推广版</strong>（PRD→Plan，20+ 人在用，稳定、ROI 高）<strong>② 端到端原型</strong>（PRD→Code 6 步闭环，个人独立设计的下一代探索）。团队推广版是当下 ROI 选择，端到端原型是未来方向。</p>
+    <p><strong>团队推广版（30 秒展开）</strong>：定位是 PRD→Plan 的入口环节。11 步蒸馏流水线（S1 摄入 → S11 Final Gate），靠证据链 + YAML 中间文件 + 4 层门控保质量。20+ 人团队在用，PRD→Plan 从 2-4h 降到 30min，文件级准确率 80%。<strong>为什么只做入口</strong>：风险和质量责任不同，先用低风险环节证明可行性。</p>
+    <p><strong>端到端原型（重点展示）</strong>：6 步完整闭环——① 蒸馏（PRD→Spec）② 分析（Spec→Plan）③ Plan 生成 ④ 双路径代码生成 ⑤ 自验证自修复 ⑥ eval/auto-tune 反哺。关键技术难点：断点续传（progress.yaml）/ 震荡检测（A→B→A 找局部最优）/ verified_by 审计链（file:line 溯源）/ drift-report 漂移检测。<strong>这是端到端原型，没在团队大规模推广</strong>。</p>
+    <p><strong>关键扩展 · 三 plan 完整闭环</strong>：单纯 PRD→开发计划价值定位低。端到端原型要扩成 PRD → 开发 plan + 测试 plan + 上线 plan <strong>三全</strong>。代码提交时跑测试 plan 自动化 case，测完给准出报告，再跑上线 plan。这个完整闭环是下一代探索方向（详细翻"PRD→三 plan 完整闭环"卡）。</p>
+    <p><strong>被问"既然完整为啥不推广"怎么答</strong>：PRD→Plan 是 ROI 最高风险最低的环节，代码生成涉及质量责任和 CI 对齐，先用原型验证设计可行性再决定工程化投入。团队推广版证明 PRD→Plan 的可行性，端到端原型证明完整闭环的可行性，<strong>两条线并行</strong>是 ROI 和风险的权衡。</p>
+    <p><strong>金句收口</strong>："AI 工程化不是一段能讲完的事——团队推广版证明入口 ROI，端到端原型探索完整闭环价值。两条线并行是 ROI 和风险权衡的结果。"</p>
+    <p class="hint">念法：钩子（这是核心失分，单纯讲团队推广版被判价值不大）→ 双轨定位一句（团队推广版+端到端原型）→ 团队推广版 30 秒（11 步+证据链+ROI 数据+为什么只做入口）→ 端到端原型（6 步闭环+4 个技术难点）→ 三 plan 完整闭环（PRD→开发+测试+上线三全）→ "既然完整为啥不推广"追问（ROI+风险权衡）→ 金句。开场自我介绍翻这张。</p>
+  </div>
+</div>
+
+<div class="card" data-c="proj" data-kw="准确度 三层度量 文件匹配率 plan稳定性 git回测 数据追穿 追问 怎么算 80% 准确率 量化 同一需求 跑两次 真实数据 简历口径">
+  <div class="card-head"><span class="tag proj">AI</span><div class="card-title">AI 工作流准确度三层度量 · 被追问怎么算的</div></div>
+  <div class="core">准确度三层度量——文件匹配率 + plan 稳定性 + git 真实回测，被追问立刻脱口而出</div>
+  <div class="card-body">
+    <p><strong>钩子先甩</strong>：快手电商一面被问"准确度怎么算的"，给了 80% 但被追问口径时被动。<strong>数据被追穿是 AI 工程化 3 硬伤之一</strong>。下次面试每个数字都要备"怎么算的"话术。</p>
+    <p><strong>三层度量（被追问直接念）</strong>：</p>
+    <p>· <strong>① 文件匹配率</strong>（构造数据）：拿历史已开发完的需求，跑出 plan，对比实际开发涉及的文件 vs plan 涉及的文件，重合度。目前 <strong>80%</strong>。</p>
+    <p>· <strong>② plan 稳定性</strong>（同一性）：同一需求跑多次（比如 10 次），看 plan 文件清单一致率。早期一致性只有 40%，加证据链+门控后到 85%+。</p>
+    <p>· <strong>③ git 真实回测</strong>（线上数据，<strong>面试官建议</strong>）：拿线上已完成的需求，跑 plan 看人工有没有改、改了多少行。git 都有记录——commit message 关联 PRD，diff 显示偏离 plan 的部分。<strong>比实验室数据准</strong>。</p>
+    <p><strong>三个维度互补</strong>：构造数据可控但不真，稳定性反映确定性但不是准确性，真实回测最准但需要等需求跑完。<strong>三个一起讲才完整</strong>。</p>
+    <p><strong>下一步</strong>：把三个维度做成 dashboard 让准确度可视化——不是单一数字，是趋势图。比如"文件匹配率最近 3 个月从 75% 涨到 80%"比"目前 80%"更有说服力。</p>
+    <p><strong>金句</strong>："AI 工作流的准确度不是单一数字——文件匹配率管可控性、plan 稳定性管确定性、git 回测管真实性。三个维度互补才能讲清楚。"</p>
+    <p class="hint">念法：钩子（数据被追穿是 3 硬伤之一）→ 三层度量逐条（文件匹配率 80% / plan 稳定性 40→85% / git 真实回测）→ 三个互补（可控/确定性/真实性）→ 下一步 dashboard → 金句。被问"准确率怎么算"直接甩三层。</p>
+  </div>
+</div>
+
+<div class="card" data-c="proj" data-kw="PRD 三plan 开发计划 测试计划 上线计划 端到端 完整闭环 准出报告 自动化case CI CD 流水线 价值定位 快手 GitHub Spec Kit BMAD Kiro">
+  <div class="card-head"><span class="tag proj">AI</span><div class="card-title">PRD → 开发 + 测试 + 上线 三 plan 完整闭环</div></div>
+  <div class="core">PRD 输入产出三套 plan——开发 plan + 测试 plan + 上线 plan，把整个研发工作流串起来</div>
+  <div class="card-body">
+    <p><strong>钩子先甩</strong>：单纯 PRD→开发计划价值定位太低——快手电商面试官明确说"我塞给任何模型都能给我开发计划"。真正价值在<strong>串起完整研发工作流</strong>。下次面试必须主动讲三 plan 完整闭环。</p>
+    <p><strong>核心定位（面试官金句）</strong>："我连 case 都不应该写。"——PRD 分析完除了开发计划，应该给我蒸馏出测试功能文档。<strong>开发 plan + 测试 plan + 上线 plan 三全</strong>给我上来。</p>
+    <p><strong>三 plan 怎么协同（顺流程念）</strong>：</p>
+    <p>· <strong>① 开发 plan</strong>：PRD 蒸馏产出现在已经在做的——需求点拆分 + 文件映射 + 任务步骤。开发按 plan 写代码。</p>
+    <p>· <strong>② 测试 plan（QA 矩阵）</strong>：PRD 蒸馏同时产出——功能清单 + 边界 case + 集成场景。代码提交时<strong>跑测试 plan 的自动化 case</strong>。</p>
+    <p>· <strong>③ 上线 plan</strong>：PRD 蒸馏同时产出——灰度策略 + 回滚预案 + 监控指标。测试通过给<strong>准出报告</strong>，再跑上线 plan。</p>
+    <p><strong>串起完整研发流程</strong>：PRD 输入 → 三 plan 同时蒸馏 → 开发按 plan 写代码 → 代码提交跑测试 plan 自动化 case → 测完给准出报告 → 跑上线 plan（前端流水线 / 服务端流水线 / 两个都跑先服务端再前端）。<strong>整个流程 AI 串起来</strong>。</p>
+    <p><strong>价值定位（行业对比）</strong>：单纯 PRD→开发计划，行业已经都在做了——GitHub Spec Kit、BMAD、Kiro 都是这条路——价值不大。把整个工作流串起来——开发+测试+上线三 plan + 准出报告 + 自动化 CI/CD——<strong>这才是 AI for 研发效率的完整价值</strong>。</p>
+    <p><strong>为什么我现在没做完整（诚实承认）</strong>：团队推广版只做了 PRD→Plan 入口，端到端原型 prd2code-gen 已经覆盖开发 plan + 测试 plan 雏形，上线 plan 还在设计。诚实承认：完整三 plan 闭环是下一代探索，不是当下。</p>
+    <p><strong>面试场景怎么用</strong>：开场自我介绍主动提一句"端到端原型探索三 plan 完整闭环"，被追问再展开。被问"未来规划"或"端到端工作流"直接甩这张。</p>
+    <p class="hint">念法：钩子（单纯 PRD→Plan 价值定位低）→ 面试官金句（连 case 都不该写）→ 三 plan 协同（开发 plan + 测试 plan QA 矩阵 + 上线 plan 灰度）→ 串流程（PRD→三 plan→开发→测试准出→上线流水线）→ 价值定位（行业都在做入口，串起完整闭环才是真价值）→ 诚实承认（团队推广版只做入口，端到端原型探索中）→ 面试场景（开场提一句+被问未来规划甩这张）。</p>
+  </div>
+</div>
+
+<div class="card" data-c="emer" data-kw="反问 B端 AI 落地 AI for 业务 AI for 研发效率 商家 运营 to AIS 端智能 快手 行业判断 团队定位">
+  <div class="card-head"><span class="tag emer">反问</span><div class="card-title">B 端 AI 落地定位 · AI for 业务 vs AI for 研发效率</div></div>
+  <div class="core">B 端业务团队 AI 投入优先级是帮业务方提效，不是帮研发提效</div>
+  <div class="card-body">
+    <p><strong>钩子先甩</strong>：反问"团队在 AI 工程化的落地"时，快手电商面试官给了清晰定位——<strong>B 端业务团队的 AI 投入优先级是 AI for 业务，不是 AI for 研发效率</strong>。这个判断重塑了我对 AI 工程化价值定位的理解。</p>
+    <p><strong>快手电商 B 端商家团队定位</strong>：第一是业务支撑，第二是 AI for 业务（不是 AI for 研发效率）。<strong>AI for 研发效率基本不涉及</strong>。除了 AI for 研发效率不做，其他 AI 都会做。</p>
+    <p><strong>AI for 业务做什么</strong>：怎么帮 B 端商家、运营提升前效和人效。具体方向——批量创活动、AI to UI、端智能、端模型、AI 开发上下文。整个大的专项叫 to AIS，把这些全部包成一套体系。</p>
+    <p><strong>面试启示 · 怎么桥接自己的项目</strong>：面试 B 端业务团队时，AI 工程化的故事要往"帮业务提效"靠，<strong>不能只讲研发效能</strong>。我自己做的 prd-tools 是 AI for 研发效率——团队内部用。但面试官如果是 B 端业务团队，要主动桥接："这套工作流的方法论（蒸馏/证据链/门控）可以迁移到 AI for 业务场景——比如批量创活动的配置生成、运营策略的 PRD 蒸馏、商家端 AI 工具的 prompt 设计"。</p>
+    <p><strong>反问时机 · 高价值反问</strong>：被问"你有什么问题"时，反问"团队在 AI 工程化的落地"是个<strong>高价值反问</strong>——既能收集行业实践（双 CR / AI 巡检物理机等），又能判断团队定位是否匹配自己的方向。</p>
+    <p><strong>金句</strong>："B 端业务团队的 AI 投入优先级是 AI for 业务——帮业务方（商家/运营）提效。AI for 研发效率是研发效能团队的事。"</p>
+    <p class="hint">念法：钩子（B 端业务团队 AI 投入优先级是 AI for 业务）→ 快手电商定位（业务支撑+AI for 业务，研发效率不做）→ AI for 业务做什么（商家运营提效+批量创活动+AI to UI+端智能）→ 面试启示（B 端团队要讲业务提效不能只讲研发效能，prd-tools 要桥接）→ 反问时机（高价值反问）→ 金句。被问"团队 AI 落地"翻这张。</p>
+  </div>
+</div>
+
+<div class="card" data-c="emer" data-kw="反问 code review 双CR 智能CR 人工CR AI巡检 物理机 沙箱 自动调用页面 快手电商 行业实践 2024 功能性测试 B端 功能交互">
+  <div class="card-head"><span class="tag emer">反问</span><div class="card-title">双 CR 机制 + AI 巡检物理机 · 快手电商实践</div></div>
+  <div class="core">代码两条路交付都走智能 CR + 人工 CR；B 端纯 CR 看不出问题，配 AI 巡检物理机自动跑功能</div>
+  <div class="card-body">
+    <p><strong>钩子先甩</strong>：反问"团队 code review 怎么做"时，快手电商面试官分享了<strong>真实生产实践</strong>——双 CR 机制 + AI 巡检物理机。这是 2024 年开始做的工业化方案，对端到端 AI 工作流设计有直接借鉴价值。</p>
+    <p><strong>代码交付两条路</strong>：</p>
+    <p>· <strong>① 端到端 AI 研发流水线</strong>：AI 全自动生成代码（接近 Cursor Background Agent / Devin Sleep Mode 模式）。</p>
+    <p>· <strong>② 纯编码</strong>：AI 辅助 + 人工写。</p>
+    <p><strong>双 CR 机制（两条路都走）</strong>：智能 CR 在前 + 人工 CR 在后。AI 先做第一层分析，人工再精审。<strong>AI CR 准确率较低</strong>，所以人工兜底。这和 AI CR 行业共识一致——2025 研究显示即使最好的工具也只能把幻觉降低 96% 不能完全消除。</p>
+    <p><strong>关键洞察 · B 端场景纯 CR 看不出问题</strong>：B 端偏功能交互（不是 C 端偏展示），纯看代码看不出来——必须配合<strong>功能性巡检</strong>。AI CR 只能查代码层（语法/规范/重复），功能层要 AI 巡检查。</p>
+    <p><strong>AI 巡检物理机（核心差异化）</strong>：从 2024 年开始做。专门一套环境（<strong>物理机</strong>，不是沙箱）跑代码稳定性 + 功能正确性校验。给足权限后，<strong>AI 自己调用页面功能</strong>——按 PRD 自动操作页面，验证功能是否正确。</p>
+    <p><strong>面试官金句</strong>："我连 case 都不应该写。"——PRD 分析完除了开发计划，应该给蒸馏出测试功能文档（QA 矩阵），AI 巡检按 QA 矩阵自动跑，不用人工写 case。</p>
+    <p><strong>对端到端工作流设计的借鉴</strong>：快手电商的 AI 巡检物理机 = 端到端工作流的<strong>测试环节工业化</strong>。我自己的 prd2code-gen 端到端原型目前只到代码生成+自校验，没到"AI 自动调用页面验证功能"这一步。<strong>这是端到端工作流下一步要补的环节</strong>。</p>
+    <p><strong>反问时机 · 高价值反问</strong>：被问"你有什么问题"时，反问"团队 code review 怎么做"是<strong>高价值反问</strong>——能直接收集行业实践，比问"技术栈"更有价值。</p>
+    <p class="hint">念法：钩子（快手电商真实生产实践）→ 代码交付两条路（端到端 AI 流水线 + 纯编码）→ 双 CR（智能在前人工在后）→ B 端纯 CR 看不出问题（偏功能交互）→ AI 巡检物理机（2024 开始做+物理机+AI 自动调用页面）→ 金句（连 case 都不该写）→ 借鉴价值（端到端工作流测试环节工业化）→ 反问时机。被问"团队 CR 怎么做"翻这张。</p>
+  </div>
+</div>
+
 <div class="card" data-c="proj" data-kw="Harness Engineering 合并引擎 通信引擎 反思引擎 KSG Agent">
   <div class="card-head"><span class="tag proj">AI</span><div class="card-title">Harness 三种引擎（合并/通信/反思）</div></div>
   <div class="core">Agent = Model + Harness，三种核心引擎让 Agent 自进化</div>
@@ -4256,7 +4352,8 @@ function buildTreeOptimized(list) {
     <p><strong>工程实现（被追问甩）</strong>：Claude Code 的 /loop 命令、Cron+Agent Skill、自建编排器（监控事件→触发 Agent→验证→反馈）、Devin/Cursor Background Agent 都是产品化案例。</p>
     <p><strong>落到我的项目（桥接）</strong>：prd-tools 的"自验证+自修复循环"就是 Loop Engineering 雏形——PRD→Plan→Code→Verify 失败自动注入错误重新生成。端到端原型 prd2code-gen 的 eval/auto-tune 闭环也是（跑完→llm-judge→失败 pattern 反哺 prompt）。我的 Claude Code Skills + Cron 周期触发也是 Loop Engineering 实践。</p>
     <p><strong>收口金句</strong>："Prompt Engineering 是写好一句话，Loop Engineering 是设计好一个系统。2026 年价值重心从'会调 AI'转向'能设计让 AI 自驱的循环'——这是 Boris Cherny'我不再写 prompt'的真正含义。"</p>
-    <p class="hint">念法：Boris名言钩子（不再写prompt）→ 核心转变（用AI→设计系统让AI自驱）→ 四要素（目标/行动/验证/反馈）→ vs Prompt Eng → vs Agentic Workflow → 工程实现 → 落 prd-tools（自验证自修复+eval闭环+Cron触发）→ 金句。2026加分点。</p>
+    <p><strong>面试场景 · 被面试官说"噱头"怎么接（不要盲从）</strong>：快手电商一面面试官说"五破（疑似 Loop 的某个具体落地工具）就是个噱头"——候选人跟着说"对特定场景可能有点帮助"，<strong>这是失分点</strong>。正确接法分两层：① <strong>概念本身不噱头</strong>——Boris Cherny 是 Claude Code 创始人，原话 "my job is to write loops, not prompts"，是 Anthropic 官方在推的范式；② <strong>噱头的是落地过度营销</strong>——很多团队把 Loop 包装成银弹，但实际场景有限（参考 Loopmaxxing 反模式卡）；③ <strong>礼貌坚持自己的判断</strong>："概念本身不噱头，噱头的是过度营销的落地。<strong>批量同构任务</strong>适合 Loop，<strong>需要深度业务判断</strong>不适合，<strong>跨上下文长链路</strong>容易爆上下文。"被面试官下"噱头"判断不要盲从——先确认概念本质，再分清"概念本身" vs "落地过度营销"。</p>
+    <p class="hint">念法：Boris名言钩子（不再写prompt）→ 核心转变（用AI→设计系统让AI自驱）→ 四要素（目标/行动/验证/反馈）→ vs Prompt Eng → vs Agentic Workflow → 工程实现 → 落 prd-tools（自验证自修复+eval闭环+Cron触发）→ 金句 → <strong>被说噱头怎么接（概念不噱头+落地过度营销+三类场景）</strong>。2026加分点。</p>
   </div>
 </div>
 
@@ -4288,6 +4385,33 @@ function buildTreeOptimized(list) {
     <p><strong>落到我的项目（桥接）</strong>：prd-tools 的"自验证+自修复"循环设了 max_iter=3 + Readiness 阈值 + 失败兜底（降级人工审核）。简单任务（PRD 转 Spec）不进 Loop，复杂任务（双路径生成+交叉验证）才进。</p>
     <p><strong>收口金句</strong>："Loop Engineering 不是'万物皆 Loop'。我的判断标准是四问：有明确成功条件吗？失败原因可观察吗？错误可注入吗？ROI 正吗？四问都 yes 才上 Loop，否则用确定性 Workflow 更稳。"</p>
     <p class="hint">念法：工程成熟度钩子（不盲从新概念）→ 什么是Loopmaxxing（4表现）→ 为什么反模式（成本/劣化/调试/认知）→ 该用四条（追问甩）→ 不该用4类 → 防Loopmaxxing实践 → 落prd-tools（max_iter=3+阈值+兜底）→ 四问金句。</p>
+  </div>
+</div>
+
+<div class="card" data-c="ai" data-kw="AI 幻觉 行业共识 不会编造 危险断言 2025 研究 96% 第三方库 lodash lodash-es 防止层 包白名单 import lint 4层自校验 震荡检测 快手 失分补救">
+  <div class="card-head"><span class="tag ai">AI</span><div class="card-title">AI 幻觉是行业共识 · 不要说"不会编造"</div></div>
+  <div class="core">AI 幻觉降低只能到 96% 不能消除——"不会编造"是危险断言，被挑战立刻翻这张</div>
+  <div class="card-body">
+    <p><strong>钩子先甩</strong>：快手电商一面说"目前跑通的流程不会随意编造"，被面试官直接挑战（lodash 大版 vs lodash-es 场景）。<strong>"不会编造"是危险断言</strong>——AI 幻觉是行业共识，永远不能说不会。</p>
+    <p><strong>行业共识（2025 研究数据）</strong>：</p>
+    <p>· <strong>幻觉降低上限 96%</strong>：2024-2025 研究显示即使最好的工具也只能把幻觉降低 96%，<strong>不能完全消除</strong>（来源：diffray.ai 2025 研究）。</p>
+    <p>· <strong>第三方库理解不到位是公认问题</strong>：大多数 AI CR 工具失败因为分析 diff 时没有项目结构/类型系统/上下文（来源：cubic.dev 2025）。</p>
+    <p>· <strong>False Positive 是开发者主要 concern</strong>：不是 True Positive 漏检，是误报多到让开发者不信 AI（来源：r/ExperiencedDevs 讨论）。</p>
+    <p><strong>正确话术（替代"不会编造"）</strong>：</p>
+    <p>· <strong>❌ 错</strong>："目前跑通的流程不会随意编造"（绝对化断言，被挑战时无路可退）</p>
+    <p>· <strong>✅ 对</strong>："幻觉是行业共识，我们靠 negative search + 静态扫描 + 4 层自校验降低，不能完全消除。出现时通过自修复循环兜底，人工 CR 兜最终质量。"</p>
+    <p><strong>防止层（优先于修复层）</strong>：</p>
+    <p>· <strong>① import 白名单 lint</strong>：禁止 lodash，强制 lodash-es（团队规范固化成 lint 规则）</p>
+    <p>· <strong>② package.json 依赖审查</strong>：自动检查新引入的依赖是否符合团队规范</p>
+    <p>· <strong>③ 第三方库版本锁</strong>：lockfile 防止意外升级引入非标准依赖</p>
+    <p><strong>修复层（4 层自校验 + 震荡检测）</strong>：</p>
+    <p>· <strong>① 语法层</strong>：AST 完整性 + TS/ESLint 编译</p>
+    <p>· <strong>② 字段双向对齐</strong>：spec 蒸馏出的字段/组件必须在代码里出现，反之亦然</p>
+    <p>· <strong>③ 代码规则层</strong>：i18n 完整性 + 命名规范反模式检查</p>
+    <p>· <strong>④ 集成层</strong>：导入导出路径 + 历史 diff 检查</p>
+    <p>· <strong>自修复循环</strong>：差异性修正（不重写）→ 全量重演（A 改可能影响 B）→ 震荡检测（A→B→A 来回横跳找局部最优）</p>
+    <p><strong>金句</strong>："AI 幻觉降低不能消除是行业共识——防止优先于修复。我们靠 import 白名单 + 4 层自校验 + 震荡检测兜底，但承认无法完全消除，所以人工 CR 兜底。"</p>
+    <p class="hint">念法：钩子（"不会编造"是危险断言被直接挑战）→ 行业共识（96% 上限+第三方库理解差+False Positive）→ 正确话术对比（❌ 不会编造 / ✅ 降低不消除+兜底机制）→ 防止层（import 白名单+依赖审查+版本锁）→ 修复层（4 层自校验+震荡检测）→ 金句。被问"AI 准确率""幻觉怎么办"翻这张。</p>
   </div>
 </div>
 
