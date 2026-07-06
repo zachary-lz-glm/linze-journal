@@ -337,7 +337,7 @@ body{overscroll-behavior-y:contain}
   <div class="card-head"><span class="tag proj">追问</span><div class="card-title">线上出过事故吗？</div></div>
   <div class="core">yarn 解析器升级导致构建全挂，15 分钟回滚</div>
   <div class="card-body">
-    <p><strong>这道题我不会藏着——确实出过一次线上事故，但我把它讲透，反而显工程成熟度。事故处理就三步：快速止血、根因分析、流程改进，我按这三步讲。</strong></p>
+    <p><strong>核心定调</strong>：确实出过线上事故，但讲透反而显工程成熟度。事故处理三步：快速止血 → 根因分析 → 流程改进。</p>
     <p><strong>先说背景，为什么这种事故躲不掉</strong>：营销中台是 Monorepo，依赖装不好就是定时炸弹。我们的 CI 每次构建都自动拉最新依赖，正常情况没事，但有一次踩了坑。</p>
     <p><strong>第一步，快速止血（15 分钟）</strong>：某次构建突然全挂——所有活动页面都发不出去。我第一时间定位到是 yarn 的 resolver（依赖解析器）版本被自动升级了，从 rc.31 跳到了 rc.48，新版本和 Node 16 不兼容。止血很直接：立刻把 yarn.lock 回滚到旧版本，15 分钟内恢复构建。先让线上活过来，再查根因。</p>
     <p><strong>第二步，根因分析</strong>：根子不在 resolver 本身，在于——<strong>我们的依赖版本没有锁死，谁都能自动升</strong>。rc 是 release candidate（候选版），本来就不保证稳定，结果被当成正式版自动拉了。这类隐性版本漂移是 Monorepo 最常见的炸弹。</p>
@@ -350,7 +350,7 @@ body{overscroll-behavior-y:contain}
   <div class="card-head"><span class="tag proj">追问</span><div class="card-title">Schema 版本变了怎么兼容？</div></div>
   <div class="core">Schema 带 version 字段，BFF 层版本路由 + 迁移函数双版本并行</div>
   <div class="card-body">
-    <p><strong>先甩一句定调（这是全场骨架）</strong>：Schema 版本兼容的核心不是"标注版本"，是<strong>让老活动线上不停、新引擎能灰度上线</strong>——配置化系统一旦上线就有历史包袱，线上跑着几十个老活动，引擎升级时绝不能一刀切换，得新老并行平滑过渡。这句先立住，后面三要素是给它做支撑。</p>
+    <p><strong>核心定调</strong>：Schema 版本兼容的核心不是"标注版本"，是<strong>让老活动线上不停、新引擎能灰度上线</strong>——配置化系统一旦上线就有历史包袱，线上跑着几十个老活动，引擎升级时绝不能一刀切换，得新老并行平滑过渡。这句先立住，后面三要素是给它做支撑。</p>
     <p><strong>业务背景先说清楚（面试官想听这个）</strong>：我做的营销中台是 Schema 驱动——运营配 Schema 就能上新活动，20+ 种活动类型，上线从 2 周降到几小时。但代价是线上沉淀了大量历史 Schema：每个老活动都是一份冻结在某个版本的配置。引擎要演进（比如联动 DSL 加了新能力、字段结构变了），不可能让所有老活动重新配置，也不能停服改造。所以"版本怎么兼容"不是优化项，是配置化系统能不能长期演进的命门。</p>
     <p><strong>核心是三要素，逐条讲（顺着数据流）</strong>：</p>
     <p>第一是<strong>版本号标注</strong>——Schema 根节点带 version 字段，告诉系统这是哪个版本的配置。这是基础，没它后面两步都无从谈起，BFF 拿到 Schema 第一件事就是读 version。</p>
@@ -460,8 +460,8 @@ body{overscroll-behavior-y:contain}
 </div>
 
 <div class="card" data-c="bagu" data-kw="性能优化 首屏 LCP CDN 懒加载 虚拟列表 代码分割">
-  <div class="card-head"><span class="tag bagu">#11</span><div class="card-title">前端性能优化全链路</div></div>
-  <div class="core">从网络、渲染、资源、代码四个维度逐一优化</div>
+  <div class="card-head"><span class="tag bagu">#11</span><div class="card-title">前端性能优化全链路（综述）</div></div>
+  <div class="core">从网络、渲染、资源、代码四个维度逐一优化。性能指标定义见「前端性能指标」卡、Schema 项目实战见 G6 和「性能优化和懒加载」卡</div>
   <div class="card-body">
     <p>网络层：CDN 缩短物理距离、HTTP/2 多路复用减少连接、Preload 预加载关键资源。渲染层：首屏用 SSR 或骨架屏、图片懒加载、长列表用虚拟滚动只渲染可视区域。资源层：代码分割 dynamic import 按需加载、Tree Shaking 删掉没用的代码、图片用 WebP。代码层：React.memo 和 useMemo 防止不必要的重渲染、耗时计算放 Web Worker 不阻塞主线程。</p>
     <p>核心指标口诀：LCP 小于 2.5 秒、FID 小于 100 毫秒、CLS 小于 0.1。</p>
@@ -934,8 +934,8 @@ type Item&lt;T&gt; = T extends (infer I)[] ? I : never;</div>
 </div>
 
 <div class="card" data-c="code" data-kw="手写 深拷贝 防抖 节流 instanceof EventEmitter 回城 技能CD">
-  <div class="card-head"><span class="tag code">#1-3</span><div class="card-title">深拷贝 + 防抖节流 + instanceof</div></div>
-  <div class="core">深拷贝（循环引用）+ 防抖（回城被打断重读条）+ 节流（技能CD固定频率）</div>
+  <div class="card-head"><span class="tag code">#1-3</span><div class="card-title">深拷贝 + 防抖节流 + instanceof（手撕代码）</div></div>
+  <div class="core">深拷贝（循环引用）+ 防抖（回城被打断重读条）+ 节流（技能CD固定频率）。原理和比喻见 #42 节流防抖卡</div>
   <div class="card-body">
     <p><strong>正确比喻（这道题最易讲反）</strong>：<strong>防抖=英雄联盟回城</strong>——你每次按都重新读条，只有最后那次能完成（被打断就重来）；<strong>节流=技能冷却</strong>——技能用完后固定CD内不能再放，但CD到了就一定能放。<strong>核心区别</strong>：防抖只执行最后一次（quiet period后），节流执行第一次然后每隔delay执行一次。<strong>典型场景</strong>：防抖=搜索框输入/window resize；节流=scroll/mousemove/按钮防连点。</p>
   </div>
@@ -1712,8 +1712,8 @@ function buildTreeOptimized(list) {
 </div>
 
 <div class="card" data-c="ai" data-kw="Agent 架构 ReAct Plan-and-Execute Reflection Tool Use Function Calling Memory 状态机 循环 推理行动">
-  <div class="card-head"><span class="tag ai">E16</span><div class="card-title">Agent 架构全解（面试必考）</div></div>
-  <div class="core">Agent 不是单次调模型，是"感知→思考→行动"的循环——LLM 决策 + 工具执行 + 记忆持续，三者缺一不可</div>
+  <div class="card-head"><span class="tag ai">E16</span><div class="card-title">Agent 架构全解（面试必考·综述）</div></div>
+  <div class="core">Agent 不是单次调模型，是"感知→思考→行动"的循环——LLM 决策 + 工具执行 + 记忆持续，三者缺一不可。Claude Code 具体实现见 G7、Memory 机制见「Agent Memory」卡、设计方法论见「怎么设计一个 Agent」卡</div>
   <div class="card-body">
     <p><strong>这道题我从三层答。</strong></p>
     <p><strong>第一层·本质</strong>：Agent 和普通 LLM 对话的区别，在于它不是问一句答一句的单轮调用，而是会自己决定"下一步做什么"的循环——<strong>感知</strong>（接收输入和工具返回）→ <strong>思考</strong>（LLM 推理下一步）→ <strong>行动</strong>（调工具），不断迭代到任务完成。普通 Chat 停在"思考完输出"，Agent 多了"行动 + 再感知"的闭环。</p>
@@ -1723,10 +1723,10 @@ function buildTreeOptimized(list) {
 </div>
 
 <div class="card" data-c="ai" data-kw="Agent 能力 感知 推理 行动 记忆 Reflection 多Agent 人机协作 HITL 完整 能力清单">
-  <div class="card-head"><span class="tag ai">AI</span><div class="card-title">标准Agent应该具备哪些能力？</div></div>
-  <div class="core">感知→推理→行动→记忆→自我评估→人机协作，六层递进</div>
+  <div class="card-head"><span class="tag ai">AI</span><div class="card-title">标准Agent应该具备哪些能力？（六层清单）</div></div>
+  <div class="core">感知→推理→行动→记忆→自我评估→人机协作，六层递进。基础循环定义见 E16 综述</div>
   <div class="card-body">
-    <p><strong>这道题我答六层递进——前四层是 Agent 的基座（缺一层都不叫 Agent），后两层是工业级 Agent 的必需（没有就是玩具）。</strong></p>
+    <p><strong>核心定调</strong>：Agent 六层架构——前四层是基座（缺一层都不叫 Agent），后两层是工业级必需（没有就是玩具）。</p>
     <p><strong>基座四层</strong>：</p>
     <p>① <strong>感知</strong>——能理解用户输入、解析工具返回、感知环境变化（文件改了、接口超时）。没感知就是瞎子，没法根据实际调整。</p>
     <p>② <strong>推理</strong>——LLM 的核心价值，判断下一步做什么、选哪个工具、结果满不满足条件。这是 Agent 和普通脚本的分水岭。</p>
@@ -1740,8 +1740,8 @@ function buildTreeOptimized(list) {
 </div>
 
 <div class="card" data-c="ai" data-kw="Agent 设计 方法论 流程 边界 编排模式 选型 Tool 记忆 质量保障 门控 设计Agent">
-  <div class="card-head"><span class="tag ai">AI</span><div class="card-title">怎么设计一个Agent？设计方法论</div></div>
-  <div class="core">五步法：定边界→选模式→定义Tool→设计记忆→加保障</div>
+  <div class="card-head"><span class="tag ai">AI</span><div class="card-title">怎么设计一个Agent？（设计方法论·五步法）</div></div>
+  <div class="core">五步法：定边界→选模式→定义Tool→设计记忆→加保障。架构综述见 E16、框架选型见「用什么工具写自己的 Agent」卡</div>
   <div class="card-body">
     <p><strong>这道题我有一套五步法，是工业级 Agent 的设计骨架——别上来就写代码，先把这五步想清楚。</strong></p>
     <p><strong>第一步·定任务边界（最关键，不清这步后面全白做）</strong>：哪些步骤让 Agent 自主、哪些必须人介入。原则是"低风险高确定性让 Agent 自主，高风险低确定性必须 HITL（人介入）"。比如生成代码可以自主，但发布上线必须人审。</p>
@@ -1798,7 +1798,7 @@ function buildTreeOptimized(list) {
 
 <div class="card" data-c="ai" data-kw="Memory 记忆 短期 长期 Context Window 向量数据库 RAG Embedding 工作记忆 情景记忆 语义记忆 Lilian Weng">
   <div class="card-head"><span class="tag ai">AI</span><div class="card-title">Agent Memory 机制：短期 vs 长期</div></div>
-  <div class="core">短期靠 Context Window（Chat History），长期靠 RAG + 向量数据库；进阶三层：工作/情景/语义记忆</div>
+  <div class="core">短期靠 Context Window（Chat History），长期靠 RAG + 向量数据库；进阶三层：工作/情景/语义记忆。多轮对话压缩策略见 E9 系列</div>
   <div class="card-body">
     <p><strong>这道题被问"Agent 记忆怎么设计"，我先把一句话定调甩出来：Agent 的记忆不是单一的东西，是分层的——短期靠上下文窗口、长期靠检索，进阶还能类比人的三种记忆。讲清这三层比堆"RAG + 向量库"的名词更能体现深度。</strong></p>
     <p><strong>先把框架立住</strong>：Agent 的核心公式是 <strong>Agent = LLM（大脑）+ Planning（规划）+ Memory（记忆）+ Tool Use（工具）</strong>，Memory 是四大组件之一，不能缺。没有记忆，Agent 每一步都从零开始，跟普通 Chat 没区别。</p>
@@ -1839,8 +1839,8 @@ function buildTreeOptimized(list) {
 
 
 <div class="card" data-c="ai" data-kw="RAG 检索增强 向量 Embedding Chunking 分块 向量数据库 Agentic">
-  <div class="card-head"><span class="tag ai">E17</span><div class="card-title">RAG 深度解析</div></div>
-  <div class="core">RAG = 先检索再生成，用外挂知识库解决大模型知识过时和幻觉——不微调，改库即生效</div>
+  <div class="card-head"><span class="tag ai">E17</span><div class="card-title">RAG 深度解析（综述）</div></div>
+  <div class="core">RAG = 先检索再生成，用外挂知识库解决大模型知识过时和幻觉——不微调，改库即生效。专题：vs 微调、Chunking、向量库选型、多路召回</div>
   <div class="card-body">
     <p><strong>一句话</strong>：RAG（检索增强生成）就是回答前先去知识库检索相关资料，拼进 prompt 再让模型生成——相当于"开卷考试"，模型不用把所有知识背进权重。</p>
     <p><strong>为什么用 RAG</strong>：大模型两个天生短板——① 知识有截止日期、不知道私有或最新信息；② 会幻觉（编造）。RAG 用外挂知识库补这俩：检索真实文档喂给模型，既新又准、还能溯源。</p>
@@ -1866,7 +1866,7 @@ function buildTreeOptimized(list) {
   <div class="card-head"><span class="tag proj">G1</span><div class="card-title">reference 知识过时怎么办？（L7 会员升级问题）</div></div>
   <div class="core">三层防线：时效性分层 + 触发式失效 + 金标准回归</div>
   <div class="card-body">
-    <p><strong>定调</strong>：reference 过时不是"忍不忍"的问题，是"有没有机制兜住"的问题。答"暂时不可避免"是认输，正确答法是拿机制说话——分层、触发、回归三层防线。这道题的典型追问场景："滴滴L7会员6/1刚升级了规则，你reference里还是老规则，过时知识反而误导AI，怎么办？"</strong></p>
+    <p><strong>定调</strong>：reference 过时不是"忍不忍"的问题，是"有没有机制兜住"的问题。答"暂时不可避免"是认输，正确答法是拿机制说话——分层、触发、回归三层防线。典型追问场景："滴滴L7会员6/1刚升级了规则，你reference里还是老规则，过时知识反而误导AI，怎么办？"</p>
     <p><strong>先讲业务背景</strong>：我做 prd-tools，reference 六文件是 AI 的唯一事实来源，喂 20+ 人团队真用——一旦某条记录过期（比如 L7 升级规则变了），AI 照老规则出计划，下游同事照错计划开工就是返工，信任一塌就废了。所以"知识保鲜"不是可选项是必修课。</p>
     <p><strong>第一层·时效性分层（SLA-based）</strong>：我把 reference 里的每条记录按"变不变"分三档——Tier1 永久事实（枚举、API 路径、类型定义）几乎不变，绑代码 diff 触发失效；Tier2 慢变事实（业务规则、契约、字段语义）30 天 reverify 一次；Tier3 快变事实（配置、文案、活动模板）7 天 reverify。每条记录带三个时间戳：valid_from、valid_to、last_verified_at，过期自动标 stale。</p>
     <p><strong>第二层·触发式更新，这是机制核心</strong>：集成 GitNexus 的 detect_changes，代码一 diff 涉及到 reference 某条记录，自动标 stale，下次蒸馏强制走 source 验证而不是 reference——AI 不再吃老规则。这层把"被动等过期"变成"主动感知变化"。</p>
@@ -1907,8 +1907,7 @@ function buildTreeOptimized(list) {
   <div class="card-head"><span class="tag proj">G4</span><div class="card-title">度量体系设计：L1/L2/L3 三层指标（深挖时讲）</div></div>
   <div class="core">L1 产物质量（OQ/IMP 锚点·已能跑）+ L2 研发效率（端到端+返工率·排期中）+ L3 业务价值（飞轮定性）</div>
   <div class="card-body">
-    <p><strong>这张卡专门答"产物质量怎么衡量/度量体系怎么设计"，被追问到产物质量层面的 OQ/IMP/返工率才翻这张。<strong>数据口径（5h→2h、60%、对照组是不是纯手写、80%/68 分维度）翻 emer 数据口径卡，那里讲死。</strong></p>
-    <p><strong>定调</strong>：这道题被追到分母时容易答"其实就是开发工时"——但 prd-tools 产出的是 plan.md 不是代码，收益得绕一层度量"想清楚"带来的下游收益。所以我搭了三层指标从产物质量、研发效率、业务价值兜住。</p>
+    <p><strong>定调</strong>：这道题被追到分母时容易答"其实就是开发工时"——但 prd-tools 产出的是 plan.md 不是代码，收益得绕一层度量"想清楚"带来的下游收益。所以我搭了三层指标从产物质量、研发效率、业务价值兜住。<strong>数据口径（5h→2h、60%、80%/68 分维度）详见 emer 数据口径卡</strong>。</p>
     <p><strong>L1 产物质量——直接量 plan 本身靠不靠谱</strong>：三锚点——Code Anchor 准确率（plan.md 里标的 anchor 真实被改的比例，目标≥85%）、OQ 命中率（Open Questions 真实阻塞率，目标≥60%）、IMP 执行率（Implementation 计划条目真实执行率，目标≥75%）。v2.19 已能跑，readiness 评分基于这套。</p>
     <p><strong>L2 研发效率——量下游真省了多少</strong>：端到端开发耗时（实验组 vs 对照组，两组都用 Claude Code，只差有没有走 prd-tools 全流程，目标提升≥40%）、QA 缺陷数（目标下降≥30%）、开发返工率（开发过程中发现 plan 错了的比例，主指标）。<strong>对照组不是纯手写</strong>——是 Claude Code init 后直接喂 PRD 让它自己分析，变量单一，只验证 prd-tools 证据链的价值。</p>
     <p><strong>L3 业务价值——量长期飞轮</strong>：reference 飞轮增速（每月新增 playbook/术语数）、团队模式契约对齐度提升。这层偏定性。</p>
@@ -1948,7 +1947,7 @@ function buildTreeOptimized(list) {
 
 <div class="card" data-c="ai" data-kw="Agent Loop 主循环 ReAct Read Think Act Observe stop_reason tool_use tool_result 配对 end_turn harness 单次调用 区别 Claude Code 怎么跑">
   <div class="card-head"><span class="tag ai">G7</span><div class="card-title">Agent Loop 主循环：Claude Code 怎么一步步干活？</div></div>
-  <div class="core">Read→Think→Act→Observe 的 ReAct 循环；停止靠 stop_reason；tool_use/tool_result 必须配对，是模型决定停不是开发者写 if</div>
+  <div class="core">Read→Think→Act→Observe 的 ReAct 循环；停止靠 stop_reason；tool_use/tool_result 必须配对，是模型决定停不是开发者写 if。Claude Code 具体实现，基础循环定义见 E16、工程化约束见 G10</div>
   <div class="card-body">
     <p><strong>这道题常被问"你说用过 Claude Code，那它内部到底是个什么循环？跟直接调一次 API 啥区别？"——很多人卡在"它就是不停调模型"。具体怎么停、怎么知道要不要调工具、消息怎么拼，要讲清五件事：ReAct 范式、一次 Loop 四步、停止条件、工具配对、和单次调用的本质区别。</strong></p>
     <p><strong>第一·ReAct 范式</strong>：Thought→Action→Observation，模型边推理边调工具，每轮把工具结果塞回上下文继续推理。区别于 CoT 纯思维链（只推理不行动）。ReAct 论文 2022 年 Yao 提出，是当前主流 Agent 范式——Claude Code、Cursor Composer、AutoGPT 都是它的工程化变体。</p>
@@ -2006,7 +2005,7 @@ function buildTreeOptimized(list) {
   <div class="card-head"><span class="tag proj">G6</span><div class="card-title">Schema 引擎 + 插槽 + 微前端性能损失多少？</div></div>
   <div class="core">三大瓶颈：包体积膨胀（多版本并存）+ 联动接口重复调用 + 长列表渲染</div>
   <div class="card-body">
-    <p><strong>这题先甩一个定调——性能损失问的不是"具体几个百分点"，是你知不知道引擎+微前端+插槽这三层各自会卡在哪、有没有量化的抓手。所以我答三层瓶颈 + 每层一个已做的优化 + 最后一句话诚实说基线还缺，照念下来就比"凭个人了解、做得少"高一个档次。</strong></p>
+    <p><strong>核心定调</strong>：性能损失问的不是"具体几个百分点"，是知不知道引擎 + 微前端 + 插槽这三层各自会卡在哪、有没有量化的抓手。</p>
     <p><strong>先给业务背景立住场景</strong>：营销活动表单字段多（50+）、联动密，引擎外还套了微前端做插槽式加载——架构灵活的代价就是性能要主动设计。这道题被追细节时容易答弱（"做得少""凭个人了解""包体积、Web Worker、长列表"），复盘后整理成三个瓶颈。</p>
     <p><strong>第一层·包体积膨胀（最容易先想到）</strong>：组件库多版本并存——业务方用 v1.0、营销平台用 v2.0，Webpack 都打进 bundle，体积膨胀 1.5-2x，极端情况触发打包内存溢出。<strong>优化抓手</strong>：建 bundle size 基线（主包 &lt; 300KB、按路由 chunk split 后首屏 &lt; 200KB），配 webpack-bundle-analyzer 周报盯异常增长。</p>
     <p><strong>第二层·联动接口重复调用（体验体感最强）</strong>：50+ 字段每个联动都可能触发一次接口，转圈圈体感 1-2 秒。<strong>三招优化</strong>：Service Worker 缓存相同前置条件的联动结果、Web Worker 把序列化计算挪出主线程、同 key 请求 batch 合并。<strong>抓手</strong>：联动接口 P95 &lt; 300ms、缓存命中率 &gt; 60%。</p>
@@ -2030,10 +2029,10 @@ function buildTreeOptimized(list) {
 </div>
 
 <div class="card" data-c="ai" data-kw="多轮对话 上下文 窗口 滑动 摘要 token 管理">
-  <div class="card-head"><span class="tag ai">E9</span><div class="card-title">多轮对话上下文怎么管理？</div></div>
-  <div class="core">滑动窗口 + 关键信息提取 + 自动摘要</div>
+  <div class="card-head"><span class="tag ai">E9</span><div class="card-title">多轮对话上下文怎么管理？（前端工程师视角）</div></div>
+  <div class="core">滑动窗口 + 关键信息提取 + 自动摘要。进阶压缩方案见「Agent 工作记忆」卡、开源生态见「对话压缩技术」卡</div>
   <div class="card-body">
-    <p><strong>这道题答三层就够了——核心矛盾是"上下文窗口有限，对话越轮越长"，所以管理本质是"在有限窗口里保留最多有效信息"。我把它拆成三机制 + 落地 + 前端三件套。</strong></p>
+    <p><strong>核心矛盾</strong>：上下文窗口有限，对话越轮越长，管理本质是"在有限窗口里保留最多有效信息"。</p>
     <p><strong>为什么这题必考</strong>：LLM 的上下文窗口是硬上限（Claude 200K，但有效利用远小于此），多轮对话每轮都在往窗口里堆 token——前文越长越贵（自回归每生成一个 token 都要回看历史 K/V），还容易触发 "Lost in the Middle"（中间信息被忽略）。所以"多轮怎么管"不是优化项，是必须项。</p>
     <p><strong>机制一·滑动窗口（管短期）</strong>：只保留最近 N 轮对话在窗口里，超出的直接截断。N 怎么定——按 token 预算反推（留够当前请求 + 输出空间，剩下的全给历史）。优点是实现简单、行为可预测；缺点是早期信息直接丢，用户引用过的话可能"忘了"。</p>
     <p><strong>机制二·关键信息提取（管长期，最关键）</strong>：在截断前先把要丢的内容"抢救"——把重要实体、用户决策、约束条件提取出来持久化（存 DB 或结构化文件），下次请求拼进系统 prompt 带上。这样信息没真丢，只是从"全量对话"压缩成"结构化摘要"。这是把短期记忆转长期记忆的桥梁。</p>
@@ -2100,8 +2099,8 @@ function buildTreeOptimized(list) {
 </div>
 
 <div class="card" data-c="ai" data-kw="Evals 评测 评估 evaluation 为什么重要 LLM-as-Judge 基线 自动化 可重复">
-  <div class="card-head"><span class="tag ai">AI</span><div class="card-title">AI Evals是什么？为什么评测体系是必需品？</div></div>
-  <div class="core">没有Evals的AI系统就是"凭感觉开车"——Evals是AI系统的仪表盘和刹车</div>
+  <div class="card-head"><span class="tag ai">AI</span><div class="card-title">AI Evals是什么？（概念入门）</div></div>
+  <div class="core">没有Evals的AI系统就是"凭感觉开车"——Evals是AI系统的仪表盘和刹车。方法论见 E28、实操见 4 层 Eval 架构、排行榜认知见 LLM Benchmark</div>
   <div class="card-body">
     <p><strong>这道题先甩一个比喻：没有 Evals 的 AI 系统就是"凭感觉开车"——没有仪表盘也没刹车。改了个 prompt，根本不知道变好还是变差。</strong></p>
     <p><strong>业务背景</strong>：prd-tools 给 20+ 人团队用，AI 产出的开发计划直接影响开发。质量靠"感觉这次不错"，改 prompt 后没法客观对比，等于盲改。所以必须有 Evals 把质量从主观感受变成客观数据。</p>
@@ -2115,7 +2114,7 @@ function buildTreeOptimized(list) {
 
 <div class="card" data-c="ai" data-kw="Benchmark 排行榜 MMLU HumanEval AgentBench BFCL 评测 数据污染 区分度 怎么看">
   <div class="card-head"><span class="tag ai">AI</span><div class="card-title">LLM Benchmark体系：排行榜到底在评什么？</div></div>
-  <div class="core">Benchmark测的是模型能力上限，不是你的业务效果——选模型看Benchmark，调效果看Evals</div>
+  <div class="core">Benchmark测的是模型能力上限，不是你的业务效果——选模型看Benchmark，调效果看Evals。区别于业务 Evals（见「AI Evals是什么」卡）</div>
   <div class="card-body">
     <p><strong>这道题先甩一个关键区分：Benchmark 测的是模型的能力上限，不是你的业务效果。选模型看 Benchmark，调效果看自己的 Evals——别拿排行榜分数当产品质量。</strong></p>
     <p><strong>业务背景</strong>：选模型时大家爱甩排行榜分数，但排行榜高分不等于你的场景好。得懂每个 Benchmark 测什么、有什么坑。</p>
@@ -2185,8 +2184,8 @@ function buildTreeOptimized(list) {
 </div>
 
 <div class="card" data-c="ai" data-kw="Agent 评测 eval 评分器 pass@k pass^k Rubric 确定性 用例 基线 容忍">
-  <div class="card-head"><span class="tag ai">E28</span><div class="card-title">AI Agent 评测体系（三类评分器 + pass^k）</div></div>
-  <div class="core">三类评分器（确定性&gt;Rubric&gt;人工）+ pass^k 测稳定性 vs pass@k 测峰值能力 + 五维度全覆盖</div>
+  <div class="card-head"><span class="tag ai">E28</span><div class="card-title">AI Agent 评测体系（方法论·三类评分器 + pass^k）</div></div>
+  <div class="core">三类评分器（确定性&gt;Rubric&gt;人工）+ pass^k 测稳定性 vs pass@k 测峰值能力 + 五维度全覆盖。概念入门见「AI Evals是什么」卡、实操见 4 层 Eval 架构</div>
   <div class="card-body">
     <p><strong>eval 是 Agent 从 Demo 走向生产的那道门槛——答好这道题体现你不是只会调 API 是真做过落地。</strong></p>
     <p><strong>三类评分器（选择优先级）</strong>：</p>
@@ -2267,8 +2266,8 @@ function buildTreeOptimized(list) {
 </div>
 
 <div class="card" data-c="proj" data-kw="质量门控 门禁 quality-gate Step间 Spec Review 评分 readiness">
-  <div class="card-head"><span class="tag proj">架构</span><div class="card-title">质量门控：prd-tools的门禁体系</div></div>
-  <div class="core">三层门控层层收紧：步骤间前置检查 → 蒸馏门禁12项 → 最终五维评分</div>
+  <div class="card-head"><span class="tag proj">架构</span><div class="card-title">质量门控：prd-tools的门禁体系（三层架构）</div></div>
+  <div class="core">三层门控层层收紧：步骤间前置检查 → 蒸馏门禁12项 → 最终五维评分。五维具体权重见「Readiness Score 精确评分体系」卡</div>
   <div class="card-body">
     <p><strong>第一层：步骤间前置检查</strong>：11步蒸馏中，每步执行前检查上一步产物存在且非空。不通过就重跑上一步。</p>
     <p><strong>第二层：蒸馏门禁</strong>：12项检查——8项质量（文件存在、需求有证据、代码锚点、Spec确认等）+ 4项覆盖率（PRD内容全覆盖、图片全覆盖、需求全追溯，这3项是致命项，不通过直接停）。</p>
@@ -2278,8 +2277,8 @@ function buildTreeOptimized(list) {
 </div>
 
 <div class="card" data-c="proj" data-kw="Readiness Score 评分 权重 阈值 prd_ingestion evidence_coverage code_search contract_alignment plan_completeness 85 60 硬性降级">
-  <div class="card-head"><span class="tag proj">架构</span><div class="card-title">Readiness Score精确评分体系</div></div>
-  <div class="core">五个维度加权评分，85分直接通过，60分需确认，低于60必须修</div>
+  <div class="card-head"><span class="tag proj">架构</span><div class="card-title">Readiness Score精确评分体系（五维评分）</div></div>
+  <div class="core">五个维度加权评分，85分直接通过，60分需确认，低于60必须修。门禁三层架构见「质量门控」卡</div>
   <div class="card-body">
     <p><strong>五个维度</strong>：PRD摄入质量（权重20%）、证据覆盖率（25%）、代码搜索命中率（15%）、契约对齐度（25%）、计划完整性（15%）。加权汇总后对照两个阈值。</p>
     <p><strong>三档判定</strong>：85-100分通过可直接进开发，60-84分需owner确认，0-59分阻塞必须修。</p>
@@ -2320,7 +2319,7 @@ function buildTreeOptimized(list) {
   <div class="core">按改动半径分层：跨团队走完整版，单模块走lite版，改文案不走流程——产品分层是工具设计的基本功</div>
   <div class="card-body">
     <p><strong>这题面试官考的是产品思维而不是技术实现——被问"小需求是不是太复杂"，"渐进式披露"是技术答案，面试官要的是产品决策。字节TikTok一面被问这题，我答"渐进式披露"，面试官直接喂"lite版"——意思是你没思考过分层。这是从工程师到产品型工程师的关键转变。</strong></p>
-    <p><strong>先甩一句定调（这是骨架）</strong>：已经做了分层设计——按改动半径分三档：完整版给跨团队复杂需求，lite版给单点小需求，简单配置不走流程。</p>
+    <p><strong>核心定调</strong>：已经做了分层设计——按改动半径分三档：完整版给跨团队复杂需求，lite版给单点小需求，简单配置不走流程。</p>
     <p><strong>三档分层逐条（被问就按这套念）</strong>：</p>
     <p>· <strong>完整版（10-15分钟）</strong>：跨前后端、接口变更、影响多模块的需求。走六步：领域知识前置 + PRD蒸馏 + SPEC + Plan + 自评门控 + 双轨生成。适合改动半径大的需求。</p>
     <p>· <strong>lite版（1-2分钟）</strong>：单模块、UI调整、Bug修复。只保留两步：PRD/语义描述直接蒸馏成Plan + 自评门控。跳过 Reference 构建（小需求不需要项目级领域知识）和 SPEC 阶段（直接进 Plan）。</p>
@@ -2344,9 +2343,9 @@ function buildTreeOptimized(list) {
 
 <div class="card" data-c="proj" data-kw="端到端 自验证 自修复 震荡检测 校验 重试 Harness 闭环 A→B→A validation history prd2code-gen 工程化深度">
   <div class="card-head"><span class="tag proj">架构</span><div class="card-title">端到端原型：自验证+自修复循环怎么实现？</div></div>
-  <div class="core">4 类校验 + 3 次重试 + 震荡检测（A→B→A 切整段重写），修正历史全程可追溯</div>
+  <div class="core">4 类校验 + 3 次重试 + 震荡检测（A→B→A 切整段重写），修正历史全程可追溯。端到端原型系列之一，双路径生成见另一张、过渡到生产见第三张</div>
   <div class="card-body">
-    <p><strong>这道题我答四个字——"出错兜底"。AI 生成代码不可能一次就对，真正体现工程深度的不是生成多准，而是错了之后系统能不能自己兜回来、还兜得明白。</strong></p>
+    <p><strong>核心定调·四个字</strong>：出错兜底。AI 生成代码不可能一次就对，真正体现工程深度的不是生成多准，而是错了之后系统能不能自己兜回来、还兜得明白。</p>
     <p><strong>先说为什么这块对我特别重要</strong>：我独立设计的端到端原型 prd2code-gen，目标是从 PRD 一路生成到能跑的代码。这种场景下"错了怎么办"不是边界 case，是主路径——一个需求可能动几十个文件，每一处都可能编译不过、字段对不上、破坏已有逻辑。所以我必须有一套自动化兜底，不能靠人肉看 diff。</p>
     <p><strong>我分三块来讲。</strong></p>
     <p>第一块是 <strong>四类校验，按顺序跑，前一层过了才进下一层</strong>：① <strong>语法层</strong>——tsc --noEmit 编译 + AST 完整性 + 残留 <code>{{</code> 占位符检查，先把"根本不能跑的"拦掉；② <strong>字段双向对齐</strong>——蒸馏出来的字段必须 ⊆ 生成的（不能漏），生成的字段也必须 ⊆ 蒸馏的（不能幻觉编出来），双向都查；③ <strong>规则层</strong>——i18n key 格式、enum 白名单、命名规范、反模式逐条过；④ <strong>集成层</strong>——import 路径对不对、类型兼容不兼容、有没有破坏已有代码（diff 检查）。从最便宜到最贵，层层过滤。</p>
@@ -2360,7 +2359,7 @@ function buildTreeOptimized(list) {
   <div class="card-head"><span class="tag proj">架构</span><div class="card-title">端到端原型：模板/LLM 双路径 + verified_by 审计</div></div>
   <div class="core">Handlebars 模板优先（0 token）+ LLM 兜底；每条事实带 file:line 溯源 + drift-report 自动发现 reference 漂移</div>
   <div class="card-body">
-    <p><strong>这题我答一句话——"能不算钱就不算钱，能不靠猜就不靠猜"。</strong>面试官一问"成本怎么控 / 知识库怎么保鲜"，我先甩这句定调，再分两层讲我是怎么把这句话落成代码的。</p>
+    <p><strong>核心定调·一句话</strong>：能不算钱就不算钱，能不靠猜就不靠猜。</p>
     <p><strong>先说背景，为什么这块对我特别重要</strong>：我独立设计的端到端原型 prd2code-gen，是从 PRD 一路生成到能跑的代码，一个需求可能动几十个文件。如果每次都让 LLM 从零生成，token 账单爆炸不说，输出还不可复现、还容易幻觉编字段。所以我必须做到两件事——能确定的部分零 token 出，必须靠模型的部分每条事实都能追溯、还能发现知识库自己过期了。</p>
     <p><strong>第一块是双路径代码生成，把"能不算钱就不算钱"做成机制</strong>：① <strong>模板路径优先</strong>——读 templates/{campaign_type}/ 下的 Handlebars 模板，渲染蒸馏出来的 JSON 数据，0 token、确定性输出，同一个输入永远同一个产物；② <strong>LLM 路径兜底</strong>——没匹配模板时才让模型参照 reference 规则生成。关键在这两条路径会自学习：LLM 兜底生成、人工确认质量够的产物，会被抽出来存成新模板，"模板库越用越大，LLM 越用越少"。配合一个 <strong>四级回退</strong>（LLM 写文件时精确 SEARCH/REPLACE → 模糊匹配 → 行号定位 → 全文件重写，从最安全到最激进逐级降级），把成本和风险都压到最低。</p>
     <p><strong>第二块是 verified_by 审计链 + drift-report，把"能不靠猜就不靠猜"做成机制</strong>：reference 里每条事实都强制附 <code>verified_by: ["file.ts:line"]</code>，必须真去源码 Read 过才允许写，禁止凭推断——这是防幻觉的硬规则，Phase 2 强制验证、Phase 3 再做致命类检查（枚举完备性、分支计数、方法签名、字段路径 100% 匹配）。但代码会变、reference 会过期，所以我每次验证后跑 <strong>drift-report.json</strong> 自动对比：reference 有但代码找不到的是 stale 漂移，代码有但 reference 没记的是 missing 漂移，引用路径失效的是 broken_path——warning 级别不阻塞流程，但会明确提示"知识库该更新了"。</p>
@@ -2370,9 +2369,9 @@ function buildTreeOptimized(list) {
 
 <div class="card" data-c="proj" data-kw="端到端 原型 生产 推广 三步路径 CI 责任 模板库 过渡 prd2code-gen 协同 既然完整为啥不推广">
   <div class="card-head"><span class="tag proj">架构</span><div class="card-title">端到端原型 → 生产的三步过渡路径</div></div>
-  <div class="core">双轨协同：团队推广版稳态运营，端到端原型探索三步过渡——模板库扩展 + CI对齐 + 责任归属</div>
+  <div class="core">双轨协同：团队推广版稳态运营，端到端原型探索三步过渡——模板库扩展 + CI对齐 + 责任归属。原型本身见另两张</div>
   <div class="card-body">
-    <p><strong>先甩一句定调（这是答题核心）</strong>：团队推广版和端到端原型不是二选一，是<strong>双轨并行、各取所需</strong>——团队推广版要稳（聚焦 PRD→Plan 那段、ROI 最高、20+ 人团队真在用），端到端原型要快（验证 PRD→Code 完整链路可行性、积累工程化经验、等模型成本下降）。一句话："稳态运营 + 探索储备"，过渡不是替换，是逐步把原型里验证过的能力沉淀进团队版。</p>
+    <p><strong>核心定调</strong>：团队推广版和端到端原型不是二选一，是<strong>双轨并行、各取所需</strong>——团队推广版要稳（聚焦 PRD→Plan 那段、ROI 最高、20+ 人团队真在用），端到端原型要快（验证 PRD→Code 完整链路可行性、积累工程化经验、等模型成本下降）。一句话："稳态运营 + 探索储备"，过渡不是替换，是逐步把原型里验证过的能力沉淀进团队版。</p>
     <p><strong>再把过渡拆成三步，每步一句（被问"怎么过渡到生产"就按这三步念）</strong>：</p>
     <p>· <strong>第一步：模板库从 40% 扩到 80%</strong>。原型阶段模板命中率大概 40%，剩下走 LLM 兜底；目标是把兜底里质量达标的产物抽成新模板——命中一次 LLM 生成、人工确认评分过阈值、Golden Sample 回归跑通，就入库。模板库越大，越确定越省钱越稳。</p>
     <p>· <strong>第二步：CI/CD 对齐团队流水线</strong>。原型现在是独立 pipeline，生产化得对齐三件事——产物格式进团队 lint/tsc/test 流水线、接 code review 工具（SonarQube 这类）、灰度发布（先放 10% 需求走 AI 生成再逐步放量，不是一刀切）。</p>
@@ -2386,9 +2385,8 @@ function buildTreeOptimized(list) {
   <div class="card-head"><span class="tag proj">工作流</span><div class="card-title">AI工作流怎么优化和迭代</div></div>
   <div class="core">维护黄金Case集 + Benchmark回归 + LLM-as-Judge自动评分；端到端原型已落地完整 eval/auto-tune 五模块闭环</div>
   <div class="card-body">
-    <p><strong>这道题先甩一句定调——AI 工作流不是"调好 prompt 就完了"，是"能持续量化效果、能定位失分、能自动反哺"，缺哪环都会停在一次性 demo。我答的骨架是"三件套闭环 + 量化实验"，照念能讲出真正搭过 eval 体系的深度。</strong></p>
     <p><strong>先讲为什么必须有这套（业务背景）</strong>：prd-tools 喂 20+ 人用，我每次改 prompt、调门禁阈值、加能力面，都会担心"是不是改坏了别的"。如果只靠人工看几个产物，既不可复现、也没法量化退步——必须有一套"固定输入跑出来的、能用同一把尺子打分"的东西。这套东西就是黄金 Case 集 + LLM-as-Judge 自动评分。</p>
-    <p><strong>三件套顺一遍（答题骨架，每件一句）</strong>：</p>
+    <p><strong>三件套顺一遍（每件一句）</strong>：</p>
     <p>· <strong>第一件·黄金 Case 集做 Benchmark 回归</strong>：维护一套人工验证过的完整需求案例（5-10 个中等复杂度，覆盖典型场景），每次改完 prompt 或配置就用这套重跑，对比前后五维评分和文件覆盖率的变化——本质就是 A/B 测试，进步还是退步一眼看出。</p>
     <p>· <strong>第二件·LLM-as-Judge 做自动评分</strong>：不用人工逐个看产物，用另一个大模型对生成产物做五维独立评分。这一步把"主观好不好"变成"可比较的数字"，是整个闭环的前提。</p>
     <p>· <strong>第三件·迭代节奏（防改坏的纪律）</strong>：每次只改一个变量（prompt / 门禁阈值 / 能力面配置），跑黄金 Case 看效果，确认无退化才合入——别一次改五处，否则退步了都说不清是哪处引入的。</p>
@@ -2401,7 +2399,7 @@ function buildTreeOptimized(list) {
   <div class="card-head"><span class="tag ai">AI</span><div class="card-title">Claude Code Skills 调用原理</div></div>
   <div class="core">Skills通过system prompt注入，模型按指令匹配触发</div>
   <div class="card-body">
-    <p><strong>这道题我答三层——从"是什么"到"怎么跑起来"再到"我落地过"。</strong></p>
+    <p><strong>答三层</strong>：是什么 → 怎么跑起来 → 我落地过。</p>
     <p><strong>第一层·Skill 是什么（先破一个误区）</strong>：很多人以为 Skill 是一段代码或一个插件，其实<strong>它就是一组 Markdown 文件</strong>——靠 system prompt 注入让模型"读懂流程"，再按指令一步步执行。核心是<strong>把"人怎么用好 AI 干一件事"的隐性经验显性化</strong>，固化成可复用流程。不写代码、不绑模型，改 Markdown 就能调行为。</p>
     <p><strong>第二层·三个文件怎么协作</strong>：① <strong>SKILL.md</strong> 管"什么时候触发"——写清 trigger 触发条件、输入输出、硬规则；② <strong>workflow.md</strong> 管"分几步做"——是整个流程的 SSOT（单一事实源），声明步骤、依赖、门控；③ <strong>steps/ 目录</strong> 管"每步不能越界"——每个 step 文件用 XML 标签做硬约束（<code>&lt;allowed_inputs&gt;</code> 规定只能读什么、<code>&lt;must_not_produce&gt;</code> 规定不许产出什么）。</p>
     <p><strong>第三层·怎么跑起来（底层机制）</strong>：注入层——Skills 内容拼进 Agent 的 system prompt，模型看到用户输入匹配 trigger 就按指令选调哪个；执行层——本质类似 Function Calling，模型识别意图 → 匹配 Skill → 按 workflow 一步步走，每步的 XML 约束卡住边界，中间产物靠文件传递不占对话上下文。</p>
@@ -2452,7 +2450,7 @@ function buildTreeOptimized(list) {
   <div class="card-head"><span class="tag ai">AI</span><div class="card-title">前端在AI时代能做什么？</div></div>
   <div class="core">三层递进——编码自动化、工程全流程Agentic、用户侧AI交互</div>
   <div class="card-body">
-    <p><strong>先甩一句定调（这是全场骨架）</strong>：前端在AI时代的价值，不是写更多页面，而是沿着三层递进往上走——<strong>编码自动化 → 工程全流程 Agentic → 用户侧AI交互</strong>。越往上越值钱，越往下越容易被替代。这句先立住，后面三层是给它做支撑。</p>
+    <p><strong>核心定调</strong>：前端在AI时代的价值，不是写更多页面，而是沿着三层递进往上走——<strong>编码自动化 → 工程全流程 Agentic → 用户侧AI交互</strong>。越往上越值钱，越往下越容易被替代。这句先立住，后面三层是给它做支撑。</p>
     <p><strong>第一层·编码自动化（已经成熟，门槛最低）</strong>：Copilot、Cursor、Windsurf 这批工具已经在做，文件级改动很准，专门取代重复性编码。这层不是你的竞争力——大家都会用，提它能说"我知道这是起点"，但别停在这。</p>
     <p><strong>第二层·工程全流程 Agentic（这是核心，务必讲透）</strong>：Agent 接管需求分析、技术方案、代码生成、测试、部署的完整链路。这里有个关键转变要主动甩——前端工程师的角色从<strong>"写代码"变成"设计 Agent 的行为和质量门控"</strong>，核心竞争力从"会写页面"变成<strong>系统设计和流程编排</strong>。谁的 Agent 设计得好、质量门控做得严，谁就赢。</p>
     <p><strong>第三层·用户侧AI交互（最前端特色，加分点）</strong>：对话式UI、智能表单、个性化推荐这些需要前端和AI结合的新交互形态。前端的价值从"实现页面"变成<strong>"设计人机协作的系统"</strong>。这层是前端工程师独占的地盘——模型再强，最终和用户交互的还是前端。</p>
@@ -2467,7 +2465,7 @@ function buildTreeOptimized(list) {
   <div class="card-head"><span class="tag ai">AI</span><div class="card-title">大厂AI工程化实践图谱（公开实践整理）</div></div>
   <div class="core">工作流是过渡态，业务知识沉淀才是长期价值，模型越强工作流越轻知识越重</div>
   <div class="card-body">
-    <p><strong>先甩一句定调（这题骨架）</strong>：大厂 AI 工程化不是"用不用 AI"的问题，是"跑到哪一站"的问题——从单点探索，到端到端跑通，再到全托管自动闭环，三层递进。这句话先立住，后面三层是给它排序。</p>
+    <p><strong>核心定调</strong>：大厂 AI 工程化不是"用不用 AI"的问题，是"跑到哪一站"的问题——从单点探索，到端到端跑通，再到全托管自动闭环，三层递进。这句话先立住，后面三层是给它排序。</p>
     <p><strong>第一层·单点探索（工具替代重复劳动）</strong>：代表是 <strong>腾讯短视频 AIGC 团队</strong>——已经做到 issue 驱动的 Agent 编码：人提 issue，Agent 自主调研方案、写代码，人只做 Code Review 合并。这层的特征是 AI 吃掉重复性编码和传统交互工具，工具平台的核心从"做交互"转向"管效率"。我讲这层时会主动点一句：产品经理也在用 AI 直接提 issue，工程师角色已经从"写代码"转为"把控质量"。</p>
     <p><strong>第二层·端到端跑通（激进派的现状，2026 真实样本）</strong>：代表是 <strong>某海外电商团队（公开分享）</strong>——AI 工程化最激进的团队之一，从 AI 写 PRD、代码生成、自动化测试到发布前阶段全链路已经跑通。两个硬数据：今年目标 60% 以上需求由产品经理直接用 AI 完成（vibe coding 模式），团队 AI 使用率约 90%。组织上已经不分前后端，按业务线划分、前后端都你负责；核心链路仍需 review，但随 AI 精准度提升逐步脱手。我讲这层会主动补一句老板视角：技术痛点不在技术，是怎么用技术完成 GMV/订单——研发要学业务的 skill，用技术驱动业务。这句最显你懂业务。</p>
     <p><strong>第三层·全托管工业级（最完整，行业天花板）</strong>：代表是 <strong>阿里淘天 B 端基建</strong>——自研 Coding Agent 在云端跑，起点是 PRD，产物直接对齐 CI/CD 流水线自动部署；知识图谱承接业务文档。但这套体系的核心壁垒<strong>不是代码生成</strong>（模型在涨），是<strong>自验证 + 自修复闭环</strong>：Harness 自动验证、云真机环境、PRD 驱动测试用例自动生成执行、运行环境感知 + 修复 Agent Loop。知识库这层我专门点一句定位——它是约束层和导航层，核心难题是<strong>保鲜而非构建</strong>，不是堆全量知识。</p>
@@ -2558,11 +2556,10 @@ function buildTreeOptimized(list) {
 </div>
 
 <div class="card" data-c="ai" data-kw="Agent 记忆 工作记忆 Summary 压缩 MemGPT Letta 上下文 管理">
-  <div class="card-head"><span class="tag ai">AI</span><div class="card-title">Agent工作记忆怎么管理？</div></div>
-  <div class="core">Progressive Summarization递归压缩旧消息保持上下文固定大小，类似操作系统的虚拟内存分页</div>
+  <div class="card-head"><span class="tag ai">AI</span><div class="card-title">Agent工作记忆怎么管理？（Agent 工程师进阶视角）</div></div>
+  <div class="core">Progressive Summarization递归压缩 + MemGPT 分页 + Observation Masking 三套进阶方案；基础三机制见「多轮对话上下文怎么管理？」卡</div>
   <div class="card-body">
-    <p><strong>这道题被追问"工作记忆怎么做 Summary"是常见场景——核心矛盾一句话：对话越轮越长，但上下文窗口是硬上限，所以记忆管理本质是"在有限窗口里保留最多有效信息"。我把它拆成三套方案，再加一个我落地的对照。</strong></p>
-    <p><strong>先把矛盾讲透，这是面试官想听的第一层</strong>：LLM 是自回归的，每生成一个 token 都要回看历史 K/V，所以前文越长越贵、延迟越高，还会触发 "Lost in the Middle"——中间的信息被忽略。所以"长对话怎么管"不是优化项，是必须项，必须压。</p>
+    <p><strong>定位</strong>：这是 Agent 工程师视角的进阶方案——基础三机制（滑动窗口/关键信息提取/自动摘要）见 E9 多轮对话上下文管理卡，这里讲 Agent 场景下的三套进阶方案。</p>
     <p><strong>方案一·Progressive Summarization（递归摘要，最经典）</strong>：把最老的消息递归压缩成一段摘要块放在 prompt 开头，上下文保持固定大小。好处是成本和延迟恒定、可预测；代价是有损压缩——多压几轮细节就糊了，像传话游戏。<strong>这是小红书面试官要的那个关键词，必须主动甩出来。</strong></p>
     <p><strong>方案二·MemGPT/Letta 分页（最能显深度）</strong>：设个上下文阈值，超过就把旧内容 flush 成摘要存到外部存储，下次要用再检索回来。思路跟<strong>操作系统的虚拟内存分页一模一样</strong>——主存放不下就换到磁盘，用的时候再换回来。这套是亮点，能讲到"分页"这个类比就比 90% 候选人强。</p>
     <p><strong>方案三·Observation Masking（JetBrains 的研究）</strong>：不真删旧消息，用简短占位符替换——比如一段 50 行的讨论压成 "[讨论了 API 设计，决定用 REST]"。保留了对话结构信息，但大幅省 token。适合不想丢上下文脉络、又想省钱的场景。</p>
@@ -2594,7 +2591,7 @@ function buildTreeOptimized(list) {
     <p>第三是 <strong>质量门控</strong>——每个工具都有某种"检查点"：BMAD 要人确认中间产物才往下走，Superpowers 每步有 allowed_inputs 约束，OpenClaw 用 Workspace 文件限行为边界，我的 prd-tools 是 XML 约束加 Readiness Score 五维评分。本质都在干一件事：把 AI 产出的不确定性，用机制约束成可控的确定性。</p>
     <p>第四是 <strong>记忆和知识持久化</strong>——Claude Code 的 Memory 文件、OpenClaw 的持久记忆、BMAD 的上下文文件、我 prd-tools 的 Reference 六文件——都在解决"AI 每次从零开始"的痛点，把经验固化成可检索的知识，而不是每次重新喂。</p>
     <p><strong>落到我的项目（这道题的真正加分项）</strong>：prd-tools 的每个设计决策都能在热榜工具里找到对应——我的双 Skill 拆分对应 BMAD 的多 Agent 分工，XML 约束对应 Superpowers 的 allowed_inputs，中间文件传递对应所有工具的状态管理。<strong>这说明我不是闭门造车，我的架构选择跟行业最前沿是同频的</strong>——被问"凭什么相信你的设计"，这一句就是答案。</p>
-    <p><strong>收个口</strong>：方法论收敛这件事本身就是 2026 年 AI 工程化的最大信号——工具还会换，但"Markdown 定义指令、Skills 拆任务、文件传状态、门控保质量"这套骨架短期不会变。被问"AI 工具这么多怎么选"，翻 Cursor/Copilot/Claude Code 对比卡；被问"你怎么跟进前沿"，就甩这套方法论验证的逻辑。</p>
+    <p><strong>收个口</strong>：方法论收敛这件事本身就是 2026 年 AI 工程化的最大信号——工具还会换，但"Markdown 定义指令、Skills 拆任务、文件传状态、门控保质量"这套骨架短期不会变。<strong>被问"AI 工具怎么选"</strong> → Cursor/Copilot/Claude Code 对比卡；<strong>被问"怎么跟进前沿"</strong> → 这套方法论验证逻辑。</p>
   </div>
 </div>
 
@@ -2614,7 +2611,7 @@ function buildTreeOptimized(list) {
   <div class="card-head"><span class="tag ai">AI</span><div class="card-title">AI Agent开发前沿：issue驱动+无PRD模式</div></div>
   <div class="core">人提issue Agent自主调研编码人只做CR合并，产品经理也在用AI写代码了</div>
   <div class="card-body">
-    <p><strong>先甩一句定调（这是全场骨架）</strong>：AI 编码不是一刀切地"会不会替代前端"，是沿着三阶段在演进——<strong>AI 辅助写代码 → AI 自主编码、人审核 → AI 全流程自动化</strong>。目前头部公司在第二阶段，中小公司还在第一阶段往第二阶段爬。这句先立住时间线，面试官就知道你不是凭感觉，是有框架。</p>
+    <p><strong>核心定调</strong>：AI 编码不是一刀切地"会不会替代前端"，是沿着三阶段在演进——<strong>AI 辅助写代码 → AI 自主编码、人审核 → AI 全流程自动化</strong>。目前头部公司在第二阶段，中小公司还在第一阶段往第二阶段爬。这句先立住时间线，面试官就知道你不是凭感觉，是有框架。</p>
     <p><strong>核心前沿实践·issue 驱动模式必须讲透（这是这道题的灵魂）</strong>：业界公开案例（如腾讯短视频 AIGC 团队）已经在做<strong>issue 驱动的 Agent 编码</strong>：人提一个 issue 描述需求，Agent 自主调研技术方案、编码实现，人<strong>只做 Code Review 和合并</strong>。更激进的是甚至<strong>可能没有 PRD，像开源模式一样</strong>。小改动 Agent 直接编码人 CR 后合并，复杂任务才走更重的流程。<strong>金句：Agent 已从"辅助工具"进化到"自主开发"——issue 是新的需求入口，PRD 不再是必经环节。</strong></p>
     <p><strong>再甩一个角色转变（这是真正的考点，务必主动说）</strong>：腾讯那边连产品经理都在用 AI 直接写代码提 issue，前端工程师的角色正从<strong>"写代码的人"转成"把控质量的人"</strong>。这跟另一张卡（前端在 AI 时代能做什么）是同一个信号——未来核心竞争力不是写代码速度，是<strong>架构设计和技术判断力</strong>。这一句能堵住"前端会不会消失"的追问：消失的是纯写代码的工种，留下来的是设计 Agent 行为和质量门控的人。</p>
     <p><strong>补一个行业格局（显你跟过前沿，被追问再甩）</strong>：通用办公 Agent 是巨头必争之地——腾讯元宝和 ima、字节豆包、OpenAI Codex 都在转向"口袋式 Agent"模式，把编码、文档、沟通、调度全塞进一个 Agent。业界共识级别的判断：不做可能都会被吃掉所有入口。说明 Agent 正在重塑所有软件的入口形态，前端在这个方向有天然的交互和工程化优势。</p>
@@ -2626,7 +2623,7 @@ function buildTreeOptimized(list) {
   <div class="card-head"><span class="tag ai">AI</span><div class="card-title">AI编码能力边界：C端70%、中后台已可用</div></div>
   <div class="core">C端视觉要求高AI只能到70%还原，中后台视觉要求低AI已经做得不错</div>
   <div class="card-body">
-    <p><strong>先甩一句定调（这是全场骨架）</strong>：AI 编码能力不是一刀切的强或弱，是<strong>按产品类型分层</strong>的——C端视觉敏感型还到不了 100%，中后台功能敏感型已经能大幅提效。<strong>关键不在模型行不行，在场景对视觉的容忍度</strong>。这句先立住，后面是给它做支撑。</p>
+    <p><strong>核心定调</strong>：AI 编码能力不是一刀切的强或弱，是<strong>按产品类型分层</strong>的——C端视觉敏感型还到不了 100%，中后台功能敏感型已经能大幅提效。<strong>关键不在模型行不行，在场景对视觉的容忍度</strong>。这句先立住，后面是给它做支撑。</p>
     <p><strong>这条分界线必须讲透（核心论点）</strong>：业界共识判断（如起点读书/阅文这类 C 端产品的经验）——偏 C 端产品对<strong>视觉还原要求很高</strong>，AI 目前只能做到 <strong>70% 左右</strong>，像素级对齐还差一截；但中后台产品视觉要求不高，AI 编码<strong>已经做得不错、可以实际落地</strong>。一句话：痛点不在功能能不能写出来，在 UI 够不够精致。C 端卡在最后一公里还原度，中后台这关早就过了。</p>
     <p><strong>再甩三家佐证（证明不是我一个人的感觉）</strong>：① <strong>小红书搜索团队</strong>——80-90% 代码 AI 生成，但<strong>全是偏中后台的工具和搜索产品</strong>；② <strong>腾讯短视频团队</strong>——产品都在用 AI 写代码；③ <strong>阿里淘天</strong>——已经跑起全托管流水线。三家的共同点很关键：<strong>能跑通的案例集中在中后台和工具型产品</strong>，C 端视觉敏感型的工业级案例几乎没有。这正好和分界线对上——不是巧合是规律。</p>
     <p><strong>落到职业路径收口（这道题的真正考点）</strong>：被问"AI 会取代前端吗"，别站队，给路径——<strong>在 AI 擅长的领域做编排者，在 AI 不擅长的领域做手艺人</strong>。中后台是 AI 的主场，前端价值从"写代码"转成"设计 Agent 行为和质量门控"（这正好是我 prd-tools 在做的事）；C 端视觉敏感型短期还是人的主场，像素级还原、动效打磨这些 AI 还顶不上。<strong>一句话收口：AI 替不替代你不取决于 AI 多强，取决于你站在分界线的哪一边——站在中后台纯写代码那边危险，站在设计 Agent 行为和 C 端精细活那边安全。</strong></p>
@@ -2652,7 +2649,7 @@ function buildTreeOptimized(list) {
   <div class="card-head"><span class="tag proj">AI</span><div class="card-title">Agent死循环怎么防（编排层+运行时层·bridge）</div></div>
   <div class="core">Agent死循环防两处——编排层用状态机和最大迭代设终止条件，运行时层用递归上限和工具失败熔断</div>
   <div class="card-body">
-    <p><strong>这题我先甩一句定调——Agent 死循环不是"会不会发生"的问题，是"怎么防"的问题，而且必须分两层防。</strong>很多人听到死循环会慌，其实把它拆成编排层和运行时层两道防线，每层管一个维度，这题就答透了。别和 Schema 表单联动混淆——那是配置层面的联动，不是 Agent 推理循环层面的死循环。</p>
+    <p><strong>核心定调</strong>：Agent 死循环不是"会不会发生"的问题，是"怎么防"的问题，必须分两层防——<strong>编排层防 Agent Loop 跑飞，运行时层防 LLM 单调用死循环</strong>。别和 Schema 表单联动混淆（那是配置层面的联动，不是 Agent 推理循环层面的死循环）。</p>
     <p><strong>先说为什么这题必考、为什么有空间</strong>：我做的 prd-tools 把 PRD 转开发计划喂给二十多人团队用，团队最怕的就是"过程不确定"——AI 跑着跑着陷入循环、卡在某一步反复调用同一个工具烧 token、甚至永远停不下来。Tool Use 底层本来就是"循环直到模型不再调工具"，这意味着只要模型一直觉得"我还要再调一下"，它就会无限转下去。所以防死循环不是优化项，是 Agent 能不能上生产的底线项。</p>
     <p><strong>第一层·编排层（我有实战）</strong>：这一层防的是"流程没有终止条件"。两个手段——① <strong>状态机显式定义 Node 和 Edge</strong>（LangGraph 就是这个路子），每个节点有明确的下一步，循环只在受控的回退路径上发生；② <strong>max_iterations 上限</strong>，无论是状态机还是裸 Agent Loop，都硬设一个最大步数，到了就强制结束。这是"用确定性结构约束开放式循环"——我的 prd-tools 用的就是这条，11 步固定顺序蒸馏流水线，本质是用确定性编排直接规避了开放式 Agent Loop 的死循环风险，主流程根本不给它循环的机会。</p>
     <p><strong>第二层·运行时层（设计认知）</strong>：这一层防的是"单步异常导致无限重试"。三个手段叠加——① <strong>RecursionLimit</strong> 限制递归深度，防止工具回调嵌套爆栈；② <strong>工具失败熔断</strong>，单个工具连续失败超过阈值就返回错误而不是无限重试（不然一个超时的接口能把整个 Agent 拖死）；③ <strong>重复检测</strong>，相邻几步的 tool call 参数都相同就判定卡死、主动中断。这一层我诚实说是设计认知、还没全部落地，但思路和第一层是配套的。</p>
@@ -2676,7 +2673,7 @@ function buildTreeOptimized(list) {
   <div class="card-head"><span class="tag ai">AI</span><div class="card-title">主流AI产品体验对比（产品感知力考察）</div></div>
   <div class="core">豆包赢在交互体验和娱乐化，Kimi赢在专业深度，千问赢在生态整合——最好的是Kimi</div>
   <div class="card-body">
-    <p><strong>先甩一句定调（这是全场骨架）</strong>：主流 AI 产品不是比谁模型最强，是比谁的产品定位最清晰——豆包赢在交互体验和娱乐化、千问赢在生态整合、Kimi 赢在专业深度、可灵赢在垂直赛道。这句先立住，后面四家是给它做支撑。</p>
+    <p><strong>核心定调</strong>：主流 AI 产品不是比谁模型最强，是比谁的产品定位最清晰——豆包赢在交互体验和娱乐化、千问赢在生态整合、Kimi 赢在专业深度、可灵赢在垂直赛道。这句先立住，后面四家是给它做支撑。</p>
     <p><strong>四家产品顺一遍（每家一句优缺点，不堆参数）</strong>：</p>
     <p>· <strong>豆包（字节，月活3.4亿）</strong>：交互体验最丝滑——键盘弹出流畅、语音对话自然、5个外置功能键操作便捷。图片和视频生成的娱乐化玩法深入，用户基数碾压。但功能偏娱乐，专业生产力场景弱。本质是"AI版的抖音"——用体验换深度。</p>
     <p>· <strong>千问/通义千问（阿里，月活1.7亿）</strong>：生态整合最强——阿里系的购物、出行、办公场景全部打通，定位"行政管家"。2026年模型在Agent编程能力上有突破。但产品打磨有瑕疵——用户反馈键盘弹出不丝滑，这种基础交互问题在竞品上不会出现。说明模型能力强不等于产品体验好。</p>
@@ -2709,10 +2706,10 @@ function buildTreeOptimized(list) {
   <div class="card-head"><span class="tag ai">AI</span><div class="card-title">AI-first团队工作方式：工程师做什么？</div></div>
   <div class="core">80-90%代码AI生成，工程师核心是设计运行环境和建立反馈闭环而非写代码</div>
   <div class="card-body">
-    <p><strong>先甩一句定调（这是全场骨架，必须先立住）</strong>：AI-first 团队里工程师的核心工作已经<strong>不是写代码，是设计运行环境、审核 AI 产出、建立反馈闭环</strong>——把代码生成这件事交给 AI，自己退到"搭舞台、把质量、做沉淀"的位置。这句先立住，后面全是给它做支撑。</p>
+    <p><strong>核心定调</strong>：AI-first 团队里工程师的核心工作已经<strong>不是写代码，是设计运行环境、审核 AI 产出、建立反馈闭环</strong>——把代码生成这件事交给 AI，自己退到"搭舞台、把质量、做沉淀"的位置。这句先立住，后面全是给它做支撑。</p>
     <p><strong>把业界公开的 AI-first 实况讲透（这是这道题的灵魂，有公开佐证）</strong>：公开分享的数据是"我们这边会提供大量的工具，大家可能 80-90% 都是 AI 生成的"——他们的工程师流程很清楚：把 PRD 转化成 Claude Code 能理解的运行环境（Prompt、Skill、MCP 配置），让 AI 生成代码，人做 Code Review，建立反馈链路告诉 AI 怎么做得更好，循环优化后才提交走 pipeline。<strong>关键是他们甚至没有代码覆盖率考核</strong>——因为重心已经不在"代码写得全不全"，在"运行环境设计得对不对、反馈闭环转不转得起来"。这个细节主动甩出来，比泛泛说"我们用 Cursor"有说服力十倍。</p>
     <p><strong>补一个腾讯佐证强化（被追问"别人也这样吗"就甩这句）</strong>：腾讯那边连产品经理都在用 AI 写代码直接提 issue——说明这不是小红书一家，是头部公司的共同趋势：编码这件事在下沉，<strong>工程师的核心价值从"写代码"转成"把控质量"</strong>。腾讯面试官还专门追问"Code Review 怎么做的"，说明这个环节在 AI-first 团队是新的主战场，不是走形式。</p>
-    <p><strong>再把工程师新角色拆成三件事逐条念（答题骨架，每件一句）</strong>：① <strong>设计运行环境</strong>——把 Prompt、Skill、MCP 这些配置搭好，让 AI 在正确的上下文里干活，这是"舞台搭好演员才能演好"；② <strong>审核 AI 产出</strong>——Code Review 加质量门控，确保产出可信赖，不是 AI 写完就直接合；③ <strong>建立反馈闭环</strong>——把错误纠正和经验沉淀回去，让 AI 持续变好，不是每次都从零开始。<strong>这三件共同指向一句：编码在贬值，"设计 AI 怎么干活"在升值。</strong></p>
+    <p><strong>再把工程师新角色拆成三件事逐条念</strong>：① <strong>设计运行环境</strong>——把 Prompt、Skill、MCP 这些配置搭好，让 AI 在正确的上下文里干活，这是"舞台搭好演员才能演好"；② <strong>审核 AI 产出</strong>——Code Review 加质量门控，确保产出可信赖，不是 AI 写完就直接合；③ <strong>建立反馈闭环</strong>——把错误纠正和经验沉淀回去，让 AI 持续变好，不是每次都从零开始。<strong>这三件共同指向一句：编码在贬值，"设计 AI 怎么干活"在升值。</strong></p>
     <p><strong>收口落回我自己（桥接，证明不是背概念而是真在做）</strong>：我做的 prd-tools 走的就是 AI-first 团队第一件事的工程化——<strong>不是替人写代码，是把"设计运行环境"做扎实</strong>：用 SKILL.md + workflow.md 把 11 步流水线固化成 Claude Code 能理解的运行环境，用 Reference 六文件给 AI 喂正确的业务上下文，用 Readiness 五维评分 + 证据链把审核做成机制而不是靠人肉。这正是"工程师从写代码转向设计运行环境"的真实落地——模型再强，运行环境设计得松，产出就翻车。<strong>金句收口：AI-first 团队里，代码是 AI 写的，但代码对不对、稳不稳、能不能持续变好，全靠工程师设计的运行环境和反馈闭环——机器替你写，但替不了你把舞台搭好。</strong></p>
   </div>
 </div>
@@ -2722,7 +2719,7 @@ function buildTreeOptimized(list) {
   <div class="core">AI Native 终局不是"AI 帮前端写前端"，是"前后端边界消失"——前端工程师的护城河不再是会前端</div>
   <div class="card-body">
     <p><strong>这题面试官想听的不是你会不会说"AI 提效"这种正确废话，是你有没有从行业前沿实践里提炼出"未来 2-3 年前端工程师的护城河在哪"的判断——京东国际电商面试官亲口讲的方向，是行业最前沿的判断，比泛泛而谈"AI 时代要学新东西"有说服力十倍。</strong></p>
-    <p><strong>先甩一句定调（这是全场骨架）</strong>：AI Native 的终局不是"AI 帮前端写前端"，是<strong>"前后端技术栈边界消失"</strong>——前端工程师的护城河不再是"会前端"，是"会某一类问题的端到端解决"。这句先立住，所有职业规划类问题都靠它收口。</p>
+    <p><strong>核心定调</strong>：AI Native 的终局不是"AI 帮前端写前端"，是<strong>"前后端技术栈边界消失"</strong>——前端工程师的护城河不再是"会前端"，是"会某一类问题的端到端解决"。这句先立住，所有职业规划类问题都靠它收口。</p>
     <p><strong>把京东的实践讲透（这是这道题的灵魂，有公开佐证）</strong>：京东国际电商在推三件事——① <strong>建各业务方向自己的知识库 + 核心资产沉淀 + Skill 规约</strong>（和我做的 prd-tools 高度一致）；② <strong>推进 AI Native 生产范式</strong>，把一个需求涉及的多个角色（PM/前端/后端/QA）压缩到尽可能少；③ <strong>抹平技术栈边界</strong>——后端同学没有一点前端知识也能开发前端 APP 前端页面，前端同学没有后端知识也能做后端的事情。这是面试官原话，行业最前沿判断。</p>
     <p><strong>这个判断对我的直接影响（桥接，证明不是空谈）</strong>：</p>
     <p>· <strong>方向对</strong>：我现在做的 Schema 中台 + AI 工作流，本质就是在抹平前后端边界——Schema 让前端零代码、AI 让 PRD 直接生成 Plan 跨角色。这条路是对的，不是边角料。</p>
@@ -2730,10 +2727,10 @@ function buildTreeOptimized(list) {
     <p>· <strong>能力模型</strong>：从"会前端"迁到"会某一类业务问题的端到端解决"——业务理解 + 系统设计 + AI 工程化能力的组合，比纯前端深度更值钱。</p>
     <p><strong>类比其他大厂佐证（被追问"别人也这样吗"就甩）</strong>：阿里淘天推"Coding Agent 全托管"（前端写需求规约 + AI 写代码）、腾讯推"PM 直接用 AI 写代码提 issue"、小红书搜索团队"80-90% 代码 AI 生成"。共同趋势：编码在下沉，角色边界在消失。<strong>关键不是"AI 帮谁写"，是"哪个角色被压缩"</strong>。</p>
     <p><strong>面试场景怎么用</strong>：</p>
-    <p>· 被问"AI 会不会取代前端" → 翻这张卡 + "前端在 AI 时代能做什么"卡。答"<strong>取代的不是前端，是只会前端的人</strong>"。</p>
-    <p>· 被问"你的职业规划" → 翻这张卡。答"主动补全栈 + 业务深度，从会前端迁到会端到端"。</p>
-    <p>· 被问"为什么看新机会" → 翻这张卡。答"想找 AI Native 实践更前沿的团队，把角色边界抹平这件事做深"。</p>
-    <p>· 反问环节 → 主动问"团队在推 AI Native 吗？怎么做角色压缩？"。这是行业前沿判断，问出来显专业度。</p>
+    <p>· "AI 会不会取代前端" → "<strong>取代的不是前端，是只会前端的人</strong>"。</p>
+    <p>· "你的职业规划" → "主动补全栈 + 业务深度，从会前端迁到会端到端"。</p>
+    <p>· "为什么看新机会" → "想找 AI Native 实践更前沿的团队，把角色边界抹平这件事做深"。</p>
+    <p>· 反问环节 → 主动问"团队在推 AI Native 吗？怎么做角色压缩？"。</p>
     <p><strong>收口金句</strong>：AI Native 的终局是<strong>前后端边界消失</strong>——前端工程师要么主动抹平自己（补全栈 + 业务深度），要么被动被抹平（只守前端深度）。我现在做的 Schema + AI 工作流，正是抹平自己的工程实践。</p>
   </div>
 </div>
@@ -2753,7 +2750,7 @@ function buildTreeOptimized(list) {
   <div class="card-head"><span class="tag ai">AI</span><div class="card-title">AI编程工具横向对比：Cursor vs Copilot vs Claude Code</div></div>
   <div class="core">Cursor=AI编辑器(图形界面全栈)，Copilot=IDE插件(快速补全)，Claude Code=终端CLI(复杂任务最准)</div>
   <div class="card-body">
-    <p><strong>先甩一句定调（这是全场骨架）</strong>：这三家不是同维度竞品——<strong>形态决定定位</strong>：Cursor 是独立 AI 编辑器（VS Code 魔改），GitHub Copilot 是兼容所有 IDE 的插件，Claude Code 是终端 CLI。选哪个不取决于"谁最强"，取决于<strong>你解决什么任务</strong>。这句先立住，后面三家都是给它做支撑。</p>
+    <p><strong>核心定调</strong>：这三家不是同维度竞品——<strong>形态决定定位</strong>：Cursor 是独立 AI 编辑器（VS Code 魔改），GitHub Copilot 是兼容所有 IDE 的插件，Claude Code 是终端 CLI。选哪个不取决于"谁最强"，取决于<strong>你解决什么任务</strong>。这句先立住，后面三家都是给它做支撑。</p>
     <p><strong>① Cursor（图形界面党，全栈日常）</strong>：最大卖点是<strong>图形界面 + 实时预览 + 多模型切换</strong>，Composer 能做多文件协同编辑，前端写页面边写边看效果很顺。短板是闭源付费、资源占用高。我的定位——前端日常开发首选。</p>
     <p><strong>② GitHub Copilot（补全党，免费生态最广）</strong>：本质是 IDE 插件，强在<strong>行内快速补全 + 生态广（VS Code/JetBrains 通吃）+ 免费版可用</strong>，速度快。短板是 Agent 模式有限、复杂多文件任务成功率低。我的定位——写业务代码时的快速补全，不指望它做重构。</p>
     <p><strong>③ Claude Code（CLI 党，复杂任务最准）</strong>：终端 CLI 工具，强在<strong>准确率最高 + 复杂代码库理解 + 多文件修改 + Bash 执行 + 自主循环</strong>，能直接进 CI/CD 跑自动化。配套 Skill 机制 + MCP Server 比 .cursorrules 更工程化。短板是无图形界面、学习曲线陡。我的定位——复杂任务（代码库理解、多文件重构、自动化流水线）必用 Claude Code，它是我日常主力。</p>
@@ -2904,8 +2901,7 @@ function buildTreeOptimized(list) {
   <div class="card-head"><span class="tag proj">架构</span><div class="card-title">代码上下文怎么精准定位？</div></div>
   <div class="core">知识库路由优先定向 → 索引精确扫描 → 全局搜索补充，三轮逐步精准</div>
   <div class="card-body">
-    <p><strong>这道题面试官想听的不是"我用了向量库"，是你能不能讲清"怎么把几万行代码精准收敛成几百行喂给模型"——核心矛盾是 token 预算有限，喂多了爆窗、喂少了幻觉。我答三层递进的扫描策略 + 一个能力面抽象，照念能答出真做过 RAG 的深度。</strong></p>
-    <p><strong>先甩一句定调（这题骨架）</strong>：精准定位不是一次搜出来，是<strong>三轮逐步收敛——知识库路由先定向、索引精确匹配再缩小、全局搜索兜底补漏</strong>。核心思想是"先靠记忆缩小范围，再靠精确匹配锁定，最后才全文搜索"。这一句先立住，下面三层都是给它做支撑。</p>
+    <p><strong>核心定调</strong>：精准定位不是一次搜出来，是<strong>三轮逐步收敛——知识库路由先定向、索引精确匹配再缩小、全局搜索兜底补漏</strong>。核心思想是"先靠记忆缩小范围，再靠精确匹配锁定，最后才全文搜索"。核心矛盾是 token 预算有限，喂多了爆窗、喂少了幻觉。</p>
     <p><strong>业务背景（为什么这题对我特别重要）</strong>：prd-tools 喂 20+ 人用，几万行代码不可能全塞进 prompt——窗口会爆、还 Lost in Middle。所以我必须做到"每次只给 AI 它真正需要的那几百行"。这套三轮扫描就是干这个的：不是堆全量知识，是给模型精准的"导航+锚点"。</p>
     <p><strong>先说给 AI 准备了什么（两层弹药）</strong>：① <strong>静态层</strong>是 6 个 YAML 知识库（目录/枚举/契约/路由映射/编码规则/领域术语）+ 4 个索引文件（实体/边/倒排索引/清单），跑一次 build 全建好；② <strong>动态层</strong>是运行时按需求搜源码。两层的分工是——静态管"导航和约束"，动态管"确认事实"。</p>
     <p><strong>再讲三轮扫描，每轮一句（被问"具体怎么搜"就按这三轮念）</strong>：</p>
@@ -2934,8 +2930,7 @@ function buildTreeOptimized(list) {
   <div class="card-head"><span class="tag ai">AI</span><div class="card-title">AI 输出质量两层架构：provenance vs validation</div></div>
   <div class="core">证据链只解决"结论从哪来"，"结论对不对"靠另一套独立验证机制——这层分层混了就被追穿</div>
   <div class="card-body">
-    <p><strong>这题面试官想考的不是你能不能背证据链实现，是你有没有把"质量保障"做概念分层的能力——混为一谈的回答会被一句话追穿：「你说的证据链只能说明 TRD 是从 PRD 来的，那当然是从 PRD 来的了」。京东国际电商面试官这个逻辑拆解能力极强，他帮我精确定位了一个我之前混淆的设计认知。</strong></p>
-    <p><strong>先甩一句定调（答题骨架）</strong>：AI 输出质量保障分两层——<strong>provenance（溯源）解决"结论从哪来"，validation（验证）解决"结论对不对"</strong>。证据链只是 provenance 这层的实现机制，validation 靠的是另一套完全独立的机制。这句先立住，被任何"怎么保证质量"的追问都不会绕。</p>
+    <p><strong>这题面试官想考的不是你能不能背证据链实现，是你有没有把"质量保障"做概念分层的能力——混为一谈的回答会被一句话追穿：「你说的证据链只能说明 TRD 是从 PRD 来的，那当然是从 PRD 来的了」。京东国际电商面试官这个逻辑拆解能力极强，他帮我精确定位了一个我之前混淆的设计认知。</strong></p>    <p><strong>核心定调</strong>：AI 输出质量保障分两层——<strong>provenance（溯源）解决"结论从哪来"，validation（验证）解决"结论对不对"</strong>。证据链只是 provenance 这层的实现机制，validation 靠的是另一套完全独立的机制。这句先立住，被任何"怎么保证质量"的追问都不会绕。</p>
     <p><strong>逐层念（每层一句，被追问再展开）</strong>：</p>
     <p>· <strong>provenance（溯源）</strong>——每条结论必须可追溯到原始来源（PRD 原文 / 源码 / 技术文档 / Git diff），实现是证据链：EV ID + file:line + confidence。回答"这个结论 AI 怎么得出的"，不是黑盒。</p>
     <p>· <strong>validation（验证）</strong>——结论是否正确，靠三套独立机制：① <strong>人审硬中止</strong>（Spec 生成后必须人工确认才允许生成 Plan）② <strong>字段双向对齐</strong>（Spec 字段 ⊇ 实际改动字段，蒸馏出的字段 ⊆ PRD 字段，双向都查）③ <strong>黄金样本回归</strong>（5-10 个中等复杂度历史需求做 Benchmark，A/B 对比文件覆盖率）。</p>
@@ -2950,7 +2945,7 @@ function buildTreeOptimized(list) {
   <div class="core">LLM 是概率系统，结果对不等于实现稳——稳定性靠把模型约束在固定输出空间，不是靠模型自觉</div>
   <div class="card-body">
     <p><strong>这题面试官的逻辑拆解极强——他会用排序算法举例：「我们要做一个从大到小排序的功能，10 次跑下来可能是冒泡、插入、快排都不一样，但结果都是对的」——一句话点透了"对"和"稳"是两件事。如果你不能立刻识别这个分层，会绕 4 个回合才能追回来（京东这场我就是这样失分）。</strong></p>
-    <p><strong>先甩一句定调（答题骨架）</strong>：LLM 是概率系统，<strong>输出对（correctness）和输出稳（consistency / idempotency）是两件事</strong>。对错靠 validation（见 provenance 卡），稳定靠<strong>把模型约束在固定输出空间</strong>。这句先立住。</p>
+    <p><strong>核心定调</strong>：LLM 是概率系统，<strong>输出对（correctness）和输出稳（consistency / idempotency）是两件事</strong>。对错靠 validation（见 provenance 卡），稳定靠<strong>把模型约束在固定输出空间</strong>。这句先立住。</p>
     <p><strong>再讲怎么把"稳"做成机制（三层约束，被问"幂等怎么保证"就按这三层念）</strong>：</p>
     <p>· <strong>第一层·颗粒度收敛到文件维度</strong>——同一需求拆出的文件路径必须一致。排序的实现可以每次不同（冒泡 vs 快排），但同一个需求涉及的文件列表必须稳定。这是把"自由度"从代码层收到文件层。</p>
     <p>· <strong>第二层·中间产物确定性校验</strong>——每个 step 之间用 Python 脚本检查：上下文消费情况（前置打包的 context bundle 是否被正确读取）+ 锚点覆盖（需求 IR 与代码锚点的匹配度）+ 必传文件是否丢失。这些都是确定性脚本，不依赖模型自觉。</p>
@@ -3061,7 +3056,7 @@ function buildTreeOptimized(list) {
   <div class="card-head"><span class="tag proj">AI</span><div class="card-title">如果让你设计前端Agent？</div></div>
   <div class="core">三个方向按落地优先级——配置校验 > 契约比对 > 需求拆分</div>
   <div class="card-body">
-    <p><strong>先甩一句定调（这题骨架）</strong>：前端 Agent 我不会上来就追最复杂的"PRD 直出代码"，而是按"痛点越具体、基础越现成、风险越可控"排优先级——配置校验 &gt; 契约比对 &gt; 需求拆分。这句先立住，面试官就知道你不是技术自嗨，是真把业务当回事。</p>
+    <p><strong>核心定调</strong>：前端 Agent 我不会上来就追最复杂的"PRD 直出代码"，而是按"痛点越具体、基础越现成、风险越可控"排优先级——配置校验 &gt; 契约比对 &gt; 需求拆分。这句先立住，面试官就知道你不是技术自嗨，是真把业务当回事。</p>
     <p><strong>第一档·配置校验 Agent（最快落地，1-2 周可见效）</strong>：我们 Schema 中台每月 20+ 起新活动，配置上线前最怕联动写错——字段引用不存在、联动表达式语法错、循环依赖。我现在已有<strong>沙箱预渲染</strong>能把配置跑一遍看渲染对不对，但还停在"人眼验收"。升级成 Agent 的关键是把"看对不对"变成"自动定位问题字段并给修复建议"——Agent 读 Schema 结构、对照字段定义库、跑联动模拟，把根因字段圈出来。<strong>这档的 ROI 最清楚：问题在上线前拦住，比线上事故回滚便宜一个数量级。</strong></p>
     <p><strong>第二档·契约比对 Agent（中期价值最大，1-2 个月）</strong>：后端接口变更时，自动比对前后端契约差异、检测前端影响面。本质是把 Reference 知识库里的跨层契约文件 + 变更检测做成 Agent——后端改了一个字段枚举值，Agent 自动通知所有消费方并标记需改动的组件。<strong>这档的痛是真实的</strong>：8 个业务项目共用权益 SDK，后端一改字段，前端到底谁受影响以前靠人记靠吼，现在靠 Agent 自动追踪依赖。<strong>价值大但落地慢一档</strong>，因为要先沉淀出完整的契约文件库。</p>
     <p><strong>第三档·需求拆分 Agent（长期方向，已有 prd-tools 基础）</strong>：PRD → 结构化开发计划的自动化，我在滴滴已经做了完整落地——团队推广版做 PRD→Plan 蒸馏（20+ 人在用），个人另独立设计端到端原型 prd2code-gen 跑通 PRD→Code 完整闭环。<strong>这档放最后不是不重要，是它最重最复杂</strong>——要建知识库、铺证据链、设计质量门控。来这边可以复用知识库 + 证据链的方法论，但<strong>知识库得重新建</strong>（业务领域不同），所以排在长期。</p>
@@ -3073,7 +3068,7 @@ function buildTreeOptimized(list) {
   <div class="card-head"><span class="tag ai">AI</span><div class="card-title">Agent系统怎么设计？（架构级系统设计）</div></div>
   <div class="core">三层架构：推理循环是骨架、工具调用是手脚、记忆管理是大脑，缺一不可</div>
   <div class="card-body">
-    <p><strong>系统设计题的套路是先甩框架再展开——我答三层架构，每层一句话点透，最后落到我自己做过的项目。</strong>先把骨架立住：推理循环是骨架、工具调用是手脚、记忆管理是大脑，缺一个都跑不稳。面试官想听的不是你会多少概念，是你能不能把一张架构图画出来、把数据流讲顺。</p>
+    <p><strong>核心定调</strong>：系统设计题先甩框架再展开。Agent 三层架构——<strong>推理循环是骨架、工具调用是手脚、记忆管理是大脑</strong>，缺一个都跑不稳。面试官想听的不是你会多少概念，是你能不能把一张架构图画出来、把数据流讲顺。</p>
     <p><strong>①推理循环（Perception→Reasoning→Action）</strong>：Agent不是调用一次模型就结束，而是持续循环——感知上下文变化（用户输入/工具返回/环境状态）→推理决策（下一步做什么、用什么工具）→执行动作（调API/读文件/生成代码）→再感知结果变化。关键设计：每轮循环要有明确终止条件（目标达成/达到最大轮次/用户中断），否则会死循环。我的证据链机制本质就是循环内的质量门控——每轮执行后校验产出是否达标，不达标就再推理一轮修正。</p>
     <p><strong>②工具路由（最关键的工程难题）</strong>：核心矛盾——工具越多能力越强，但识别准确率越低。架构解法是两层路由——Router Agent做意图分类，子Agent只从5-8个相关工具里选。具体优化策略（分层路由+动态激活+描述规范）见"Tool多了识别率下降怎么优化"那张卡片，三策略叠加准确率从33%→74%。</p>
     <p><strong>③记忆三层架构</strong>：短期记忆=当前对话上下文（直接放prompt，受窗口限制，超了就用Progressive Summarization压缩旧消息）；长期记忆=跨会话知识沉淀（我的Reference知识库就是这种——6个SSOT文件存项目领域知识，需要时RAG检索注入上下文）；工作记忆=当前任务中间状态（用状态图谱追踪多步骤任务进度，记录"做到哪了、下一步是什么、哪些已完成"，避免Agent丢失任务上下文）。</p>
@@ -3086,8 +3081,8 @@ function buildTreeOptimized(list) {
   <div class="card-head"><span class="tag proj">产品</span><div class="card-title">AI工作流推广ROI</div></div>
   <div class="core">单团队建库1-2天，之后每需求省2.5h，5团队月省125h，但必须扣掉协同成本</div>
   <div class="card-body">
-    <p><strong>这题业务面考的不是"你的工具多强"，是"你能不能像经营一门生意一样算清投入产出比"——只甩"5h→2h"会显得在背技术指标，得把它摊成一张账本：成本多少、收益多少、哪些协同成本必须扣掉。我整理成"一句定调 + 成本一摊 + 收益两本账 + 务实修正 + 推广收口"，照念就答得像个有经营意识的人，不是个只会写代码的。</strong></p>
-    <p><strong>先甩一句定调（这是答题骨架）</strong>：推广一个工具不能只算它省了多少，得算三本账——<strong>建库成本、单需求收益、全链路必须扣的协同成本</strong>。三本账一摆，面试官就知道你不是 PPT 选手，是真把它当产品在经营。这句先立住，后面是给它做支撑。</p>
+    <p><strong>核心定调</strong>：业务面考的不是"你的工具多强"，是"能不能像经营一门生意一样算清投入产出比"。只甩"5h→2h"会显得在背技术指标，得把它摊成一张账本：成本多少、收益多少、哪些协同成本必须扣掉。</p>
+    <p><strong>核心定调</strong>：推广一个工具不能只算它省了多少，得算三本账——<strong>建库成本、单需求收益、全链路必须扣的协同成本</strong>。三本账一摆，面试官就知道你不是 PPT 选手，是真把它当产品在经营。这句先立住，后面是给它做支撑。</p>
     <p><strong>第一本账·建库成本（一次性投入，要诚实说多大）</strong>：单个团队建知识库跑一遍 Reference 蒸馏大概 1-2 天，学习成本约半天（三步上手）。关键亮点是<strong>只建一次</strong>——之后每次产出自动回流更新知识库，不重复建库，所以成本是收敛的不是持续的。这是"边际成本递减"的生意逻辑，业务面听着舒服。</p>
     <p><strong>第二本账·单需求收益（指标要带样本和口径）</strong>：PRD→Plan 单环节每个需求省 2-3 小时人工评审（口径是 5 个中等复杂度需求对照，对照组是人工 Jira 不是纯手写）。摊到 5 个团队、月均 50 需求、每需求 2.5 小时，<strong>月省 125 小时</strong>。纯开发环节一周能从原来缩到 1-2 天。<strong>主动交代这是单环节不是全链路</strong>——这一句最能堵住"那 60% 怎么算"的追穿。</p>
     <p><strong>第三本账·全链路修正（最防吹，业务面必听的诚实段）</strong>：单环节好看但不能拿去当全链路成绩——联调、环境搭建、合作方依赖这些 AI 替代不了的部分要扣回来，<strong>整体提效 20-30%</strong>，排期 10 天的需求现在 7-8 天。主动给这个务实口径比被面试官追问出来强十倍：说明你算过真实账，不是只看自己那段最优。<strong>金句：单环节提效是技术指标，全链路提效才是经营指标——后者才有决策价值。</strong></p>
@@ -3099,7 +3094,7 @@ function buildTreeOptimized(list) {
   <div class="card-head"><span class="tag proj">Schema</span><div class="card-title">架构决策故事：为什么选Schema？</div></div>
   <div class="core">排除了if-else维护和低代码平台的方案，Schema在灵活性和可控性之间取到最优解</div>
   <div class="card-body">
-    <p><strong>这道题考的不是"我选了什么"，是"我排除了什么、为什么、代价是什么"——架构决策的核心是取舍。我讲个决策故事。</strong></p>
+    <p><strong>核心定调</strong>：架构决策的核心是取舍——考的不是"我选了什么"，是"我排除了什么、为什么、代价是什么"。讲个决策故事。</p>
     <p><strong>业务背景先说</strong>：营销中台要支持 20+ 活动类型，还要国际化扩城市。当时的存量方案已经撑不住了。</p>
     <p><strong>当时三个选项</strong>：</p>
     <p>① <strong>继续 if-else 堆逻辑</strong>（存量方案）——排除理由：维护失控。几万行 if-else，新人改一处影响多处，每扩一个城市就加一堆分支，<strong>月均线上问题一二十起</strong>，不可持续。</p>
@@ -3150,7 +3145,7 @@ function buildTreeOptimized(list) {
   <div class="card-head"><span class="tag proj">Schema</span><div class="card-title">线上事故反思 + 基础设施架构判断</div></div>
   <div class="core">事故响应三部曲+容灾架构判断：两地同区域不算真容灾，异地双活才是</div>
   <div class="card-body">
-    <p><strong>这道题考的不是你知不知道那次事故，是你有没有基础设施意识——只会写代码不管部署的工程师天花板很低。</strong></p>
+    <p><strong>核心定调</strong>：考的不是你知不知道那次事故，是你有没有基础设施意识——只会写代码不管部署的工程师天花板很低。</p>
     <p><strong>事故处理方法论（三步，通用）</strong>：① <strong>快速止血</strong>（回滚/降级/摘流量，先恢复服务）；② <strong>根因分析</strong>（不追责，追机制漏洞）；③ <strong>流程改进</strong>（加监控、加校验、加灰度）。我的经验是 yarn.lock 锁版本+CI 加 diff 检测，本质都是第三步——把事故教训固化成机制。</p>
     <p><strong>两地部署都在华南 A/B 合理吗（高频追问）</strong>：不合理。两地部署的目的是容灾——地震、机房断电、光缆被挖断这类区域性故障。两个机房在同一城市甚至同一区域，面对区域性灾难会同时挂掉，失去容灾意义。<strong>真正容灾是异地双活</strong>——北京+广州、华东+华南，物理距离保证不同时受灾。</p>
     <p><strong>短期补偿措施（如果无法异地）</strong>：① 完善降级策略（核心链路有兜底页）；② 多级监控（机房级→服务级→接口级）；③ 预案演练（定期模拟机房级故障验证切换速度）；④ 客户端容错（服务端挂了客户端展示缓存数据不白屏）。</p>
@@ -3215,7 +3210,7 @@ function buildTreeOptimized(list) {
   <div class="card-head"><span class="tag proj">Schema</span><div class="card-title">Schema驱动解决什么类型页面的开发效率？</div></div>
   <div class="core">B端营销配置类页面——表单密集、联动复杂、多国家多业务线配置组合爆炸的场景</div>
   <div class="card-body">
-    <p><strong>这题我答一句话定调——面试官想听的不是"Schema 什么都能做"，是你能不能说清边界。所以我不夸大覆盖范围，主动分三段讲：什么样适合、具体哪几类页面、什么样坚决不用，最后一句收口。</strong></p>
+    <p><strong>核心定调</strong>：不夸大 Schema 覆盖范围，主动分三段讲——什么样适合、具体哪几类页面、什么样坚决不用。</p>
     <p><strong>先甩适用判据（三个特征同时满足收益最大）</strong>：① <strong>表单密集</strong>——页面上 80% 是表单输入、选择、配置，不是自由布局的展示页；② <strong>联动复杂</strong>——字段之间有显隐联动、值联动、跨接口联动，纯手写 if-else 维护成本爆炸；③ <strong>配置组合爆炸</strong>——多国家 × 多业务线 × 多产品线 × 多城市，同样一套页面逻辑要配出几百种组合。这三个特征凑齐的时候，Schema 驱动把"写代码"变成"配数据"，收益才压得过学习成本。</p>
     <p><strong>具体落到哪几类页面（落到我的项目背出来）</strong>：我做过的是营销中台这套——活动配置页（优惠券/折扣/立减的创建编辑）、权益投放页（选城市+产品线+用户标签后配权益内容）、营销规则页（条件组合+动作配置的决策表）、国际化运营页（同一套 Schema 按国家/语言生成不同产物）。一句话归纳它们的共性：<strong>本质都是"配置驱动内容"，不是"设计稿驱动 UI"</strong>——这条共性就是判型的尺子。</p>
     <p><strong>接着主动说"不适合什么"——这是加分项，不是减分项</strong>：我分三类。第一类，<strong>C 端自由布局页面</strong>——首页、详情页这些设计稿驱动、交互复杂的，Schema 描述不了，硬套反而扭曲。第二类，<strong>数据可视化大屏</strong>——图表组合和布局规则跟表单完全两套逻辑，不是一个域。第三类，<strong>高度定制化的交互</strong>——拖拽排序、可视化编辑器这种，配置化方案反而比直接写代码更绕。<strong>主动划这三条边界，面试官就知道你不是只会一个锤子到处敲</strong>。</p>
@@ -3281,7 +3276,7 @@ function buildTreeOptimized(list) {
   <div class="card-head"><span class="tag emer">软技能</span><div class="card-title">最有成就感的事（技术+非技术）</div></div>
   <div class="core">技术上是从0到1搭了SDD体系让AI真正落地业务；非技术上是把个人工具推成了团队基础设施</div>
   <div class="card-body">
-    <p><strong>这道题我先甩一句定调（这是答题骨架）</strong>：最有成就感的事不是写了多少代码，是"做了两件从 0 到 1、且最后变成了团队基础设施的事"——技术上是搭了 SDD 体系让 AI 真正在业务里可落地，非技术上是一个人把个人工具推成了 20+ 人团队的标配。面试官考的是价值观和驱动力，<strong>所以重点不是"我做了什么"，是"从 0 到 1 的设计判断力 + 影响力"</strong>。这一句先立住，后面两层都是给它做证据。</p>
+    <p><strong>这道题我核心定调</strong>：最有成就感的事不是写了多少代码，是"做了两件从 0 到 1、且最后变成了团队基础设施的事"——技术上是搭了 SDD 体系让 AI 真正在业务里可落地，非技术上是一个人把个人工具推成了 20+ 人团队的标配。面试官考的是价值观和驱动力，<strong>所以重点不是"我做了什么"，是"从 0 到 1 的设计判断力 + 影响力"</strong>。这一句先立住，后面两层都是给它做证据。</p>
     <p><strong>先讲业务背景（为什么这件事难、为什么值得做）</strong>：市面上的 AI 编码工具（Cursor、Windsurf）都在解决"从 0 到 1 写新代码"，但真实项目是几万行代码、大量历史逻辑——<strong>怎么让 AI 理解已有项目、产出可信不编的方案</strong>是空白领域。我做 prd-tools 填的就是这个空：把 PRD 自动蒸馏成有证据支撑的开发计划，给团队用。如果 AI 编了个错的方案误导开发，返工成本比纯人工还高——所以可靠性是生命线，也是这件事真正的难点。</p>
     <p><strong>技术层面（核心是"从 0 到 1 的设计判断力"）</strong>：SDD 体系最难的不是写代码，是解决"怎么让 AI 的产出可控可追溯"——我设计了一套三件套：① <strong>证据链</strong>，AI 每条结论必须挂证据 ID 能追溯到 PRD 第几页或代码第几行，搜不到也得显式标 negative_search 不能闷头编；② <strong>质量门禁</strong>，用脚本（quality-gate）对中间产物做五维评分 + 确定性检查，低于阈值直接 fail；③ <strong>Reference 知识库</strong>，让 AI 有项目专属的领域知识。最终结果 PRD→Plan 从 <strong>5h/需求降到 2h/需求</strong>（5 个需求对照），已推广到 20+ 人团队。但比数字更值钱的是——这套体系让团队从"不敢用 AI"变成"信任 AI 的产出"。<strong>这不是一个工具，是一套让 AI 在工程化场景里可信赖的方法论。</strong></p>
     <p><strong>非技术层面（核心是"影响力"）</strong>：prd-tools 最初只是我自己用的 Claude Code Skill，要让其他同事也用起来，我解决了三个问题——第一，<strong>零门槛安装</strong>，一键脚本不需要配环境；第二，<strong>产出标准化</strong>，不管谁跑出来的 Plan 格式都一样能直接拿去技术评审；第三，<strong>信任建立</strong>，前 5 个需求我自己陪着跑、产出跟人工做对比让同事看到差异，验证质量后同事才开始独立用。从"一个人的工具"变成"团队的标配"——这个过程教会我的比写代码多得多：<strong>技术影响力不是技术本身，是让别人愿意用你的技术</strong>。</p>
@@ -3304,7 +3299,7 @@ function buildTreeOptimized(list) {
   <div class="core">我做司机端营销中台，业务方关心拉新CAC、首单转化、留存率这三个——技术工作挂钩业务指标才有价值</div>
   <div class="card-body">
     <p><strong>这题不是考你背指标，是考你做技术的时候有没有业务Sense——字节面试官特别关注这一层。字节TikTok一面被问"业务方关注哪些核心指标"，我卡壳严重（"你比如说""业务方数"），最后讲出来的还是司机运营侧指标（完单率/接单率/调度时长），不是营销侧指标——典型"AI工程化硬伤①数据被追穿"。</strong></p>
-    <p><strong>先甩一句定调（这是骨架）</strong>：我做司机端营销中台，业务方是B端运营，他们关心的核心指标是<strong>司机拉新成本、首单转化率、留存率</strong>这三个。一句话锚定业务侧而不是运营侧——这是关键。</p>
+    <p><strong>核心定调</strong>：我做司机端营销中台，业务方是B端运营，他们关心的核心指标是<strong>司机拉新成本、首单转化率、留存率</strong>这三个。一句话锚定业务侧而不是运营侧——这是关键。</p>
     <p><strong>三个指标逐条（被问就按这套念）</strong>：</p>
     <p>· <strong>拉新侧</strong>：注册→首单转化率（行业基准 ~30%）、单司机获取成本 CAC、活动期间注册量增量。</p>
     <p>· <strong>留存侧</strong>：7日/30日留存率（行业基准 30日 ~30%，Uber 1年留存只有4%，留存是核心痛点）、完单率、调度时长。</p>
@@ -3348,7 +3343,7 @@ function buildTreeOptimized(list) {
   <div class="core">2C 岗位 KPI 是性能体验质量三件套，简历要有移动端性能优化；B 端中台能力模型不通用</div>
   <div class="card-body">
     <p><strong>这题不是面试题，是反问环节面试官亲口透露的岗位 KPI——但它的价值比面试题更大：直接告诉你"这家公司要什么样的人"。京东国际电商面试官反问环节被问"岗位最重要的事"，原话是「首先最基本的是不出线上问题，然后性能体验好，这是最基本的。秒开，FPS 高，I PS 高」。这是 2C 业务的通用 KPI，不只是京东。</strong></p>
-    <p><strong>先甩一句定调（这是骨架）</strong>：2C 业务（独立 APP / 移动端为主）的岗位 KPI 是<strong>性能体验质量三件套</strong>——秒开、FPS、不出线上问题。这和 B 端中台（滴滴国际化的能力模型）是<strong>完全不同的能力模型</strong>，简历和面试讲法必须分场景。</p>
+    <p><strong>核心定调</strong>：2C 业务（独立 APP / 移动端为主）的岗位 KPI 是<strong>性能体验质量三件套</strong>——秒开、FPS、不出线上问题。这和 B 端中台（滴滴国际化的能力模型）是<strong>完全不同的能力模型</strong>，简历和面试讲法必须分场景。</p>
     <p><strong>2C 业务 KPI 速查（被问"岗位 KPI 是什么"就按这套念）</strong>：</p>
     <p>· <strong>不出线上问题</strong>：稳定性第一，故障数 / 故障等级是硬指标。</p>
     <p>· <strong>性能体验好</strong>：秒开（首屏 LCP）、FPS 高（动画流畅）、低内存（不崩）、长列表不卡。</p>
@@ -3379,8 +3374,8 @@ function buildTreeOptimized(list) {
   <div class="card-head"><span class="tag emer">话术</span><div class="card-title">术语迁移怎么不被挑刺（蒸馏/编译/路由借用）</div></div>
   <div class="core">用迁移类词第一句话必须解释为什么借用——否则被挑"花哨包装"，信任崩塌</div>
   <div class="card-body">
-    <p><strong>这题面试官想考的不是你项目的实现，是你<strong>用词的合法性</strong>——这是高级工程师才有的考察维度。京东国际电商面试官一上来就追"我知道模型蒸馏大模型蒸馏成小模型，你这个带个蒸馏是个什么概念"——一句话定调，意思就是"你为什么借用这个词？说不出个所以然来，整个项目我都会认为是花哨包装"。这个考察维度我自己之前没意识到。</strong></p>
-    <p><strong>先甩一句定调（这是骨架）</strong>：用术语迁移类词汇（蒸馏/编译/路由/契约/管道/中台等），<strong>第一句话必须解释为什么借用</strong>——讲不出合理的迁移逻辑，会被认为是花哨包装，整个项目的可信度受牵连。</p>
+    <p><strong>核心定调</strong>：这题考的不是项目实现，是<strong>用词的合法性</strong>——高级工程师才有的考察维度。京东国际电商面试官一上来就追"模型蒸馏大模型蒸馏成小模型，你这个带个蒸馏是个什么概念"——一句话定调，意思就是"你为什么借用这个词？说不出个所以然来，整个项目我都会认为是花哨包装"。</p>
+    <p><strong>核心定调</strong>：用术语迁移类词汇（蒸馏/编译/路由/契约/管道/中台等），<strong>第一句话必须解释为什么借用</strong>——讲不出合理的迁移逻辑，会被认为是花哨包装，整个项目的可信度受牵连。</p>
     <p><strong>常见迁移类词的合理解释（被追问就按这套念）</strong>：</p>
     <p>· <strong>"蒸馏"（PRD → Spec）</strong>：从非结构化自然语言里把需求骨架提炼出来，跟模型蒸馏（参数压缩）的相似点是<strong>"从大杂烩里提纯精华"</strong>。借用这个词是强调"压缩 + 结构化"，不是"训练小模型"。</p>
     <p>· <strong>"编译"（DSL → 代码）</strong>：从一种表示形式翻译成另一种，类似源码→机器码但抽象一层。借用这个词是强调"确定性转换 + 多目标产物"，不是"产二进制"。</p>
@@ -3540,7 +3535,7 @@ function buildTreeOptimized(list) {
   <div class="card-head"><span class="tag emer">软技能</span><div class="card-title">子方向负责人如何做技术规划？</div></div>
   <div class="core">先对齐大团队方向，再盘点现状找差距，按优先级拆解落地，用数据验证效果</div>
   <div class="card-body">
-    <p><strong>先甩一句定调（这是答题骨架）</strong>：子方向负责人做技术规划不是"我想做什么"，是"对齐大方向 → 盘现状找差距 → 按优先级拆解 → 用数据证明做对了"。面试官真正在考的，是你有没有负责人思维——能不能从全局拆到可执行项、会不会排优先级、有没有闭环意识。这一句先立住，后面四步都是给它做证据。</p>
+    <p><strong>核心定调</strong>：子方向负责人做技术规划不是"我想做什么"，是"对齐大方向 → 盘现状找差距 → 按优先级拆解 → 用数据证明做对了"。面试官真正在考的，是你有没有负责人思维——能不能从全局拆到可执行项、会不会排优先级、有没有闭环意识。这一句先立住，后面四步都是给它做证据。</p>
     <p><strong>第一步·对齐（先把自己放进大框架里）</strong>：子方向规划必须嵌在大团队年度目标里，不能偏。比如大团队今年重点是 AI 工程化，子方向就得围绕"AI 怎么提效"做。这里有个要点要主动甩——阿里前端团队的经验是"从业务痛点出发做普适性思考"，不是头疼医头，是把单点痛点抽象成共性的技术问题。这一步答好，面试官就知道你不是只会埋头干活的执行者。</p>
     <p><strong>第二步·盘点现状找差距（这是核心，务必讲透）</strong>：拿稳定性举例，按事前/事中/事后三个维度拆——事前看开发流程、Code Review、军规执行；事中看报警机制、错误码规范、白屏监控覆盖率；事后看复盘机制和经验回流率。每个维度都跟行业标准对标，差距最大的优先做。这一步体现的是"用结构化方法看全局"，比凭感觉拍脑袋强一档。</p>
     <p><strong>第三步·排优先级（考的是取舍判断力）</strong>：不是所有问题同时解决，用"投入-价值"矩阵——横轴成本、纵轴业务价值，右上角（低成本高价值）优先做。这一步主动说一句"明确说哪些先不做"，显你有取舍意识，不是什么都想要。</p>
@@ -3551,8 +3546,8 @@ function buildTreeOptimized(list) {
 
 <!-- ==================== HR面 ==================== -->
 <div class="card" data-c="emer" data-kw="空窗期 裸辞 间隔期 gap 辞职 为什么离职 休息 HR 逐字稿">
-  <div class="card-head"><span class="tag emer">HR</span><div class="card-title">空窗期/裸辞怎么解释？</div></div>
-  <div class="core">空窗期不是扣分项，关键是要讲清楚这段时间在做什么、为什么做、产出了什么</div>
+  <div class="card-head"><span class="tag emer">HR</span><div class="card-title">空窗期/裸辞怎么解释？（HR 专题）</div></div>
+  <div class="core">空窗期不是扣分项，关键是要讲清楚这段时间在做什么、为什么做、产出了什么。通用离职原因见「离职原因四段式」卡</div>
   <div class="card-body">
     <p><strong>回答公式</strong>：客观原因（一句话带过）+ 主动做了什么（重点展开）+ 现在的状态（准备好回归）。</p>
     <p><strong>逐字稿</strong>："上一份工作做了四年，完成了从0到1的架构搭建和落地推广，该验证的都验证完了。离职后我没有急着投简历，而是花了一段时间做两件事——第一，系统梳理了这四年的架构经验，把Schema驱动和AI工程化的方法论沉淀成了一套开源工具；第二，深度体验了市面上的AI Coding产品，建立了对行业的真实感知。现在工具已经开源、方法已经验证，我觉得是时候把这些能力带到更大的场景里去了。"</p>
@@ -3574,7 +3569,7 @@ function buildTreeOptimized(list) {
   <div class="card-head"><span class="tag emer">HR</span><div class="card-title">你最大的失败/挫折是什么？</div></div>
   <div class="core">讲一个真实的、有复盘的、有改进行为的失败，失败不是重点，学到了什么才是</div>
   <div class="card-body">
-    <p><strong>定调</strong>：好的失败回答不是"我没出过事"，是"出过、而且我把教训固化成了机制"。按"事件 → 根因 → 改进 → 现在还在用"四段念，每段不超过 30 秒。</p>
+    <p><strong>定调</strong>：好的失败回答不是"我没出过事"，是"出过、而且我把教训固化成了机制"。按"事件 → 根因 → 改进 → 现在还在用"四段答。</p>
     <p><strong>先念事件本身（30 秒，先立住真实性）</strong>：最大的挫折是 Monorepo 的 yarn 解析器事故——CI 每次自动拉最新依赖，有一次把 resolver 从 rc.31 自动升到了 rc.48，rc 是候选版本本来就不保证稳定，结果新版本和 Node 16 不兼容，所有活动页面发不出去，15 分钟内我先回滚 yarn.lock 让线上活过来。这一段不绕弯，先把"真实发生了什么"讲清楚，面试官就知道你不是背的。</p>
     <p><strong>再念根因（20 秒，这是面试官真正想听的）</strong>：根子不在 resolver 本身，是<strong>我对依赖管理缺乏敬畏</strong>——没锁版本、没 CI 检测、没升级验证流程，谁都能自动升，rc 候选版被当成正式版拉了。这一句主动认领责任，比甩锅给"工具的锅"成熟十倍。讲到这里面试官会接"那后来怎么改的"，正好进下一段。</p>
     <p><strong>接着念改进（30 秒，三道防线，最有价值的一段）</strong>：这次事故后我建了三道防线，后来成了团队的依赖管理规范——① <strong>yarn.lock 加入 git 保护禁止自动升级</strong>；② <strong>CI 加 lockfile diff 检测，依赖变了必须在 PR 里显式说明走 review</strong>；③ <strong>依赖升级强制走 staging 验证</strong>。这一段要主动说"后来这三步也复用到了别的故障处理上"，显你把单次教训抽象成了可复用机制。</p>
@@ -3659,16 +3654,16 @@ function buildTreeOptimized(list) {
 
 <!-- ==================== 应急话术 ==================== -->
 <div class="card" data-c="emer" data-kw="不会 说不出 印象 话术 救命">
-  <div class="card-head"><span class="tag emer">L1</span><div class="card-title">有点印象但说不准确</div></div>
-  <div class="core">说确定部分 → 给合理推测 → 展示验证方向</div>
+  <div class="card-head"><span class="tag emer">L1</span><div class="card-title">不会答 L1·有点印象但说不准确</div></div>
+  <div class="core">说确定部分 → 给合理推测 → 展示验证方向。不会答救市系列，L2 完全没概念见另一张、万能兜底见万能卡</div>
   <div class="card-body">
     <p>"这个知识点我之前遇到过，核心思路是——[能想起来的]，但具体细节我可能说得不够精确。不过从使用场景来看，我觉得它主要解决的是——[合理推测]的问题。"</p>
   </div>
 </div>
 
 <div class="card" data-c="emer" data-kw="不会 完全没概念 算法 做不出">
-  <div class="card-head"><span class="tag emer">L2</span><div class="card-title">完全没概念（算法不会）</div></div>
-  <div class="core">先说暴力思路，再问优化方向</div>
+  <div class="card-head"><span class="tag emer">L2</span><div class="card-title">不会答 L2·完全没概念（算法不会）</div></div>
+  <div class="core">先说暴力思路，再问优化方向。不会答救市系列，L1 有点印象见另一张、万能兜底见万能卡</div>
   <div class="card-body">
     <p>"这道题我一时想不出最优解，但我先说一下初步思路——[暴力解法]。如果时间允许，请问期望的时间复杂度是多少？这样我可以往那个方向优化。"</p>
   </div>
@@ -3683,8 +3678,8 @@ function buildTreeOptimized(list) {
 </div>
 
 <div class="card" data-c="emer" data-kw="万能 兜底 任何 引导">
-  <div class="card-head"><span class="tag emer">万能</span><div class="card-title">万能兜底句式</div></div>
-  <div class="core">永远不要说"我不会"就停了</div>
+  <div class="card-head"><span class="tag emer">万能</span><div class="card-title">不会答·万能兜底句式</div></div>
+  <div class="core">永远不要说"我不会"就停了。不会答救市系列，分级场景见 L1 有点印象 / L2 完全没概念</div>
   <div class="card-body">
     <p><strong>"这个问题我实际遇到过…"</strong> → 锚定项目经验，把话题往熟悉领域引导。</p>
     <p><strong>"如果让我重新设计…"</strong> → 展现反思能力。</p>
@@ -3750,7 +3745,7 @@ function buildTreeOptimized(list) {
 
 <div class="card" data-c="proj" data-kw="AI 工作流 开场 自我介绍 双轨定位 团队推广版 端到端原型 PRD Plan 6步闭环 主动展示 快手 价值定位 核心失分">
   <div class="card-head"><span class="tag proj">AI</span><div class="card-title">AI 工作流开场介绍 · 双轨定位必须主动展示</div></div>
-  <div class="core">单纯讲团队推广版 PRD→Plan 会被判"价值不大"，开场就讲双轨——团队推广版 + 端到端原型</div>
+  <div class="core">单纯讲团队推广版 PRD→Plan 会被判"价值不大"，开场就讲双轨——团队推广版 + 端到端原型。完整介绍见 A10、双轨协同逻辑见 A10 第三阶段</div>
   <div class="card-body">
     <p><strong>核心失分</strong>：这是快手电商一面的核心失分——只讲了团队推广版（PRD→Plan），被面试官明确说"单纯 PRD 到开发计划价值不大"。下次开场必须主动展示<strong>双轨定位</strong>，让面试官 30 秒内听到完整闭环。</p>
     <p><strong>双轨定位（开场一句话）</strong>：我做的 AI 工程工作流分两轨——<strong>① 团队推广版</strong>（PRD→Plan，20+ 人在用，稳定、ROI 高）<strong>② 端到端原型</strong>（PRD→Code 6 步闭环，个人独立设计的下一代探索）。团队推广版是当下 ROI 选择，端到端原型是未来方向。</p>
@@ -3905,8 +3900,8 @@ function buildTreeOptimized(list) {
 </div>
 
 <div class="card" data-c="ai" data-kw="对话压缩 LLMLingua MemGPT 分页 MemWalker 递归摘要 上下文压缩 auto-compaction 90%触发 60-70%释放 Claude Code">
-  <div class="card-head"><span class="tag ai">AI</span><div class="card-title">对话压缩技术（AI 应用核心基建，含 Claude auto-compaction）</div></div>
-  <div class="core">每轮全量上下文扔模型积分秒超，必须自建压缩层；<strong>Claude auto-compaction 90% 触发释放 60-70%</strong></div>
+  <div class="card-head"><span class="tag ai">AI</span><div class="card-title">对话压缩技术（开源生态 + Claude auto-compaction）</div></div>
+  <div class="core">开源四套代表（LLMLingua/MemGPT/MemWalker/渐进式摘要）+ Claude auto-compaction 90% 触发释放 60-70%；基础机制见「多轮对话上下文怎么管理？」卡</div>
   <div class="card-body">
     <p><strong>定调</strong>：大模型应用没有压缩层就不可持续。硬追问是"每一轮都把上下文扔给模型，不用积分就肯定会超"，接不住就暴露。所以这题不是问你会不会压缩，是问你有没有把"压缩"当成 AI 应用的第一公民来设计。</p>
     <p><strong>先讲 Claude 自己怎么压（高频追问——auto-compaction 触发阈值）</strong>：Claude Code 上下文逼近容量极限（<strong>约 90%，剩 10%</strong>）时，自动把旧对话总结成摘要，<strong>一次释放 60-70% 窗口</strong>，用户几乎无感。CLAUDE.md 压缩后重新加载保证项目指令不丢。手动 <code>/compact</code> 主动压、<code>/clear</code> 硬重置。<strong>追问"和 prompt caching 什么关系"→ prompt caching 管单次请求内前缀复用（省 token），auto-compaction 管跨多轮历史压缩（腾窗口），是两层。</strong></p>
@@ -3922,7 +3917,7 @@ function buildTreeOptimized(list) {
 
 <div class="card" data-c="ai" data-kw="RAG 微调 finetune 对比 选型 成本 时效 知识更新">
   <div class="card-head"><span class="tag ai">AI</span><div class="card-title">RAG vs 微调：什么场景用哪个？</div></div>
-  <div class="core">知识频繁变用 RAG，能力/风格固化用微调，最佳实践是 RAG 为主+轻量微调互补</div>
+  <div class="core">知识频繁变用 RAG，能力/风格固化用微调，最佳实践是 RAG 为主+轻量微调互补。RAG 基础概念见 E17</div>
   <div class="card-body">
     <p><strong>这道题我最想强调一句——别选边，说互补。微调解决能力问题（模型会不会），RAG 解决知识问题（模型知不知道），两者根本不在一个维度上，硬比就是答错方向了。</strong></p>
     <p><strong>四个维度快速对比</strong>：① <strong>数据时效</strong>——RAG 换文档就更新，微调的知识冻结在训练那一刻；② <strong>成本</strong>——RAG 只要向量库+检索，微调要 GPU 训练（百万 token 起步），差一个数量级；③ <strong>可控性</strong>——RAG 能溯源（每条答案挂文档 ID），微调是黑盒，错了难定位；④ <strong>场景</strong>——知识问答、企业知识库用 RAG，风格对齐、领域术语、固定输出格式用微调。</p>
@@ -3933,9 +3928,9 @@ function buildTreeOptimized(list) {
 
 <div class="card" data-c="ai" data-kw="RAG Chunking 文档切割 分块 语义 重叠 窗口">
   <div class="card-head"><span class="tag ai">AI</span><div class="card-title">RAG Chunking：文档怎么切才不丢语义</div></div>
-  <div class="core">固定大小最糙、按语义分段中规中矩、按文档结构（章节/段落）最准</div>
+  <div class="core">固定大小最糙、按语义分段中规中矩、按文档结构（章节/段落）最准。RAG 综述见 E17、向量库选型见「RAG 向量数据库怎么选」卡</div>
   <div class="card-body">
-    <p><strong>这道题先甩一句定调——Chunking 决定 RAG 的上限，切得不好检索再强也救不回来。所以这道题答得好不好，不在背几个策略，而在能不能讲清"怎么根据文档选切法"。</strong></p>
+    <p><strong>核心定调</strong>：Chunking 决定 RAG 的上限，切得不好检索再强也救不回来。</p>
     <p><strong>先讲三种切分策略，从糙到精</strong>：① <strong>固定大小</strong>（Fixed-Size）——按 token 数硬切（比如每 512 token 一块），简单粗暴但可能把一句话切两半，只适合快速 demo。② <strong>按语义分段</strong>（Semantic）——基于句子、段落边界切，保留完整语义单元，是主流方案。③ <strong>按文档结构</strong>（Structural）——按 Markdown 标题、HTML 标签、PDF 段落切，最精准但依赖文档格式规整。</p>
     <p><strong>块大小有个取舍（这是面试官爱追问的）</strong>：太小（128 以下）召回精准但上下文不足，模型看不到全貌；太大（1024 以上）上下文足但召回噪声多，检索把不相关的也带进来。主流 256-512 token，长文档可以到 1024。还有个容易漏的硬约束——Embedding 模型本身有 max token 限制（OpenAI ada-002 是 8192，BGE-large-zh 只有 512），块再大也塞不进去。</p>
     <p><strong>三个工程手段防止"切到一半丢语义"</strong>：① <strong>重叠窗口</strong>（Overlap）——相邻块重叠 50-100 token，边界信息两边都留一份；② <strong>句号/换行优先</strong>——遇到句号、感叹号、问号、换行就切，绝不把句子拦腰截断；③ <strong>层级切分</strong>——先切大块再切小块，检索时父子块一起返回（Parent-Child Chunking），既精准又上下文足。</p>
@@ -3958,11 +3953,11 @@ function buildTreeOptimized(list) {
 
 <div class="card" data-c="ai" data-kw="向量数据库 选型 Milvus Pinecone Chroma pgvector Qdrant ANN HNSW IVF RAG 检索">
   <div class="card-head"><span class="tag ai">AI</span><div class="card-title">RAG 向量数据库怎么选？</div></div>
-  <div class="core">小规模 Chroma/pgvector，大规模 Milvus，托管图省事 Pinecone——核心是 ANN 索引</div>
+  <div class="core">小规模 Chroma/pgvector，大规模 Milvus，托管图省事 Pinecone——核心是 ANN 索引。RAG 综述见 E17</div>
   <div class="card-body">
     <p><strong>本质</strong>：被问"向量库怎么选"，别上来就背产品名——先点破本质：向量库的命门是<strong>ANN 近似最近邻检索</strong>（不是精确找最近的，O(N) 太慢，用索引结构快速找"足够近"的），选型本质是在"召回精度、速度、运维成本"三者间做取舍。把这句立住，后面所有产品对比都是这句话的展开。</p>
     <p><strong>核心能力先讲透（被追问索引原理再展开）</strong>：主流两类索引——① <strong>HNSW</strong>（分层小世界图），查询快、召回高，但吃内存，是当前默认选择；② <strong>IVF</strong>（倒排聚类），先聚类再在类内搜，内存省但查询稍慢，适合超大规模。这一句能挡住"你懂不懂底层"的追问。</p>
-    <p><strong>选型分三个维度，顺着业务约束走（这是答题骨架）</strong>：</p>
+    <p><strong>选型分三个维度，顺着业务约束走</strong>：</p>
     <p>· <strong>第一看数据规模</strong>：百万级 Chroma、pgvector 就够；亿级、要水平扩展，上 Milvus（分布式、支持十亿级，但部署运维重，依赖 etcd/MinIO）。</p>
     <p>· <strong>第二看要不要自己运维</strong>：想零运维、不养 DBA，选 Pinecone（全托管 SaaS，贵但省心）；已经有 PG 技术栈，选 pgvector（PG 插件，复用现成运维/事务/SQL 生态，向量+结构化混合查询方便）。</p>
     <p>· <strong>第三看过滤多不多</strong>：元数据过滤密集（先按 metadata 过滤再向量检索），选 Qdrant（Rust 写、过滤能力强）；小规模原型验证，选 Chroma（轻量本地、Python 友好）。</p>
@@ -3973,7 +3968,7 @@ function buildTreeOptimized(list) {
 
 <div class="card" data-c="ai" data-kw="RAG 多路召回 Query Rewrite BM25 向量 RRF 融合">
   <div class="card-head"><span class="tag ai">AI</span><div class="card-title">RAG 多路召回 + Query Rewrite</div></div>
-  <div class="core">单路向量召回准确率 60%，BM25+向量+字段三路融合能到 85%+</div>
+  <div class="core">单路向量召回准确率 60%，BM25+向量+字段三路融合能到 85%+。RAG 综述见 E17</div>
   <div class="card-body">
     <p><strong>这道题答好了能拉开差距——RAG 怎么提升准确率，关键就在检索优化，分三招：先改写 query，再多路召回，最后进阶用自纠正。</strong></p>
     <p><strong>第一招·Query Rewrite（检索前改写）</strong>：用户原话通常口语化、信息不全，比如问"怎么用"，检索系统根本不知道在问什么。要先改写成适合检索的形式。最有效的是 <strong>HyDE</strong>——让 LLM 先生成一个假设答案，再用答案去检索（假设答案和真实文档语义分布更接近）。还有 Step-back（具体问题抽象成大类先查背景）、Sub-query（拆子问题分别查）、Multi-query（生成多个改写并行查）。</p>
@@ -4048,7 +4043,7 @@ function buildTreeOptimized(list) {
   <div class="card-head"><span class="tag ai">AI</span><div class="card-title">LLM 解码策略：贪心 / Beam Search / 采样</div></div>
   <div class="core">LLM 不用 Beam Search（成本高+多样性差），用 Top-P 采样是行业共识</div>
   <div class="card-body">
-    <p><strong>这道题先甩一句定调：解码策略就是"模型生成下一个 token 时怎么选"。三种主流选法——贪心、Beam Search、采样，核心区别是"敢不敢赌概率"。然后我会重点讲为什么 LLM 时代 Beam Search 被淘汰了。</strong></p>
+    <p><strong>核心定调</strong>：解码策略就是"模型生成下一个 token 时怎么选"。三种主流选法——贪心、Beam Search、采样，核心区别是"敢不敢赌概率"。</p>
     <p><strong>业务背景</strong>：大模型生成是逐 token 的——每一步先算出整个词表的概率分布（logits），再决定选哪个 token。选法直接决定三件事：输出稳定性、多样性、成本。调错要么重复啰嗦、要么发散跑题，还可能烧 token。所以这是 LLM 工程化的基础题。</p>
     <p><strong>三种策略（从最确定到最自由）</strong>：① <strong>贪心解码</strong>（Greedy）——每步无脑取概率最大的 token。最简单最稳定，但容易陷进局部最优，输出爱重复（"我很开心我很开心"）。② <strong>Beam Search</strong>——同时维护 B 条候选路径，每步都把 B 条全展开、再砍回 top-B。本质是"保留多个备胎，最后选整体最优"。机器翻译时代是标配。③ <strong>采样</strong>（Sampling）——按概率分布随机抽，概率大的更可能被选中，但小的也有机会。配合 Top-P/Top-K/温度控制发散程度。</p>
     <p><strong>核心问题：为什么 LLM 不用 Beam Search（这是面试真正考点）</strong>：① <strong>成本爆炸</strong>——B=4 意味着每步要算 4 倍计算量，长文本生成成本根本扛不住。② <strong>多样性差</strong>——它偏爱"高概率"路径，输出又稳又"中庸"、没个性，开放场景（对话、创意）效果反而差。③ <strong>场景不匹配</strong>——Beam Search 适合有"标准答案"的任务（翻译、摘要有参考译文），而 LLM 主要做开放生成，没有唯一正确解。④ <strong>有研究背书</strong>——Google 2022 论文《Beam Search is not Sufficient for Open-Ended Generation》系统论证了它在开放生成上的缺陷。</p>
@@ -4226,8 +4221,8 @@ function buildTreeOptimized(list) {
 </div>
 
 <div class="card" data-c="emer" data-kw="离职原因 跳槽 四段式 成长空间 主动选择 不逃避">
-  <div class="card-head"><span class="tag emer">行为</span><div class="card-title">离职原因四段式（每场必问）</div></div>
-  <div class="core">不是逃避，是主动选择；4 年 0-1 验证完成，找更大场景</div>
+  <div class="card-head"><span class="tag emer">行为</span><div class="card-title">离职原因四段式（通用模板·每场必问）</div></div>
+  <div class="core">不是逃避，是主动选择；4 年 0-1 验证完成，找更大场景。空窗期专题见另一张、公司定制见大麦「为什么看机会」卡</div>
   <div class="card-body">
     <p><strong>四段式标准答案</strong>：</p>
     <p>· <strong>[角色]</strong>：我在滴滴国际化 4 年，从 0 到 1 建了 Schema 中台和 prd-tools AI 工作流。</p>
@@ -4327,8 +4322,8 @@ function buildTreeOptimized(list) {
 </div>
 
 <div class="card" data-c="emer" data-kw="大麦 自我介绍 30秒 定制 Schema 权益 AI 虎鲸文娱 开场">
-  <div class="card-head"><span class="tag emer">大麦</span><div class="card-title">大麦定制自我介绍（30 秒）</div></div>
-  <div class="core">三条线 + 一条兜底，对齐大麦 B 端配置 + C 端上新 + AI</div>
+  <div class="card-head"><span class="tag emer">大麦</span><div class="card-title">大麦定制自我介绍（30 秒·公司定制）</div></div>
+  <div class="core">三条线 + 一条兜底，对齐大麦 B 端配置 + C 端上新 + AI。通用模板见「1 分钟自我介绍」卡</div>
   <div class="card-body">
     <p><strong>核心句（15 秒）</strong>：面试官好，我是邓泽霖，滴滴国际化高级前端 4 年，连续 2 年 A 绩效。在滴滴做了三件事：<strong>Schema 驱动营销中台 + 400+ 权益组件库 + AI 工程工作流</strong>，这三块和大麦业务高度对口。</p>
     <p><strong>展开（按大麦业务锚点）</strong>：</p>
@@ -4356,8 +4351,8 @@ function buildTreeOptimized(list) {
 </div>
 
 <div class="card" data-c="emer" data-kw="大麦 反问 面试官 团队 AI 研发 抢票架构 分工 千问教训">
-  <div class="card-head"><span class="tag emer">大麦</span><div class="card-title">大麦反问 3 件套</div></div>
-  <div class="core">个人强相关 + 技术深度 + 团队情况，避免宏大战略</div>
+  <div class="card-head"><span class="tag emer">大麦</span><div class="card-title">大麦反问 3 件套（公司定制）</div></div>
+  <div class="core">个人强相关 + 技术深度 + 团队情况，避免宏大战略。通用方法论见「反问策略分级」卡、团队画像见「大麦国际团队画像」卡</div>
   <div class="card-body">
     <p>⚠️ <strong>千问教训</strong>：Q43 问"近半年最重要 1-2 件事"被当面批评"跟你关系不大"。反问必须个人强相关。</p>
     <p><strong>第 1 问（个人强相关·必问）</strong>：这岗位具体哪个团队？我看大麦有 C 端购票、B 端主办方、营销增长几条线，前端在不同团队分工边界？进来后预期重点参与哪个方向？</p>
@@ -4370,8 +4365,8 @@ function buildTreeOptimized(list) {
 </div>
 
 <div class="card" data-c="emer" data-kw="大麦 为什么看机会 为什么选大麦 淘天 蚂蚁 离职 跳槽 虎鲸文娱">
-  <div class="card-head"><span class="tag emer">大麦</span><div class="card-title">为什么看机会 + 为什么选大麦</div></div>
-  <div class="core">成长到顶+想深入AI工程化+虎鲸文娱C端上新场景对口</div>
+  <div class="card-head"><span class="tag emer">大麦</span><div class="card-title">为什么看机会 + 为什么选大麦（公司定制）</div></div>
+  <div class="core">成长到顶+想深入AI工程化+虎鲸文娱C端上新场景对口。通用模板见「离职原因四段式」卡</div>
   <div class="card-body">
     <p><strong>核心句</strong>：成长空间到顶 + 想深入 AI 工程化 + 大麦业务场景对口。</p>
     <p><strong>四段式</strong>：</p>
@@ -4444,8 +4439,8 @@ function buildTreeOptimized(list) {
 </div>
 
 <div class="card" data-c="emer" data-kw="TikTok 自我介绍 定制 客服工作台 智能客服 全球化 Schema AI 国际化">
-  <div class="card-head"><span class="tag emer">TikTok</span><div class="card-title">TikTok SEP 定制自我介绍（30 秒）</div></div>
-  <div class="core">四条线对齐：Schema→工作台配置 / 组件库→多业务 / AI→智能客服 / 国际化→全球化</div>
+  <div class="card-head"><span class="tag emer">TikTok</span><div class="card-title">TikTok SEP 定制自我介绍（30 秒·公司定制）</div></div>
+  <div class="core">四条线对齐：Schema→工作台配置 / 组件库→多业务 / AI→智能客服 / 国际化→全球化。通用模板见「1 分钟自我介绍」卡</div>
   <div class="card-body">
     <p><strong>核心句（15 秒）</strong>：面试官好，我是邓泽霖，滴滴国际化高级前端 4 年，连续 2 年 A 绩效。在滴滴做了三件事：<strong>Schema 营销中台 + 400+ 权益组件库 + AI 工程工作流</strong>，外加<strong>10+ 国家国际化实战</strong>，这四块和 TikTok 客服平台的中后台 + AI + 全球化方向高度对口。</p>
     <p><strong>展开（按 TikTok 业务锚点）</strong>：</p>
@@ -4489,8 +4484,8 @@ function buildTreeOptimized(list) {
 </div>
 
 <div class="card" data-c="emer" data-kw="TikTok 反问 面试官 智能客服 高并发 团队 Agent RAG 约面">
-  <div class="card-head"><span class="tag emer">TikTok</span><div class="card-title">TikTok 反问 3 件套</div></div>
-  <div class="core">岗位团队边界 + AI 研发现状/高并发架构 + 团队协作</div>
+  <div class="card-head"><span class="tag emer">TikTok</span><div class="card-title">TikTok 反问 3 件套（公司定制）</div></div>
+  <div class="core">岗位团队边界 + AI 研发现状/高并发架构 + 团队协作。通用方法论见「反问策略分级」卡</div>
   <div class="card-body">
     <p><strong>第 1 问（个人强相关·必问）</strong>：TikTok SEP 这岗位具体在哪个团队？客服平台下有工作台/工单/智能客服几条线，前端在不同团队分工边界？进来后预期重点参与哪个方向？</p>
     <p><strong>第 2 问（技术深度·二选一）</strong>：</p>
@@ -4517,8 +4512,8 @@ function buildTreeOptimized(list) {
 <!-- ==================== 补充卡片 v2 · 蚂蚁专属（3 张） ==================== -->
 
 <div class="card" data-c="emer" data-kw="蚂蚁 自我介绍 开场 定制 财富 AI Lab Agent Schema 金融 45秒">
-  <div class="card-head"><span class="tag emer">蚂蚁</span><div class="card-title">蚂蚁财富 AI Lab 定制自我介绍（45 秒）</div></div>
-  <div class="core">三线对齐 Agent 工作流 + 金融稳定性 + AI 体验，收尾点资损防控</div>
+  <div class="card-head"><span class="tag emer">蚂蚁</span><div class="card-title">蚂蚁财富 AI Lab 定制自我介绍（45 秒·公司定制）</div></div>
+  <div class="core">三线对齐 Agent 工作流 + 金融稳定性 + AI 体验，收尾点资损防控。通用模板见「1 分钟自我介绍」卡</div>
   <div class="card-body">
     <p><strong>核心句（15 秒）</strong>：面试官好，我是邓泽霖，滴滴国际化高级前端 4 年，连续 2 年 A 绩效。我做过的三件事跟财富 AI Lab 高度对口。</p>
     <p>① <strong>Agent 工作流（最对口 JD）</strong>：独立设计 prd-tools，Claude Code 双 Skill，PRD→Spec→Plan 11 步蒸馏，靠证据链 + 三层质量门控保证产出可控，5h→2h/需求。JD 要的"Agent 编排 + Claude Code 工作流"就是我的主场。</p>
@@ -4596,8 +4591,8 @@ function buildTreeOptimized(list) {
 </div>
 
 <div class="card" data-c="bagu" data-kw="Web Vitals LCP FCP INP CLS TTFB 性能指标 Core Web Vitals">
-  <div class="card-head"><span class="tag bagu">基础</span><div class="card-title">前端性能指标（LCP/FCP/INP/CLS + Web Vitals）</div></div>
-  <div class="core">Core Web Vitals 三大指标：LCP（加载）+ INP（交互）+ CLS（视觉稳定）</div>
+  <div class="card-head"><span class="tag bagu">基础</span><div class="card-title">前端性能指标 LCP/FCP/INP/CLS + Web Vitals（指标定义）</div></div>
+  <div class="core">Core Web Vitals 三大指标：LCP（加载）+ INP（交互）+ CLS（视觉稳定）。优化手段见 #11 全链路</div>
   <div class="card-body">
     <p><strong>Core Web Vitals 三大核心</strong>：</p>
     <p>· <strong>LCP（Largest Contentful Paint）</strong>：最大内容渲染时间。指标 <2.5s 良好，>4s 差。优化：CDN + HTTP/3 + critical CSS 内联 + 图片优先级。</p>
@@ -4915,8 +4910,8 @@ function buildTreeOptimized(list) {
 </div>
 
 <div class="card" data-c="ai" data-kw="评测 4层 Eval L1结构 L2行为 L3语义 L4成本 regression diff baseline 短路 G-Eval llm-judge 阻断 CI 实验 experiment_id">
-  <div class="card-head"><span class="tag ai">L3</span><div class="card-title">4 层 Eval 架构（结构短路 + 回归阻断）</div></div>
-  <div class="core">L1 结构 0 LLM 短路省钱 + L2 行为 tsc+断言 + L3 语义 G-Eval + L4 成本；regression diff &gt; 5% 阻断 CI</div>
+  <div class="card-head"><span class="tag ai">L3</span><div class="card-title">4 层 Eval 架构（实操·结构短路 + 回归阻断）</div></div>
+  <div class="core">L1 结构 0 LLM 短路省钱 + L2 行为 tsc+断言 + L3 语义 G-Eval + L4 成本；regression diff &gt; 5% 阻断 CI。方法论见 E28、概念入门见「AI Evals是什么」卡</div>
   <div class="card-body">
     <p><strong>"你怎么评测 LLM 产物质量"——大厂 AI 必问。答"用 BLEU/ROUGE"是上世代答案,答"人工看一眼"是不懂工程,当代答案是 L1-L4 流水线 + regression diff + baseline 对比。</strong></p>
     <p><strong>L1-L4 流水线（核心架构，每层有明确职责）</strong>：</p>
