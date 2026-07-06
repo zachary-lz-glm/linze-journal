@@ -2210,20 +2210,6 @@ function buildTreeOptimized(list) {
   </div>
 </div>
 
-<div class="card" data-c="ai" data-kw="Agent 评测 评估 规划 工具使用 自反思 多步评估 LLM Judge Win Rate 人工验证">
-  <div class="card-head"><span class="tag ai">AI</span><div class="card-title">Agent评测怎么做？跟LLM评测有什么区别？</div></div>
-  <div class="core">LLM评测是单轮输入输出，Agent评测是多步决策+工具调用的完整轨迹评估</div>
-  <div class="card-body">
-    <p><strong>这道题的核心区分：LLM 评测是"给输入看输出对不对"（一次判定），Agent 评测是"给任务看整个执行轨迹好不好"（规划/工具/恢复/结果全程看）。复杂度不在一个量级。</strong></p>
-    <p><strong>业务背景</strong>：prd-tools 是 Agent 工作流，光看最终 plan 对不对不够——得看规划合不合理、工具选对没、出错能不能恢复。所以 Agent 评测比 LLM 评测难得多。</p>
-    <p><strong>Agent 评测三个维度</strong>：① <strong>规划能力</strong>——任务分解合不合理、步骤顺序对不对、有没有漏关键步骤（评测：跟人工黄金路径比，算步骤覆盖率和顺序准确率）；② <strong>工具使用</strong>——选对工具没、参数对没、该调时调了不该调时没乱调（BFCL 专测，评测：工具选择准确率+参数正确率+无效调用率）；③ <strong>自反思与恢复</strong>——出错能发现吗、能修正吗、修正后改善了吗（评测：故意构造会出错的场景，观察恢复行为）。</p>
-    <p><strong>三种评测方法（组合用）</strong>：① <strong>LLM-as-Judge</strong>（强模型评 Agent 输出，可扩展但有误差，需先跟人工校准）；② <strong>Win Rate</strong>（两 Agent 做同任务比谁好，适合对比配置/模型，HelloAgents 等框架支持）；③ <strong>人工验证</strong>（金标准但不可扩展，抽样 LLM Judge 做交叉验证）。</p>
-    <p><strong>落到我的项目（桥接）</strong>：prd-tools 的 Evidence Index 是 Agent 评测简化版——每步产出有溯源证据，能事后审计"结论从哪来"；Readiness Score 是自动化评分。端到端原型 prd2code-gen 的 eval 闭环更进一步——llm-judge 五维独立评分 + R01/R02 对照量化迭代效果。完整 Agent 评测的下一步是构造标准 PRD 测试集做版本间 Win Rate。</p>
-    <p><strong>收口金句</strong>："Agent 评测比 LLM 评测复杂一个量级——不是评一次输出，是评整个执行轨迹：规划、工具选择、错误恢复。跟自动驾驶评测一个道理，不只看终点到没到，看全程开得安不安全。"</p>
-    <p class="hint">念法：核心区分钩子（轨迹评测非单次）→ 业务背景（Agent工作流评全程）→ 三维度（规划/工具/恢复）→ 三方法（Judge/WinRate/人工）→ 落 prd-tools（Evidence+Readiness+prd2code-gen eval）→ 自动驾驶金句收口。</p>
-  </div>
-</div>
-
 <div class="card" data-c="ai" data-kw="量化 提效 准确率 覆盖率 基线 ROI 度量 prd-tools 效果评估">
   <div class="card-head"><span class="tag ai">追问</span><div class="card-title">怎么量化 AI 工程工具的效果？</div></div>
   <div class="core">基线对比 + 文件覆盖率，分三个维度答</div>
@@ -2507,18 +2493,6 @@ function buildTreeOptimized(list) {
   </div>
 </div>
 
-<div class="card" data-c="ai" data-kw="成本 Token 压缩 记忆 效果 权衡 幻觉 稳定性">
-  <div class="card-head"><span class="tag ai">D27</span><div class="card-title">大模型成本优化策略</div></div>
-  <div class="core">效果vs成本权衡：更贵模型≠更好效果，用工程手段补齐短板</div>
-  <div class="card-body">
-    <p><strong>这题我答一句话定调——成本优化的核心不是换便宜的模型，是"用工程约束换可靠性"，让中等模型也能跑出贵模型的效果。</strong></p>
-    <p><strong>先说为什么必考、为什么有空间</strong>：我做的 prd-tools 喂 20+ 人用，每天几十次调用，如果每次都无脑把全量上下文塞进 prompt，token 账单会爆炸、稳定性还会劣化（上下文越长越贵、还容易 Lost in Middle）。真实场景里"更好模型 + 更长上下文"既贵又未必更准——必须找效果和成本的甜蜜点。</p>
-    <p><strong>我从三层往下控</strong>：第一层是 <strong>Token 管理</strong>——上下文预算管控，只传必要信息（用 Reference 知识库做预筛选，不一次性全量灌入）、渐进式披露（按需检索按需注入）、中间产物靠文件传递（Skill 之间不重复传上下文，省的是真金白银的 token）。第二层是 <strong>记忆压缩</strong>——对话历史不能每轮全传，要做压缩（类似 MemGPT 思路），大厂普遍自研对话压缩去掉无关信息只留关键上下文。第三层是 <strong>工程手段补短板</strong>——这是我最深的实践：用质量门控（L1 前置检查 + L2 distill 门禁 + L3 final 评分）、证据链、Spec Review 硬停止这些工程机制弥补模型能力不足，而不是简单堆更贵的模型。</p>
-    <p><strong>落到我的项目</strong>：prd-tools 的多层门控就是这个思路——把 T/P 参数定死（T=0.2、P=0.95 让一致性从 40 拉到 85），主流程走确定性编排不烧钱，只在自修复那段开 Agent Loop 兜底。<strong>一句话收口：该确定的地方用工程锁死，该开放的地方才花 token 让模型发挥</strong>——这才是成本优化的本质。</p>
-    <p class="hint">念法：定调金句（用工程约束换可靠性，不是换便宜模型）→ 业务背景（prd-tools 喂 20+ 人、越长越贵+Lost in Middle）→ 三层（Token 管理/记忆压缩/工程补短板）→ 落 prd-tools（多层门控+T=0.2/P=0.95 一致性 40→85+确定性编排只在自修复开 Agent Loop）→ 金句收口（该确定锁死该开放才花 token）。被问"为什么不直接换 GPT-5/最贵模型"→ 工程兜底比换模型稳且省。</p>
-  </div>
-</div>
-
 <div class="card" data-c="ai" data-kw="Skills Claude Code SKILL.md workflow.md Agent system prompt 调用原理 function calling">
   <div class="card-head"><span class="tag ai">AI</span><div class="card-title">Claude Code Skills 调用原理</div></div>
   <div class="core">Skills通过system prompt注入，模型按指令匹配触发</div>
@@ -2675,32 +2649,6 @@ function buildTreeOptimized(list) {
     <p>· <strong>语义缓存 = Memoization模式</strong>。相似请求直接返回缓存结果，本质就是函数式编程里的记忆化——相同的输入不重复计算。</p>
     <p>· <strong>Flow Engineering = 状态机</strong>。用LangGraph把Agent行为建模成确定性状态转换，跟XState或Redux管理前端状态是同一个模式——节点是处理步骤，边是跳转规则。</p>
     <p><strong>面试用法</strong>：被问"AI和传统工程有什么关系"时，用这个映射表快速展示跨领域理解力。能说出三组以上映射的候选人很少。</p>
-  </div>
-</div>
-
-<div class="card" data-c="ai" data-kw="Function Calling 详解 Tools 区别 Tool Use 机制 协议 schema 运行时 安全 模型不执行">
-  <div class="card-head"><span class="tag ai">AI</span><div class="card-title">Function Calling详解 + Tools vs Function Calling区别</div></div>
-  <div class="core">FC 是机制（模型输出调用意图，运行时执行）——Tools/Tool Use 是新名字，三者一回事</div>
-  <div class="card-body">
-    <p><strong>先澄清一个名字坑</strong>：Function Calling、Tools、Tool Use 是同一个机制的不同叫法——OpenAI 最早叫 Function Calling（GPT-4 时代），后改名 Tools；Anthropic 一直叫 Tool Use。面试混用没事，能说清演变说明你跟过这领域。</p>
-    <p><strong>核心是一句话：模型只决定"调什么、传什么参数"，真正执行的是你的运行时代码。</strong>这是关键的安全设计——模型不直接跑代码，它只输出一个结构化的 tool_call（工具名+参数的 JSON），你的代码拿到后才真正执行（发 API、查数据库）。执行权在你手里，所以你能加白名单、限流、审计。</p>
-    <p><strong>完整链路是个五步循环</strong>：① 开发者定义工具 schema（name + 参数 JSON Schema + description，description 写得好不好直接决定模型选不选得对）→ ② 模型拿到用户输入+工具定义，靠语义判断要不要调、调哪个（不是关键词匹配）→ ③ 输出 tool_call JSON（只表达意图，不执行）→ ④ 运行时执行真正的函数拿结果 → ⑤ 结果作为新消息注入上下文，模型看到后继续推理。循环到不再调工具为止。</p>
-    <p><strong>MCP vs Function Calling（高频追问）</strong>：两者不是替代是配合。FC 是模型侧内置能力（绑厂商，如 OpenAI），管"决策"；MCP 是协议层（不绑模型），管"工具怎么标准化连接、跨模型复用"。实际架构：MCP 负责把工具标准化暴露，FC 负责模型选哪个工具。</p>
-    <p><strong>落到我的项目</strong>：prd-tools 跑在 Claude Code 里，用的就是这套机制——两个 Skill（/reference 构建知识库、/prd-distill 蒸馏 PRD）本质是封装好的 Tool Use 工作流：模型按 Skill 指令决策（读哪些 PRD、查哪些代码），真正的确定性计算交给 .prd-tools/scripts/ 里的运行时脚本（build-index、context-pack、quality-gate）。正好体现"模型决策 + 运行时执行"的分离——智能靠模型，可靠靠脚本。</p>
-    <p class="hint">念法：先澄清名字（FC/Tools/Tool Use）→ 核心一句（模型决策、运行时执行）→ 五步循环 → MCP vs FC（决策 vs 连接）→ 落 prd-tools（Skill+scripts 分离）。</p>
-  </div>
-</div>
-
-<div class="card" data-c="ai" data-kw="长期记忆 短期记忆 记忆方案 设计 向量存储 知识库 摘要 Claude Code Memory 文件 持久化">
-  <div class="card-head"><span class="tag ai">AI</span><div class="card-title">长期记忆vs短期记忆分别怎么做？</div></div>
-  <div class="core">短期靠上下文窗口+压缩，长期靠外部存储+检索注入，两者靠 Memory 文件桥接</div>
-  <div class="card-body">
-    <p><strong>这道题抓住一个核心：短期记忆管"当前对话"，长期记忆管"跨对话的知识"，两者之间靠"检索-注入"桥接——这个桥接做得好不好，决定了 Agent 是"每次从零开始"还是"越用越懂你"。</strong></p>
-    <p><strong>短期记忆</strong>：就是当前对话的上下文窗口。容量有限（Claude 200K，但有效利用更小），对话越长越满。管理核心是压缩——怎么在有限窗口里保留最多有效信息（具体方案见「上下文压缩 & Token 预算总表」卡）。核心矛盾：信息保留 vs Token 成本。</p>
-    <p><strong>长期记忆</strong>：对话结束就消失的信息，得持久化到外部。三种载体按场景选：① <strong>向量存储</strong>（Chroma/Pinecone）——语义检索，适合大文档；② <strong>结构化文件</strong>（Markdown/JSON）——精确可读，适合规则和决策；③ <strong>知识图谱</strong>（Neo4j）——关系推理，适合实体密集场景。大多数场景前两种就够，知识图谱只在实体密集时才值得投入。</p>
-    <p><strong>关键是桥接（检索-注入）</strong>：长期记忆不会自动出现在短期记忆里。每次对话开始：① 用当前任务检索长期记忆里的相关内容；② 注入到 system prompt 当背景；③ 对话结束时把本轮关键决策写回长期记忆。Claude Code 的 CLAUDE.md/Memory 文件就是这个桥接——Markdown 既能让人读，又能注入模型。</p>
-    <p><strong>落到我的项目</strong>：prd-tools 的 reference 6 文件（01-codebase 到 05-domain）就是长期记忆的结构化文件实现——把项目知识沉淀成可检索的 YAML，每次蒸馏前按需检索注入（context-pack 做这件事），产出后再把新知识回流（reference 的 Mode E 反馈回流）。我选结构化文件而非向量，因为代码场景的事实要精确可审计，不能靠语义近似。</p>
-    <p class="hint">念法：核心一句（短期vs长期+桥接）→ 短期压缩 → 长期三载体 → 桥接检索注入 → 落 prd-tools（reference 6 文件+Mode E 回流，为何选结构化不用向量）。</p>
   </div>
 </div>
 
@@ -2862,19 +2810,6 @@ function buildTreeOptimized(list) {
     <p><strong>前端视角桥接（这是 AI 高级前端岗的加分项，必带）</strong>：搜索工具里前端体验最好的是 <strong>Perplexity</strong>——搜索结果分卡片展示，每个来源有独立引用标签可点击溯源，答案和来源左右分栏让验证信息变得自然，追问输入框始终在底部不遮挡内容。它解决的是一个真问题：<strong>AI 生成的内容用户怎么验证可信度</strong>——通过引用溯源加左右分栏对比，把"AI 说的对不对"的判断成本降到最低。这是前端设计对产品核心问题的直接贡献，也是我做 prd-tools 时"证据链可溯源"同一个产品直觉的来源：让 AI 产出可验证、可追溯，比让 AI 产出更多更值钱。</p>
     <p><strong>方法层收口（拔高，证明你有评价标准不是凭感觉）</strong>：好的产品回答要带三层——① 事实层（每个产品优缺点你看到什么）；② 判断层（你觉得谁最好、为什么）；③ 方法层（你的评价标准是什么——交互丝滑度、场景匹配度、用户心智清晰度）。能说到第三层，面试官就知道你不只是用户，有产品视角。<strong>金句收口：好的产品不是功能最多的，是用户知道什么时候该用它的——产品定位的清晰度，比模型能力的强弱更决定留存。</strong></p>
     <p class="hint">念法：钩子（不是考背参数，是考感知力和审美，笼统说"都不错"没判断）→ 一句定调立骨架（不比谁模型强比谁定位清晰：豆包体验娱乐/千问生态/Kimi深度/可灵垂直）→ 四家各一段（每家一句优缺点+本质一句话：豆包用体验换深度/千问模型强≠体验好/Kimi用深度换广度/可灵工具非助手）→ 判断层必敢下（最好的是 Kimi，定位最清晰，敢说谁最好比说都不错显判断力）→ 前端桥接（Perplexity 引用溯源+分栏把"AI 对不对"判断成本降到最低，=我做 prd-tools 证据链可溯源同一产品直觉）→ 方法层金句收口（好产品不是功能最多是用户知道何时该用，定位清晰度比模型强弱更决定留存）。被问"你觉得谁最好"必须敢下判断别和稀泥，被问"前端在 AI 产品里能贡献什么"甩 Perplexity 桥接段。</p>
-  </div>
-</div>
-
-<div class="card" data-c="ai" data-kw="AI时代 最重要 能力 判断力 审美 领域深度 系统思维 前端 核心竞争力 学习能力">
-  <div class="card-head"><span class="tag ai">AI</span><div class="card-title">AI时代最重要的能力是什么？</div></div>
-  <div class="core">不是编码速度也不是框架熟练度，是判断力——知道什么是对的，什么是好的</div>
-  <div class="card-body">
-    <p><strong>这题面试官想听的绝对不是"会用AI提效"这种正确废话，是你对"AI时代人还值不值钱"有没有想透——笼统说"AI很强人要学习"会显得没判断。我把它整理成"一个钩子 + 三种能力逐条 + 前端三层路径 + 项目桥接"，照念就能答得有格局又不空。</strong></p>
-    <p><strong>先甩个钩子定调（这是全场骨架）</strong>：AI时代最重要的能力，<strong>不是编码速度也不是框架熟练度，是判断力——知道什么是对的、什么是好的</strong>。理由一句话立住：AI写代码越来越强（C端能到70%、中后台已可用），今天你花一周写的代码，AI可能半天搞定——继续在"写得快"这个维度卷，是在和一台越跑越快的机器赛跑，必输。所以真正升值的，是机器替代不了的那部分。</p>
-    <p><strong>我认为最值钱的是三种能力（一个比一个难被替代）</strong>：① <strong>判断力（最核心，必先讲）</strong>——面对模糊需求能判断优先级，面对AI产出能判断质量好坏，面对技术选型能判断利弊。这能力来自业务理解加踩坑经验，AI给不了。模型能生成十个方案，但选哪个、改哪里、什么算合格，这需要人拍板。② <strong>系统设计能力</strong>——能把复杂问题拆成可执行的架构方案，不是"写代码"是"知道代码应该怎么组织"。Agent时代工程师从执行者变设计者，设计AI的工作流、质量门控、异常恢复；不会设计只会写代码的人会被取代。③ <strong>领域深度加学习能力</strong>——对某个业务有足够深的理解，同时能快速学新领域。AI能给你信息，但给不了对业务的真实感知——"这个字段为什么不能改"、"这个接口为什么这么设计"，这种隐性知识只能靠积累。</p>
-    <p><strong>前端具体能做什么（三层递进，越往后越不可替代）</strong>：① <strong>编码层</strong>——用AI提效，把重复性工作交给Agent，这是起点不是终点；② <strong>编排层</strong>——设计AI的工作流和质量保障体系，做Agent的架构师，这才是工程师的新主场；③ <strong>交互层</strong>——设计人和AI协作的新交互形态（对话式UI、智能表单、实时反馈），这是前端独占的地盘，模型再强最终和用户交互的还是前端。一句话：越往后越值钱，越往前越容易被替代。</p>
-    <p><strong>收口落回我的项目（桥接，证明不是空谈）</strong>：我做 prd-tools 时感触最深的就是这一点——这个工具的核心价值不是"让AI写代码更快"，是<strong>把人的判断力固化成可复用的工程约束</strong>：哪些PRD信息关键、Spec是否完整、Plan是否可行，这些都是判断；我做的事是用证据链锁事实、用quality-gate五维评分卡住质量，把"判断"从靠人脑变成靠机制可审计。<strong>金句收口：编码能力在贬值，判断力、系统设计、领域深度在升值——前端工程师要从"写代码的人"进化成"设计AI怎么干活的人"。机器能替你写，但替不了你想清楚。</strong></p>
-    <p class="hint">念法：钩子（不是考"会用AI"，是考"人还值不值钱"，定调金句=判断力最值钱）→ 为什么贬值（C端70%/中后台已可用，和写得快的机器赛跑必输）→ 三能力逐条（判断力最核心模型替不了/系统设计=执行者变设计者/领域深度=隐性知识只能积累）→ 前端三层路径（编码层起点→编排层主场→交互层独占地盘，越往后越值钱）→ 落 prd-tools（判断力固化成证据链+quality-gate五维）→ 金句（机器能替你写替不了你想清楚）。被问"AI会不会取代前端"直接甩三能力+三层路径。</p>
   </div>
 </div>
 
@@ -3642,17 +3577,6 @@ function buildTreeOptimized(list) {
   </div>
 </div>
 
-<div class="card" data-c="emer" data-kw="为什么离开 换工作 看机会 离职 原因 动机">
-  <div class="card-head"><span class="tag emer">软技能</span><div class="card-title">为什么看新机会？</div></div>
-  <div class="core">在现有平台收获很大但成长边际递减，想找个更大的场景继续验证方法论</div>
-  <div class="card-body">
-    <p>先感恩再说原因。<strong>滴滴国际化四年给了我特别好的成长机会</strong>，从0到1建了Schema驱动的营销中台，架构设计、跨团队协作、从业务痛点抽象技术方案这些能力都是在这练出来的。</p>
-    <p><strong>然后说为什么走</strong>：两个原因。第一是成长空间——架构已经跑通了，业务进入稳定迭代期，每天做的事就是接需求改配置，新技术探索空间有限。第二是方法论验证——Schema驱动和AI工作流这些方法论，在一个BU内部已经验证了，但到底有多大通用性？我想到更大的平台、更复杂的场景去验证。</p>
-    <p><strong>被问"为什么不去内部活水"</strong>：认真考虑过，但活水只能换业务线不能换技术天花板。同一个公司的技术栈和组织模式差不多，跳槽能接触不同的技术文化和工程规模，这种成长是活水给不了的。而且我选择跳槽是主动的职业选择，不是在逃避什么。</p>
-    <p class="hint">核心原则：说"拉力"不说"推力"。强调"我想获得什么"而非"前公司有什么问题"。必须先肯定现有平台，否则面试官会觉得不懂感恩。</p>
-  </div>
-</div>
-
 <div class="card" data-c="emer" data-kw="优点 缺点 优势 不足 自我评价">
   <div class="card-head"><span class="tag emer">软技能</span><div class="card-title">你的优点和缺点？</div></div>
   <div class="core">优点：从业务中抽象架构 + 全流程质量把控。缺点：架构方案表达力有上限</div>
@@ -4362,21 +4286,6 @@ function buildTreeOptimized(list) {
     <p><strong>收口金句</strong>："Prompt Engineering 是写好一句话，Loop Engineering 是设计好一个系统。2026 年价值重心从'会调 AI'转向'能设计让 AI 自驱的循环'——这是 Boris Cherny'我不再写 prompt'的真正含义。"</p>
     <p><strong>面试场景 · 被面试官说"噱头"怎么接（不要盲从）</strong>：快手电商一面面试官说"五破（疑似 Loop 的某个具体落地工具）就是个噱头"——候选人跟着说"对特定场景可能有点帮助"，<strong>这是失分点</strong>。正确接法分两层：① <strong>概念本身不噱头</strong>——Boris Cherny 是 Claude Code 创始人，原话 "my job is to write loops, not prompts"，是 Anthropic 官方在推的范式；② <strong>噱头的是落地过度营销</strong>——很多团队把 Loop 包装成银弹，但实际场景有限（参考 Loopmaxxing 反模式卡）；③ <strong>礼貌坚持自己的判断</strong>："概念本身不噱头，噱头的是过度营销的落地。<strong>批量同构任务</strong>适合 Loop，<strong>需要深度业务判断</strong>不适合，<strong>跨上下文长链路</strong>容易爆上下文。"被面试官下"噱头"判断不要盲从——先确认概念本质，再分清"概念本身" vs "落地过度营销"。</p>
     <p class="hint">念法：Boris名言钩子（不再写prompt）→ 核心转变（用AI→设计系统让AI自驱）→ 四要素（目标/行动/验证/反馈）→ vs Prompt Eng → vs Agentic Workflow → 工程实现 → 落 prd-tools（自验证自修复+eval闭环+Cron触发）→ 金句 → <strong>被说噱头怎么接（概念不噱头+落地过度营销+三类场景）</strong>。2026加分点。</p>
-  </div>
-</div>
-
-<div class="card" data-c="ai" data-kw="Prompt Loop 范式 跃迁 Copilot Cursor Claude Code 四次 协作">
-  <div class="card-head"><span class="tag ai">AI</span><div class="card-title">从 Prompt 到 Loop：四次范式跃迁</div></div>
-  <div class="core">补全(2020)→对话(2022)→Agent(2024)→Loop(2026)，每次跃迁人的角色都退一层</div>
-  <div class="card-body">
-    <p><strong>这道题讲 AI 协作的四次范式跃迁——核心规律：每次跃迁，人的手离代码远一层，离系统设计近一层。</strong></p>
-    <p><strong>1.0 补全时代（2020-2021）</strong>：GitHub Copilot 代表。AI 补全下一行，打字时被动触发，粒度单行/小函数，价值是减少打字量。本质"高级语法糖"。<strong>工程师角色 = 打字员</strong>。</p>
-    <p><strong>2.0 对话/增强开发（2022-2023）</strong>：Cursor、ChatGPT 代表。开发者主动 chat，AI 参与代码讨论和重构，粒度整个文件/函数，价值辅助思考/debug。本质"配对编程"。<strong>角色 = 对话者</strong>。</p>
-    <p><strong>3.0 Agent 化执行（2024-2025）</strong>：Claude Code、Codex 代表。人给 prompt，Agent 自主规划执行多步骤任务，粒度跨文件跨模块，价值任务级自动化。本质"任务外包"。<strong>角色 = prompt 工程师</strong>。</p>
-    <p><strong>4.0 Loop Engineering（2026-）</strong>：自治循环系统。事件/定时器触发，人不在循环里，粒度持续性项目级任务，价值是"AI 替代自己"做持续工作。代表：Claude Code /loop、Cursor Background Agent、Devin Sleep Mode。本质"自驱系统"。<strong>角色 = loop 设计师</strong>。</p>
-    <p><strong>什么时候选哪个（不是后面就更好，是组合用）</strong>：1.0 单文件小改动补全；2.0 重构/debug/设计讨论；3.0 明确任务边界（写测试、改 bug、生成 demo）；4.0 持续性监控、自动化运维、issue-driven 开发。</p>
-    <p><strong>收口金句（落项目）</strong>："AI 协作四次跃迁——Copilot 补全、Cursor 对话、Claude Code Agent、Loop Engineering。我项目 4 个范式都在用：日常编码 Copilot、重构讨论 Cursor、PRD 蒸馏 Claude Code Agent、自验证自修复是 Loop。"</p>
-    <p class="hint">念法：核心规律钩子（人退层、靠系统设计）→ 四时代快速过（补全/对话/Agent/Loop 各一句+角色）→ 选型（组合非替代）→ 金句落项目（4范式都在用）。</p>
   </div>
 </div>
 
@@ -5176,7 +5085,7 @@ function buildTreeOptimized(list) {
     <p><strong>第三招·Batch 批处理（异步场景必上）</strong>：Anthropic / OpenAI 都有 Batch API，成本降 50%，代价是 24h 内返回。适合非实时场景：批量打标签、批量生成 embeddings、批量内容审核。实时聊天不能用，但后台任务必上。</p>
     <p><strong>第四招·增量蒸馏（Context Engineering 维度）</strong>：不是省单价，是省 token 数。把几万行代码/长文档蒸馏成结构化知识库（如 prd-tools 的 Reference 六文件），每次请求按需检索相关片段拼进上下文——比把全量塞进去省 90% token。本质 = RAG 的工程化变体。</p>
     <p><strong>金句收口</strong>：成本控制不是省钱，是工程能力——Caching 省前缀、路由配任务、Batch 攒异步、蒸馏减 token，四招组合才是工业级。只会用 mini 模型是入门，会组合才是工程师。</p>
-    <p><strong>落到我的项目</strong>：prd-tools 是四招全用的样本——Caching（Reference 六文件稳定前缀走 cache）；模型路由（PRD 摄入走 Opus、术语抽取走 Haiku）；蒸馏（核心机制，几万行代码→6 文件）；Batch（Mode E 反馈回流走批处理）。loop 系统额外加一层：worker:reviewer = 4:1，粗活（改写）多派、精活（复核）少派，间接成本控制。</p>
+    <p><strong>落到我的项目</strong>：prd-tools 是四招全用的样本——Caching（Reference 六文件稳定前缀走 cache）；模型路由（PRD 摄入走 Opus、术语抽取走 Haiku）；蒸馏（核心机制，几万行代码→6 文件）；Batch（Mode E 反馈回流走批处理）；<strong>T/P 参数定死（T=0.2、P=0.95 让一致性从 40 拉到 85，确定性优先）</strong>。loop 系统额外加一层：worker:reviewer = 4:1，粗活（改写）多派、精活（复核）少派，间接成本控制。</p>
     <p class="hint">念法：钩子（ToB 必问，大部分人只答"用 mini"太浅）→ 四招总览（Caching/路由/Batch/蒸馏组合省 70%+）→ Caching（前缀复用，省 90%/85%）→ 模型路由（三层：Haiku/Sonnet/Opus 按任务配，错配代价决定）→ Batch（异步省 50%）→ 蒸馏（Context Engineering 省 90% token）→ 金句（成本控制是工程能力）→ 落 prd-tools 四招全用 + loop worker:reviewer 比例。被问"你们一个月烧多少"翻这张+量化数据。</p>
   </div>
 </div>
