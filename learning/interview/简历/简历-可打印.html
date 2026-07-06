@@ -170,6 +170,106 @@
     }
     .display.math{display: block; text-align: center; margin: 0.5rem auto;}
   </style>
+  <style>
+    @page { size: A4; margin: 14mm 14mm; }
+    * { box-sizing: border-box; }
+
+    /* 覆盖 pandoc 默认 */
+    header#title-block-header, h1.title, .title { display: none; }
+
+    body {
+      font-family: -apple-system, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue", sans-serif;
+      font-size: 10.2pt;
+      line-height: 1.55;
+      color: #222;
+      background: #fff;
+      max-width: 42em;
+      margin: 0 auto;
+      padding: 40px 56px;
+    }
+
+    /* 头部:姓名 + 联系方式 + 头像 */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 18px;
+      margin-bottom: 8px;
+    }
+    .header .info { flex: 1; }
+    .header .photo {
+      width: 78pt;
+      height: 104pt;
+      object-fit: cover;
+      border-radius: 3px;
+      border: 0.5px solid #ddd;
+      margin: 0;
+    }
+    .header h1 {
+      font-size: 22pt;
+      margin: 0 0 3pt 0;
+      color: #1a1a1a;
+      letter-spacing: 0.5pt;
+      font-weight: 700;
+    }
+
+    h2 {
+      font-size: 11.5pt;
+      color: #1A2B4A;
+      border-bottom: 0.6pt solid #cccccc;
+      padding-bottom: 2pt;
+      margin: 12pt 0 5pt 0;
+      font-weight: 700;
+      letter-spacing: 0.3pt;
+    }
+
+    h3 {
+      font-size: 11pt;
+      margin: 9pt 0 2pt 0;
+      color: #1a1a1a;
+      font-weight: 700;
+      padding-left: 6pt;
+      border-left: 2.5pt solid #1A2B4A;
+    }
+
+    p { margin: 4px 0; }
+    ul { margin: 4px 0 4px 0; padding-left: 18px; }
+    li { margin: 2px 0; }
+
+    /* 加粗 = Navy 加粗(技术词强调) */
+    strong {
+      color: #1A2B4A;
+      font-weight: 700;
+    }
+
+    /* 项目副标题 = 9pt 灰 */
+    em {
+      color: #555;
+      font-size: 9pt;
+      font-style: normal;
+      display: block;
+      margin: 1px 0 3px 0;
+    }
+
+    a { color: #1A2B4A; text-decoration: none; }
+
+    hr {
+      border: none;
+      border-top: 0.4pt solid #e0e0e0;
+      margin: 8px 0;
+    }
+
+    h1 + p { font-size: 11pt; font-weight: 600; color: #1A2B4A; margin-bottom: 2px; }
+    h1 + p + p { font-size: 9.2pt; color: #555; }
+
+    h2, h3 { break-after: avoid; page-break-after: avoid; }
+    li { break-inside: avoid; }
+
+    @media print {
+      body { padding: 0; max-width: none; font-size: 10.2pt; }
+      .header .photo { width: 78pt; height: 104pt; }
+    }
+  </style>
 </head>
 <body>
 <header id="title-block-header">
@@ -193,26 +293,23 @@ href="https://github.com/zachary-lz-glm">github.com/zachary-lz-glm</a></p>
 <ul>
 <li><strong>Spec-Driven Development Platform</strong> — 一次蒸馏产出
 plan.md 三段式(开发计划 + QA 矩阵 + 回滚方案) + final-quality-gate 5
-维准出报告;需求耗时 <strong>5h → 2h/需求</strong>,<strong>20+
-人团队</strong>推广;消融实验:去掉证据链层产物评分 <strong>82 →
-54</strong>。</li>
+维准出报告;需求耗时 <strong>5h → 2h/需求</strong>,20+
+人团队推广;消融实验:去掉证据链层产物评分 <strong>82 → 54</strong>。</li>
 <li><strong>Multi-Agent 自动化流水线</strong> — 自动产出 <strong>18
-个生产版本</strong>(v233 → v251),真实运行 <strong>6
-个月+</strong>,<strong>长跑 100+ 轮</strong>负担不变。</li>
+个生产版本</strong>(v233 → v251),真实运行 6 个月+,长跑 100+
+轮负担不变。</li>
 <li><strong>Schema 驱动营销中台 + 400+ 权益组件库</strong> — 4
-年大厂业务硬证据:覆盖 <strong>10+ 国家 / 20+ 活动类型 / 8
-业务项目</strong>。</li>
+年大厂业务硬证据:覆盖 10+ 国家 / 20+ 活动类型 / 8 业务项目。</li>
 </ul>
 <hr />
 <h2 id="专业技能">专业技能</h2>
 <p><strong>AI / Agentic Workflow</strong>:Claude Code Skill 工作流 ·
 Sub-agent 编排 · Multi-Agent 编排 · RAG(混合检索) · Prompt Engineering ·
 Context Engineering · MCP 协议 · Function Calling / Tool Use ·
-Eval(产物质量门禁) · Embedding 选型 · Vector Database</p>
-<p><strong>前端工程</strong>:React + TypeScript · 状态管理(Redux /
-Zustand)· Node.js Serverless BFF · 组件库设计(SDK 抽象 + Rollup 双模打包
-+ Changesets)· Lerna + Nx Monorepo · Schema 驱动架构 ·
-微前端(qiankun)</p>
+Eval(产物质量门禁)</p>
+<p><strong>前端工程</strong>:React + TypeScript · Node.js Serverless BFF
+· 组件库设计(Rollup 双模打包 + Changesets)· Lerna + Nx Monorepo · Schema
+驱动架构 · 微前端(qiankun)</p>
 <p><strong>工程效能</strong>:CI/CD 流水线 · Sentry 监控 · Service Worker
 缓存 · 自动化测试(Vitest / Jest)</p>
 <hr />
@@ -241,19 +338,17 @@ Claude Code + MCP 用 RAG + verified_by 证据链解决这一企业级 AI
 <li><strong>6 文件 SSOT 知识库 + 混合检索</strong> — 历史代码 / PRD /
 跨层契约蒸馏成 6 个 yaml(代码结构 / 编码规则 / 契约 / PRD 路由 /
 业务领域 / 实体索引),配合倒排索引 + 实体图,按需检索入上下文</li>
-<li><strong>三 plan 完整闭环</strong> — 一次蒸馏产出 plan.md
-三段式(开发计划精确到行号 + QA 矩阵 + 回滚方案) + final-quality-gate 5
-维准出报告(完整性 / 一致性 / 可追溯 / 可行性 / 风险),区别于单点 PRD→Plan
-工具</li>
-<li><strong>verified_by 证据链</strong> — 每条事实附带 file:line
-溯源,源码 Read 后才写入,禁止推断,降低 AI 编码幻觉</li>
-<li><strong>Spec Review Gate</strong> — Spec 必须用户 approved 才能进入
+<li>三 plan 完整闭环 — 一次蒸馏产出 plan.md 三段式(开发计划精确到行号 +
+QA 矩阵 + 回滚方案) + final-quality-gate 5 维准出报告,区别于单点
+PRD→Plan 工具</li>
+<li>verified_by 证据链 — 每条事实附带 file:line 溯源,源码 Read
+后才写入,禁止推断,降低 AI 编码幻觉</li>
+<li>Spec Review Gate — Spec 必须用户 approved 才能进入
 Plan,避免错误计划被开发执行</li>
 </ul>
 <p><strong>量化产出</strong>:需求理解阶段耗时 <strong>5h → 2h /
-需求</strong>(5 个需求对照);文件级覆盖率 <strong>80%+</strong>;同一 PRD
-跑 10 次一致性 <strong>40% → 85%+</strong>(产物稳定性指标);<strong>20+
-人团队</strong>生产环境推广,后端基于此迭代。</p>
+需求</strong>(5 个需求对照);文件级覆盖率 80%+;同一 PRD 跑 10 次一致性
+40% → 85%+ (产物稳定性指标);20+ 人团队生产环境推广,后端基于此迭代。</p>
 <p><strong>消融实验</strong>:去掉证据链层,产物评分 <strong>82 →
 54</strong>,验证证据链是必需层而非可选层。</p>
 <hr />
@@ -266,16 +361,14 @@ Plan,避免错误计划被开发执行</li>
 工程化的核心瓶颈之一。本系统让 AI 自动持续优化自己的产出。</p>
 <p><strong>核心技术</strong>:</p>
 <ul>
-<li><strong>Multi-Agent 上下文隔离</strong> — 独立 Context
+<li>Multi-Agent 上下文隔离 — 独立 Context
 Window,主调度只收一行简报(信息压缩 + 主流程解耦)</li>
-<li><strong>失败自动回滚</strong> — commit 前结构自检,失败立即回滚</li>
-<li><strong>风格漂移防护</strong> — 每轮重读样板,对抗 LLM 长跑漂移</li>
+<li>失败自动回滚 — commit 前结构自检,失败立即回滚</li>
+<li>风格漂移防护 — 每轮重读样板,对抗 LLM 长跑漂移</li>
 </ul>
 <p><strong>量化产出</strong>:自动产出 <strong>18
-个生产版本</strong>(v233 → v251,跨度 <strong>6
-个月+</strong>);生产环境无破坏性
-commit;主调度上下文与运行轮次解耦,<strong>长跑 100+
-轮</strong>负担不变。</p>
+个生产版本</strong>(v233 → v251,跨度 6 个月+);生产环境无破坏性
+commit;主调度上下文与运行轮次解耦,长跑 100+ 轮负担不变。</p>
 <hr />
 <h3 id="schema-驱动营销中台-400-权益组件库">Schema 驱动营销中台 + 400+
 权益组件库</h3>
@@ -286,18 +379,16 @@ Lerna + Nx · Rollup</em></p>
 立减)全生命周期。传统方式每新增一种需前后端各写一套,周期长易错。</p>
 <p><strong>核心技术</strong>:</p>
 <ul>
-<li><strong>BFF Template Engine + 双重求值联动(自研 DSL)</strong> —
-safeEval 求初值 + 序列化运行时指令</li>
-<li><strong>Dynamic Rendering</strong> — 35+ 组件注册表 + 发布订阅</li>
-<li><strong>Register 注册模式</strong> — 运行时注册权益,新增无需改
-SDK</li>
-<li><strong>Monorepo 治理</strong> — Lerna + Nx 管理 15+ 业务模块</li>
+<li>BFF Template Engine + 双重求值联动(自研 DSL) — safeEval 求初值 +
+序列化运行时指令</li>
+<li>Dynamic Rendering — 35+ 组件注册表 + 发布订阅</li>
+<li>Register 注册模式 — 运行时注册权益,新增无需改 SDK</li>
+<li>Monorepo 治理 — Lerna + Nx 管理 15+ 业务模块</li>
 </ul>
-<p><strong>量化产出</strong>:新增活动前端
-<strong>零代码</strong>,上线周期 <strong>2 周 → 3 天</strong>;权益库覆盖
-<strong>8 个业务项目 / 400+ SKU</strong>(底层组件 30-40 个),新权益接入
-<strong>2 天 → 2 小时</strong>,运行 <strong>18 个月+</strong> 仅 2-3
-起小 bug。</p>
+<p><strong>量化产出</strong>:新增活动前端零代码,上线周期 <strong>2 周 →
+3 天</strong>;权益库覆盖 <strong>8 个业务项目 / 400+
+SKU</strong>(底层组件 30-40 个),新权益接入 2 天 → 2 小时,运行 18 个月+
+仅 2-3 起小 bug。</p>
 <hr />
 <h2 id="教育背景">教育背景</h2>
 <p><strong>黑龙江大学</strong> ｜ 计算机科学与技术 ｜ 本科 ｜ 2018.09 -
