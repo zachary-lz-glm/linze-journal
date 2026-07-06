@@ -189,7 +189,8 @@ body{overscroll-behavior-y:contain}
     <p>② <strong>代码锚定</strong>——涉及修改/删除的操作，必须有源码级锚点（具体文件+行），不能凭空推断"应该改某个文件"。静态分析+精准匹配定位，没锚点就拦。</p>
     <p>③ <strong>多层门控</strong>——摄入阶段检查 PRD 读取质量，Spec 阶段硬停止等人确认才允许生成 Plan，最终用 quality-gate.py 做五维评分（PRD 摄入/证据覆盖/代码搜索/契约对齐/计划完整）+ 五项确定性检查。低于阈值直接 fail。</p>
     <p><strong>再加反馈回流（防退化）</strong>：每次蒸馏的新知识更新 reference 知识库（Mode E），配合已验证的 golden case 集做回归——改了知识库要重跑基准案例，确保不劣化才上线（消融实验证明去掉证据链层 Readiness 从 82 掉到 54）。</p>
-    <p class="hint">念法：先亮观点（靠流程不靠模型）→ 业务背景（20+人团队、返工成本）→ 三机制（证据链/代码锚定/多层门控，带 negative_search 和 quality-gate 五维）→ 反馈回流防退化（消融 82→54）。prd-tools 主线必讲。</p>
+    <p><strong>Spec 后硬停止的本质是 HUMAN GATE（哲学视角升级，被问"人和 AI 怎么分工"必答）</strong>：人不是被替代，是转为<strong>裁判</strong>——我做"出题的人"（定方向·拍架构），AI 做"搬砖的人"（批量生成），五维 QG + 门禁脚本做"当眼睛的人"（联调·给反馈），Spec 后我做"把门的人"（每个 commit 授权）。这不是人和 AI 的分工问题，是<strong>AI 时代工程师角色重定义</strong>——靠机制约束才能扛住 20+ 人天天用。讲到这一层，面试官就知道你不只在用 AI，在思考 AI 工程化的组织级本质。</p>
+    <p class="hint">念法：先亮观点（靠流程不靠模型）→ 业务背景（20+人团队、返工成本）→ 三机制（证据链/代码锚定/多层门控，带 negative_search 和 quality-gate 五维）→ 反馈回流防退化（消融 82→54）→ <strong>HUMAN GATE 收口（人是裁判不是搬运工，转出题/眼睛/把门/搬砖四角色，AI 时代工程师重定义）</strong>。prd-tools 主线必讲。</p>
   </div>
 </div>
 
@@ -201,9 +202,10 @@ body{overscroll-behavior-y:contain}
     <p><strong>业务背景（先讲为什么做）</strong>：市面上的 AI 编码工具（Cursor、Windsurf）都是解决"从 0 到 1"写新代码。但真实项目是几万行代码、大量历史逻辑，<strong>怎么让 AI 理解已有项目的需求</strong>是空白领域。prd-tools 就填这个空——把 PRD 自动蒸馏成有证据支撑的开发计划。</p>
     <p><strong>弯路（30秒，体现踩过坑）</strong>：一开始我用 MCP 做，两周发现不管怎么优化 prompt，准确率就是上不去。定位到根因——<strong>MCP 是单次调用模式，但需求分析需要多轮上下文和复杂论证</strong>，这是架构级瓶颈，不是调优能解决的。关键认知：选错架构，再多优化都白费。</p>
     <p><strong>突破方案（1分钟，亮架构）</strong>：转向 Agent + Skill 工作流模式——自研 Reference 六文件 SSOT（项目知识结构化）+ 多轮搜索（Agent Loop 不是单次）+ 证据链验证（每条结论可追溯）。这套让 PRD→Plan 从 5h/需求降到 2h/需求，已推广到 20+ 人团队。</p>
+    <p><strong>精准定位升级（被问"和 Cursor 区别"必答，是这道题的硬度核心）</strong>：更精准的分类不是"已有项目 vs 新项目"，是<strong>问题类型</strong>——有标准答案的问题（架构/算法/模板代码/性能优化）AI 几乎一次过，Cursor/Copilot 已解决；涉及业务约定的问题（联调反馈/字段细节/跨服务约定）<strong>每条线都得 8-14 次迭代</strong>。prd-tools 解决的就是后者。<strong>Reference 六文件本质是「把规范做进代码」</strong>——不靠 AI 上下文记忆、不占 token、写代码时天然遵循。从"靠 prompt 提醒"升级到"工程化注入"，这才是已有项目 AI 理解的破局点，也是 MCP 弯路的根因——单次调用没法把规范做进流程。</p>
     <p><strong>核心收获（收口）</strong>：AI 工程的难点不在调 prompt，在架构选型——单次调用 vs 多轮 Agent，决定了能力上限。我走过的弯路，让我对"什么场景该用 Agent 而不是简单工具调用"有体感。</p>
     <p><strong>备选（偏传统前端时）</strong>：选 Schema 引擎——营销中台月均 10+ bug，自研 Schema 渲染引擎后归零。</p>
-    <p class="hint">念法：选prd-tools → 背景30秒（已有项目AI理解空白）→ 弯路30秒（MCP单次瓶颈）→ 突破1分钟（Agent+Skill+证据链，5h→2h）→ 收口（架构选型决定上限）。控制2分钟内。</p>
+    <p class="hint">念法：选prd-tools → 背景30秒（已有项目AI理解空白）→ 弯路30秒（MCP单次瓶颈）→ 突破1分钟（Agent+Skill+证据链，5h→2h）→ <strong>精准定位升级（被问和 Cursor 区别必答：标准答案一次过 vs 业务约定 8-14 次，Reference 是把规范做进代码）</strong> → 收口（架构选型决定上限）。控制2分钟内。</p>
   </div>
 </div>
 
@@ -270,9 +272,10 @@ body{overscroll-behavior-y:contain}
   <div class="core">双轨：团队推广版三阶段 PRD→Spec→Plan（20+ 人在用），端到端原型 prd2code-gen 6 步 PRD→Code 已跑通</div>
   <div class="card-body">
     <p><strong>双轨定位（先说清楚再展开）</strong>：① 团队推广版聚焦 ROI 最高的 PRD→Plan 环节（人工确认后才开发、风险低、提效明显），20+ 人团队在用；② 端到端原型 prd2code-gen（个人独立设计）跑通 PRD→Code 完整 6 步，作为下一代探索。</p>
-    <p><strong>团队推广版 · 第一阶段：Reference 构建知识库</strong>。跑一遍项目代码，把几万行代码蒸馏成 6 个领域知识文件——代码结构、编码规则、跨层契约、PRD 路由、业务领域 Map、代码实体索引。一次性构建，后续新需求自动回流更新。</p>
+    <p><strong>团队推广版 · 第一阶段：Reference 构建知识库</strong>。跑一遍项目代码，把几万行代码蒸馏成 6 个领域知识文件——代码结构、编码规则、跨层契约、PRD 路由、业务领域 Map、代码实体索引。一次性构建，后续新需求自动回流更新。<strong>团队有个真实故事可对照：日志改了 14 次才稳定，根因是 AI 不知道项目约定——业务字段（叫 stage 还是 env？记不记 body？）、工具链（AI 默认 logrus 但项目用别的）、部署细节（日志滚动/软链清理/采集机制）。Reference 六文件正好系统性解这三类——业务领域 Map 解业务字段、编码规则解工具链、跨层契约解部署细节。从"每次踩坑修一次"升级到"一次沉淀全局复用"，这才是知识库的工程价值</strong>。</p>
     <p><strong>团队推广版 · 第二阶段：PRD 蒸馏 11 步</strong>。能力面适配器 → PRD 摄入 → 证据账本 → 需求 AR 标注 → Reference 路由 → 源码精读 → 契约差异 → 生成 Spec（硬停止人工确认） → 生成 Plan → AI 五项自评 → 门禁脚本。每步产出是下一步输入，链条断任何一处都能定位。</p>
     <p><strong>团队推广版 · 第三阶段：人工确认后开发</strong>。Spec 确认后 AI 生成 Execution Plan，人工 Review 后各用各的开发工具（Copilot/Cursor/Windsurf），开发完新知识回流更新 Reference。</p>
+    <p><strong>飞轮积累 · VAULT（叙事升级，被问"长期价值"必答）</strong>：每次失败的结构化沉淀进 vault（golden case 集 + 错误模式库），改知识库要重跑基准案例确保不劣化。<strong>这不是单纯防退化——失败不消失，成为下次提速的动能。Reference 越用越准，从冷启动到稳定态是非线性提升</strong>。这套从"防守"升级到"进攻"的叙事，是把单点工具升级为平台资产的关键——单次蒸馏只是工具，vault 积累才是壁垒。</p>
     <p><strong>端到端原型 prd2code-gen · 6 步完整闭环</strong>：① PRD 蒸馏 → ② 项目分析 → ③ 变更计划（人工确认）→ ④ <strong>双路径代码生成</strong>（Handlebars 模板优先 0 token + 无模板走 LLM 兜底）→ ⑤ <strong>自验证 + 自修复循环</strong>（4 类校验：语法/字段双向/规则/集成 + 3 次重试 + 震荡检测 A→B→A 切整段重写）→ ⑥ 输出报告（人工评分）+ eval/auto-tune 反哺。</p>
     <p><strong>双轨协同逻辑（被问为啥不推广必答）</strong>：① 团队推广版要<strong>稳</strong>——执行段成熟工具多（Cursor/Copilot），各人偏好不一，强行推广代码生成涉及质量责任划分；② 端到端原型要<strong>快</strong>——验证可行性、积累工程化经验、等模型成本下降。前者追求落地稳定（20+ 人日活），后者探索链路完整性（R01/R02 对照）。详见"端到端原型→生产路径"卡片。</p>
     <p class="hint">念法：钩子（双轨并行不是没想清楚，是稳和快各取所需）→ 先亮团队推广版三阶段（Reference 知识库→PRD 蒸馏 11 步→人工确认后开发，20+ 人真在用）→ 再甩端到端原型 prd2code-gen 6 步（双路径生成 0 token + 自验证自修复震荡检测是亮点）→ 双轨协同收口（团队版要稳质量责任划分、原型要快验证可行性）。被问"既然端到端跑通为啥不推广"→ 用"双轨协同逻辑"那段答（团队版落地稳+原型探索储备），指向"端到端原型→生产路径"卡。被问"出码后怎么保证质量"→ 6 步里的自验证自修复循环是核心防御。</p>
