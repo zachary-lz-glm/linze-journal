@@ -5110,7 +5110,10 @@ function getGroup(c){
     if(/双插件|BMAD|能力面适配器|PRD 摄入|多格式|Spec.*Plan|Spec.*长什么样|代码.*定位|reference.*过时|知识库.*本质|SSOT|PRD.*质量卡口|PRD过时|PRD 改动|AI 怎么理解|打爆 ?[Cc]ontext/.test(t))return 'AI 架构';
     if(/最有技术挑战|完整链路|可靠性|4个王牌|5h→2h|准确率.*损耗|Claude Code init|Cursor 的区别|团队.*落地|工作流.*介绍|PRD 到代码最难/.test(t))return 'AI 总览';
     if(/Skill|Tools|自定义Agent|识别率|死循环|设计稿|Harness|前端Agent|传统工程|迭代|SDD 完整流程/.test(t)&&!/联动/.test(t))return 'AI 工具';
-    if(/金字塔|能力地图/.test(t))return 'AI 总览';
+    if(/金字塔|能力地图|分层设计|完整版.*lite/.test(t))return 'AI 总览';
+    if(/SDD.*11.*步|倒背/.test(t))return 'AI 架构';
+    if(/准确度|三层度量/.test(t))return 'AI 质量';
+    if(/三 ?plan|完整闭环/.test(t))return 'AI 端到端';
     if(/loop 自动化|AI 工程含量/.test(t))return 'AI 工具';
     return 'Schema 项目';
   }
@@ -5120,7 +5123,7 @@ function getGroup(c){
     if(/Webpack|Vite|Vue/.test(t))return '工程化';
     if(/CSS|居中|盒模型|溢出|布局/.test(t))return 'CSS';
     if(/HTTP|HTTPS|TCP|UDP|URL|URI|跨域|Token|存储|握手|协议|缓存策略/.test(t))return '网络';
-    if(/浏览|渲染|事件|懒加载|首屏|监控|Service Worker|性能优化|XSS|CSRF|安全/.test(t))return '浏览器/性能';
+    if(/浏览|渲染|事件|懒加载|首屏|监控|Service Worker|性能|XSS|CSRF|安全/.test(t))return '浏览器/性能';
     if(/React|useEffect|Fiber|并发|虚拟\s*DOM/.test(t))return 'React';
     return 'JS 核心';
   }
@@ -5143,6 +5146,8 @@ function getGroup(c){
     if(/L3 AI 工程化|工程化 12 题|Prompt 注入|AI 安全|成本控制|减幻觉六板斧|自修复循环|震荡检测|保真度|Fidelity|Eval 架构|回归阻断/.test(t))return 'AI 工程化';
     if(/Evals|Benchmark|评测|量化|防污染|不被污染/.test(t))return 'AI 评测';
     if(/Loop Engineering|Harness|自进化|Agent Loop|循环工程|Prompt.*Loop|maxxing/i.test(t))return 'Loop 工程';
+    if(/Subagent|Task 架构/.test(t))return 'Agent 基础';
+    if(/provenance|validation|质量两层/.test(t))return 'AI 工程化';
     if(/MCP|Function Calling|A2A|Tools vs|Skills 调用|Skills 原理|工具协议/.test(t))return '工具协议';
     if(/Agent|Workflow|LangChain|LangGraph|Multi|长期记忆|短期记忆/.test(t)&&!/前沿/.test(t))return 'Agent 基础';
     if(/RAG|Embedding|Chunking|向量检索|多路召回|Query Rewrite|结构化索引/.test(t))return 'RAG 检索';
