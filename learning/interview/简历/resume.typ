@@ -27,7 +27,7 @@
   [
     #text(size: 22pt, weight: "bold", fill: rgb("#1a1a1a"))[邓泽霖]
     #v(2pt)
-    #text(size: 11pt, weight: "bold")[AI 工程方向 · 高级前端工程师] #text(size: 10.5pt)[ · 4 年大厂经验 · ] #hl[2 年 A 绩效]
+    #text(size: 11pt, weight: "bold")[AI 工程师 · Agentic Workflow 方向] #text(size: 10.5pt)[ · 4 年大厂经验 · 连续 2 年 A 绩效]
     #v(1pt)
     #text(size: 9pt, fill: rgb("#555555"))[188-4617-4594 · 2597419838\@qq.com · #link("https://zachary-lz.vercel.app")[个人主页] · #link("https://github.com/zachary-lz-glm")[github.com/zachary-lz-glm]]
   ],
@@ -39,73 +39,76 @@
 
 == 个人优势
 
-#hl[AI 工程化方向独立落地者] —— 独立设计并落地 SDD（Spec-Driven Development）体系，PRD→开发计划耗时从 5h 降到 2h/需求，已在 B 端 20+ 人团队推广；同步独立设计端到端 PRD→Code 完整原型 prd2code-gen（6 步闭环：蒸馏 → Plan → 双路径生成 → 自验证自修复 → eval 反哺），清晰区分 Vibe Coding 与标准化 AI 研发的边界。
+4 年大厂经验,连续 2 年 A 绩效。基于 Claude Code 独立设计并落地两套生产级 Agentic Workflow 平台:
 
 #set list(marker: text(fill: accent)[•], indent: 2pt, body-indent: 5pt, spacing: 4pt)
 
-- #hl[Agent / Agentic Workflow 工程实践]：独立搭建 Claude Code 三 Skill 体系（build-reference + prd-distill + prd2code-gen），#hl[双轨落地]：① 团队推广版跑通 PRD→Spec→Plan→人工 Review→反馈回流闭环（20+ 人在用）；② 端到端原型 prd2code-gen 跑通 PRD→可部署代码 6 步闭环（含断点续传、震荡检测、自修复循环、eval/auto-tune 反哺）；深度实践 Prompt / Context Engineering、Tool Use、MCP 协议、RAG（BM25 + 语义混合检索 + RRF）。
-- #hl[前端架构 + BFF 全栈能力]：主导 Schema 驱动营销中台（BFF 模板引擎 + 前端动态渲染 + 双重求值联动引擎）与 400+ 营销权益组件库，支撑 20+ 种活动类型、8 个业务项目。
+- #hl[Spec-Driven Development Platform] — 一次蒸馏产出 plan.md 三段式(开发计划 + QA 矩阵 + 回滚方案) + final-quality-gate 5 维准出报告;需求耗时 #hl[5h → 2h/需求],#hl[20+ 人团队]推广;消融实验:去掉证据链层产物评分 82 → 54。
+- #hl[Multi-Agent 自动化流水线] — 自动产出 #hl[18 个生产版本]（v233 → v251）,真实运行 #hl[6 个月+],长跑 100+ 轮负担不变。
+- #hl[Schema 驱动营销中台 + 400+ 权益组件库] — 4 年大厂业务硬证据:覆盖 10+ 国家 / 20+ 活动类型 / 8 业务项目。
 
 == 专业技能
 
-#hl[AI 工程化]：SDD / Spec-Driven · Claude Code Skill 工作流 · Prompt Engineering · Context Engineering · Harness Engineering · RAG · MCP 协议 · Function Calling · Agent Loop · Claude API
+#hl[AI / Agentic Workflow]:Claude Code Skill 工作流 · Sub-agent 编排 · Multi-Agent 编排 · RAG(混合检索) · Prompt Engineering · Context Engineering · MCP 协议 · Function Calling / Tool Use · Eval(产物质量门禁) · Embedding 选型 · Vector Database
 
-#hl[前端 & 架构]：React + TypeScript · Redux · Node.js Serverless BFF · Lerna + Nx Monorepo · Schema 驱动架构 · Rollup / Webpack · 微前端（qiankun）
+#hl[前端工程]:React + TypeScript · 状态管理(Redux / Zustand)· Node.js Serverless BFF · 组件库设计(SDK 抽象 + Rollup 双模打包 + Changesets)· Lerna + Nx Monorepo · Schema 驱动架构 · 微前端(qiankun)· 性能优化 / 工程化(Webpack / Rollup)
 
-#hl[工程效能]：Changesets · zx 自动化 · CI/CD 流水线 · Sentry 监控 · Service Worker 缓存
+#hl[工程效能]:CI/CD 流水线 · Sentry 监控 · Service Worker 缓存 · 自动化测试(Vitest / Jest)
 
 == 工作经历
 
-#text(weight: "bold")[滴滴出行 · 国际化事业部] ｜ 高级前端工程师 ｜ 2022.06 - 至今
+#text(weight: "bold")[滴滴出行 · 国际化事业部] ｜ AI 工程师 · Agentic Workflow 方向 ｜ 2022.06 - 至今
 
-主导国际化营销中台前端架构 + AI 工程化体系搭建。独立落地 SDD 全流程（PRD 蒸馏工作流），主导 Schema 驱动架构和 400+ 营销权益组件库。覆盖 10+ 国家、20+ 种活动类型、8 个业务项目。主导《中台开发规范》《BFF 接口规范》《CI/CD 流水线规范》落地与多场业务技术分享；连续 2 年 A 绩效，核心交付质量团队前列。
+负责国际化营销中台前端架构 + Agentic Workflow 工程化体系搭建。独立设计并落地两套生产级 Agent 工作流平台(Spec-Driven Development Platform + Multi-Agent 自动化流水线),主导 Schema 驱动架构和 400+ 营销权益组件库,覆盖 10+ 国家、20+ 种活动类型。连续 2 年 A 绩效,核心交付质量团队前列。
 
 #block(breakable: false, spacing: 14pt)[
 == 项目经历
 
-=== SDD 工作流落地 — PRD 蒸馏到可执行开发计划
-#text(size: 8.5pt, fill: rgb("#666666"))[独立设计 + 落地 · Claude Code Skill · MCP 协议 · Prompt / Context Engineering · Harness 约束体系]
+=== Spec-Driven Development Platform — 企业级 AI 代码理解与 SDLC 自动化平台
+#text(size: 8.5pt, fill: rgb("#666666"))[独立设计并主导落地 · Claude Code Skill · RAG · MCP 协议 · Context Engineering · Sub-agent]
 
-#text(weight: "bold")[背景]：B 端 PRD 到代码缺少可追溯的中间产物（Spec），导致 AI Coding 产出不可控、需求理解偏差返工频发。基于 Claude Code + MCP 实现 Spec 自动蒸馏，用 Cursor Agent Mode 按 Spec 驱动编码。
+#text(weight: "bold")[业务场景]:B 端 PRD 到代码缺少可追溯的中间产物 Spec,AI 直接分析 PRD 缺乏历史代码上下文与隐性业务逻辑,产出计划不可执行,需求理解偏差导致返工频发。本平台基于 Claude Code + MCP 用 RAG + verified_by 证据链解决这一企业级 AI 编码痛点。
 
-#text(weight: "bold")[行动]：
-- #hl[三 Skill 知识底座]：知识库构建 6 模式 + Spec 蒸馏 11 步工作流 + prd2code-gen 端到端代码生成，反馈回流闭环让 Spec 越用越准；Skill 零依赖设计（不依赖 Node / LLM Key），团队拿到即用。
-- #hl[SSOT 规范体系]：6 文件按关注点分离（代码结构 / 编码规则 / 跨层契约 / PRD 路由 / 业务领域 / 实体索引），5 条边界规则避免 AI 编码知识污染。
-- #hl[AI Coding 质量管控]：8 种证据类型（含负向搜索 negative_code_search）+ PRD 入口三级门禁，降低返工率。
+#text(weight: "bold")[核心技术]:
+- #hl[6 文件 SSOT 知识库 + 混合检索] — 历史代码 / PRD / 跨层契约蒸馏成 6 个 yaml(代码结构 / 编码规则 / 契约 / PRD 路由 / 业务领域 / 实体索引),配合倒排索引 + 实体图,按需检索入上下文
+- #hl[三 plan 完整闭环] — 一次蒸馏产出 plan.md 三段式(开发计划精确到行号 + QA 矩阵 + 回滚方案) + final-quality-gate 5 维准出报告(完整性 / 一致性 / 可追溯 / 可行性 / 风险),区别于单点 PRD→Plan 工具
+- #hl[verified_by 证据链] — 每条事实附带 file:line 溯源,源码 Read 后才写入,禁止推断,降低 AI 编码幻觉
+- #hl[Spec Review Gate] — Spec 必须用户 approved 才能进入 Plan,避免错误计划被开发执行
 
-#text(weight: "bold")[结果]：PRD 到开发计划耗时从 #hl[5h/需求 降到 2h/需求]（5 需求对照）；文件级准确率 #hl[80%]；同一 PRD 跑 10 次一致性从 #hl[40% 提升到 85%+]；已在 B 端 #hl[20+ 人团队推广]，后端基于此迭代。
+#text(weight: "bold")[量化产出]:需求理解阶段耗时 #hl[5h → 2h / 需求] (5 个需求对照);文件级覆盖率 #hl[80%+];同一 PRD 跑 10 次一致性 #hl[40% → 85%+] (产物稳定性指标);20+ 人团队生产环境推广,后端基于此迭代。
 
-#text(weight: "bold")[端到端原型 prd2code-gen（个人项目，下一代探索）]：团队推广版聚焦 ROI 最高的 PRD→Plan 环节，同时独立设计跑通端到端 PRD→Code 完整 6 步闭环：蒸馏 → 分析 → Plan → #hl[Handlebars 模板/LLM 双路径生成] → #hl[4 类校验自修复循环（震荡检测 A→B→A 切整段重写）] → eval/auto-tune 反哺；含 verified_by 审计链（file:line 溯源）、断点续传（progress.yaml）；R01/R02 实验对照（54→68 分，量化 reference 价值）。
-
-]
-
-#block(breakable: false, spacing: 14pt)[
-=== Schema 驱动营销中台 — BFF 动态生成 + 前端动态渲染
-#text(size: 8.5pt, fill: rgb("#666666"))[前端 + BFF 架构设计（与导师联合主导，本人负责前端侧）· React · TypeScript · Node.js Serverless · Lerna + Nx]
-
-#text(weight: "bold")[背景]：营销中台覆盖 10+ 国家、20+ 种活动类型，每种活动字段组合与联动规则不同。传统方式每新增一种活动需前后端各写一套，周期长易错（老代码月均 10+ 线上事故）。
-
-#text(weight: "bold")[行动]：
-- #hl[BFF 模板引擎]：模板驱动 Schema 生成，按活动类型分文件管理（25 模板），联动模板复用渲染 handler。
-- #hl[双重求值联动引擎（自研 DSL injectDActions）]：一次声明，BFF 端 safeEval 求初始状态（SSR 正确）+ 序列化 d_actions 给前端运行时联动，支持 fetchApi 型与 state 型。
-- #hl[前端渲染引擎 + Monorepo 治理]：嵌套路径拍平 + 注册表 35+ 组件动态渲染 + 发布订阅联动；Lerna + Nx 管理 15+ 业务模块。
-
-#text(weight: "bold")[结果]：新增活动类型前端 #hl[零代码]，上线周期从 #hl[2 周缩短到 3 天]，累计支撑 #hl[20+ 种活动类型]，联动配置复用率 #hl[80%+]，上线 2 年仅 2-3 起小 bug（老代码月均 10+）。
+#text(weight: "bold")[消融实验]:去掉证据链层,产物评分 #hl[82 → 54],验证证据链是必需层而非可选层。
 
 ]
 
 #block(breakable: false, spacing: 14pt)[
-=== 营销权益组件库 — 400+ 权益 React 组件库
-#text(size: 8.5pt, fill: rgb("#666666"))[架构设计 + 核心开发（独立完成）· React · TypeScript · Rollup · Changesets]
+=== Multi-Agent 自动化流水线 — LLM 内容自优化系统
+#text(size: 8.5pt, fill: rgb("#666666"))[独立设计并主导落地(生产项目)· Claude Code cron + subagent · 失败自动回滚]
 
-#text(weight: "bold")[背景]：营销平台管理 400+ 种权益（优惠券、折扣、积分、立减等）全生命周期，类型持续增长，原方案每新增一种都需硬编码，维护成本高。
+#text(weight: "bold")[业务场景]:LLM 生成内容随时间漂移——风格不一致、质量参差、维护成本线性增长,这是 LLM 工程化的核心瓶颈之一。本系统让 AI 自动持续优化自己的产出。
 
-#text(weight: "bold")[行动]：
-- #hl[Register 注册模式]：内置 24 组件 + 运行时注册自定义权益（add / addMultipleCmps），新增权益无需改 SDK。
-- #hl[Schema 同构渲染]：组件库与活动表单共享 Schema 渲染架构，两个消费者复用同一套引擎。
-- #hl[Rollup 双模打包]（ESM + CJS + 类型声明）+ peerDependencies 隔离 + Changesets 语义化发版。
+#text(weight: "bold")[核心技术]:
+- Multi-Agent 上下文隔离 — 独立 Context Window,主调度只收一行简报(信息压缩 + 主流程解耦)
+- 失败自动回滚 — commit 前结构自检,失败立即回滚
+- 风格漂移防护 — 每轮重读样板,对抗 LLM 长跑漂移
 
-#text(weight: "bold")[结果]：覆盖 #hl[8 个业务项目]，累计接入 #hl[400+ 种权益 SKU]（底层组件 30-40 个），新权益接入从 #hl[2 天缩短到 2 小时]，零 breaking change 运行 #hl[18 个月+]。
+#text(weight: "bold")[量化产出]:自动产出 #hl[18 个生产版本]（v233 → v251,跨度 #hl[6 个月+]）;生产环境无破坏性 commit;主调度上下文与运行轮次解耦,#hl[长跑 100+ 轮]负担不变。
+
+]
+
+#block(breakable: false, spacing: 14pt)[
+=== Schema 驱动营销中台 + 400+ 权益组件库
+#text(size: 8.5pt, fill: rgb("#666666"))[前端 + BFF 架构设计 · React · TypeScript · Node.js Serverless · Lerna + Nx · Rollup]
+
+#text(weight: "bold")[业务场景]:国际化营销中台覆盖 10+ 国家、20+ 活动类型、400+ 种营销权益(优惠券 / 折扣 / 积分 / 立减)全生命周期。传统方式每新增一种需前后端各写一套,周期长易错。
+
+#text(weight: "bold")[核心技术]:
+- BFF Template Engine + 双重求值联动(自研 DSL) — safeEval 求初值 + 序列化运行时指令
+- Dynamic Rendering — 35+ 组件注册表 + 发布订阅
+- Register 注册模式 — 运行时注册权益,新增无需改 SDK
+- Monorepo 治理 — Lerna + Nx 管理 15+ 业务模块
+
+#text(weight: "bold")[量化产出]:新增活动前端 #hl[零代码],上线周期 #hl[2 周 → 3 天];权益库覆盖 #hl[8 个业务项目 / 400+ SKU]（底层组件 30-40 个）,新权益接入 2 天 → 2 小时,运行 18 个月+ 仅 2-3 起小 bug。
 ]
 
 == 教育背景
