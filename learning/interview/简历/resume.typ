@@ -4,7 +4,7 @@
 
 // 配色:Navy 主色 + 红色单点强调(仅核心对比型数据)
 #let accent = rgb("#1A2B4A")
-#let pop = rgb("#DC2626")
+#let pop = rgb("#059669")
 #let muted = rgb("#555555")
 #let faint = rgb("#888888")
 #let lineColor = rgb("#cccccc")
