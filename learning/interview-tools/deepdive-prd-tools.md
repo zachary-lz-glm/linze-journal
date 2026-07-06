@@ -333,7 +333,70 @@ v2.19 已经有 readiness / final QG 内部评分（L1 能跑），但 L2/L3 业
 
 ---
 
-## 十三、最后提醒（面试前去洗手间默念）
+## 十三、三 plan 完整闭环（快手面试官「单 PRD→Plan 价值不大」的破局点）
+
+> 快手电商一面 Q5：面试官明确说「单纯 PRD 到开发计划价值不大」——市面都做了（GitHub Spec Kit / BMAD / Kiro）。**破局点是「三 plan 完整闭环」**：一次蒸馏产出开发 + 测试 + 上线三套可执行计划，代码提交时跑测试 plan 自动化 case、测完给准出报告、上线走灰度回滚。**这套我 prd-to-code 和 prd-to-code-gen 都已经实现，只是 stealth 卡片没显性化讲**。
+
+### 13.1 对照表：面试官要的 vs 你实际有的
+
+| 快手面试官要求 | prd-to-code / prd-to-code-gen 实际能力 |
+|---|---|
+| **开发 plan** | `plan.md` §2.5 实现计划精确到行号 |
+| **测试 plan（QA）** | `plan.md` QA 矩阵 + `04-routing-playbooks.yaml` 场景打法 + 自动化 case 覆盖 |
+| **上线 plan** | `plan.md` 回滚方案 + `team-plan.md` + `plans/*` 多文件 |
+| 代码提交跑测试 plan 自动化 | prd-to-code-gen 6 步第 ⑤ 步 4 类校验 + 3 次自修复 |
+| 测完给**准出报告** | `final-quality-gate.yaml` 5 维评分 + `src/reporter/` |
+| **验证 agent 终检** | Mode C 质量门控 + Phase 3 致命类检查（100% 匹配） |
+| **verified_by 审计链** | `verified_by: ["file.ts:line"]` 每条事实可回溯 |
+| **eval/auto-tune 反哺** | `src/auto-tune/` + `src/eval/` 评测框架 |
+
+**结论**：面试官要的「端到端工作流后半段」，prd-to-code 已经在 plan.md 里隐性实现了（QA 矩阵 + 回滚方案就是测试 plan + 上线 plan 的雏形），prd-to-code-gen 还多做了验证 agent 终检和准出报告。**只是没显性化成「三 plan 闭环」叙事，被面试官当成「单 PRD→Plan 工具」低估了**。
+
+### 13.2 三 plan 闭环完整话术（被问"端到端工作流"必念）
+
+> 「prd-tools 不只是 PRD→Plan，是 **一次蒸馏产出三套可执行计划**——
+> ① **开发 plan**：plan.md §2.5 实现计划精确到行号，每个改动点带 verified_by 锚点；
+> ② **测试 plan**：plan.md QA 矩阵 + 04-routing-playbooks.yaml 场景打法，覆盖正常路径 + 边界 case + 异常 case；
+> ③ **上线 plan**：plan.md 回滚方案 + team-plan.md 灰度/监控预案。
+>
+> 完整研发闭环是：开发完不等于结束—— **代码提交时跑测试 plan 的 QA 矩阵自动化 case**，不通过 CI 拦截；**测完出准出报告**（final-quality-gate 5 维评分 + reporter），达标才允许合并；**上线时按上线 plan 走灰度 + 监控 + 回滚预案**；最后新知识回流更新 Reference。
+>
+> **单 PRD→Plan 行业都做了**（GitHub Spec Kit 9 万 stars / BMAD / Kiro 都是这条路），价值不大；**三 plan 闭环才是破局点**——这是从「单点蒸馏」升级到「完整研发工作流」的叙事跃迁。」
+
+### 13.3 念法节奏
+
+- **30 秒钩子**：「prd-tools 是三 plan 完整闭环——开发/测试/上线一次产出」
+- **60 秒展开**：三 plan 各自内容 + 准出报告 + 上线灰度
+- **30 秒收口**：「单 PRD→Plan 行业都做了，三 plan 闭环才是壁垒」
+
+### 13.4 关键接招预设
+
+**追问 1**：「你说有测试 plan，那 case 怎么生成？」
+→ 「QA 矩阵是从 PRD 蒸馏时同步产出——每个需求点抽 IR 时标注验收条件，QA 矩阵就是把这些验收条件结构化。04-routing-playbooks.yaml 还提供场景打法，覆盖类似需求的标准 case 模板。」
+
+**追问 2**：「准出报告 5 维是什么？」
+→ 「required_files（必需文件齐不齐）/ context_pack_consumed（上下文用没用）/ code_anchor_coverage（代码锚点覆盖）/ plan_actionability（plan 可执行性）/ blocker_quality（阻塞点质量）。每维 0-100 加权，最终 readiness ≥ 75 才准出。」
+
+**追问 3**：「上线 plan 和回滚方案具体怎么走？」
+→ 「plan.md 内嵌回滚方案段——明确这次改动的爆炸半径、灰度策略（按用户/按地域/按流量）、监控指标（核心 KPI + 异常率）、回滚条件（指标跌多少触发）、回滚步骤（git revert + 缓存清理 + 通知 SOP）。team-plan.md 还跨团队对齐依赖。」
+
+**追问 4**：「这套在团队里跑起来了吗？」
+→ 「团队推广版（prd-to-code）20+ 人天天在用，跑的就是开发 plan + QA 矩阵。准出报告和上线 plan 完整闭环在 prd-to-code-gen 端到端原型里跑通，作为下一代探索，等模型成本下降再工程化推广。」
+
+### 13.5 失分点对照（快手电商一面复盘）
+
+- ❌ **失分**：被问「单纯 PRD→Plan 价值不大」时，候选人直到反问环节才充分展示端到端原型（详见 `reviews/qa/快手电商.md` Q5）
+- ✅ **改进**：现在主动在 A10 卡 30 秒开场就甩「三 plan 完整闭环」，把面试官的「价值不大」质疑直接接住
+- ❌ **失分**：80% 准确度被追问「怎么算的」，回答构造数据 vs 实际文件数，没主动讲清口径
+- ✅ **改进**：13.4 追问 2 直接给出 5 维评分细节，把抽象的「准确度」落到可量化指标
+
+---
+
+> **三 plan 闭环的核心价值**：不是加内容是显性化叙事——**prd-to-code 的 plan.md 早就包含 QA 矩阵 + 回滚方案**，prd-to-code-gen 早就有验证 agent 终检 + 准出报告，只是 stealth 卡片没显性化成「三 plan 闭环」的杀手级叙事。**stealth.html A10/A4/A5 三张卡已同步嵌入这套话术**。
+
+---
+
+## 十四、最后提醒（面试前去洗手间默念）
 
 1. **不吹过头**：60% 是当时的表述，现在用 5h→2h（5 个需求对照）；L2/L3 在 Sprint 3 排期，没有硬 A/B
 2. **表达流畅**：钩子三件套（空白领域 / 5h→2h / 证据链）背到张口就来
