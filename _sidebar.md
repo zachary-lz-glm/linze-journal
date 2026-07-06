@@ -10,6 +10,21 @@
     - [快手电商（演练报告）](learning/interview/定向/快手-演练.md)
     - [字节TikTok（二面准备）](learning/interview/定向/字节TikTok二面.md)
   - [简历v3](learning/interview/简历/v3.md)
+  - [简历v4](learning/interview/简历/v4.md)
+
+- **Agent 学习笔记**
+  - [Agent 开发基础](learning/agent-books/Agent开发基础.md)
+  - [WorkFlow vs Agent](learning/agent-books/WorkFlow-vs-Agent.md)
+  - [Prompt 工程](learning/agent-books/Prompt-工程.md)
+  - [ReAct 反思 任务规划](learning/agent-books/ReAct-反思-任务规划.md)
+  - [Tool Calling / Function Call / MCP](learning/agent-books/Tool-Calling-Function-Call-MCP.md)
+  - [Multi-Agent](learning/agent-books/Multi-Agent.md)
+  - [上下文管理与记忆](learning/agent-books/上下文管理与记忆.md)
+  - [Agent 场景设计题](learning/agent-books/Agent 场景设计题.md)
+  - [幻觉与评测](learning/agent-books/幻觉与评测.md)
+  - [异常处理 安全 熔断](learning/agent-books/异常处理-安全-熔断.md)
+  - [工程化与部署](learning/agent-books/工程化与部署.md)
+  - [模型相关](learning/agent-books/模型相关.md)
 
 - **工具**
   - [面试速查板](learning/interview-tools/stealth.html)
