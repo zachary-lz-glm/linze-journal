@@ -719,7 +719,10 @@ function renderHomepage(){
   html+='<div class="home-card home-full"><div class="home-card-icon">🎯</div><h3>面试备战</h3><div class="card-desc">速查板 · 简历 · 定向备战</div><div class="home-links" style="display:flex;flex-wrap:wrap;gap:8px 20px">';
   if(interview&&interview.children){
     for(const sub of interview.children){
-      if(sub.path)html+='<a href="#/'+sub.path+'">'+sub.label+'</a>';
+      if(sub.path){
+        if(sub.external)html+='<a href="'+sub.path+'" target="_blank" rel="noopener">'+sub.label+'</a>';
+        else html+='<a href="#/'+sub.path+'">'+sub.label+'</a>';
+      }
       else if(sub.children&&sub.children.length)html+='<a href="#/'+sub.children[0].path+'">'+sub.label+'</a>';
     }
   }
