@@ -9,6 +9,7 @@
 
 | 场景 | 入口 |
 |------|------|
+| **AI 工程师能力图谱与准备路线** | [能力图谱](learning/interview/AI工程师能力图谱.md) |
 | 面试当天速查 | [面试速查板](learning/interview-tools/stealth.html) |
 | 简历 | [在线简历(HTML/PDF)](learning/interview/resume/resume.html) |
 | 大麦定向 | [大麦](learning/interview/定向/大麦.md) |

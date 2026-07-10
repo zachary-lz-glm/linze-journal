@@ -2,6 +2,7 @@
   - [学习导航](README.md)
 
 - **面试备战**
+  - [AI工程师能力图谱](learning/interview/AI工程师能力图谱.md)
   - 公司定向
     - [大麦](learning/interview/定向/大麦.md)
     - [TikTok SEP](learning/interview/定向/TikTok-SEP.md)
