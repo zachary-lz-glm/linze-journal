@@ -288,6 +288,18 @@ body{overscroll-behavior-y:contain}
   </div>
 </div>
 
+<div class="card" data-c="proj" data-kw="reference 准确性 关键词 匹配 文件 倒排索引 inverted-index context-pack query-plan LLM 输入输出 工作流 边界 一句话需求 蒸馏过程 确定性 脚本 HARD GATE Spec Review Gate 分工 领域知识">
+  <div class="card-head"><span class="tag proj">追问</span><div class="card-title">reference 怎么和 PRD 匹配？LLM/工作流/人三层边界（实现细节）</div></div>
+  <div class="core">匹配走确定性脚本（倒排索引+同义词桥接）不是 LLM 猜；一句话需求 4 段蒸馏；LLM 做语义/工作流做约束/人做拍板</div>
+  <div class="card-body">
+    <p><strong>这张卡治"齿轮怎么转"的追问——A4 讲了"为什么准"、追问卡④讲了"怎么自查 reference"，这张补实现细节。被问"关键词怎么匹配文件""LLM 输入输出是什么""哪些是 LLM 做的哪些是脚本做的""一句话需求怎么走"必翻。</strong></p>
+    <p><strong>① 关键词↔文件匹配（核心：是确定性脚本不是 LLM 猜）</strong>：三步——<strong>build-index.py</strong> 扫源码产出 entities.json(函数/类/枚举/接口) + edges.json(DEFINES/IMPORTS/REFERENCES 关系) + <strong>inverted-index.json</strong>(term→entity_id 倒排)。标识符按驼峰/下划线拆 token（<code>previewRewardType</code> → preview/reward/type 多个 term）。<strong>context-pack.py</strong> 匹配时先读 05-domain.yaml 的 prd_keywords/synonyms 做同义词扩展（PRD 写"转盘"匹配到代码 <code>lottery_wheel</code>），再查倒排算 BM25-like 评分，产出 query-plan.yaml 带 confidence。LLM 只做最后语义判断——high confidence 直接 Read 源码确认、low confidence 用 rg 复验是不是噪音。<strong>关键工程价值</strong>：换模型换机器匹配结果一致，这是质量基础——如果让 LLM 直接读全部源码，上下文爆炸+不可复现。</p>
+    <p><strong>② 一句话需求的蒸馏 4 段（11 步压成 4 段好讲）</strong>：第①段 <strong>Ingestion</strong>——一句话也存 <code>_ingest/document.md</code> 记 source-manifest。第②段 <strong>理解</strong>——LLM 拆成 Requirement IR，"加个抽奖转盘"被拆成 REQ-001 玩法 / REQ-002 奖品池 / REQ-003 防作弊，每条带 evidence_ids 指回 PRD 段落、target_layers、acceptance_criteria。第③段 <strong>锚定</strong>——Query Plan(确定性预匹配) + Graph Context(LLM Reference-First：先按 04-routing-playbooks 路由表锁 target_surfaces、再 rg 补扫未覆盖实体)，每条线索标 source：<code>reference_routing</code> / <code>index_query</code> / <code>code_scan</code>，layer-impact 强制走完前端/BFF/后端/外部 4 层（非本仓层标 needs_confirmation）。第④段 <strong>输出</strong>——spec.md §1-§9（§3 三栏式"PM想什么/现状/新增什么"，§1-§7 纯业务不准出现文件路径，§8 技术附录）→ 暂停等人 approved → plan.md（§3 是需求→文件映射表，与 spec §3 形成闭环）。</p>
+    <p><strong>③ LLM 输入输出（按阶段拆，被问"LLM 干了啥"必答）</strong>：IR 阶段<strong>输入</strong> document.md + 05-domain(术语) + project-profile(知道是 BFF 还是前端)，<strong>输出</strong> requirement-ir.yaml；Graph 阶段<strong>输入</strong> IR + 01-codebase(代码地图) + 04-routing(路由表) + query-plan(预匹配) + rg 命中源码，<strong>输出</strong> graph-context.md 每条标 source；Spec 阶段<strong>输入</strong> 所有 context yaml + evidence 台账，<strong>输出</strong> spec.md；Plan 阶段<strong>输入</strong> spec + layer-impact + contract-delta，<strong>输出</strong> plan.md。<strong>共同约束</strong>：每个输出回溯 evidence id、不确定写 <code>confidence: low</code>、<strong>禁用"120+/大量/几十个"模糊统计</strong>——没数据写 unknown 并把补计数放进 open_questions。</p>
+    <p><strong>④ 三层边界（被问"LLM/工作流/人怎么分工"必答，是这道题的硬度核心）</strong>：<strong>LLM 做语义</strong>——理解 PRD、写 IR、写 spec/plan 叙事、Self-Check 的 [H] 人工判读项（如"幻觉检查覆盖了所有文件路径"）。<strong>工作流做约束（确定性，LLM 不能改）</strong>——① Skill markdown 的 <code>&lt;workflow_state&gt;</code> 标签写死 allowed_inputs/must_not_read/must_not_produce（LLM 不能越界读文件）；② HARD GATE（Step 6 写 spec 前强制 5 个 context 文件全非空，缺一个不能开始）；③ Python 脚本（倒排索引/query-plan/quality-gate 都是纯确定性，零 LLM 调用）；④ 文件边界 SSOT（字段级契约只在 03-contracts、编码规则只在 02-coding-rules，越界 Phase 4 边界检查报 fail）；⑤ Self-Check [M] 项（每条带 verify 命令+expect 结果，机器跑）。<strong>人做拍板</strong>——Spec Review Gate（必 approved 才进 plan，最关键卡点）、Mode E 反馈回流（prd-distill 只产建议不直接改 reference，owner 确认后才写）、跨仓契约默认 needs_confirmation 不能写 confirmed。<strong>一句话收口</strong>：LLM 负责理解和生成，工作流负责边界和确定性，人负责拍板——三层缺一不可。</p>
+  </div>
+</div>
+
 <div class="card" data-c="proj" data-kw="大表单 性能 200字段 虚拟滚动 精确订阅 重渲染 依赖图 路径拍平 发布订阅 dot path 字段改动">
   <div class="card-head"><span class="tag proj">追问</span><div class="card-title">大表单 200+ 字段性能 + 字段改动重渲染</div></div>
   <div class="core">分步渲染+按 dot path 精确订阅（路径拍平+依赖图）+虚拟滚动+SW缓存；一个字段改动不会全表单重渲染</div>

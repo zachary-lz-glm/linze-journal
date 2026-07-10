@@ -31,3 +31,7 @@
   - 金牌项目深挖稿
     - [PRD 工具](learning/interview-tools/deepdive-prd-tools.md)
     - [loop 系统](learning/interview-tools/deepdive-loop-system.md)
+
+- **AI 情报**
+  - 2026-W28
+    - [07-09 AI Agent 与 Skill 最新情报](learning/ai-intelligence/2026-W28/日报-07-09-AI-Agent与Skill最新情报.md)
