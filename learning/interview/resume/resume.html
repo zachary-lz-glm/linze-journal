@@ -230,7 +230,7 @@ li { break-inside: avoid; }
 <li><strong>Probe + Health 双层探活 + HITL 人工确认</strong> — 规划前先探针下游能力（RAG 文档 / DB schema）,失败则降级跳过 down 的 Agent;高风险写操作 HITL 人工确认,file + Redis 双后端 checkpoint 支持跨进程续跑</li>
 <li><strong>Self-Evolution Layer — 无标注自进化闭环</strong> — ① 失败归因 12 分类 → ② LLM 假设生成（每 30min 产出 ≤3 条） → ③ 假设金丝雀 A/B 验证命中后晋级 Prompt 补丁 → ④ 经验回放（向量 + Jaccard 混合召回）注入 router few-shot,整套机制无需人工标注</li>
 </ul>
-<p><strong>量化产出</strong>:<span class="data">39 节点 / ~42 条边</span>（含 14 条条件边）· <span class="data">12 Agent</span>（8 外部 + 4 内部）· 8 类 WS 消息 · 7 个 eval golden + 34 个 smoke 脚本。</p>
+<p><strong>量化产出</strong>:<span class="data">39 节点 / 40 条边</span>（含 20 条条件边）· <span class="data">12 Agent</span>（8 外部 + 4 内部）· 8 类 WS 消息 · 7 个 eval golden + 34 个 smoke 脚本。</p>
 
 <hr />
 

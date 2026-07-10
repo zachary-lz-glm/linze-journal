@@ -1,0 +1,11 @@
+{
+  "name": "resume-pdf",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node html2pdf.mjs"
+  },
+  "dependencies": {
+    "playwright": "^1.49.0"
+  }
+}
