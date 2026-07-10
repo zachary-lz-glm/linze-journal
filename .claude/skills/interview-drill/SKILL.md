@@ -44,7 +44,7 @@ JD：[粘贴JD全文]
 
 | 资产 | 路径 | 用途 |
 |------|------|------|
-| 简历 | `learning/interview/简历/resume.typ` | 候选人最新背景 |
+| 简历 | `learning/interview/resume/resume.typ` | 候选人最新背景 |
 | 速查页 | `learning/interview-tools/stealth.html` | **演练的单一信源**（答案必须能映射到这里的卡） |
 | 亲历面经 Q&A | `reviews/qa/*.md` | 第一手真题，优先于联网 |
 | 亲历面经转写 | `reviews/transcripts/*` | 卡壳点和面试官风格 |
@@ -173,7 +173,7 @@ JD：[粘贴JD全文]
 
 ## 候选人背景
 
-以实际读取的 `learning/interview/简历/resume.typ` 为准。重点关注：
+以实际读取的 `learning/interview/resume/resume.typ` 为准。重点关注：
 - AI 工程方向（SDD / prd-tools / prd2code-gen）
 - 中台架构（Schema 驱动 / 双重求值联动 / 权益组件库）
 - 量化数据（5h→2h / 80% / 40%→85% / 400+ SKU / 20+ 人推广）

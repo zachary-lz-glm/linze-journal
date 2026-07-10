@@ -791,7 +791,7 @@ class TicketStateMachine {
 - `reviews/qa/小红书.md` — Skill/Agent/Tool 概念深挖
 - `reviews/qa/小红书二面.md` — Harness Engineering 答得浅
 - `reviews/qa/拼多多.md` — Schema 配置沙箱预渲染 + Monorepo 拓扑排序
-- `learning/interview/简历/v3.md` — 候选人最新简历
+- `learning/interview/resume/v3.md` — 候选人最新简历
 - `archive/retrospectives/04-27-Schema渲染引擎.md` — Schema 渲染引擎细节
 - `archive/retrospectives/04-28-BFF-Schema生成与联动链路.md` — BFF 联动链路
 - `archive/retrospectives/04-29-benefit-SDK权益组件库.md` — 权益组件库

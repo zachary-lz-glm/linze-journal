@@ -10,7 +10,7 @@
 | 场景 | 入口 |
 |------|------|
 | 面试当天速查 | [面试速查板](learning/interview-tools/stealth.html) |
-| 简历 | [在线简历(HTML/PDF)](learning/interview/简历/resume.html) |
+| 简历 | [在线简历(HTML/PDF)](learning/interview/resume/resume.html) |
 | 大麦定向 | [大麦](learning/interview/定向/大麦.md) |
 | TikTok SEP 定向 | [TikTok SEP](learning/interview/定向/TikTok-SEP.md) |
 | 蚂蚁财富 AI Lab 定向 | [蚂蚁财富AI Lab](learning/interview/定向/蚂蚁财富AI-Lab.md) |
