@@ -1,397 +1,215 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html lang="zh-CN">
 <head>
-  <meta charset="utf-8" />
-  <meta name="generator" content="pandoc" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
-  <title>邓泽霖-简历</title>
-  <style>
-    /* Default styles provided by pandoc.
-    ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
-    */
-    html {
-      color: #1a1a1a;
-      background-color: #fdfdfd;
-    }
-    body {
-      margin: 0 auto;
-      max-width: 36em;
-      padding-left: 50px;
-      padding-right: 50px;
-      padding-top: 50px;
-      padding-bottom: 50px;
-      hyphens: auto;
-      overflow-wrap: break-word;
-      text-rendering: optimizeLegibility;
-      font-kerning: normal;
-    }
-    @media (max-width: 600px) {
-      body {
-        font-size: 0.9em;
-        padding: 12px;
-      }
-      h1 {
-        font-size: 1.8em;
-      }
-    }
-    @media print {
-      html {
-        background-color: white;
-      }
-      body {
-        background-color: transparent;
-        color: black;
-        font-size: 12pt;
-      }
-      p, h2, h3 {
-        orphans: 3;
-        widows: 3;
-      }
-      h2, h3, h4 {
-        page-break-after: avoid;
-      }
-    }
-    p {
-      margin: 1em 0;
-    }
-    a {
-      color: #1a1a1a;
-    }
-    a:visited {
-      color: #1a1a1a;
-    }
-    img {
-      max-width: 100%;
-    }
-    svg {
-      height: auto;
-      max-width: 100%;
-    }
-    h1, h2, h3, h4, h5, h6 {
-      margin-top: 1.4em;
-    }
-    h5, h6 {
-      font-size: 1em;
-      font-style: italic;
-    }
-    h6 {
-      font-weight: normal;
-    }
-    ol, ul {
-      padding-left: 1.7em;
-      margin-top: 1em;
-    }
-    li > ol, li > ul {
-      margin-top: 0;
-    }
-    blockquote {
-      margin: 1em 0 1em 1.7em;
-      padding-left: 1em;
-      border-left: 2px solid #e6e6e6;
-      color: #606060;
-    }
-    code {
-      white-space: pre-wrap;
-      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
-      font-size: 85%;
-      margin: 0;
-      hyphens: manual;
-    }
-    pre {
-      margin: 1em 0;
-      overflow: auto;
-    }
-    pre code {
-      padding: 0;
-      overflow: visible;
-      overflow-wrap: normal;
-    }
-    .sourceCode {
-     background-color: transparent;
-     overflow: visible;
-    }
-    hr {
-      border: none;
-      border-top: 1px solid #1a1a1a;
-      height: 1px;
-      margin: 1em 0;
-    }
-    table {
-      margin: 1em 0;
-      border-collapse: collapse;
-      width: 100%;
-      overflow-x: auto;
-      display: block;
-      font-variant-numeric: lining-nums tabular-nums;
-    }
-    table caption {
-      margin-bottom: 0.75em;
-    }
-    tbody {
-      margin-top: 0.5em;
-      border-top: 1px solid #1a1a1a;
-      border-bottom: 1px solid #1a1a1a;
-    }
-    th {
-      border-top: 1px solid #1a1a1a;
-      padding: 0.25em 0.5em 0.25em 0.5em;
-    }
-    td {
-      padding: 0.125em 0.5em 0.25em 0.5em;
-    }
-    header {
-      margin-bottom: 4em;
-      text-align: center;
-    }
-    #TOC li {
-      list-style: none;
-    }
-    #TOC ul {
-      padding-left: 1.3em;
-    }
-    #TOC > ul {
-      padding-left: 0;
-    }
-    #TOC a:not(:hover) {
-      text-decoration: none;
-    }
-    span.smallcaps{font-variant: small-caps;}
-    div.columns{display: flex; gap: min(4vw, 1.5em);}
-    div.column{flex: auto; overflow-x: auto;}
-    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
-    /* The extra [class] is a hack that increases specificity enough to
-       override a similar rule in reveal.js */
-    ul.task-list[class]{list-style: none;}
-    ul.task-list li input[type="checkbox"] {
-      font-size: inherit;
-      width: 0.8em;
-      margin: 0 0.8em 0.2em -1.6em;
-      vertical-align: middle;
-    }
-    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
-  </style>
-  <style>
-    @page { size: A4; margin: 14mm 14mm; }
-    * { box-sizing: border-box; }
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>邓泽霖 - AI 工程师简历</title>
+<style>
+@page { size: A4; margin: 14mm 14mm; }
+* { box-sizing: border-box; }
 
-    /* 覆盖 pandoc 默认 */
-    header#title-block-header, h1.title, .title { display: none; }
+body {
+  font-family: -apple-system, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue", sans-serif;
+  font-size: 10.2pt;
+  line-height: 1.55;
+  color: #222;
+  background: #fff;
+  max-width: 42em;
+  margin: 0 auto;
+  padding: 40px 56px;
+}
 
-    body {
-      font-family: -apple-system, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue", sans-serif;
-      font-size: 10.2pt;
-      line-height: 1.55;
-      color: #222;
-      background: #fff;
-      max-width: 42em;
-      margin: 0 auto;
-      padding: 40px 56px;
-    }
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 18px;
+  margin-bottom: 8px;
+}
+.header .info { flex: 1; }
+.header .photo {
+  width: 78pt;
+  height: 104pt;
+  object-fit: cover;
+  border-radius: 3px;
+  border: 0.5px solid #ddd;
+  margin: 0;
+}
+.header h1 {
+  font-size: 22pt;
+  margin: 0 0 3pt 0;
+  color: #1a1a1a;
+  letter-spacing: 0.5pt;
+  font-weight: 700;
+}
+.header .title-line {
+  font-size: 11pt;
+  font-weight: 700;
+  color: #1A2B4A;
+  margin-bottom: 2pt;
+}
+.header .title-line .muted {
+  font-size: 10.5pt;
+  font-weight: normal;
+  color: #555;
+}
+.header .contact {
+  font-size: 9pt;
+  color: #555;
+  margin-top: 2pt;
+}
 
-    /* 头部:姓名 + 联系方式 + 头像 */
-    .header {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: 18px;
-      margin-bottom: 8px;
-    }
-    .header .info { flex: 1; }
-    .header .photo {
-      width: 78pt;
-      height: 104pt;
-      object-fit: cover;
-      border-radius: 3px;
-      border: 0.5px solid #ddd;
-      margin: 0;
-    }
-    .header h1 {
-      font-size: 22pt;
-      margin: 0 0 3pt 0;
-      color: #1a1a1a;
-      letter-spacing: 0.5pt;
-      font-weight: 700;
-    }
+h2 {
+  font-size: 11.5pt;
+  color: #1A2B4A;
+  border-bottom: 0.6pt solid #cccccc;
+  padding-bottom: 2pt;
+  margin: 12pt 0 5pt 0;
+  font-weight: 700;
+  letter-spacing: 0.3pt;
+}
 
-    h2 {
-      font-size: 11.5pt;
-      color: #1A2B4A;
-      border-bottom: 0.6pt solid #cccccc;
-      padding-bottom: 2pt;
-      margin: 12pt 0 5pt 0;
-      font-weight: 700;
-      letter-spacing: 0.3pt;
-    }
+h3 {
+  font-size: 11pt;
+  margin: 9pt 0 2pt 0;
+  color: #1a1a1a;
+  font-weight: 700;
+  padding-left: 6pt;
+  border-left: 2.5pt solid #1A2B4A;
+}
 
-    h3 {
-      font-size: 11pt;
-      margin: 9pt 0 2pt 0;
-      color: #1a1a1a;
-      font-weight: 700;
-      padding-left: 6pt;
-      border-left: 2.5pt solid #1A2B4A;
-    }
+p { margin: 4px 0; }
+ul { margin: 4px 0 4px 0; padding-left: 18px; }
+li { margin: 2px 0; }
 
-    p { margin: 4px 0; }
-    ul { margin: 4px 0 4px 0; padding-left: 18px; }
-    li { margin: 2px 0; }
+strong {
+  color: #1A2B4A;
+  font-weight: 700;
+}
 
-    /* 加粗 = Navy 加粗(技术词强调) */
-    strong {
-      color: #1A2B4A;
-      font-weight: 700;
-    }
+.data {
+  color: #059669;
+  font-weight: 700;
+}
 
-    /* 项目副标题 = 9pt 灰 */
-    em {
-      color: #555;
-      font-size: 9pt;
-      font-style: normal;
-      display: block;
-      margin: 1px 0 3px 0;
-    }
+em {
+  color: #555;
+  font-size: 9pt;
+  font-style: normal;
+  display: block;
+  margin: 1px 0 3px 0;
+}
 
-    a { color: #1A2B4A; text-decoration: none; }
+a { color: #1A2B4A; text-decoration: none; }
 
-    hr {
-      border: none;
-      border-top: 0.4pt solid #e0e0e0;
-      margin: 8px 0;
-    }
+hr {
+  border: none;
+  border-top: 0.4pt solid #e0e0e0;
+  margin: 8px 0;
+}
 
-    h1 + p { font-size: 11pt; font-weight: 600; color: #1A2B4A; margin-bottom: 2px; }
-    h1 + p + p { font-size: 9.2pt; color: #555; }
+h2, h3 { break-after: avoid; page-break-after: avoid; }
+li { break-inside: avoid; }
 
-    h2, h3 { break-after: avoid; page-break-after: avoid; }
-    li { break-inside: avoid; }
-
-    @media print {
-      body { padding: 0; max-width: none; font-size: 10.2pt; }
-      .header .photo { width: 78pt; height: 104pt; }
-    }
-  </style>
+@media print {
+  body { padding: 0; max-width: none; font-size: 10.2pt; }
+  .header .photo { width: 78pt; height: 104pt; }
+}
+</style>
 </head>
 <body>
-<header id="title-block-header">
-<h1 class="title">邓泽霖-简历</h1>
-</header>
+
 <div class="header">
-<section id="邓泽霖" class="info">
-<h1>邓泽霖</h1>
-<p><strong>AI 工程师 · Agentic Workflow 方向</strong> · 4 年大厂经验 ·
-连续 <strong>2 年 A 绩效</strong></p>
-<p>188-4617-4594 · 2597419838@qq.com · <a
-href="https://zachary-lz.vercel.app">个人主页</a> · <a
-href="https://github.com/zachary-lz-glm">github.com/zachary-lz-glm</a></p>
-</section>
-<p><img src="photo.jpg" class="photo" /></p>
+  <section class="info">
+    <h1>邓泽霖</h1>
+    <div class="title-line">AI 工程师 · Agentic Workflow 方向<span class="muted"> · 4 年大厂经验 · 连续 <span class="data">2 年 A 绩效</span></span></div>
+    <div class="contact">188-4617-4594 · 2597419838@qq.com · <a href="https://zachary-lz.vercel.app">个人主页</a> · <a href="https://github.com/zachary-lz-glm">github.com/zachary-lz-glm</a></div>
+  </section>
+  <img src="photo.jpg" class="photo" alt="photo" />
 </div>
+
 <hr />
-<h2 id="个人优势">个人优势</h2>
-<p>4 年大厂经验,连续 2 年 A 绩效。基于 Claude Code
-独立设计并落地两套生产级 Agentic Workflow 平台:</p>
+
+<h2>个人优势</h2>
+<p>4 年大厂经验,连续 2 年 A 绩效。专注 LLM 工程化,基于 Claude Code / LangGraph 独立设计并落地多套 Multi-Agent 系统,核心方向:Agent 编排架构 / Agent Safety / RAG 工程。</p>
 <ul>
-<li><strong>Spec-Driven Development Platform</strong> — 一次蒸馏产出
-plan.md 三段式(开发计划 + QA 矩阵 + 回滚方案) + final-quality-gate 5
-维准出报告;需求耗时 <strong>5h → 2h/需求</strong>,20+
-人团队推广;消融实验:去掉证据链层产物评分 <strong>82 → 54</strong>。</li>
-<li><strong>Multi-Agent 自动化流水线</strong> — 自动产出 <strong>18
-个生产版本</strong>(v233 → v251),真实运行 6 个月+,长跑 100+
-轮负担不变。</li>
-<li><strong>Schema 驱动营销中台 + 400+ 权益组件库</strong> — 4
-年大厂业务硬证据:覆盖 10+ 国家 / 20+ 活动类型 / 8 业务项目。</li>
+<li><strong>Spec-Driven Development Platform</strong> — 用 <strong>Evidence-based Grounding</strong>（file:line citation）+ <strong>Distilled Knowledge Base</strong> 解决 LLM 编码 Hallucination;需求理解 <span class="data">5h → 2h / 需求</span>,20+ 人团队日常使用。Ablation study 验证 grounding 层为必需（rubric 评分 <span class="data">82 → 54</span>）。</li>
+<li><strong>Manager_Agent</strong> — <span class="data">39 节点</span> LangGraph Supervisor 状态机编排 12 个能力 Agent,Plan-and-Execute + Critic 闭环 + HITL Checkpoint + Probe + Health 双层探活 + Self-Evolution Layer。</li>
+<li><strong>code_assistent_Agent</strong> — ReAct Tool Use 循环（<span class="data">18 工具</span>）+ Custom CheckpointSaver + Agent Safety（三层写盘守卫 + Sandbox Isolation）+ Prompt A/B（Shadow Patch）。</li>
+<li><strong>Server-Driven UI 中台 + 400+ 权益组件库</strong> — 4 年大厂业务落地:覆盖 10+ 国家 / 20+ 活动类型 / 8 业务项目,新权益接入 <span class="data">2 天 → 2 小时</span>。</li>
 </ul>
-<hr />
-<h2 id="专业技能">专业技能</h2>
-<p><strong>AI / Agentic Workflow</strong>:Claude Code Skill 工作流 ·
-Sub-agent 编排 · Multi-Agent 编排 · RAG(混合检索) · Prompt Engineering ·
-Context Engineering · MCP 协议 · Function Calling / Tool Use ·
-Eval(产物质量门禁)</p>
-<p><strong>前端工程</strong>:React + TypeScript · Node.js Serverless BFF
-· 组件库设计(Rollup 双模打包 + Changesets)· Lerna + Nx Monorepo · Schema
-驱动架构 · 微前端(qiankun)</p>
-<p><strong>工程效能</strong>:CI/CD 流水线 · Sentry 监控 · Service Worker
-缓存 · 自动化测试(Vitest / Jest)</p>
-<hr />
-<h2 id="工作经历">工作经历</h2>
-<p><strong>滴滴出行 · 国际化事业部</strong> ｜ AI 工程师 · Agentic
-Workflow 方向 ｜ 2022.06 - 至今</p>
-<p>负责国际化营销中台前端架构 + Agentic Workflow
-工程化体系搭建。独立设计并落地两套生产级 Agent 工作流平台(Spec-Driven
-Development Platform + Multi-Agent 自动化流水线),主导 Schema 驱动架构和
-400+ 营销权益组件库,覆盖 10+ 国家、20+ 种活动类型。连续 2 年 A
-绩效,核心交付质量团队前列。</p>
-<hr />
-<h2 id="项目经历">项目经历</h2>
-<h3
-id="spec-driven-development-platform-企业级-ai-代码理解与-sdlc-自动化平台">Spec-Driven
-Development Platform — 企业级 AI 代码理解与 SDLC 自动化平台</h3>
-<p><em>独立设计并主导落地 · Claude Code Skill · RAG · MCP 协议 · Context
-Engineering · Sub-agent</em></p>
-<p><strong>业务场景</strong>:B 端 PRD 到代码缺少可追溯的中间产物 Spec,AI
-直接分析 PRD
-缺乏历史代码上下文与隐性业务逻辑,产出计划不可执行,需求理解偏差导致返工频发。本平台基于
-Claude Code + MCP 用 RAG + verified_by 证据链解决这一企业级 AI
-编码痛点。</p>
+
+<h2>专业技能</h2>
+<p><strong>Agent 架构</strong>:LangGraph StateGraph / Checkpointer · Supervisor / Orchestrator 模式 · Plan-and-Execute（Planner / Critic / Synth）· ReAct Tool Use · Sub-agent · MCP 协议 · Function Calling</p>
+<p><strong>Agent Safety & Self-Evolution</strong>:Sandbox Isolation · Read-before-Write / Diff 工程 · HITL Checkpoint · Probe + Health 双层探活 · Self-Evolution（online learning loop）</p>
+<p><strong>RAG / Context Engineering</strong>:Hybrid Retrieval（BM25 + Dense Vector + Reranking）· 代码 RAG / 仓库语义检索 · Distilled Knowledge Base · Context Engineering · Citation Grounding</p>
+<p><strong>Eval & Prompt 工程</strong>:rubric-based Eval · Ablation Study · Golden Set · Prompt A/B（Shadow Patch）· LLM-as-a-Judge</p>
+<p><strong>前端工程</strong>:React + TypeScript · Node.js Serverless BFF · Server-Driven UI / Schema-as-Code · Monorepo（Lerna + Nx）· WebSocket 流式协议 · 微前端（qiankun）· CI/CD</p>
+
+<h2>工作经历</h2>
+<p><strong>滴滴出行 · 国际化事业部</strong> ｜ AI 工程师 · Agentic Workflow 方向 ｜ 2022.06 - 至今</p>
+<p>2024 年起专注 LLM 工程化,基于 Claude Code / LangGraph 独立设计并落地 <span class="data">3 套 Multi-Agent 系统</span>（Spec-Driven / Manager_Agent / code_assistent_Agent,详见项目段）,覆盖 Spec → Plan → Code SDLC 自动化 / Multi-Agent 编排 / Coding Agent Safety 三个方向。此前 2 年作为前端 owner 主导国际化营销中台,Server-Driven UI 架构 + 400+ 权益组件库服务 10+ 国家 / 8 业务项目,标准活动上线 <span class="data">2 周 → 3 天</span>。连续 2 年 A 绩效。</p>
+
+<h2>项目经历</h2>
+
+<h3>Spec-Driven Development Platform — Spec-Driven Development / Agentic Coding 工作流</h3>
+<em>独立设计并主导落地 · Claude Code Skill · Context Engineering · Citation Grounding · Sub-agent</em>
+<p><strong>业务场景</strong>:B 端 PRD 到代码缺少可追溯中间产物 Spec,AI 直接分析 PRD 缺历史代码上下文与隐性业务逻辑,产出计划不可执行、返工频发。本平台基于 Claude Code + MCP 用 Agentic RAG + Citation Grounding 解决企业级 AI 编码痛点。</p>
 <p><strong>核心技术</strong>:</p>
 <ul>
-<li><strong>6 文件 SSOT 知识库 + 混合检索</strong> — 历史代码 / PRD /
-跨层契约蒸馏成 6 个 yaml(代码结构 / 编码规则 / 契约 / PRD 路由 /
-业务领域 / 实体索引),配合倒排索引 + 实体图,按需检索入上下文</li>
-<li>三 plan 完整闭环 — 一次蒸馏产出 plan.md 三段式(开发计划精确到行号 +
-QA 矩阵 + 回滚方案) + final-quality-gate 5 维准出报告,区别于单点
-PRD→Plan 工具</li>
-<li>verified_by 证据链 — 每条事实附带 file:line 溯源,源码 Read
-后才写入,禁止推断,降低 AI 编码幻觉</li>
-<li>Spec Review Gate — Spec 必须用户 approved 才能进入
-Plan,避免错误计划被开发执行</li>
+<li><strong>Distilled Knowledge Base + Hybrid Retrieval</strong> — 历史代码 / PRD / 跨层契约蒸馏为 6 类知识（代码结构 / 编码规则 / 契约 / PRD 路由 / 业务领域 / 实体索引）,倒排索引 + 实体图按需检索（Context Engineering 范式）</li>
+<li><strong>Plan-and-Execute 闭环</strong> — 一次蒸馏产出三份产物（开发计划精确到行号 + QA Matrix + Rollback Plan）+ Final Quality Gate（5 维准出报告:完整性 / 一致性 / 可追溯 / 可行性 / 风险）,区别于单点 PRD → Plan 工具</li>
+<li><strong>Evidence-based Grounding</strong> — 每条事实附带 file:line citation,源码 Read 后才写入,禁止推断,降低 LLM 编码 Hallucination</li>
+<li><strong>Spec Review Gate</strong> — Spec 必须用户 approved 才能进入 Plan（HITL gate before plan execution）,避免错误计划被开发执行</li>
 </ul>
-<p><strong>量化产出</strong>:需求理解阶段耗时 <strong>5h → 2h /
-需求</strong>(5 个需求对照);文件级覆盖率 80%+;同一 PRD 跑 10 次一致性
-40% → 85%+ (产物稳定性指标);20+ 人团队生产环境推广,后端基于此迭代。</p>
-<p><strong>消融实验</strong>:去掉证据链层,产物评分 <strong>82 →
-54</strong>,验证证据链是必需层而非可选层。</p>
+<p><strong>量化产出</strong>:需求理解阶段耗时 <span class="data">5h → 2h / 需求</span>（n=5 PRDs）;文件级覆盖率 80%+;同一 PRD 蒸馏 determinism <span class="data">40% → 85%+</span>（n=10）;20+ 人团队日常使用,后端基于 Spec 产物扩展。</p>
+<p><strong>Ablation Study</strong>:去掉 grounding 层,rubric 评分（完整性 / 一致性 / 可追溯 / 可行性 / 风险,满分 100）<span class="data">82 → 54</span>。</p>
+
 <hr />
-<h3 id="multi-agent-自动化流水线-llm-内容自优化系统">Multi-Agent
-自动化流水线 — LLM 内容自优化系统</h3>
-<p><em>独立设计并主导落地(生产项目)· Claude Code cron + subagent ·
-失败自动回滚</em></p>
-<p><strong>业务场景</strong>:LLM
-生成内容随时间漂移——风格不一致、质量参差、维护成本线性增长,这是 LLM
-工程化的核心瓶颈之一。本系统让 AI 自动持续优化自己的产出。</p>
+
+<h3>Manager_Agent — Multi-Agent Supervisor Orchestrator</h3>
+<em>主导设计实现 · LangGraph · Multi-Agent · HITL · Self-Evolution · Plan-and-Execute</em>
+<p><strong>业务场景</strong>:企业级 AI 助手需统一调度多个专业 Agent（知识库 / NL2SQL / 代码 / 爬虫 / GUI / 办公 / 多模态）,"一个 Prompt 包打天下"无法支撑。本系统基于 LangGraph 设计 Supervisor 编排模式,调度 <span class="data">12 个能力 Agent</span>（8 外部 + 4 内部）。</p>
 <p><strong>核心技术</strong>:</p>
 <ul>
-<li>Multi-Agent 上下文隔离 — 独立 Context
-Window,主调度只收一行简报(信息压缩 + 主流程解耦)</li>
-<li>失败自动回滚 — commit 前结构自检,失败立即回滚</li>
-<li>风格漂移防护 — 每轮重读样板,对抗 LLM 长跑漂移</li>
+<li><strong>Multi-Agent Supervisor 编排</strong> — 基于 LangGraph 设计 <span class="data">39 节点</span> 状态机,编排层与专家层分离（总管只做意图路由 / 任务规划 / 结果汇总,不写 SQL / 不建向量 / 不改代码）;支持 <span class="data">14 路意图分发</span> 与子句拆解（多意图 → 多步 plan）</li>
+<li><strong>Plan-and-Execute + Critic 闭环</strong> — Planner 拆任务 → Executor 并行调度 → Critic 事实性审查 → Synth 综合产出;Critic 与 Evaluator 形成"重试否决"仲裁,避免无谓重试;recursionLimit <span class="data">48</span> 内长跑稳定</li>
+<li><strong>Probe + Health 双层探活 + HITL 人工确认</strong> — 规划前先探针下游能力（RAG 文档 / DB schema）,失败则降级跳过 down 的 Agent;高风险写操作 HITL 人工确认,file + Redis 双后端 checkpoint 支持跨进程续跑</li>
+<li><strong>Self-Evolution Layer — 在线学习闭环</strong> — ① 失败归因 12 分类 → ② LLM 假设生成（每 30min 产出 ≤3 条） → ③ 假设金丝雀 A/B 验证命中后晋级 Prompt 补丁 → ④ 经验回放（向量 + Jaccard 混合召回）注入 router few-shot,整套机制无需人工标注</li>
 </ul>
-<p><strong>量化产出</strong>:自动产出 <strong>18
-个生产版本</strong>(v233 → v251,跨度 6 个月+);生产环境无破坏性
-commit;主调度上下文与运行轮次解耦,长跑 100+ 轮负担不变。</p>
+<p><strong>量化产出</strong>:<span class="data">39 节点 / ~42 条边</span>（含 14 条条件边）· <span class="data">12 Agent</span>（8 外部 + 4 内部）· 8 类 WS 消息 · 213 个 TS 文件（约 4.6 万行）· 7 个 eval golden + 34 个 smoke 脚本。</p>
+
 <hr />
-<h3 id="schema-驱动营销中台-400-权益组件库">Schema 驱动营销中台 + 400+
-权益组件库</h3>
-<p><em>前端 + BFF 架构设计 · React · TypeScript · Node.js Serverless ·
-Lerna + Nx · Rollup</em></p>
-<p><strong>业务场景</strong>:国际化营销中台覆盖 10+ 国家、20+
-活动类型、400+ 种营销权益(优惠券 / 折扣 / 积分 /
-立减)全生命周期。传统方式每新增一种需前后端各写一套,周期长易错。</p>
+
+<h3>code_assistent_Agent — Agentic Coding / Coding Agent Safety</h3>
+<em>主导设计实现 · LangGraph · ReAct · Tool Use · 代码 RAG · Agent Safety</em>
+<p><strong>业务场景</strong>:LLM 改仓库的高风险场景下"模型 + 写权限 = 事故"。本 Agent 把 LLM 改仓库约束在可审计的工程边界内,完整覆盖 Read-before-Write → 语义检索 → 静态分析 → Diff 预览 → 受控写盘 工程闭环。</p>
 <p><strong>核心技术</strong>:</p>
 <ul>
-<li>BFF Template Engine + 双重求值联动(自研 DSL) — safeEval 求初值 +
-序列化运行时指令</li>
-<li>Dynamic Rendering — 35+ 组件注册表 + 发布订阅</li>
-<li>Register 注册模式 — 运行时注册权益,新增无需改 SDK</li>
-<li>Monorepo 治理 — Lerna + Nx 管理 15+ 业务模块</li>
+<li><strong>ReAct Tool Use 工具循环</strong> — 基于 LangGraph 编排 <span class="data">18 个</span> 仓库工具（读 / 检索 / AST 分析 / Patch / 校验 / 执行 / Git）的 agent↔tools 循环;Custom CheckpointSaver 实现 BaseCheckpointSaver 接口,支持跨进程会话状态恢复（LangGraph 早期版本仅内置 MemorySaver）</li>
+<li><strong>代码 RAG + Unified Diff 工程</strong> — 仓库语义检索（向量召回 + 文件名粗筛 + 增量索引）,区别于端到端 chat 把全量 repo 塞 context;统一 Diff 预览再写入,read-before-write,杜绝 LLM 错误 diff 静默覆盖</li>
+<li><strong>Agent Safety — 三层写盘守卫 + Sandbox Isolation</strong> — 路径黑名单 + 受保护目录 + sha256 乐观锁,任一层拦截即拒绝;subprocess 白名单 env + docker 网络隔离双沙箱,优先强隔离不可用时自动降级</li>
+<li><strong>Auto-Validation Hook + Prompt A/B（Shadow Patch）</strong> — autoValidateAfterWrite 自动跑 typecheck / lint / test,失败针对性修复,信号回流 Prompt 进化库;shadow patch 多次命中晋级正式库,hash 分桶 A/B 对照</li>
 </ul>
-<p><strong>量化产出</strong>:新增活动前端零代码,上线周期 <strong>2 周 →
-3 天</strong>;权益库覆盖 <strong>8 个业务项目 / 400+
-SKU</strong>(底层组件 30-40 个),新权益接入 2 天 → 2 小时,运行 18 个月+
-仅 2-3 起小 bug。</p>
+<p><strong>量化产出</strong>:<span class="data">18 个工具</span> 覆盖 read / search / vector / AST / patch / validate / exec / git 全链路 · 默认服务 800 文件仓库 / 512MB 内存 / 90s 超时 · 跨进程会话恢复（回归测试 0 丢失）。</p>
+
 <hr />
-<h2 id="教育背景">教育背景</h2>
-<p><strong>黑龙江大学</strong> ｜ 计算机科学与技术 ｜ 本科 ｜ 2018.09 -
-2022.06</p>
+
+<h3>Server-Driven UI 中台 + 400+ 权益组件库</h3>
+<em>前端 + BFF 架构设计 · Server-Driven UI · Plugin Architecture · Schema-as-Code · React · TypeScript</em>
+<p><strong>业务场景</strong>:国际化营销中台覆盖 10+ 国家、20+ 活动类型、400+ 种营销权益（优惠券 / 折扣 / 积分 / 立减）全生命周期。传统模式每新增权益前后端各开发一套,周期长易错。</p>
+<p><strong>核心技术</strong>:</p>
+<ul>
+<li><strong>Server-Driven UI + Plugin Architecture</strong> — Schema 化页面指令驱动运行时渲染,权益作为插件通过 SDK 注入,新增权益无需改 SDK / 无需发版,接入从 2 人天降到 2 小时</li>
+<li><strong>Schema-as-Code + DSL 引擎</strong> — DSL 描述权益规则,引擎做两阶段求值（编译期 schema 校验 + 运行期求值）,解决权益规则跨国家 / 跨活动动态组合问题</li>
+<li><strong>Plugin Registry + Hot Swap</strong> — 35+ 渲染组件通过 Registry 注册,发布订阅驱动运行时渲染,组件 hot-swap 不停机</li>
+</ul>
+<p><strong>量化产出</strong>:新活动 Server-Driven 接入,前端零配置;标准活动上线 <span class="data">2 周 → 3 天</span>（联调 + QA 时间）;权益库 <span class="data">400+ SKU</span> 服务 8 个业务项目（底层组件 30-40 个）,新权益接入 <span class="data">2 天 → 2 小时</span>,运行 18 个月+ 仅 2 起低危 bug。</p>
+
+<hr />
+
+<h2>教育背景</h2>
+<p><strong>黑龙江大学</strong> ｜ 计算机科学与技术 ｜ 本科 ｜ 2018.09 - 2022.06</p>
+
 </body>
 </html>
