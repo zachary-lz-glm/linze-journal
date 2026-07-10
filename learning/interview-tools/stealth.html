@@ -4969,7 +4969,7 @@ function buildTreeOptimized(list) {
   </div>
 </div>
 
-<!-- ==================== Manager_Agent 项目子组（15 张·2026-07-10 新增） ==================== -->
+<!-- ==================== Manager_Agent 项目子组（18 张·2026-07-10 新增） ==================== -->
 <div class="card" data-c="proj" data-kw="Manager_Agent 30秒电梯 Multi-Agent Supervisor LangGraph 编排网关">
   <div class="card-head"><span class="tag Manager">M0</span><div class="card-title">Manager_Agent 30 秒电梯版（必背）</div></div>
   <div class="core">基于 Nuxt 4 + LangGraph 的多 Agent 编排网关——39 节点状态机（40 条边含 20 条件边）+ 12 能力 Agent + Probe/Health 双层探活 + Self-Evolution + HITL</div>
@@ -5399,7 +5399,57 @@ function buildTreeOptimized(list) {
   </div>
 </div>
 
-<!-- ==================== code_assistent_Agent 项目子组（14 张·2026-07-10 新增） ==================== -->
+<div class="card" data-c="proj" data-kw="Manager_Agent 立项 为什么做 总管层 多 Agent 编排 痛点 单入口 平台补能力">
+  <div class="card-head"><span class="tag Manager">M17</span><div class="card-title">Manager_Agent 立项原因（被问"为什么做这个"必答）</div></div>
+  <div class="core">单 Agent 各管一域没有总管层；状态机 + WS + HITL + 自进化是把"多 Agent 协作"做成生产可用的最小集合</div>
+  <div class="card-body">
+    <p><strong>5 条立项动机（按"痛点 → 对策"念）</strong>：</p>
+    <ul class="points">
+      <li><strong>① 平台缺"总管层"</strong>——agent-main 单仓下 10+ Agent（DB / RAG / Code / Extractor / Multimodal / Music / Video / AI Admin…）各管一域，<strong>用户不可能为每类需求找不同入口</strong>。Manager 做"一个入口、多个专家"的路由层</li>
+      <li><strong>② 状态机对位多 Agent 编排</strong>——分支 / 回环 / HITL / 失败恢复不是单次 LLM call 能搞定的，<strong>LangGraph StateGraph 是天然对位</strong>（vs 一把梭的 if/else LLM chain）</li>
+      <li><strong>③ WebSocket 是多轮 + 流式 + 确认/取消的最佳载体</strong>——HTTP 单向请求做不了 chat / resume / cancel / confirm 长会话</li>
+      <li><strong>④ HITL 是真实业务的安全网</strong>——写库 / 调外部 / 大批量改这类高风险操作必须能暂停确认，<strong>否则 AI 一旦自主决策出圈就是事故</strong></li>
+      <li><strong>⑤ 自进化 + 可观测性是降本关键</strong>——失败样本自动沉淀为 prompt 补丁 + planner 规则，避免每次都改代码；LangSmith 节点级 trace 定位问题</li>
+    </ul>
+    <p><strong>非主流动机（被追问甩）</strong>：国产化模型链路（百炼/Qwen，规避 OpenAI 直连合规问题）；学习/面试导向（README 通篇"面试版"标签，定位就是<strong>把多 Agent 编排做到能上生产的工程范式</strong>讲清楚）</p>
+    <p><strong>念法（被问"为什么不直接用 Dify/Coze 搭"）</strong>：诚实答<strong>"Dify/Coze 是低代码可视化平台，灵活但黑盒；自研 Manager 是为了把路由策略 / 自进化规则 / HITL 流程完全可控，能解释每一跳为什么走"</strong>——这是面试场景下"显工程深度"的关键差异。详见 M18 维度对比表。</p>
+    <p><strong>杀手追问"如果就你一个人用，做 Manager 是否 over-engineering"</strong>：</p>
+    <p>诚实答<strong>"是"</strong>——demo 阶段没人用，但<strong>立项逻辑不是"现在有人用"，是"学习把多 Agent 编排做到能上生产的工程范式"</strong>。M1 档位卡里承认机制强数据弱。</p>
+    <p><strong>金句</strong>："不是把 10 个 Agent 接一起就叫 Multi-Agent 系统——总管层做的是<strong>意图路由 + 任务规划 + HITL + 自进化 + 可观测性</strong>，这才是工程化。"</p>
+  </div>
+</div>
+
+<div class="card" data-c="proj" data-kw="Manager_Agent 维度对比表 Dify Coze LangGraph Supervisor Swarm Anthropic 编排范式 HITL 自进化 跨进程">
+  <div class="card-head"><span class="tag Manager">M18</span><div class="card-title">Manager_Agent 维度对比表（被问"和 Dify/Coze/Swarm 哪个强"必答）</div></div>
+  <div class="core">按维度横向对比，不按产品罗列；竞品功能对比见 M11 (Swarm) / M12 (Anthropic)</div>
+  <div class="card-body">
+    <p><strong>11 维度横向对比（被问甩）</strong>：</p>
+    <table>
+      <tr><th>维度</th><th>Manager_Agent</th><th>Dify / Coze</th><th>LangGraph 模板</th><th>Swarm / Agents SDK</th></tr>
+      <tr><td>编排范式</td><td>Supervisor + StateGraph</td><td>可视化工作流</td><td>Supervisor 模板</td><td>Handoff</td></tr>
+      <tr><td>路由决策</td><td>LLM + 规则混合</td><td>条件分支节点</td><td>纯 LLM</td><td>LLM + tool</td></tr>
+      <tr><td>HITL</td><td>Checkpoint 三后端</td><td>节点暂停</td><td>interrupt()</td><td>弱</td></tr>
+      <tr><td>自进化</td><td>Shadow → Canary → Promote</td><td>无</td><td>无</td><td>无</td></tr>
+      <tr><td>跨进程部署</td><td>Specialist 独立进程 RPC</td><td>进程内</td><td>进程内 subgraph</td><td>进程内</td></tr>
+      <tr><td>可观测性</td><td>LangSmith + /metrics</td><td>内置面板</td><td>LangSmith</td><td>弱</td></tr>
+      <tr><td>通信协议</td><td>WS（多轮+流式+确认）</td><td>HTTP + SSE</td><td>函数调用</td><td>函数调用</td></tr>
+      <tr><td>调度粒度</td><td>12 Specialist + 14 意图</td><td>workflow 节点</td><td>worker 节点</td><td>agent 实例</td></tr>
+      <tr><td>失败恢复</td><td>统一重试预算 + Critic</td><td>节点重试</td><td>edge 条件</td><td>handoff 接力</td></tr>
+      <tr><td>配置形态</td><td>代码即配置（54k 行 TS）</td><td>低代码 UI</td><td>代码即配置</td><td>代码即配置</td></tr>
+      <tr><td>国产化模型</td><td>百炼 / Qwen 全链路</td><td>支持</td><td>无关</td><td>无关</td></tr>
+    </table>
+    <p><strong>3 个核心差异化（被问"哪个 Dify/Coze 没有"）</strong>：</p>
+    <ul class="points">
+      <li><strong>跨进程 Specialist 部署</strong>——Dify/Coze/LangGraph 模板都是<strong>进程内</strong>，Specialist 拆不出来独立扩展；Manager 把每个 Agent 部署成独立服务（13101~13106 端口），<strong>符合企业级分布式部署诉求</strong></li>
+      <li><strong>显式自进化闭环</strong>——Shadow → Canary → Promote 带 hash 分桶 + 显著性检验，<strong>Dify/Coze 没有这层</strong>（它们靠人调 prompt）</li>
+      <li><strong>跨进程 Checkpoint</strong>——file + Redis 双后端，HITL 暂停可跨进程恢复；Dify/Coze 暂停后状态在内存，重启丢</li>
+    </ul>
+    <p><strong>诚实收口</strong>：Dify/Coze <strong>低代码 UI + 工作流可视化是 Manager 没有的强项</strong>——非工程师能搭 Agent。Manager 是<strong>"工程师视角的多 Agent 系统"</strong>，<strong>不是给运营 / 产品用的</strong>。这是赛道差异不是优劣。</p>
+    <p><strong>金句</strong>："Dify/Coze 是给非工程师搭 Agent 的低代码平台，Manager 是给工程师做<strong>分布式、可观测、可自进化</strong>的多 Agent 系统——<strong>一个是 Excel，一个是 React</strong>。"</p>
+  </div>
+</div>
+
+<!-- ==================== code_assistent_Agent 项目子组（16 张·2026-07-10 新增） ==================== -->
 <div class="card" data-c="proj" data-kw="code_assistent 30秒电梯 ReAct Coding Agent Safety CheckpointSaver Shadow Patch">
   <div class="card-head"><span class="tag CodeAgent">C0</span><div class="card-title">code_assistent_Agent 30 秒电梯版（必背）</div></div>
   <div class="core">工程化 Coding Agent — 18 工具 ReAct 循环 + Custom CheckpointSaver + Agent Safety 三层守卫 + Sandbox + Shadow Patch 自进化</div>
@@ -5824,6 +5874,51 @@ docker:     --network=none --memory=512m -v cwd:/workspace:ro</div>
     <p><strong>诚实补刀（模型选型漏洞）</strong>：实际默认是 <strong>qwen-plus 通用模型</strong>（不是 qwen-coder-plus 代码专用）——<strong>代码语义捕获弱</strong>（C6 已提到）。<strong>没用 voyage-code / qwen-coder 等代码专用模型是漏洞</strong>，自托管 GPU 成本高没做 A/B。</p>
     <p><strong>关键认知</strong>：ReAct Agent 的 token 成本是<strong>"看着灵活但贵"</strong>——P&E 在已知场景反而更省（不每步重 think）。我选 ReAct 是因为 Coding 探索式（C4 卡），但 token 成本是 ReAct 的<strong>代价</strong>，要在简历/面试时主动说清。</p>
     <p><strong>诚实收口</strong>："ReAct 的 token 成本是设计选择，不是缺陷——但 compaction 没做是真漏洞。接生产要补三件——① token budget 每步入口算；② message sliding window + summary；③ 工具结果按 id retrieval（Claude Code file tool 范式）。"</p>
+  </div>
+</div>
+
+<div class="card" data-c="proj" data-kw="code_assistent 立项 为什么做 工程化 Coding Agent 痛点 平台补能力 Safety 国产化 面试导向">
+  <div class="card-head"><span class="tag CodeAgent">C15</span><div class="card-title">code_assistent 立项原因（被问"为什么做这个"必答）</div></div>
+  <div class="core">平台缺"真能改代码"的 Agent；模型 + 写权限 = 事故，安全是第一公民；闭环可信 + 国产化 + 面试导向</div>
+  <div class="card-body">
+    <p><strong>5 条立项动机（按"痛点 → 对策"念）</strong>：</p>
+    <ul class="points">
+      <li><strong>① 平台补一块"真能改代码"的能力</strong>——agent-main 单仓 10+ Agent 里，<strong>唯独缺能落地写代码的</strong>。Manager 只路由不改、RAG 只检索不改、DB 只查数据——code_assistent 把"AI 模型"变成"工程工具"：能读仓库、出 Diff、受控写盘、被 Manager 调度</li>
+      <li><strong>② 安全是第一公民，不是事后补丁</strong>——<code>ensureDangerousToolAllowed('write')</code> + JWT scope + 敏感路径拦截（<code>.env</code> / <code>*.pem</code> / <code>id_rsa</code>）+ 沙箱 + 审计日志，<strong>agent.ts 大量篇幅都在做这个</strong>。原因：<strong>模型 + 写权限 = 事故</strong>，服务端托管必须前置防御</li>
+      <li><strong>③ 闭环可信</strong>——<code>validate_project</code> 自动跑 lint / typecheck / test + 两层修复（lint --fix、test -u），把"AI 写完代码"升级成"<strong>AI 写完还能保证不破坏既有测试</strong>"。这是工程化 Coding Agent 区别于玩具 demo 的关键</li>
+      <li><strong>④ 国产化模型链路</strong>——全栈阿里云百炼（DashScope）+ Qwen-Coder，<strong>规避 OpenAI 直连的合规问题</strong>，符合国内企业部署</li>
+      <li><strong>⑤ 学习 / 面试导向</strong>——README 通篇"面试版 / 面试常问点"标签，定位明确：<strong>用一份可读的、能讲清 ReAct / 工具调用 / 沙箱 / Diff / RAG 的代码，证明能塞进真实工程</strong></li>
+    </ul>
+    <p><strong>念法（被问"和 Copilot/Cursor 比增量"）</strong>：诚实答<strong>"Copilot/Cursor 是个人桌面工具，code_assistent 是企业服务端 Coding Agent——能放内网、被 Manager 调度、能审计每次改动、能受控写盘"</strong>。差异化在<strong>"工程化 + 安全 + 平台化"</strong>，不在"模型对话体验"。详见 C13 + C16。</p>
+    <p><strong>杀手追问"为什么 Manager 不直接做改代码"</strong>：</p>
+    <p>答<strong>"职责分离"</strong>——Manager 只做意图路由 + 任务规划，不持有写权限；code_assistent 持有写权限但只受 Manager 调度。<strong>权限边界清晰才可控</strong>，符合最小权限原则。也是 M16 跨 Agent 协议里 Specialist 拆成独立服务的设计动机。</p>
+    <p><strong>金句</strong>："不是要和 Copilot 抢用户桌面，是要做一个<strong>能放在企业内网、被总管 Agent 调度、能受控改代码且能审计</strong>的服务端 Coding Agent。"</p>
+  </div>
+</div>
+
+<div class="card" data-c="proj" data-kw="code_assistent 维度对比表 Copilot Cursor Cline 形态 部署 写盘 校验 检索 鉴权 审计 LLM 沙箱 多 Agent">
+  <div class="card-head"><span class="tag CodeAgent">C16</span><div class="card-title">code_assistent 维度对比表（被问"和 Copilot/Cursor/Cline 哪里不同"必答）</div></div>
+  <div class="core">按维度横向对比；竞品功能罗列见 C13</div>
+  <div class="card-body">
+    <p><strong>11 维度横向对比（被问甩）</strong>：</p>
+    <table>
+      <tr><th>维度</th><th>Copilot / Cursor / Cline</th><th>code_assistent</th></tr>
+      <tr><td>形态</td><td>IDE 插件 / 桌面 App</td><td>独立 Web 服务（Nuxt + WS）</td></tr>
+      <tr><td>部署位置</td><td>用户本机</td><td>服务端，端口 13103，可入 Manage-platform 编排</td></tr>
+      <tr><td>写盘控制</td><td>直接改本地文件</td><td>三层闸门：runtimeConfig 开关 → JWT scope (write:repo / run:script) → 路径白名单 + 敏感文件拦截</td></tr>
+      <tr><td>改的方式</td><td>全文覆盖居多</td><td>read-before-write + unified diff，context 不匹配直接抛错（<code>applyUnifiedDiffOrThrow</code>）</td></tr>
+      <tr><td>校验闭环</td><td>一般没有</td><td><code>validate_project</code> 自动跑 lint / typecheck / test + 两层修复</td></tr>
+      <tr><td>检索</td><td>LLM 上下文 / 关键词</td><td>双轨：<code>semantic_search</code>（正则扫描） + <code>vector_search</code>（embedding 分块缓存）</td></tr>
+      <tr><td>鉴权 / 限流</td><td>无（本地工具）</td><td><code>/api/*</code> 全走 <code>00-rate-limit.ts</code>（IP 桶 60/min） + <code>01-auth.ts</code>（JWT 校验 + scope）</td></tr>
+      <tr><td>审计</td><td>无</td><td>每个工具调用 → <code>.data/agent-audit.log</code>（actor / reqId / 耗时 / 状态）</td></tr>
+      <tr><td>LLM</td><td>OpenAI / Claude 闭源</td><td>阿里云百炼 <code>qwen-coder-plus</code> + <code>text-embedding-v3</code></td></tr>
+      <tr><td>沙箱</td><td>本机直接跑</td><td><code>CODE_SANDBOX_MODE</code>：off / subprocess / docker</td></tr>
+      <tr><td>多 Agent 协作</td><td>单 Agent</td><td>接 Manager_Agent：<code>manager_task_json</code> 协议 + Cross-Agent Memory</td></tr>
+    </table>
+    <p><strong>核心结论</strong>：Copilot/Cursor 是<strong>个人工具</strong>，code_assistent 是<strong>团队 / 平台可托管的服务端 Coding Agent</strong>。</p>
+    <p><strong>被问"为什么不直接用 Cursor"念法</strong>：Cursor 假设<strong>开发者本机信任</strong>，code_assistent 假设<strong>服务端多用户不信任</strong>——<strong>不同赛道的取舍</strong>。详细杀手追问（repo map / search-replace / Composer）见 C13。</p>
+    <p><strong>诚实边界</strong>：功能完整度 Cursor 远超我（IDE 集成 / repo map / long context / Composer 我都没有）。<strong>这张表的每一行都是"我有 / 它没有"，不是说它弱</strong>——C13 有完整的功能对比，这里只列维度差异。</p>
+    <p><strong>金句</strong>："<strong>桌面工具 vs 服务端 Agent</strong>——一个 Personal，一个 Platform。差异化在工程化 + 安全 + 平台化，不在对话体验。"</p>
   </div>
 </div>
 
