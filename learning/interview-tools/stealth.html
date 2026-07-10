@@ -52,6 +52,7 @@ body.qb-on{padding-top:calc(var(--fixed-h) + 6px)}
 .quickbar button.on{background:var(--core);color:#000;border-color:var(--core)}
 .quickbar button:active{background:#333;color:#fff}
 .card-body p{margin-bottom:4px;font-size:13px;color:#aaa;line-height:1.5}
+.card-body .pre-body{white-space:pre-line;margin:0 0 4px;font-size:13px;color:#aaa;line-height:1.5}
 .card-body .hint{color:#888;font-size:11px;font-style:italic;margin-top:3px}
 .card-body strong{color:#ddd}
 .code-blk{background:#0a0a0a;color:#e0e0e0;padding:8px 10px;margin:3px 10px 6px;border-radius:6px;font-family:"SF Mono",Menlo,Consolas,monospace;font-size:12px;overflow-x:auto;white-space:pre;word-break:keep-all;line-height:1.4;-webkit-overflow-scrolling:touch;border:1px solid #222}
@@ -5922,6 +5923,565 @@ docker:     --network=none --memory=512m -v cwd:/workspace:ro</div>
   </div>
 </div>
 
+<!-- ==================== HR软性/抗压子组（2026-07-11 新增·面试前必刷） ==================== -->
+<div class="card" data-c="emer" data-kw="HR 离职 原因 为什么离开 跳槽 动机 建设性 不吐槽 滴滴">
+  <div class="card-head"><span class="tag emer">HR1 离职原因</span><div class="card-title">为什么离开滴滴国际化</div></div>
+  <div class="core">不是逃离滴滴，而是要追AI工程化这条线——前东家已做到20+人团队用，现在想去更专注的AI场做得更深更专</div>
+  <div class="card-body"><div class="pre-body">怎么答（建设性表达，三段式）：
+1. 先肯定前东家给的平台：「滴滴国际化四年对我特别关键，前端owner从0到1搭中台、又能All-in去做公司级Spec-Driven平台，这个机会是很多公司给不了的，连续两年A绩效也说明组织认可。」
+2. 再说清离开的真实拉力（不是推力）：「但我越做Spec-Driven越发现，真正让我兴奋的不是前端这个岗位身份，是Agent工程化本身——Plan-and-Execute、Self-Evolution、多Agent协作这些。在前东家我已经验证了平台能跑（20+人团队日常用），但它是工程内部工具，公司主业务还是出行，AI是赋能不是主线。我想去一家AI是核心业务或核心战场的地方，把它当作第一职业身份来做。」
+3. 收回到对方公司（如果能现场点对点）：「这也是我来你们这边的原因——你们的XX产品/方向，正好是我业余做Manager_Agent和code_assistent_Agent想验证但缺场景验证的东西。」
+
+为什么这么答：HR听离职原因最怕三种——吐槽前公司、纯为钱、含糊说不清。这套答法把离职包装成「能力长出来了想去更大的场」，是成长型动机不是逃避型，且和AI岗位强相关。连续两年A绩效是硬证据，证明不是混不下去才走。
+
+雷区：
+- 绝不说「滴滴不重视AI」「机会有限」「晋升慢」「加班多」任何负向词，哪怕是真的。HR会自动脑补你将来也会这么说他家。
+- 别说「想挑战自己」这种空话，必须落到AI工程化这个具体方向。
+- 别说「薪资没有竞争力」——薪资单独那张卡处理，离职原因别混进来。
+- 被追「那滴滴AI也在做啊为什么不留下」，答：「内部平台服务工程团队，到20+人团队已经是它的天花板了，我想去AI是收入/用户主战场的地方，规模量级和工程深度都不一样。」</div></div>
+</div>
+
+<div class="card" data-c="emer" data-kw="HR 合规 个人项目 业余 公司资源 IP 数据 算力 零交叉 工作时间 摸鱼">
+  <div class="card-head"><span class="tag emer">HR3 合规性</span><div class="card-title">个人项目合规性·工作/业余/公司资源（高敏感）</div></div>
+  <div class="core">业余独立设计、没用公司数据和算力、不涉密——代码能现场开，和滴滴业务零交叉</div>
+  <div class="card-body"><div class="pre-body">这道题必须答得干脆不犹豫，一犹豫就完蛋。直接三句话先定调：
+1. 「Manager_Agent和code_assistent_Agent都是我下班和周末业余时间独立设计的，从架构到代码都是我个人思路的延续。」
+2. 「没有用滴滴的任何数据、模型、算力或内部工具——Manager_Agent用的是LangGraph.js标准库，code_assistent的embedding用阿里云DashScope text-embedding-v3，模型是qwen-plus，全是公开API我自己付费。」
+3. 「和滴滴业务零交叉——滴滴是出行，我的Agent是通用Multi-Agent Supervisor和Coding Agent，不涉及任何公司业务场景、客户、内部系统。」
+
+可主动加一句降顾虑：「如果你需要，代码我现在就能现场打开给你看，包括Commit历史都能看到是我个人长期累积的。」
+
+为什么这么答：HR问这个本质是排查三件事——(1) 你会不会带走前公司IP；(2) 来了会不会用公司资源干私活；(3) 做事有没有边界感。三句话直击这三点：业余时间、自费资源、业务零交叉。
+
+特别要强调：Spec-Driven是公司项目（简历项目1）我是主导者但IP属公司；Manager/code_assistent是个人项目。三者界限必须清晰。Spec-Driven用Claude Code Skill/Sub-agent/Citation Grounding（公司出钱公司主导）；个人项目用LangGraph+qwen，技术栈都不一样，正好自证隔离。
+
+雷区（踩雷直接挂）：
+- 绝不能说「工作时间摸鱼做的」「公司电脑上写过」——一律「业余时间+个人设备」。
+- 绝不能说「参考了公司Spec-Driven的实现」——强调「Spec-Driven是公司项目IP属公司，个人项目独立设计思路不同」。
+- 被追「Spec-Driven和Manager_Agent都涉及Plan-Execute是不是同一套思路」，答：「Plan-Execute-Critic是Agent工程界公开通用范式（ReAct、Plan-and-Solve都有），不是某个公司IP。具体实现完全不同——Spec-Driven跑在Claude Code生态，Manager_Agent是LangGraph.js 39节点图。」
+- 别主动说「我评估过合规性没问题」——主动提合规反而显心虚。</div></div>
+</div>
+
+<div class="card" data-c="emer" data-kw="HR 薪资 期望 议价 offer 年薪 总包 不先开价 区间 职级 筹码">
+  <div class="card-head"><span class="tag emer">HR5 期望薪资</span><div class="card-title">期望薪资议价策略（4年大厂2年A绩效）</div></div>
+  <div class="core">不主动开第一口，先给区间+把决策权推给贵司职级体系——不先开价、给区间不给点、报真实现薪</div>
+  <div class="card-body"><div class="pre-body">核心原则：绝不先开价，但要有理有据。
+
+第一步（HR初次问）：先反问职级范围：「这个我想先了解贵司这个岗位对应的职级和薪资带宽，不同公司定级标准不一样，我希望先对齐到你们的体系里再看，比较公平。」（把球踢回去，显成熟）
+
+第二步（HR坚持要数字，一定会）：给区间不给点：「同级（4年大厂+连续A绩效）转AI工程师方向，市场区间大概XX-XX万（提前查当地AI工程师4年档市场价，北京/上海/深圳差异大）。但这是基于我了解的市场情况，具体到贵司定级和岗位价值，我更希望听你们的方案。」
+
+第三步（被问「你现在薪资多少」，关键）：「我现在的总包是XX万左右（说真实数别注水，HR能查到大概区间）。我的期望是在现有基础上有合理增长，但比起绝对数字我更看重这个岗位能让我做的事是不是Agent工程化方向、团队和成长空间怎么样。」
+
+议价筹码（心里有数不用说全）：4年大厂+连续2年A绩效=市场硬通货；主导公司级平台（Spec-Driven 20+人用）=超出4年普通工程师杠杆；完整Agent工程化项目（Manager+code_assistent 54k+行）=不是吹水；转型有清晰路径不是镀金。
+
+为什么这么答：薪资谈判铁律「先开口的人输」。你反问职级、给区间不给点、报真实现薪不注水、强调岗位价值大于数字——HR会判定你「成熟、不贪、有市场认知」，offer通常给在区间上沿。
+
+雷区（踩雷直接掉钱）：
+- 绝不主动报具体数字——你报了就是天花板，HR只会往下谈。
+- 绝不注水现薪——大厂背景HR有渠道核实，被发现直接取消offer。
+- 别在前几轮技术面聊薪资，只在HR面谈，技术面问到一律「这个我和HR那边聊比较合适」。
+- 别拿其他offer当筹码威胁，除非真拿到且准备走。
+- 心理底线提前设好，谈判时绝不暴露。</div></div>
+</div>
+
+<div class="card" data-c="emer" data-kw="HR 英语 口语 短板 读写 兜底 补强 出海 国际化 英文面">
+  <div class="card-head"><span class="tag emer">HR7 英语短板</span><div class="card-title">英语口语短板的诚实兜底</div></div>
+  <div class="core">读写没问题（国际化中台对接10+国家全看英文文档），口语一般——不回避，有补强计划+兜底方案</div>
+  <div class="card-body"><div class="pre-body">这道题不能装，装了会被英文面5分钟打穿。
+
+先承认+分级：「我英语读写没问题——滴滴国际化中台对接10+个国家，所有技术文档、SDK文档、API spec看的都是英文原版，写英文邮件文档没障碍。但口语确实一般，日常交流能应付但不流利，复杂的架构讨论用英文表达会有损耗。」
+
+补强计划（证明重视且在行动）：「这个我一直在补——每周固定跟读技术Podcast（Lex Fridman、Latent Space），公司国际化事业部也有跨时区英文会议我参与。目标入职后3-6个月把口语拉到能独立做英文技术Review。」
+
+兜底方案（证明不拖累团队）：「(1) 异步场景（文档、PR Review、Issue）我用英文写没问题；(2) 同步会议我提前准备英文Outline，关键讨论点先文字沉淀；(3) 高频英文客户对接场景，我可以先做支撑角色再过渡。」
+
+出海岗/外企主动评估：「如果是纯英文工作环境，我目前确实不是最优选，这点我对自己诚实——但如果团队中文为主、英文主要是文档和偶尔跨区会议，我能胜任且有信心快速提升。」
+
+优势要利用：滴滴国际化事业部背景本身就是「英语读写过关」的背书（对接10+国家不可能读不行），放大它。
+
+雷区：
+- 别说「英语没问题」——口语一定被打穿，当场翻车比提前承认严重十倍。
+- 别说「英语不重要/技术岗用不到」——显傲慢且逃避。
+- 别过度贬低自己（「英语很差」）——你读写OK，过度贬低把优势也丢了。
+- 别承诺「三个月英语流利」——HR觉得你不靠谱。
+- 出海AI岗要诚实评估是否真合适，别为offer硬上，进去双方都痛苦。</div></div>
+</div>
+
+<div class="card" data-c="emer" data-kw="灵魂拷问 抗压 比开源强 凭要你 Self-Evolution没数据 简历项目水分 AI生成 前端做AI 统一框架">
+  <div class="card-head"><span class="tag emer">灵魂拷问</span><div class="card-title">5条灵魂拷问统一应对框架（抗压卡）</div></div>
+  <div class="core">统一原则:不硬杠、先承认、再给工程判断、最后把弱点转成roadmap——体现「知道局限但有判断力」</div>
+  <div class="card-body"><div class="pre-body">把散落在 C13 ROI / M1 档位 / M12 分级里最狠的5条追问，汇聚成统一应对框架。
+
+【统一原则】面对灵魂拷问我做三件事：(1) 不否认——否认=没判断力；(2) 给边界——承认到什么程度（原型/demo/简历项目），用档位语言把「水分」量化掉；(3) 转 roadmap——把弱点说成「我知道这是next step，这是改进计划」。不卑不亢，不defensive，不硬杠。面试官怼你不是要你认输，是要看你被打拳之后还站不站得稳、有没有自我认知。
+
+【拷问1】「你这两个个人项目我没看出比开源强在哪，凭什么要你？」
+应对：您说得对，单看功能 Cursor/Devin/开源 Agent 确实更全，我不假装比它们强。做这两个项目的目的不是「超越开源」，是「吃透 Agent 工程化的每一层」——从 ReAct 状态机、工具 RBAC、三层写盘守卫、双沙箱、Code Authority、到 Self-Evolution 金丝雀，逐行手写一遍才知道每个设计点的 trade-off。开源是「能用」，我的价值是「知道为什么这么设计、什么场景该怎么裁剪」。招我是招一个能把开源方案落地到具体业务、知道哪里能改哪里不能碰的人，不是再写一个开源。
+
+【拷问2】「Self-Evolution 没数据不就是没做出来吗？」
+应对：这个怼得最准，我完全认。Self-Evolution 目前每臂8样本、blendedArmScore 是自定义加权（0.55*final+0.45*composite）、没对照组、没 p-value、.data 也没进仓库，严格说它「跑过但无法证明统计显著」。我把它定位成「工程框架先行+统计严谨性后补」——金丝雀分桶（SHA256 5%）、回滚机制（regression&gt;=6% 自动 rollback）、状态机（hypothesis→running→promoted/rolled_back）这些工程脚手架是认真做的，但「效果验证」我承认没做完。给3个月+真实流量，第一件事就是接统计显著性检验（t-test/bootstrap置信区间）+搭labeled评测集。我不拿「框架」冒充「效果」。
+
+【拷问3】「4个项目除了Spec-Driven都是简历项目，水分大吧？」
+应对：我主动分级——Spec-Driven是公司级、20+人日常用、有真实量化（需求理解5h→2h n=5、Grounding rubric 82→54），「生产级」；Server-Driven UI中台是主业、400+SKU服务8项目、18个月仅2起低危bug，「商业级」；Manager和code_assistent是「个人原型级」，有真实源码（54k行/307文件、18工具、39节点）但没真实用户，DAU/MAU都是0。我不拿原型冒充生产。但原型有原型的价值：证明我能独立把一个Agent系统从0设计到能跑，这个能力迁移到生产是「补工程化」不是「从零学」。
+
+【拷问4】「54k行TS一个人写的是不是AI生成的？」
+应对：我诚实说——没有「纯手敲54k行不借AI」，那不现实也不诚实。我的工作流：架构设计、节点拓扑、失败归因分类、Code Authority规则这些「需要判断」的部分我自己设计；boilerplate、类型定义、重复性CRUD确实用AI辅助生成。但「AI生成」不等于「我不懂」——你能随便指一个文件（planLinterNode/retryBudget/failureAttribution），我能讲清每一行为什么这么写、不这么写会出什么问题。AI是我的工具不是我的作者，这点随便抽查。而且「会用AI高效产出代码」本身就是AI工程师该有的能力，不是短板。
+
+【拷问5】「前端做AI基础（Transformer/训练）行吗？」
+应对：这是我最实的短板。诚实讲：Transformer的attention数学推导、预训练/SFT/RLHF完整流程、从头训一个模型——这块我只有理论理解没实操。强项在「AI工程化/Agent落地」这一层：编排多Agent、做RAG、做工具调用、做Grounding和Quality Gate、控成本控幻觉。这两个方向价值不同：基础研究岗我确实不合适，但「把大模型能力变成可靠产品」的Agent工程岗，我的前端全栈+Agent实战+Schema工程背景是直接可用的。我求职明确投Agent工程化方向不是基础研究。前者我能在1-2个月补齐工程层知识；后者我建议另找更对口的人，这是对双方负责。
+
+金句：被怼的时候，否认是最低分的回答——面试官要的不是「你完美」，是「你被打了一拳之后，还知道自己站在哪、下一步往哪走」。</div></div>
+</div>
+
+<!-- ==================== 开场/项目串联子组（2026-07-11 新增） ==================== -->
+<div class="card" data-c="open" data-kw="项目串联 主线 总览 开场 技术演进 Schema Spec Plan 声明式约定 Workflow Agent 谱系 必背">
+  <div class="card-head"><span class="tag open">B0</span><div class="card-title">4项目串联主线（总览·必背）</div></div>
+  <div class="core">一条技术演进线:Schema中台(前端主业)→Spec-Driven(LLM工程化桥)→Manager+code_assistent(Agent工程化),覆盖Workflow→Agent完整谱系</div>
+  <div class="card-body"><div class="pre-body">定位一句话：我这4年做的不是4个分散项目，是一条「从声明式渲染到Agent编排」的演进线——核心能力一直是「把人脑里的隐性约定，工程化成机器可执行的约束」。
+
+三段叙事（按时间线讲，带记忆点）：
+
+第一段·前端主业(2022-2024)——Schema驱动的Server-Driven UI中台+400权益组件库。运营配Schema就能上新活动前端零代码(2周→3天)，联动本质是字段间有向图依赖+拓扑求值。关键产物:一套声明式渲染引擎服务两个业务，18个月仅2起低危bug。
+
+第二段·LLM工程化桥(2024起)——Spec-Driven Development Platform(公司项目/主导)。把上面积累的「声明式约定」思路迁移到需求侧:PRD→Spec→Plan蒸馏，Citation Grounding每条结论挂证据ID，Spec Review Gate硬停止HITL。量化:需求理解5h→2h(n=5)、蒸馏determinism 40%→85%(n=10)、Grounding rubric 82→54、20+人团队日常用。这是真落地项目。
+
+第三段·Agent工程化(业余独立)——Manager_Agent(Supervisor,39节点/12 Specialist,LLM路由)+code_assistent_Agent(ReAct,18工具,LLM自主选)。把第二段的「门控/证据/可观测」下沉到Agent层:Probe-before-plan、Pipeline Authority、Shadow Patch自进化、三层写盘守卫+双沙箱。
+
+记忆点(金句钩子):「前端我做的是把运营的脑中活动结构化成Schema，AI时代我把同一件事做了一遍——把需求的约定、代码改写的安全边界、Agent调度的质量门控，全部工程化成可审计的约束。主线一句话:声明式约定，从UI一路做到Agent。」
+
+诚实档位(必带):这条线里第二段是真落地(20+人)，第一段是主业真服务10+国家，第三段两个Agent是技术预研/个人能力建设(偏demo级)——不是贬义，是覆盖广度的诚实定位。
+
+被问「那你技术主线是什么」一句话收口:「从Schema到Spec到Plan——声明式约束这条线，UI层、需求层、Agent层都做了一遍，这是我区别于纯算法出身AI工程师的核心差异化。」</div></div>
+</div>
+
+<div class="card" data-c="open" data-kw="讲讲你的项目 三档 30秒 2分钟 5分钟 时长 伸缩 流水账 钩子 开场讲法">
+  <div class="card-head"><span class="tag open">B1</span><div class="card-title">"讲讲你做过的项目"三档时长讲法</div></div>
+  <div class="core">30秒讲主线一句金句;2分钟讲演进三段带数据;5分钟每段加技术深度钩子留追问入口</div>
+  <div class="card-body"><div class="pre-body">核心原则:不讲流水账，讲一条线。三档按时长伸缩，信息密度递增，每档都留钩子引追问。
+
+【30秒版·被问「简单介绍一下你做的项目」】(只讲主线+金句)
+「我4年做了一条线:前端主业是Schema驱动的Server-Driven UI中台，覆盖10+国家；2024起all-in AI，主导了公司级Spec-Driven平台，把PRD蒸馏成带证据的开发计划，20+人团队在用；业余独立设计了两个Agent——一个Supervisor一个ReAct。一条主线:把声明式约定从UI做到Agent。」——停在金句，把球留给面试官追问。
+
+【2分钟版·被问「详细讲讲你的项目经历」】(三段演进+每段一个数据)
+第一段30秒:Schema中台，运营配Schema前端零代码，2周→3天，联动本质是有向图依赖。
+第二段50秒(重点):Spec-Driven平台，PRD→Spec→Plan，每条结论挂证据ID可追溯，需求理解5h→2h，蒸馏determinism 40%→85%，20+人团队真落地。这是我最想展开的。
+第三段30秒:业余两个Agent——Manager是Supervisor(LLM路由12 Specialist+Probe探活+自进化)，code_assistent是ReAct(18工具+三层写盘守卫+Shadow Patch)。
+收口10秒:诚实定位——前两段真落地，第三段技术预研。
+
+【5分钟版·被问「你最完整地讲一下你的技术经历」】(三段+每段一个技术深度钩子引追问)
+每段比2分钟版多挖一层技术深度作为钩子:
+第一段加:联动引擎的拓扑排序+循环检测——引「讲讲联动怎么设计的」。
+第二段加:Citation Grounding消融实验去掉证据链82→54+Spec Review Gate硬停止HITL——引「质量门控具体怎么做」。
+第三段加:Probe-before-plan(规划前并行探活5下游把客观快照喂LLM)+Pipeline Authority(Code是数字唯一权威)——引「Supervisor和ReAct有什么本质区别」。
+关键:每段讲完主动停，看面试官追哪段，把那段展开成5分钟。不主动讲满5分钟，留对话空间。
+
+反模式(别犯):①四项目平均用力流水账(面试官抓不住重点)；②只讲AI不讲前端(丢掉差异化故事)；③一上来就讲Agent技术细节(没铺垫主线面试官没框架)。
+
+金句:「三档不是信息量不同，是颗粒度不同——30秒给框架，2分钟给证据，5分钟给钩子。」</div></div>
+</div>
+
+<div class="card" data-c="open" data-kw="最自豪 项目 选择 面试官画像 Spec-Driven code_assistent 落地影响力 技术深度">
+  <div class="card-head"><span class="tag open">B2</span><div class="card-title">"最自豪的项目"选哪个+选择策略</div></div>
+  <div class="core">看面试官画像选:落地影响力选Spec-Driven(20+人真用);技术深度选code_assistent;默认Spec-Driven最稳</div>
+  <div class="card-body"><div class="pre-body">核心策略:不只有一个答案，按面试官画像二选一。但有一个默认推荐——选Spec-Driven。
+
+【默认推荐:Spec-Driven Development Platform】
+理由三条:①真落地(20+人团队日常用，有n=5/n=10的真实量化)，讲起来不心虚；②最能体现「AI工程化」而非「AI玩具」——Citation Grounding+Spec Review Gate HITL+消融实验(82→54)是工程级可靠性思维；③最契合AI工程师岗位(面试官想看的是你能不能把LLM关进工程笼子，不是demo多炫)。
+讲法结构:「为什么自豪」=真解决团队痛点(需求理解5h→2h)+真有工程深度(证据链消融实验证明不是玄学)+真被使用(20+人，不是简历项目)。
+
+【技术深度备选:code_assistent_Agent】(只在面试官明显是资深技术人/明确问「你技术上最深的」时切换)
+切换信号:面试官自己写过Agent/Coding工具，或追问「底层怎么实现的」，或岗位偏infra/Safety方向。
+理由:三层写盘守卫(isSensitiveRepoPath读+写防密钥/isRestrictedWritePath只写防构建产物/sha256乐观锁+tmp/rename原子写)+双向Diff工程(Myers+hunk parser严格校验防编diff)+Custom CheckpointSaver(FileSaver extends BaseCheckpointSaver全base64序列化)+Shadow Patch自进化(hits≥3晋级)——是4个项目里工程深度最密的一个。
+诚实带:这是工程化原型非真生产(800文件demo)，但自豪点在「把LLM改仓库约束在可审计边界」的设计完整性。
+
+【反例:别选Manager_Agent当「最自豪」】原因:Manager机制设计强但实测数据弱(没真实业务流量)，被追「上线了吗」要诚实降级到demo级，讲「最自豪」底气不足。Manager更适合作为「架构广度」的佐证。
+
+【反例:别选SDU中台当「最自豪」】原因:是前端主业，讲「最自豪」会把人钉在前端身份上，弱化AI转型故事。SDU是地基不是峰顶。
+
+杀手追问「为什么不是技术最深的code_assistent」:诚实答「code_assistent技术上最深，但Spec-Driven最让我自豪，因为它真在被20个人用，每天都在影响别人的开发效率——技术深度是手段，落地影响力才是我自豪的标准。」
+
+金句:「自豪的标准不是代码多精巧，是真在被多少人用——Spec-Driven每天20+人用，这是我最踏实的成就感。」</div></div>
+</div>
+
+<div class="card" data-c="open" data-kw="工作 个人 精力分配 简历包装 预研 不心虚 影响工作 不务正业">
+  <div class="card-head"><span class="tag open">B3</span><div class="card-title">工作项目vs个人项目精力分配（不心虚）</div></div>
+  <div class="core">70%精力在工作(SDU+Spec-Driven真落地),30%在个人Agent预研;诚实定位:个人项目是技术预研非简历包装</div>
+  <div class="card-body"><div class="pre-body">这道题的陷阱:面试官问「你4个项目，工作才2个，另外2个是不是简历包装」——答不好就显得不务正业或虚标。
+
+【诚实定位框架(一句话定调)】
+「70%精力在工作项目(SDU中台+Spec-Driven平台，都是真落地真被用)，30%在业余个人Agent预研(Manager+code_assistent)。个人项目不是简历包装，是技术预研——我在工作里没机会碰的Agent编排和Safety，用个人项目把能力建起来。」
+
+【精力分配的合理解释(防「会不会影响工作」)】
+三点:①个人项目和工作的技术栈是延续的——Spec-Driven用Claude Code Skill+Sub-agent，Manager和code_assistent是同一套LangGraph/Agent能力往深做，不是另起炉灶；②个人项目的产物反哺工作——code_assistent的CheckpointSaver设计和Spec-Driven的Plan-and-Execute闭环思路互相验证；③连续2年A绩效是工作没拉下的硬证据(拿绩效说话，比解释有力)。
+
+【为什么做个人Agent项目(动机诚实版)】
+「工作里Spec-Driven是Workflow(开发者主导控制权，11步预定义)，但我想验证自己能不能做真Agent(LLM路由/LLM自主选工具)——公司项目风险高不敢贸然上Agent，个人项目是最好的试验场。Manager验证Supervisor编排能力，code_assistent验证ReAct+Safety能力。这两个项目让我在面试AI工程师时，不只是讲Workflow，能讲完整的Workflow→Agent谱系。」
+
+【杀手追问「个人项目有用户吗」】
+诚实答「除了我自己demo没人用」——对比Spec-Driven写了20+人团队。但补:「个人项目的价值不是DAU，是技术验证+能力建设。我把Spec-Driven里验证过的门控/证据/可观测思路，在Manager里下沉到Agent层重新实现一遍——这是跨项目的技术复用，不是孤立的玩具。」
+
+【杀手追问「那是不是本职工作不够饱和」】
+反击:「Spec-Driven是我主导的公司级平台，20+人日常用，需求理解5h→2h——这是高强度本职产出。个人项目是下班和周末做的，和我求职AI工程师方向强相关，是主动能力建设不是闲。」
+
+【杀手追问「3套Multi-Agent系统是不是简历话术」】
+(直接复用M12口径)诚实降级:「严格说不是3套Multi-Agent，是覆盖Workflow→Agent完整谱系——Spec-Driven是1个Workflow(11步)，Manager是Supervisor Agent，code_assistent是ReAct Agent。简历『3套』是话术，准确说法是『1 Workflow + 2 Agent』。」
+
+金句:「简历项目不是贬义——诚实区分真落地和真预研，比硬包装成『都是生产系统』更稳，也更能体现我知道什么是真生产。」</div></div>
+</div>
+
+<div class="card" data-c="open" data-kw="项目关系 Schema Spec Plan 迁移 方法论 联动引擎 依赖图 组件注册 Agent注册 声明式 跨项目">
+  <div class="card-head"><span class="tag open">B4</span><div class="card-title">项目关系：Schema→Spec→Plan的演进迁移</div></div>
+  <div class="core">SDU的Schema(声明式UI约定)→Spec-Driven的Spec(声明式需求约定)→Agent的Plan/Skill(声明式行为约定)——同一套方法论贯穿</div>
+  <div class="card-body"><div class="pre-body">这道题考的是「你的项目之间到底有没有内在逻辑，还是东做一块西做一块」。答案是一条清晰的能力迁移线。
+
+【核心洞察:三个项目共享同一个底层方法论】
+「把人脑里的隐性约定，工程化成机器可执行的声明式约束」——这件事我做了三遍，只是对象不同:
+①SDU中台:把「运营脑子里的活动长什么样」工程化成Schema(声明式UI约定)；
+②Spec-Driven:把「产品脑子里的需求约定」工程化成Spec(声明式需求约定)；
+③Manager/code_assistent:把「开发者脑子里的安全边界和质量标准」工程化成Plan/Skill/Guard(声明式行为约定)。
+
+【具体迁移点(被追「怎么迁移的」答这三条)】
+
+迁移点1·Schema→Spec(声明式约定):
+SDU里BFF用模板引擎生成Schema，前端渲染引擎按Schema声明式出组件——Schema是前后端唯一真相源。Spec-Driven里PRD→Spec蒸馏，Spec是开发计划和测试计划的唯一真相源。同一个思路:「不靠人记忆和口头沟通，靠结构化声明当single source of truth」。
+
+迁移点2·联动引擎→Plan-and-Execute(依赖图):
+SDU联动的本质是字段间有向图依赖+拓扑排序求值(A字段影响B，B影响C，要拓扑序求值)。Spec-Driven的Plan-and-Execute闭环也是依赖图——每个plan step绑agent+payload，step间有依赖顺序，plan_lint硬规则校验依赖完整性(visualize必有code)。图论思维从前端联动迁移到任务规划。
+
+迁移点3·组件注册→Agent注册(插件化):
+SDU的权益组件库用Register注册模式——SDK内置通用组件，业务方register注册定制组件，新业务接入只注册不改内核。Manager_Agent的12 Agent是同一思路——核心编排层不动，Agent作为Specialist按协议注册接入(db/rag/code/crawler...)，新增能力加Agent不改Supervisor内核。
+
+【迁移点4·质量门控(加分层)】
+SDU时代质量靠18个月仅2起低危bug的工程严谨(类型+测试+Changesets)。Spec-Driven时代升级为Citation Grounding+Quality Gate五维评分+Spec Review Gate HITL。Agent时代再下沉——Manager的Critic/Evaluator双层仲裁+code_assistent的三层写盘守卫。质量思维从「写对代码」演进到「约束LLM别出错」。
+
+【被问「那你觉得最大的认知跃迁是什么」】
+诚实答:「从前端到AI，最大的跃迁不是学新框架，是意识到——前端的工程化思维(组件化/Schema/BFF/监控)几乎可以1:1翻译到AI工程(Agent编排/Safety/可观测)。我不是从零转AI，是把已有的工程能力换了个应用层。详见B5。」
+
+金句:「Schema到Spec到Plan，不是三个项目，是同一套方法论(声明式约定)在UI层、需求层、Agent层各做了一遍——这让我做AI工程比纯算法背景的人多一层工程深度。」</div></div>
+</div>
+
+<div class="card" data-c="open" data-kw="前端转AI 能力翻译 组件化 Schema BFF 监控 差异化 防御 算法 工程化 凭什么">
+  <div class="card-head"><span class="tag open">B5</span><div class="card-title">"为什么前端能做好AI工程"能力翻译</div></div>
+  <div class="core">前端4大工程能力1:1翻译成AI工程:组件化→Agent编排/Schema→Spec/BFF→Retrieval/监控→可观测</div>
+  <div class="card-body"><div class="pre-body">这道题是AI工程师面试的核心防御题——面试官潜台词「你前端出身凭什么做AI」。答案不是「我学了LLM」，是「我的工程能力天然适配AI工程的痛点」。
+
+【核心论点:AI工程的瓶颈不在算法，在工程化】
+「LLM的模型能力是OpenAI/Anthropic给的，我的工作不是训模型，是把模型能力关进工程笼子让它可靠地服务业务。这件事的核心能力——组件化抽象、Schema约束、BFF编排、全链路监控——全是前端4年练出来的。」
+
+【四组能力翻译(被追问必答，每组一个具体例子)】
+
+翻译1·组件化 → Agent编排:
+前端:权益组件库Register注册模式，400+组件靠配置覆盖组合，新业务接入只注册不改内核。
+AI:Manager_Agent的12 Specialist Agent按协议注册接入，Supervisor内核不动，新增能力加Agent。同一套「插件化+注册表+协议层」的工程模式。
+
+翻译2·Schema约束 → Spec/Citation Grounding:
+前端:Server-Driven UI靠Schema当前后端唯一真相源，运营配Schema前端零代码，联动靠字段间图依赖。
+AI:Spec-Driven靠Spec当开发计划唯一真相源，Citation Grounding每条结论挂证据ID(像Schema里每个字段有类型约束)。声明式约束防LLM幻觉，和Schema防UI乱渲染是同构问题。
+
+翻译3·BFF编排 → Retrieval/多源合成:
+前端:BFF层聚合多个后端API，模板引擎生成Schema，injectDActions双重求值(SSR算一次+运行时算一次)。
+AI:Manager的synth节点合成多Agent结果，probe节点并行探活5下游——本质都是「多源数据聚合+中间层编排」。BFF处理多后端异构的经验直接迁移到多Agent结果合成。
+
+翻译4·全链路监控 → Agent可观测:
+前端:前端监控体系(性能/异常/白屏检测)，把用户行为埋点链路化。
+AI:Manager的manager-metrics.jsonl+p95分级healthy/degraded/down+LangSmith trace——可观测思维从「监控UI渲染」迁移到「监控Agent每一步」。Agent出错比前端难定位，监控能力反而更关键。
+
+【差异化收口(防「算法出身的人也能学工程」)】
+「算法出身的人懂模型我不懂，但他们通常缺一样东西——把一个复杂系统拆成可维护可扩展可监控的工程产物的肌肉记忆。这是前端4年高强度业务锤出来的，不是临时补课能补上。我做Agent的第一周就在想checkpoint怎么持久化、Safety怎么分层、可观测怎么埋——这些是我闭眼都能做的工程事，反而LLM调用本身是最简单的部分。」
+
+【诚实短板(必带)】
+「我的短板也明确:①英语口语一般(读写OK)；②没系统学过ML理论(不会反向传播推导，但我做的是应用层不训模型)；③小程序/移动端无实战。这些我都在补，但核心AI工程能力我有信心。」
+
+【杀手追问「那你觉得前端做AI的劣势是什么」】
+诚实答:「对模型本身的理解深度不够——embedding为什么这么设计、注意力机制为什么有效，我只能讲应用层理解讲不到数学层。但我的岗位是AI工程师(Agent工程化方向)，不是算法研究员，工程化是我的主场。」
+
+金句:「前端做AI不是劣势是优势——AI工程80%的痛点是工程问题不是算法问题，而我4年都在解决工程问题，只是应用层从浏览器换成了LLM。」</div></div>
+</div>
+
+<div class="card" data-c="open" data-kw="转AI 转型 动机 路径 Schema-as-Code Aha moment 镀金 追风口 延续 4年前端">
+  <div class="card-head"><span class="tag open">HR2 转型动机</span><div class="card-title">4年前端转AI的动机与路径</div></div>
+  <div class="core">不是抛弃前端，是前端Schema思维自然长到Agent工程化上——Spec-Driven平台就是那座桥</div>
+  <div class="card-body"><div class="pre-body">动机真诚+路径清晰：
+
+1. 动机从具体的「Aha moment」切入，别喊口号:「我做国际化营销中台时核心就是Server-Driven UI——用Schema描述界面、用Plugin Registry动态组装400+权益组件。2024年开始想，这套『Schema-as-Code+配置驱动』的思路能不能用来描述Agent行为？这就是Spec-Driven平台的起点。当我发现Claude Code Skill、Sub-agent、Citation Grounding这些能真的把需求理解从5h压到2h(n=5)，我就知道这不是前端兴趣项目，是我应该All-in的方向。」
+2. 路径要说清是「延续不是断裂」:「所以严格说我的转型不是跳赛道。前端主业给我的——Schema工程化、组件化思维、工程规范(18个月400+SKU仅2起低危bug)、可观测性——全是Agent工程化最需要的底子。我业余独立设计的Manager_Agent(LangGraph 39节点40边)和code_assistent_Agent(ReAct 18工具)，本质都是把前端的工程严谨搬到了Agent上。」
+3. 收到求职目标:「现在我想把这个方向做成全职身份，找AI工程师(Agent工程化方向)的岗位。」
+
+为什么这么答:HR和技术面试官都怕「前端转AI」=「追风口镀金」。这套答法的杀手锏是「Schema-as-Code这个具体思维桥梁」——它逻辑上成立(Server-Driven UI和Spec-Driven确实同源)，且能解释为什么你4年前端不是劣势反而是优势。Spec-Driven平台有真实量化(5h到2h、20+人团队)做背书，不是空谈。
+
+雷区:
+- 别说「AI是未来」这种行业吹捧话，显得没主见。
+- 别说「前端没意思了/卷不动了」，等于承认逃避。
+- 别把转型说成「自学了点LLM」——Spec-Driven是公司级平台有团队在用，是工程实践不是自学。
+- 被问「你前端很强为什么不去大厂做资深前端」，诚实答:「我评估过，资深前端那条路我能走，但Spec-Driven让我确认了Agent工程化才是让我愿意All-in的方向，所以我不去争资深前端坑，直接来AI岗。」</div></div>
+</div>
+
+<div class="card" data-c="open" data-kw="职业规划 3年 5年 技术负责人 Multi-Agent 平台 不追风口 团队杠杆 AI工程化">
+  <div class="card-head"><span class="tag open">HR4 职业规划</span><div class="card-title">3-5年职业规划（AI工程化方向）</div></div>
+  <div class="core">三年做深Agent工程化(单Agent→Multi-Agent→平台),五年做AI工程化技术负责人——不追风口追工程深度和团队杠杆</div>
+  <div class="card-body"><div class="pre-body">具体到能落地，别喊「成为AI专家」：
+
+1. 一年内近期目标贴岗位:「先把Agent工程化的工程基座做扎实——可观测性、评测体系(这是我业余项目的明显短板，我清楚自己Spec-Driven的Grounding rubric从82降到54但Manager的Self-Evolution每臂8样本做不到统计显著，所以第一年我想在一个有真实用户量的场景里把评测和持续优化补上)。」
+2. 三年中期目标讲技术纵深:「从单Agent工程化走向Multi-Agent系统设计——我业余做的Manager是12 Agent的Supervisor架构，但还没真实DAU/MAU验证。三年内我想在一个业务里把Multi-Agent从demo级推到生产级，重点是稳定性、成本、可演进性这三件事，对应我简历里Recursion Budget、A/B金丝雀回滚、经验回放防污染那几块工程实践真正跑出数据。」
+3. 五年长期目标讲团队杠杆:「成为AI工程化方向的技术负责人——不是纯Individual Contributor，是能带一个5-10人的小团队、对Agent平台的技术路线负责。我前端owner的经历让我知道怎么对一条业务线负责，Spec-Driven让我知道怎么对一个平台负责，下一个台阶是对一个技术方向负责。」
+
+为什么这么答:HR问职业规划最怕三种回答——「不知道/没想过」(没规划)、「我想当管理者」(不想做技术)、「追风口」(不踏实)。这套精妙在于:(1)每个阶段都有具体技术内容(评测、Multi-Agent生产化、团队)，不是空话；(2)主动暴露自己项目的短板(每臂8样本统计显著性、无DAU)，显得极度清醒真诚；(3)五年目标是「技术负责人」不是「架构师」也不是「管理者」，卡在既技术又带杠杆的中间态。
+
+雷区:
+- 别说「成为AI领域的专家/大牛」——太空且好高骛远。
+- 别说「想创业」——HR听到创业自动扣分(怕你随时走)。
+- 别说「想转管理」——技术岗这么答等于不想干技术了。
+- 别把规划绑死在「Agent工程化」不留退路，可加一句「也会持续关注Multi-Agent之外的其他AI工程化方向(比如RAG系统、LLM Infra)，核心是AI工程化这个大方向不变，具体抓手跟着公司业务和行业演进。」</div></div>
+</div>
+
+<div class="card" data-c="open" data-kw="开源 看代码 现场 Demo commit历史 简历造假 验证 文件引用 行号 私有仓库">
+  <div class="card-head"><span class="tag open">HR6 开源/看代码</span><div class="card-title">个人项目开源吗·能不能看代码</div></div>
+  <div class="core">代码现在就能现场打开——文件级引用带行号,Commit历史证明个人长期累积,开源化在TODO但目前私有</div>
+  <div class="card-body"><div class="pre-body">这道题是加分项，要答得坦荡。直接答应+主动展示:
+
+「可以，两个项目的代码我现在就能给你看。我简历里写的所有技术细节都带文件引用——比如Manager_Agent的39节点在managerGraph.graph.ts:67-104、40条边在105-223行、retryBudget.ts里recursionLimit默认48可配25-120，code_assistent的18工具完整清单在agent.ts:1003-1036、三层写盘守卫在files.ts:167-215。这些不是简历话术，是能逐行对账的。」
+
+关于开源状态诚实分类:「目前两个项目都是私有仓库，状态分两种:
+- Manager_Agent:在考虑开源化，但里面有些后端配置(Redis、各Agent的API key管理)需要先做脱敏，短期内可以给面试官私有访问权限。
+- code_assistent_Agent:是我个人长期演进的实验项目，包含一些Prompt和评测数据还在迭代，暂时不开源，但面试场景随时可以现场展示代码和Demo。
+如果你需要，我可以现场跑一下——code_assistent默认起在localhost:13103，Manager可以给你看LangGraph的可视化拓扑图。」
+
+主动加分项:「如果你愿意，我也可以把Commit历史给你看，能看到这两个项目是我从2024年开始长期累积的，不是临时包装的——这点对你会比较关键(暗示你理解HR在排查简历造假)。」
+
+为什么这么答:HR问的本质是验证简历真实性。AI岗位简历造假重灾区就是「项目能力注水」——很多人简历写Multi-Agent实际只跑过demo。你直接「能现场打开+文件带行号+Commit历史可查」是最强反证。比说「我做过XX」强一万倍的是「我现在打开给你看XX在哪个文件第几行」。
+
+雷区:
+- 别说「代码在公司电脑上拿不出来」——立刻被怀疑是公司项目(踩中HR3合规雷区)。
+- 别说「暂时不方便看」——立刻被怀疑简历造假。
+- 如果代码里真有敏感信息(哪怕个人API key)，提前清理或用环境变量，别现场翻车。
+- 别吹「已经准备开源」——没开源就没开源，开源有成本(文档、脱敏、维护承诺)，承诺做不到反而扣分。
+- 现场Demo如果跑不起来要有兜底(提前录屏或截图)，别现场翻车。</div></div>
+</div>
+
+<div class="card" data-c="open" data-kw="为什么选我们 动机 最大的失败 挫折 加班 On-call 出差 Self-Evolution 成长故事 三段式">
+  <div class="card-head"><span class="tag open">HR8 动机/失败/加班</span><div class="card-title">为什么选我们+最大的失败+加班接受度</div></div>
+  <div class="core">动机=你们做的事正是我业余项目想验证的场景;失败=Self-Evolution统计显著性做到认知边界没跨过;加班=AI工程化产出导向接受必要投入</div>
+  <div class="card-body"><div class="pre-body">这张卡合并三个高频但相关的软性问题，给统一话术框架。
+
+【为什么选我们公司】通用框架三段式(每家都能套，但要提前填具体):
+1. 业务对齐:「我关注你们有一段时间了，特别是你们在XX方向(提前调研:某个产品/技术博客/开源项目)的实践，跟我业余做Manager和code_assistent想验证的东西高度吻合——我缺的就是真实业务场景和用户量，你们正好有。」
+2. 技术对齐:「我的背景是前端工程化+Agent工程化，你们JD里提到的XX(具体技术点)，正好是我Spec-Driven做过的(Plan-Execute闭环、Citation Grounding、Sub-agent)或个人项目深入过的(Multi-Agent、ReAct、Self-Evolution)。」
+3. 成长对齐:「我现在在前东家已把Spec-Driven做到20+人团队用的稳定状态，下一步成长需要更大场景和更专注的AI主线，你们这个岗位正好是这个节奏。」
+雷区:别说「贵司是行业领先/大平台/学习机会多」——所有面试者都这么说等于没说。必须具体到产品/技术点/团队。
+
+【最大的失败/挫折】把项目里的诚实边界转成成长故事(不要编假的，用真实技术边界):
+「我目前最大的一个认知边界，是做Manager的Self-Evolution模块时碰到的。我设计了完整的闭环——失败归因11类、假设生成、金丝雀A/B、经验回放——架构上看起来很完整。但落地后发现一个硬伤:每臂默认8个样本，配的是我自定义的blendedArmScore(0.55*final+0.45*composite)，没对照基准，做不到统计显著性。也就是说我能跑出『promote一条假设』，但我说不清这条假设是真的好还是噪声。
+这件事对我的成长是——(1)我真正理解了为什么工业级Online Learning/持续优化这么难，不是架构问题是评测和实验设计问题；(2)它直接决定了我下一段的职业重点，我想在有真实用户量的场景里把Agent评测和实验设计这块补上；(3)它让我对简历上每一条量化数据都更谨慎——我不写自己证明不了的数。」
+为什么这么答:核心是看「有没有自我认知+能不能从失败学到东西」。用Self-Evolution统计显著性这个真实短板答，一石三鸟:真实不编(M9已准备诚实边界)；展示技术深度(能说清为什么8样本不够)；自然接到职业规划。
+雷区:别编「太追求完美/工作太拼」的假失败；别用「离开上一段实习太早」不痛不痒的；别用「和老板/同事冲突」触发协作能力怀疑；别把失败推给外部。
+
+【加班/出差/On-call接受度】诚实但有边界地接受(别为offer无脑全答应):
+「我对接下来的工作接受必要的高强度投入——AI工程化本身是产出导向的，Agent上线、关键迭代节点该投入我会投入，我在滴滴Spec-Driven平台上线那段时间也是持续高强度。
+但我对自己诚实的一点是——我希望高强度是有目标、有节奏的，不是无意义的耗时间。如果是赶版本、攻关键问题，我完全OK；如果是日常性的人浮于事式加班，我希望团队是有产出文化的。
+On-call这块，如果是Agent线上稳定性相关，作为负责人我理应承担；出差看频次和目的，合理的客户对接、团队协作我OK。」
+雷区:别说「我不接受加班」(直接挂)；别说「随便加/996没问题」(没生活且被压价)；别问「加班有加班费吗」(HR面问显功利)；On-call和出差别一口答应，留评估空间。</div></div>
+</div>
+
+<!-- ==================== 项目亮点补强子组（2026-07-11 新增·被埋没的源码细节） ==================== -->
+<div class="card" data-c="proj" data-kw="AsyncLocalStorage ALS 上下文 请求级 Node async_hooks cls-hooked 并发安全 签名污染 关注点分离">
+  <div class="card-head"><span class="tag CodeAgent">D1 亮点</span><div class="card-title">AsyncLocalStorage 无侵入请求级上下文</div></div>
+  <div class="core">工具函数不传req/actor/reqId/sendEvent,靠Node的AsyncLocalStorage取请求上下文,签名零污染,Node高级工程亮点</div>
+  <div class="card-body"><div class="pre-body">源码:code_assistent_Agent/server/services/agent.ts:197-225
+
+【一句话讲清】我在agent.ts用 const ctxStorage = new AsyncLocalStorage&lt;{root,actor,reqId,sendEvent,sendDelta}&gt;() 建了一个请求级store，每个请求进来 ctxStorage.run(store, handler) 注入，底下任意一层的工具函数用 requestActor()/requestReqId()/requestSendEvent() 直接取，不需要把req一路往下传。
+
+【为什么不用参数传递】18个工具+ReAct两节点状态机+sandbox/checkpoint/RAG多条调用链，如果每个函数签名都加(actor, reqId, sendEvent)，签名爆炸、每个wrapper都要改、单测要mock一堆。ALS让业务函数只关心业务，横切关注点(鉴权actor、链路追踪reqId、SSE推流sendEvent)走上下文，这是「关注点分离」的标准做法。
+
+【为什么不用global变量】global在Node并发下会被串台:A请求写global.actor，B请求同一进程读到的就是B的。ALS是按「异步调用链」隔离的，每个ctxStorage.run开一条独立链路，await跨越promise边界上下文不丢，天然并发安全。这是Node做request-scoped依赖注入的官方姿势。
+
+【和cls-hooked的演进关系】面试官如果老会问cls-hooked:cls-hooked是社区早期方案，基于手动patch async API，边界case多(尤其setImmediate/child_process)、不稳。Node 13.10+把AsyncLocalStorage收进node:async_hooks，用底层的executionAsyncId()做链路追踪，是Node官方稳定实现，cls-hooked已deprecated。所以我用原生ALS。
+
+【ALS的安全边界—扛追问的关键】ALS不是万能:它依赖async_hooks的执行上下文追踪，在三种情况会「丢上下文」——(1)跨进程child_process；(2)显式新建独立异步链如new Promise里再process.nextTick跨tick；(3)经过没有hook的native binding。我的设计里sendEvent/sendDelta只在同一个HTTP请求的生命周期内(同一个handler同一条await链)用，不跨进程不跨tick，所以安全。真要跨进程(比如sandbox docker)我会显式把reqId序列化传过去再续上。
+
+【扛「为什么不用NestJS的DI/不用Zone.js」】NestJS DI是构造期注入、单例或请求级，我这个是Nuxt server不是NestJS，而且我只要请求级标量上下文，引一套DI容器太重；Zone.js是Angular那套，zone.fork性能开销大且和async_hooks定位重叠，Node后端不推荐。
+
+金句:参数传递是O(函数深度)的签名污染，global是0隔离，ALS是O(1)注入+进程内并发安全——这是Node做request-scoped context的甜点位。</div></div>
+</div>
+
+<div class="card" data-c="proj" data-kw="个性化RAG 重排 getFileScoreAdjust 协同过滤 fileBoosts filePenalties 冷启动 回音室 封顶 向量召回">
+  <div class="card-head"><span class="tag CodeAgent">D2 亮点</span><div class="card-title">getFileScoreAdjust 个性化RAG重排（向量+协同过滤）</div></div>
+  <div class="core">向量召回后用用户历史成败信号重排:成功文件+0.05(封顶0.15)、失败-0.06(封顶-0.2),向量+协同过滤混合个性化RAG</div>
+  <div class="card-body"><div class="pre-body">源码:retrieve.post.ts:88-90(score = baseScore + getFileScoreAdjust(path)) + code_learning.ts:306-318(adjust逻辑) + 123-162(fileBoosts/filePenalties怎么来)
+
+【一句话讲清】我的RAG不是只做向量召回就结束:召回完每个文件有个baseScore(cosine相似度)，我再加一个getFileScoreAdjust(path)做个性化重排——这个adjust来自该用户历史成功改过的文件加分、改崩过的文件减分，最后按总分重排再返回给LLM。
+
+【adjust怎么来的—协同过滤的来源】code_learning.ts:123 buildRoutePreferences()读.data下的JSONL信号流(每次任务结束落sig:task_kind/hint_files/files_touched/score)，score===1的把涉及文件push进fileBoosts，+1累计；score===-1的push进filePenalties。然后getFileScoreAdjust:boost = min(0.15, boostCount*0.05)，penalty = -min(0.2, penCount*0.06)。所以这不是手工配的权重，是从用户真实交互信号学出来的——这就是「个性化」，本质是item-based协同过滤(以文件为item，以成败为隐式反馈)。
+
+【和纯向量的区别】纯向量只看「这次query和文件内容像不像」，对所有用户一样。加adjust后:同一个query「改登录逻辑」，老在auth/目录改的用户把auth.ts调到前面，从来没碰过auth的用户不会被带偏。这是「召回靠语义、重排靠个人偏好」的两段式。
+
+【扛「冷启动怎么办」】新用户没有信号，fileBoosts/filePenalties是空map，adjust恒为0，退化成纯向量——冷启动天然优雅，不需要兜底分支。随着用户用得越多信号越多，个性化逐步生效，这是「冷启动不退化、热启动更准」。
+
+【扛「防偏好固化/回音室」】这是最容易被怼的点。我做了三道防御:(1)封顶——单文件boost最多+0.15、penalty最多-0.2，再强的历史也压不过baseScore太多；(2)负样本可逆——penalty不是黑名单，只是降权，新证据能把分拉回来；(3)向量召回先确定候选集再做adjust，偏好只能在「向量认为相关」的池子里重排，不能把无关文件硬塞进来。但我诚实承认:我没做时间衰减(这点不如Manager的经验回放有λ=0.09/天)，老偏好不会被自然遗忘，这是已知gap，是我下一步要加的。
+
+【扛「0.05/0.15/0.2这些魔法数字怎么来的」】诚实回答:经验值+防御性保守。0.05是「一次成功带来微调」的粒度，0.15封顶保证单文件最多把cosine分抬15%——因为cosine归一化到[0,1]，15%已经足够把同分段文件拉开但不会越过完全不相关的文件。我没做grid search调参，这是原型的诚实局限。
+
+【扛「怎么评估重排质量」】这是我最该补的:目前只有retrieve的smoke test(minHits=0不报错就过)，没有nDCG/recall@k/MRR这套检索质量评测。我承认是gap，如果上生产第一件事就是搭一个labeled query set做nDCG对比「纯向量 vs 向量+adjust」。
+
+金句:这是把「协同过滤的隐式反馈」嫁接到「向量召回」上的最小可行实现——召回靠语义保住下限，重排靠个人信号抬上限，封顶+负样本可逆防固化。</div></div>
+</div>
+
+<div class="card" data-c="proj" data-kw="Pipeline Authority Code-first 数字权威 对抗幻觉 visualize report plan_lint Critic 数值hallucination Manager">
+  <div class="card-head"><span class="tag Manager">D3 亮点</span><div class="card-title">Pipeline Authority：Code是数字唯一权威</div></div>
+  <div class="core">Manager多Agent流水里数字只来自code Agent,visualize/report只消费code结果,plan_lint+Critic双层强制,对抗LLM幻觉的工程哲学</div>
+  <div class="card-body"><div class="pre-body">源码:shared/codeFirstAuthority.ts(CODE_AUTHORITY_RULE/buildCodeFirstBundle/mergeFactsWithCodePriority) + shared/codeAuthorityPayload.ts(assessCodeDownstreamConsistencyStructural结构校验) + managerGraph.planLinterNode.ts(plan_lint) + managerCodeAuthorityNormalize.ts(enrich/repair)
+
+【一句话讲清】在Manager_Agent里，凡是「数字」——金额、占比、计数、指标——只能由code Agent(确定性代码计算)产出，visualize画图/report出报告只能引用code已经算出来的数，不允许自己从RAG/DB原文捞数、不允许自己推算。这是用「单一数据权威」对抗LLM的数值幻觉。
+
+【三层强制机制，逐层讲清】
+第一层 prompt硬规则:codeFirstAuthority.ts:22-29三条规则CODE_AUTHORITY_RULE/SYNTH_RULE/CRITIC_RULE，明确「与RAG/DB/爬虫冲突时一律采信Code，勿复述上游未计算的原始裸数」。这是注入到synthesize/critic节点system prompt的。
+第二层 数据通道隔离:buildCodeFirstBundle()给visualize/report构造downstreamContext时，如果有code输出，上下文里只放code的answer+mergedFacts，并在硬性约束里写死「ECharts series.data、表格金额、报告结论数字必须全部来自上方Code输出；禁止从RAG/DB/爬虫原文取数、禁止用占比冒充金额、禁止自行推算」。关键设计:mergeFactsWithCodePriority合并多源facts时code最后写入覆盖同名键——同名key code一定赢。
+第三层 Critic仲裁:assessCodeDownstreamConsistencyStructural()做结构校验，如果发现下游visualize/report的数字和code payload对不上，needsRetry=true且retryIntent优先指向code(图表错指visualize、报告错指report)。这是事后兜底。
+
+【为什么这么设计—对抗幻觉的本质】LLM算数不可靠是共识:大模型做「这个月比上个月增长百分之几」「三个数求和」经常错，而且错得自信。如果让visualize自己根据RAG文本里的几个零散数字算增长率再画图，等于把确定性任务交给概率模型。我的方案:把「计算」从LLM链路里彻底剥离给确定性code Agent(LLM只负责写计算代码)，数字一旦由code产出就锁定为权威，下游只能消费。这是「让LLM做它擅长的(理解/生成/编排)，不让它做它不擅长的(精确计算)」的分工。
+
+【对比「让LLM直接算数」】直接让GPT/Claude在prompt里算数的问题:(1)同一问两次答不一样(温度&gt;0)；(2)大数容易数错(7位数加法)；(3)错了无法trace。code Agent方案:(1)确定性，同输入同输出；(2)代码可审查、可单测；(3)出错trace到具体行。代价是多一次工具调用+代码执行延迟，但对「数字必须对」的场景(报表/财务/数据看板)这个代价值得。
+
+【扛「这就是个prompt工程，算什么架构」】不是。它有运行时强制:plan_lint会在计划阶段就检查「route允许的agent是否都生成了步骤、是否越权」，buildCodeFirstBundle会在数据流上做通道隔离(只喂code输出)，Critic会在事后做一致性校验并触发重试。这是「prompt提示+数据通道+事后仲裁」三位一体，不是靠prompt软约束祈祷。
+
+【诚实局限】(1)Critic一致性校验本身也可以被LLM绕过(它也是模型判断)，所以我对高价值场景加了assessCodeDownstreamConsistencyByLlm双保险，但仍是概率兜底；(2)没有ground truth数据集量化「数字准确率提升了多少」，这是我承认没法证明的——这是demo级项目的诚实边界。
+
+金句:在多Agent流水里，最危险的不是LLM不会算，而是它「自信地算错还画成图」。Code-first Authority的本质是——把确定性任务还给确定性代码，让LLM只做它该做的编排与理解。</div></div>
+</div>
+
+<!-- ==================== 系统设计/重设计子组（2026-07-11 新增·大厂二面专用） ==================== -->
+<div class="card" data-c="ai" data-kw="重设计 Manager 瘦身 39节点 subgraph 业务域 拆分 删合并 Critic降级 过度设计 架构债 系统设计">
+  <div class="card-head"><span class="tag ai">SD1</span><div class="card-title">重设计Manager_Agent：39节点拓扑怎么瘦身</div></div>
+  <div class="core">39节点按业务域拆7-8个subgraph,Probe保留、Critic降级可插拔、Self-Evolution砍到shadow-only,从大杂烩变成可独立演进的能力域</div>
+  <div class="card-body"><div class="pre-body">电梯答:现状是39个addNode(managerGraph.graph.ts:67-104)+40边(20条件边)全铺在一张图里，看起来唬人但本质是单进程内函数调用图，没有域边界、没有独立伸缩、没有故障隔离——这是原型级的拼装不是生产架构。重设计核心动作三个:拆、删、降级。
+
+一、按业务域拆subgraph(7个):知识库(RAG)/NL2SQL/代码/爬虫/GUI/办公(报表可视化)/多模态。每个subgraph自带自己的Probe+Critic+HITL+checkpoint，supervisor只做路由和仲裁。好处:multimodal/music/video这些EXTENDED_PROFILE_AGENT默认不启的域可以单独部署单独伸缩，主图回归轻量；故障隔离——爬虫域挂了不拖垮代码域；团队可并行开发各自域。落地:LangGraph的subgraph+共享状态schema，跨域通信用现有RPC非subgraph方案(M16已有验证)。
+
+二、哪些该删/合并:(1)visualize/report这两个内部Agent是pipeline尾端消费者，根本不该是独立Agent——它们没决策只是格式转换，合并成一个render服务。(2)clean Agent同理，是工具不是Agent。(3)3个内部Agent全砍。这样12个Agent降到9个外部域Agent，每个域一个subgraph。
+
+三、哪些过度设计要降级:(1)Critic——现在是每个plan都仲裁，悖论是Critic自己也会错(M5)。重设计成可插拔:默认只对高风险域(NL2SQL/代码)开Critic，低风险域(报表渲染)直接走，用Critic否决率这个线上metric动态决定哪些域需要Critic(M14已有metric基础)。(2)Self-Evolution——现在是每30min生成假设+金丝雀A/B，但每臂8样本无统计显著性(M9弱点)。重设计成shadow-only:只记录假设和结果不自动promote，所有promote走人工审批+offline power analysis，这是SD5单独展开。(3)Probe-before-plan——这个保留且加强，它是最有价值的设计(并行探活把客观快照喂LLM)，但要从5个下游扩到按域探活。
+
+四、tradeoff诚实讲:拆subgraph增加了跨域通信成本和状态同步复杂度——原来一张图内状态天然共享，拆了要显式传消息。这是架构经典取舍:高内聚低耦合 vs 通信开销。我的判断是当前9个外部域已经多到单图hold不住(故障传播+认知负担)，拆的收益大于通信成本。但如果是3个域以内，不拆。
+
+五、金句:39节点不是架构能力是架构债——节点的价值在能否独立演进和故障隔离，不在数量。我宁可要7个能独立部署的subgraph也不要39个绑死在一张图里的node。
+
+追问边界:被问subgraph怎么共享经验回放——经验库(M10)是全局单例还是每域一份？答:基础路由经验全局共享(因为路由是跨域的)，但每域的失败归因样本库独立(因为failure mode不同:NL2SQL的evidence_gap和爬虫的timeout归因逻辑完全不同)。这正好对应现有failureAttribution.ts的11类要按域重分组。</div></div>
+</div>
+
+<div class="card" data-c="ai" data-kw="scale 10万文件 1000人 pgvector 多路召回 rerank cross-encoder PostgresSaver gVisor Statsig 系统设计">
+  <div class="card-head"><span class="tag ai">SD2</span><div class="card-title">code_assistent scale到10万文件/1000人团队</div></div>
+  <div class="core">四层重构:RAG换pgvector多路召回+rerank、FileSaver换PostgresSaver多实例、沙箱换gVisor、A/B接Statsig算p-value,从原型升级为平台</div>
+  <div class="card-body"><div class="pre-body">电梯答:现状是原型级——FileSaver单文件JSON全base64(checkpointSaver.ts:35-248)不支持水平扩展、RAG只有向量召回无rerank无质量评测、沙箱docker --network=none够原型不够企业、Prompt A/B counter内存重启归零。scale到10万文件/1000人团队要动四层。
+
+一、检索层(最核心):10万文件纯向量召回会崩——embedding成本+召回质量双输。重设计四路混合召回:(1)文件名BM25倒排(精确匹配优先)；(2)符号倒排索引(AST提取function/class/export，grep能做的让索引做不烧embedding)；(3)语义向量召回(现有vectorSearch.ts的cosine)；(4)调用图邻居(改这个函数时把它调用的和调用它的也召回)。四路结果进cross-encoder rerank(如bge-reranker)取top-k。索引存储从内存cosine换成pgvector(支持HNSW索引)。增量索引保留现有sha256跳过机制(vectorSearch.ts:207-236)但补content_hash校验——LLM read时要校验chunk没过期(现有reindex窗口漏洞:基于旧chunk推理hash锁过了但写穿了)。补召回质量评测:golden query set+recall@k/nDCG对比baseline，smoke的minHits:0必须改成minHits有阈值。
+
+二、状态层:FileSaver换成PostgresSaver(LangGraph官方有)——多实例并发安全、支持checkpoint query、不再单文件串行化atomic flush。多Agent实例通过Postgres行锁协调同一thread。跨Agent实时通信用Redis pubsub——一个Agent改了文件broadcast invalidate事件，其他Agent的RAG缓存失效。
+
+三、沙箱层:现有docker --network=none --memory=512m -v cwd:/workspace:ro(sandbox_runner.ts:88-162)挡不住符号链接逃逸(safeResolve没fs.realpath校验)。企业级换gVisor(系统调用级隔离)或Firecracker microVM(内核级隔离)。补两层:(1)fs.realpath解析真实路径拒绝符号链接逃逸；(2)TOCTOU竞态——sha读(files.ts:194)到rename写(209)之间窗口，用O_TMPFILE或flock补。1000人团队还要加资源配额(每用户并发sandbox数/每日token预算/每日执行时长)。
+
+四、实验层:Prompt A/B的DJB2 hash bucket(code_prompt_ab_router.ts:10-24)和counter内存——接Statsig/PostHog，算p-value和置信区间，shadow patch hits≥3晋级(code_prompt_evolution.ts:43-91)的阈值要按power analysis定不能拍脑袋。
+
+五、tradeoff:rerank引入额外延迟(cross-encoder比bi-encoder慢10x)——用异步rerank+缓存热点query对冲。PostgresSaver vs FileSaver——前者强一致但多一跳网络延迟，原型期不值得，scale期必须换。gVisor vs docker——gVisor兼容性差(系统调用黑名单)但隔离强，我的判断是执行用户不可信代码必须上gVisor，执行受控CI脚本docker够。
+
+六、诚实边界:10万文件我没真跑过，这是基于现有架构瓶颈的推演。最大不确定性是cross-encoder rerank在10万文件级别的延迟——可能需要两阶段(向量召回top-1000再rerank top-20)，这个要benchmark。
+
+七、金句:scale不是把原型放大，是逐层换掉原型里那些只为能跑通而存在的妥协。</div></div>
+</div>
+
+<div class="card" data-c="ai" data-kw="企业级 Coding Agent 平台 多租户 权限审计 RBAC 国产化 模型路由 Safety red-team 合规 可观测 系统设计">
+  <div class="card-head"><span class="tag ai">SD3</span><div class="card-title">从0设计企业级Coding Agent平台</div></div>
+  <div class="core">六层架构:接入网关+多租户隔离+权限审计+Agent编排+模型路由(国产化)+Safety红线+可观测成本,从代码生成到合规交付全链路</div>
+  <div class="card-body"><div class="pre-body">电梯答:这不是写个Agent，是建个平台——要让100个团队的安全/财务/法务代码都能让Agent改且能审计能回滚能合规。六层从上到下。
+
+文字版架构图:
+[用户层] IDE插件/PR Bot/CLI/Slack → [接入网关:鉴权+配额+审计日志] → [多租户隔离:tenant_id贯穿+每租户独立checkpoint/RSA密钥] → [权限引擎:RBAC+ABAC+代码库ACL+分支保护] → [Agent编排:Plan-Execute-Critic-HITL复用code_assistent设计] → [模型路由:策略层分发qwen-coder/GLM/DeepSeek/Claude] → [安全执行:gVisor沙箱+符号链接修复+prompt注入检测] → [可观测:OpenTelemetry+LangSmith+成本看板+red-team eval]
+
+逐层判断力体现:
+
+一、多租户:tenant_id从网关注入到AsyncLocalStorage(code_assistent已用此模式agent.ts:197-225)，所有checkpoint/RAG索引/沙箱目录按tenant隔离。密钥每租户独立不共享。坑:RAG索引要per-tenant不能全局——A公司的代码语义不能影响B公司的召回。
+
+二、权限审计(最容易被追问):借鉴code_assistent三层守卫(isSensitiveRepoPath阻.env/id_rsa + isRestrictedWritePath阻.git + sha256乐观锁)但升级——(1)工具级RBAC按角色限制能用哪些工具(只读/可写/可执行)；(2)代码库ACL——这个team只能改这几个repo这几个目录；(3)分支保护——Agent只能往feature分支推不能碰main，PR必须人工approve；(4)全链路审计日志——谁/何时/让Agent/改了什么/模型版本/prompt版本，可回溯可重放，这是合规命脉。
+
+三、国产化模型路由(差异化):海外用Claude/GPT，国内政企要国产化。策略层抽象model interface，后端可切qwen-coder-plus(代码强)/GLM-4.5/DeepSeek-Coder。关键坑:不同模型tool calling格式不一(qwen用function_call/GLM用tools字段)，要有适配层统一成OpenAI兼容格式。成本路由——简单补注释用小模型、复杂重构用大模型，按task类型路由不只按token。
+
+四、Safety红线(red-team eval):现有code_assistent防的是LLM犯错不是防prompt injection(C12诚实边界)。企业级必须加:(1)对抗性eval集——prompt注入测试用例库，每次发版跑；(2)patch静态分析——检测可疑改动(删认证代码/加后门/硬编码密钥)；(3)HITL风险分级——高风险操作(改CI配置/改权限/改依赖)强制人工确认，低风险(补注释/格式化)自动走；(4)rate limit防滥用。
+
+五、可观测与成本:OpenTelemetry trace贯穿用户请求→Agent步骤→工具调用→模型调用；线上metric核心四件——代码采纳率(PR被merge比例)/revert率/p99延迟/单次任务token成本。成本控制按租户配额+按模型分账+缓存命中优化(prompt cache)。
+
+六、tradeoff:平台能力 vs 上手成本——加越多安全审计越重团队越不愿用。我的判断是分档:免费档全自动无审计(给个人开发)、团队档加权限审计、企业档全开合规。不要一上来就企业档劝退。
+
+七、金句:企业级Coding Agent的护城河不是模型能力是合规与可审计——模型三个月就换代，你建的权限审计追溯体系是三年资产。
+
+诚实边界:这个我没从0建过企业平台，是基于code_assistent原型的安全短板(符号链接逃逸/TOCTOU/prompt注入缺口)+spec-driven平台的多租户经验推演。最大不确定性是red-team eval集怎么持续维护——对抗样本会过时。</div></div>
+</div>
+
+<div class="card" data-c="ai" data-kw="通用 Multi-Agent 调度系统 路由可靠性 重试预算 p99长尾 跨进程 可观测 通用设计 升华 系统设计">
+  <div class="card-head"><span class="tag ai">SD4</span><div class="card-title">设计通用Multi-Agent调度系统（Manager经验升华）</div></div>
+  <div class="core">五大支柱:路由可靠性(置信度+降级)、工具失败重试预算、p99长尾治理、跨进程状态、可观测,把Manager的坑抽象成通用模式</div>
+  <div class="card-body"><div class="pre-body">电梯答:Manager_Agent是个具体实现(12 Agent+39节点)，但它踩的坑是所有Multi-Agent调度系统的共性——路由会错、工具会挂、长尾会爆、跨进程状态会丢、黑盒不可观测。把这几条升华成通用设计五大支柱。
+
+一、路由可靠性(Manager最大教训):现有14路意图分类(M7)+12 Agent路由，但路由准确率没测(M14只是改进方向)。通用设计:(1)路由器必须输出置信度，低于阈值降级到反问用户(HITL)而不是硬猜——这是clarify_needed失败类型(failureAttribution.ts)的正解；(2)路由准确率作为一等公民metric线上监控，错误路由自动采样进golden set；(3)双路由投票——关键路径用两个不同prompt的路由器投票，不一致触发HITL。坑:路由器自己也是LLM也会错，不能让路由决策不可逆。
+
+二、工具失败重试预算(Manager已有可复用):recursionLimit48(retryBudget.ts)+单步1/多步2/全局1的重试预算是通用模式——区分瞬时失败(超时重试)和逻辑失败(工具语义错不重试)。升华:(1)失败归因必须先于重试——不归因就重试是烧token，现有11类失败归因(policy_boundary不该重试/timeout该重试)是正确的分层；(2)熔断——同一工具连续失败N次触发熔断降级，不是无限重试；(3)递归预算防fix→synth死循环，这个模式通用。
+
+三、p99长尾治理:Multi-Agent最怕长尾——一个慢Agent拖垮整个plan。Manager的Probe-before-plan(M4)是长尾预防(探活发现下游慢提前换路)，升华成通用:(1)每Agent步骤设soft timeout，超时不kill而是降级返回部分结果让上层决策；(2)并行优于串行——能并行的probe/工具调用用Promise.allSettled(Manager已这么干)；(3)p99分位监控，长尾请求采样分析根因；(4)慢Agent自动降权——路由器记录每Agent历史延迟，慢的少派活。
+
+四、跨进程状态(Manager的checkpoint三后端升华):file/redis/dual(M6)是为单机设计的。通用调度系统跨多机:(1)状态外置到Redis/Postgres，进程无状态可水平扩；(2)checkpoint必须支持resume——进程崩了另一个进程接管续跑(Manager的checkpointStore.ts+checkpointRedis.ts已有此意)；(3)长任务用持久化工作流(temporal-style)，短任务用内存checkpoint。
+
+五、可观测(Manager的黑盒痛点):现有只有LangSmith(M14改进方向接OTel)。通用设计:(1)OpenTelemetry分布式trace——一个用户请求span贯穿多个Agent调用，能定位是哪个Agent哪一步慢/错；(2)结构化日志带trace_id/correlation_id；(3)核心metric看板——路由准确率/工具失败率/Critic否决率/HITL通过率/p99/成本，这些是SD6评估体系的输入。
+
+六、tradeoff:可靠性 vs 成本——双路由投票+Probe探活+熔断都增加开销。判断:高价值任务(改生产代码/执行SQL)全开，低价值任务(查文档/格式化)走快路径省成本。
+
+七、金句:Multi-Agent调度系统的核心矛盾是路由不确定+工具不可靠+延迟长尾——这三者用重试预算/置信度降级/分布式可观测三个模式系统性治理，不是靠单个模型变聪明。
+
+诚实边界:Manager没真实用户(MAU/DAU为零)，这些模式的效用是基于代码逻辑推演+小规模自测，未经过大规模流量验证。这是诚实承认——生产级验证是下一步。</div></div>
+</div>
+
+<div class="card" data-c="ai" data-kw="Self-Evolution 统计学 power analysis SPRT 序贯检验 hold-out shadow 经验衰减 回音室 p-value 显著性 系统设计">
+  <div class="card-head"><span class="tag ai">SD5</span><div class="card-title">Self-Evolution要真上生产怎么补统计学</div></div>
+  <div class="core">五件套:hold-out golden+power analysis+SPRT序贯检验+线上shadow+30天经验衰减防回音室,把8样本拍脑袋升级成可上线的实验框架</div>
+  <div class="card-body"><div class="pre-body">电梯答:现有Self-Evolution(evolutionExperiments.ts)的硬伤是minSamplesPerArm默认8/自定义blendedArmScore=0.55*final+0.45*composite——8样本无统计显著性、自定义分数无对照基准、.data不在仓库无法证明跑过(M9诚实承认)。真上生产要补五件套，本质是从拍脑袋升级成A/B实验平台。
+
+一、hold-out golden set:准备一批不参与evolution的golden任务作为永远hold-out的评估集。每次假设promote前必须在hold-out上验证，防止在训练流量上过拟合。坑:golden集会随业务变化要定期轮换，不能一份用三年。
+
+二、power analysis(为什么8不够):现有8样本是源码默认值(evolutionExperiments.ts:82 ?? 8)未推演。正确做法——给定期望effect size(比如lift 3%)+显著性水平alpha=0.05+功效beta=0.8，用power analysis反算所需样本量。3%的小效应+8样本功效极低(几乎检测不出来)。结论:要么提高minSample(可能要几百)，要么只对大效应(lift&gt;10%)快速判断、小效应拒绝。诚实讲:8是demo数不是生产数。
+
+三、SPRT序贯检验(SPRT=Sequential Probability Ratio Test):传统A/B要凑够样本才判断，SPRT允许每来一个样本就判断一次——达到置信边界立刻promote/rollback，不用等满样本。这解决evolution周期慢的问题。现有每30min生成假设(evolutionLlmHypothesis.ts)+每臂8样本是批处理思路，SPRT是流式思路更高效。坑:SPRT要预设effect size边界(什么算好什么算差)，设错了会误判。
+
+四、线上shadow(降级promote为只观察):现有policyCanary.ts默认5%流量金丝雀+rollback(drop&gt;=6%)是激进派——直接线上A/B。真上生产应该先shadow:新策略只跑不生效(并行计算结果但不返回给用户)，offline对比shadow结果和线上结果。shadow跑够样本且显著正向才开金丝雀。这样最坏情况是浪费算力不是搞坏线上。
+
+五、经验衰减防回音室(Manager经验回放的升级):现有experienceReplay.ts向量+Jaccard混合排序+时间衰减λ0.09/天已有衰减意识，但缺防回音室——Agent自己生成的经验喂回自己会强化偏见。补:(1)30天TTL硬过期(经验不是越老越好，业务变了旧经验有害)；(2)外部ground truth锚定——经验不能只来自Agent自评，必须接入外部信号(用户反馈/PR merge结果/测试通过率)作为校准；(3)负样本优先级——失败经验比成功经验更值钱(避雷)，现有已有但要加强。
+
+六、tradeoff:严谨 vs 迭代速度——power analysis+SPRT+shadow全套很慢(一个假设可能要几周才能promote)，现有30min生成假设的节奏根本不可能。判断:分两类——prompt_patches(低风险快迭代可用简化版)、policy/planner_rules(高风险必须全套)。不要一刀切。
+
+七、金句:Self-Evolution不是让Agent变聪明，是建一个让Agent的每次假设都不敢乱promote的治理体系。没有统计显著的evolution是危险的——它会自动放大你没想到的偏见。
+
+诚实边界:这套我是在Manager里踩了坑(8样本无显著性)后想明白的，但完整实现需要实验平台支撑(Statsig/EPlan/GrowthBook)，Manager原型级没全做，这是诚实承认改进方向而非已落地。</div></div>
+</div>
+
+<div class="card" data-c="ai" data-kw="评估 评测 rubric Golden Set LLM-as-Judge HITL 线上metric 路由准确率 Critic否决率 p99 成本 离线在线闭环 系统设计">
+  <div class="card-head"><span class="tag ai">SD6</span><div class="card-title">如何评估一个Agent系统的质量（评估体系）</div></div>
+  <div class="core">五层评估:rubric Eval+Golden Set+LLM-as-Judge局限+HITL评估+线上metric(路由/Critic/HITL/p99/成本),离线在线闭环</div>
+  <div class="card-body"><div class="pre-body">电梯答:Agent不像传统软件有assertion——输出是非确定性的、路径是多步的、正确性是模糊的。所以评估要五层叠加，没有银弹。这也是spec-driven平台我做Citation Grounding rubric(82到54)和code_assistent我承认RAG无检索质量评测这两个经验的汇聚。
+
+一、Rubric Eval(离线·结构化打分):不靠LLM自由判断，定义结构化rubric——每个维度1-5分+具体通过标准。我在spec-driven的Grounding rubric就是这么做的(把模糊的spec质量拆成可打分的维度，分数从82降到54是因为rubric更严格了不是变差)。坑:rubric定义本身是主观的，要多人标定+定期校准。适用:输出有明确质量维度的任务(spec/代码/报表)。
+
+二、Golden Set(离线·回归基线):固定一批query+标准答案/可验证断言，每次发版跑。code_assistent的RAG召回质量就是缺这个——smoke retrieve minHits:0等于不报错就过(诚实承认)。补:golden query set+recall@k/nDCG对比baseline(grep/全量塞context/BM25)，这是检索质量基线。坑:golden集会过拟合——Agent可能针对golden优化但泛化差，所以要定期换新golden。
+
+三、LLM-as-Judge(离线·大规模评估的妥协):rubric+golden覆盖不全时用LLM当judge评LLM输出。局限必须诚实讲:(1)judge模型自己会错且有偏见(偏长答案/偏自己风格)；(2)judge和被评模型同源时评分虚高；(3)无法判断事实正确性只能判断表面质量。所以LLM-as-Judge只能做粗筛不能做最终判。用:交叉judge(不同模型互相评)+人抽检校准judge可靠性。
+
+四、HITL评估(在线·人审信号):人工review本身就是评估数据。spec-driven的Spec Review Gate(spec review人审)产生的approve/reject/修改率是金标准评估信号。code_assistent可以借鉴——PR被merge/reject/改了多少行都是质量信号。坑:人审有滞后(PR可能几天后才review)不能实时反馈，且有审者偏差。
+
+五、线上metric(在线·系统健康度):这是SD4可观测的产出，核心五件:(1)路由准确率——用户是否反问纠正了路由(反问率高=路由不准)；(2)Critic否决率——否决率过高说明plan质量差或Critic太严，过低说明Critic失效(Manager的Critic悖论M5)；(3)HITL通过率——人审通过率低说明Agent输出不达标；(4)p99延迟——长尾是体验杀手；(5)单任务成本——token/算力。这五件构成系统健康度看板。
+
+六、离线在线闭环:线上metric发现问题(比如某域Critic否决率飙升)→采样该域case进离线golden→rubric重新评估→定位是prompt/工具/路由问题→修复→发版→看线上metric恢复。这是评估驱动的持续改进循环。
+
+七、tradeoff:评估严谨 vs 评估成本——全人审最准但不可扩展，全自动最快但不可信。判断:高风险域(NL2SQL/代码执行)人审为主、低风险域(报表/格式化)自动为主。评估本身也要算ROI。
+
+八、金句:评估Agent不是找一个完美metric，是搭一个离线rubric+golden校准、在线metric+人审反馈的多层置信体系——你永远不能100%确定Agent对，但你能知道它在哪里可能错、错得多频繁。
+
+诚实边界:spec-driven的rubric我落地过(82到54是真的)，code_assistent的RAG召回质量评测我没做(minHits:0是漏洞)，Manager的线上metric因为没真实用户全缺。所以这套体系部分已验证部分是改进方向——诚实区分。</div></div>
+</div>
+
 <div class="no-result" id="noRes">没找到匹配卡片</div>
 </div>
 
@@ -5998,7 +6558,7 @@ const catNames={all:'全部',open:'开场',proj:'项目',bagu:'基础',code:'手
 const subOrder={
   'Schema 项目':1,'AI 总览':2,'AI 架构':3,'AI 质量':4,'AI 端到端':5,'AI 工具':6,'产品思维':7,'Manager 项目':8,'Code Agent 项目':9,
   'React':1,'JS 核心':2,'CSS':3,'网络':4,'浏览器/性能':5,'TypeScript':6,'工程化':7,'框架扩展':8,
-  'Agent 基础':1,'RAG 检索':2,'LLM 工程':3,'工具协议':4,'AI 评测':5,'Loop 工程':6,'AI 工程化':7,'AI 前端':8,'行业视野':9,'追问':10,'AI Coding 实践':0,
+  'Agent 基础':1,'RAG 检索':2,'LLM 工程':3,'工具协议':4,'AI 评测':5,'Loop 工程':6,'AI 工程化':7,'AI 前端':8,'行业视野':9,'追问':10,'AI Coding 实践':0,'系统设计':11,
   '速查':0,'手写 API':1,'数组/双指针':2,'链表':3,'树/BFS/DFS':4,'回溯':5,'排序/TopK':6,'DP/贪心':7,'栈':8,'二分':9,'综合':10,
   '项目数据':1,'大麦专属':2,'TikTok专属':3,'蚂蚁专属':4,'软技能':5,'HR面':6,'反问':7,'话术急救':8
 };
@@ -6059,7 +6619,7 @@ function getGroup(c){
     if(tag==='大麦')return '大麦专属';
     if(tag==='TikTok')return 'TikTok专属';
     if(tag==='蚂蚁')return '蚂蚁专属';
-    if(tag==='HR')return 'HR面';
+    if(/^HR/.test(tag))return 'HR面';
     if(tag==='软技能')return '软技能';
     if(tag==='反问')return '反问';
     return '话术急救';
@@ -6110,6 +6670,7 @@ function getGroup(c){
   }
   if(cat==='ai'){
     const t=(c.querySelector('.card-title')||{}).textContent||'';
+    if(/^SD/.test(tag))return '系统设计';
     if(/AI Coding 实操/.test(t))return 'AI Coding 实践';
     if(/L3 AI 工程化|工程化 12 题|Prompt 注入|AI 安全|成本控制|减幻觉六板斧|自修复循环|震荡检测|保真度|Fidelity|Eval 架构|回归阻断/.test(t))return 'AI 工程化';
     if(/Evals|Benchmark|评测|量化|防污染|不被污染/.test(t))return 'AI 评测';
