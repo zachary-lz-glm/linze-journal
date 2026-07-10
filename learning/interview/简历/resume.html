@@ -114,6 +114,38 @@ li { break-inside: avoid; }
 @media print {
   body { padding: 0; max-width: none; font-size: 10.2pt; }
   .header .photo { width: 78pt; height: 104pt; }
+  .actions { display: none; }
+}
+
+.actions {
+  margin-top: 6pt;
+  display: flex;
+  gap: 8pt;
+}
+.actions a {
+  display: inline-block;
+  padding: 4pt 10pt;
+  font-size: 9pt;
+  border: 0.6pt solid #1A2B4A;
+  border-radius: 3pt;
+  color: #1A2B4A;
+  text-decoration: none;
+  background: #fff;
+  transition: all .15s;
+  font-weight: 600;
+}
+.actions a:hover {
+  background: #1A2B4A;
+  color: #fff;
+}
+.actions a.btn-dl {
+  background: #059669;
+  color: #fff;
+  border-color: #059669;
+}
+.actions a.btn-dl:hover {
+  background: #047857;
+  border-color: #047857;
 }
 </style>
 </head>
@@ -124,6 +156,10 @@ li { break-inside: avoid; }
     <h1>邓泽霖</h1>
     <div class="title-line">AI 工程师 · Agentic Workflow 方向<span class="muted"> · 4 年大厂经验 · 连续 <span class="data">2 年 A 绩效</span></span></div>
     <div class="contact">188-4617-4594 · 2597419838@qq.com · <a href="https://zachary-lz.vercel.app">个人主页</a> · <a href="https://github.com/zachary-lz-glm">github.com/zachary-lz-glm</a></div>
+    <div class="actions">
+      <a href="resume.pdf" download class="btn-dl">⬇ 下载 PDF</a>
+      <a href="javascript:window.print()" class="btn-print">🖨 打印 / 另存 PDF</a>
+    </div>
   </section>
   <img src="photo.jpg" class="photo" alt="photo" />
 </div>

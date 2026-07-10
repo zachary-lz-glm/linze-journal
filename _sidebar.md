@@ -9,8 +9,7 @@
     - [拼多多](learning/interview/定向/拼多多.md)
     - [快手电商（演练报告）](learning/interview/定向/快手-演练.md)
     - [字节TikTok（二面准备）](learning/interview/定向/字节TikTok二面.md)
-  - [简历v3](learning/interview/简历/v3.md)
-  - [简历v4](learning/interview/简历/v4.md)
+  - [在线简历(HTML/PDF)](learning/interview/简历/resume.html)
 
 - **Agent 学习笔记**
   - [Agent 开发基础](learning/agent-books/Agent开发基础.md)
