@@ -26,6 +26,11 @@
   - [工程化与部署](learning/agent-books/工程化与部署.md)
   - [模型相关](learning/agent-books/模型相关.md)
 
+- **AI 项目实战**
+  - [模块导读](learning/ai-projects/README.md)
+  - [Manager 总管(多Agent编排)](learning/ai-projects/Manager-Agent-多智能体编排总管.md)
+  - [Code Assist(工程化Coding Agent)](learning/ai-projects/Code-Assist-Agent-工程化代码助手.md)
+
 - **工具**
   - [面试速查板](learning/interview-tools/stealth.html)
   - 金牌项目深挖稿

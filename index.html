@@ -269,6 +269,11 @@ const NAV = [
     {label:'工程化与部署',path:'learning/agent-books/工程化与部署'},
     {label:'模型相关',path:'learning/agent-books/模型相关'},
   ]},
+  {label:'AI 项目实战',children:[
+    {label:'模块导读',path:'learning/ai-projects/README'},
+    {label:'Manager 总管(多Agent编排)',path:'learning/ai-projects/Manager-Agent-多智能体编排总管'},
+    {label:'Code Assist(工程化Coding Agent)',path:'learning/ai-projects/Code-Assist-Agent-工程化代码助手'},
+  ]},
   {label:'工具',children:[
     {label:'面试速查板',path:'learning/interview-tools/stealth.html',external:true},
   ]},
@@ -704,7 +709,7 @@ function changeFont(delta){
 
 /* ===== HOMEPAGE ===== */
 function renderHomepage(){
-  const sections=[];
+  const sections=[{icon:'🤖',title:'AI 项目实战',desc:'两个开源 Agent 项目的面试深度说明书',links:[{path:'learning/ai-projects/README',label:'模块导读'},{path:'learning/ai-projects/Manager-Agent-多智能体编排总管',label:'Manager 总管(多Agent编排)'},{path:'learning/ai-projects/Code-Assist-Agent-工程化代码助手',label:'Code Assist(工程化Coding Agent)'}]}];
   const interview=NAV.find(n=>n.label==='面试备战');
   let html='<div class="home-hero"><h1>邓泽霖 · 学习知识库</h1><div class="subtitle">Schema 架构全栈 + AI 工程差异化</div><div class="tags">4 年经验 · 2 年 A 绩效 · 滴滴国际化事业部</div></div>';
   html+='<div class="home-grid">';
