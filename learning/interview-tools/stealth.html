@@ -3786,6 +3786,32 @@ function buildTreeOptimized(list) {
   </div>
 </div>
 
+<div class="card" data-c="proj" data-kw="benchmark 可复现 现场跑 翻车 97分 基线 手写 评分脚本 score.py results 跑不出来 构造数据 小样本 诚实收口 数据地基 验证能力 harness 复现 跑一下 show me 数据被追穿 实证 ADR power analysis 一键复现">
+  <div class="card-head"><span class="tag proj">AI</span><div class="card-title">benchmark 可复现性 · 被问"现场跑一下"怎么收口</div></div>
+  <div class="core">那些数字(80% / 消融 82→54 / 一致性 40→85 / 97 分)是构造数据 + 手工锚点，不是 CI 自动跑批——别讲成"有实证"，被追"show me the run"会翻车</div>
+  <div class="card-body">
+    <p><strong>这是前面所有"真跑的 / 有实证 / benchmarks 实证"表述埋的雷——亲自核实过 prd-to-code 仓库：评分脚本 benchmark_score.py 还没进 git，results/ 是空的，那个 97 分基线是手写参照。面试官一句"现场 bash benchmark.sh 跑一下"直接 FileNotFoundError。</strong></p>
+    <p><strong>正确口径（被问"这些数字怎么来的 / 能复现吗"先念）</strong>：这些是<strong>构造数据 + 手工锚点</strong>，不是自动化跑批的可复现产物——文件匹配率 80% 是 5 个历史需求对照；消融 82→54、一致性 40→85 是小样本多次跑的观察值；97 分基线是我手工标注的评分参照。自动化 benchmark harness 在 roadmap，<strong>这是我知道的最大短板，主动说</strong>。</p>
+    <p><strong>为什么主动说比被拆穿强</strong>：讲得越满，反差越大。主动收口 = 数据素养（分得清构造数据和可复现实验）；被动拆穿 = 简历注水。Staff 级面试官的追问模式就是一句"你说的这个机制，实际效果数据是什么 / run 在哪"——能拿出 run 是"工程结论"，拿不出就是"工程设想"。</p>
+    <p><strong>被问"那你之前说'有实证'是不是吹的"怎么接</strong>：不绕。"实证"指的是<strong>我亲自跑过、有 ADR 记录设计决策、有构造 case 验证机制有效</strong>；但"能一键复现的自动化报告"还没有，这俩不能混。我正在补 harness 让它真能进 CI 跑。</p>
+    <p><strong>落地计划（被问"打算怎么补"念）</strong>：① 补 benchmark_score.py——确定性评分器为主（文件命中 / 字段双向对齐 / 锚点覆盖），LLM-judge 只做辅助 ② results/ 落可复现产物（输入 PRD + 产物 + 评分全留痕）③ 同 PRD 固定 seed 跑 N 次报一致性进 CI ④ 给阈值（minSample / lift）补 power analysis 定最小样本量。</p>
+    <p><strong>金句</strong>：效果数据最大的风险不是数字小，是讲成"有实证"却拿不出 run——主动说"构造数据 + 正在补 harness"比被追穿强十倍。<strong>设计能力强是资产、验证能力弱是负债，收敛这个剪刀差是当下最高优先级</strong>。</p>
+  </div>
+</div>
+
+<div class="card" data-c="proj" data-kw="价值归因 模型进化 功劳 混淆变量 控制变量 涂虎养车 起作用 归因陷阱 增量价值 同模型版本 对照 时间窗口 排除变量 天花板 地板 pass@k pass^k 峰值 方差 排除混淆">
+  <div class="card-head"><span class="tag proj">AI</span><div class="card-title">效果是工作流的功劳，还是模型自己进化了？</div></div>
+  <div class="core">涂虎养车原题——别辩"就是我功劳"，先认部分增益来自模型，再用控制变量 + "工程层替代不了"接住</div>
+  <div class="card-body">
+    <p><strong>这是否定项目价值的杀手锏（涂虎养车一面原话："为什么你觉得这个东西起作用了，而不是模型本身进化了？"）——把你的提效归因到模型进步上。和"AI 工作流出错怎么归因"是两回事：那张讲产物出错怎么修，这张讲效果归属谁。</strong></p>
+    <p><strong>第一句先 acknowledge（别硬刚）</strong>：一部分增益确实来自模型进化，我不否认——模型从 Sonnet 3.5 到 3.7/4，基线能力确实在涨。先认，显得客观。</p>
+    <p><strong>第二句讲控制变量（怎么排除混淆变量）</strong>：所以我量化时尽量控变量——<strong>同一模型版本（都锁 Sonnet 4）、同一时间窗口、对照"有无工作流"两臂</strong>。模型是常量、工作流是变量，两臂差值才是工作流的增量。不能拿"今年比去年快"直接归功工作流，因为模型也升级了。</p>
+    <p><strong>第三句讲工作流的不可替代价值（模型再强也替代不了）</strong>：模型进化抬的是<strong>单次生成的峰值能力</strong>，工作流抬的是<strong>把峰值固化成稳定产出</strong>——证据链 / 门控 / 一致性约束 / 质量回归。裸用模型峰值高但方差大（pass@k 高、pass^k 低），接工作流把方差压下来。<strong>模型越强，越需要工程层把它的能力锁死在可靠轨道上</strong>，这才是替代不了的。</p>
+    <p><strong>反例论证（被追问再甩）</strong>：同一时期同样的模型，没接这套约束的对照组（比如直接 Claude Code init 一次），文件匹配率和一致性都明显低——增量主要来自工程层不是模型。</p>
+    <p><strong>金句</strong>：模型进化抬高了天花板，工作流抬高了地板——<strong>天花板模型给、地板工程给</strong>。问归因，我承认天花板是模型的、地板是我的。</p>
+  </div>
+</div>
+
 <div class="card" data-c="proj" data-kw="PRD 三plan 开发计划 测试计划 上线计划 端到端 完整闭环 准出报告 自动化case CI CD 流水线 价值定位 快手 GitHub Spec Kit BMAD Kiro">
   <div class="card-head"><span class="tag proj">AI</span><div class="card-title">PRD → 开发 + 测试 + 上线 三 plan 完整闭环</div></div>
   <div class="core">PRD 输入产出三套 plan——开发 plan + 测试 plan + 上线 plan，把整个研发工作流串起来</div>
@@ -6634,9 +6660,9 @@ function getGroup(c){
     if(/^(G1|G2)$/.test(tag))return 'AI 架构';
     if(/^(G3|G4|G5)$/.test(tag))return 'AI 总览';
     if(/端到端原型/.test(t))return 'AI 端到端';
-    if(/质量门控|门禁|Readiness|证据链|幻觉|稳定性|不稳定|跑两次|AI工作流出错|归因/.test(t))return 'AI 质量';
+    if(/质量门控|门禁|Readiness|证据链|幻觉|稳定性|不稳定|跑两次|AI工作流出错|归因|benchmark|可复现|现场跑|翻车/.test(t))return 'AI 质量';
     if(/双插件|BMAD|能力面适配器|PRD 摄入|多格式|Spec.*Plan|Spec.*长什么样|代码.*定位|reference.*过时|知识库.*本质|SSOT|PRD.*质量卡口|PRD过时|PRD 改动|AI 怎么理解|打爆 ?[Cc]ontext/.test(t))return 'AI 架构';
-    if(/最有技术挑战|完整链路|可靠性|4个王牌|5h→2h|准确率.*损耗|Claude Code init|Cursor 的区别|团队.*落地|工作流.*介绍|PRD 到代码最难/.test(t))return 'AI 总览';
+    if(/最有技术挑战|完整链路|可靠性|4个王牌|5h→2h|准确率.*损耗|Claude Code init|Cursor 的区别|团队.*落地|工作流.*介绍|PRD 到代码最难|模型进化|功劳/.test(t))return 'AI 总览';
     if(/Skill|Tools|自定义Agent|识别率|死循环|设计稿|Harness|前端Agent|传统工程|迭代|SDD 完整流程/.test(t)&&!/联动/.test(t))return 'AI 工具';
     if(/金字塔|能力地图|分层设计|完整版.*lite/.test(t))return 'AI 总览';
     if(/SDD.*11.*步|倒背/.test(t))return 'AI 架构';
