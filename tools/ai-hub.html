@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AI 趋势 · 起始页</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{
+  --bg:#F8FAFC;--bg2:#EFF4F9;--card:#fff;
+  --text:#0F172A;--text2:#475569;--text3:#94A3B8;
+  --border:#E2E8F0;--border2:#CBD5E1;
+  --accent:#3B82F6;--accent-bg:#EFF6FF;
+  --fast:#16a34a;--slow:#ea580c;--mirror:#2563eb;
+  --radius:14px;--radius-sm:8px;
+  --shadow:0 1px 3px rgba(0,0,0,.05);
+  --shadow-lg:0 10px 40px rgba(15,23,42,.10);
+  --font:-apple-system,BlinkMacSystemFont,"SF Pro Text","PingFang SC","Microsoft YaHei",sans-serif;
+}
+.dark{
+  --bg:#0B0F1A;--bg2:#0F1623;--card:#161E2E;
+  --text:#E2E8F0;--text2:#94A3B8;--text3:#64748B;
+  --border:#1E293B;--border2:#334155;
+  --accent:#38BDF8;--accent-bg:#0C3550;
+  --fast:#4ade80;--slow:#fb923c;--mirror:#60a5fa;
+  --shadow:0 1px 3px rgba(0,0,0,.3);
+  --shadow-lg:0 10px 40px rgba(0,0,0,.5);
+}
+html{scroll-behavior:smooth}
+body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;transition:background .25s,color .25s;
+  background-image:radial-gradient(circle at 15% 0%,var(--accent-bg) 0%,transparent 40%),radial-gradient(circle at 85% 100%,var(--accent-bg) 0%,transparent 35%);background-attachment:fixed}
+::-webkit-scrollbar{width:8px;height:8px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px}
+
+.wrap{max-width:1180px;margin:0 auto;padding:48px 24px 64px}
+
+/* ===== HEADER ===== */
+header{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:32px;flex-wrap:wrap}
+.greet-block{display:flex;flex-direction:column;gap:2px}
+.greet{font-size:15px;color:var(--text2)}
+.greet b{color:var(--text);font-weight:700}
+.clock{font-size:30px;font-weight:800;letter-spacing:-.5px;line-height:1.2;font-variant-numeric:tabular-nums}
+.header-right{display:flex;align-items:center;gap:12px}
+.date-chip{font-size:13px;color:var(--text2);background:var(--card);border:1px solid var(--border);padding:6px 12px;border-radius:20px;box-shadow:var(--shadow)}
+.theme-btn{width:40px;height:40px;border:1px solid var(--border);border-radius:50%;background:var(--card);color:var(--text);font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow);transition:transform .2s,background .2s}
+.theme-btn:hover{transform:scale(1.1) rotate(15deg)}
+
+/* ===== SEARCH ===== */
+.search-section{margin-bottom:40px}
+.engines{display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap}
+.engine{font-size:13px;padding:5px 13px;border-radius:20px;border:1px solid var(--border);background:var(--card);color:var(--text2);cursor:pointer;transition:all .15s;font-family:var(--font)}
+.engine:hover{color:var(--accent);border-color:var(--accent)}
+.engine.active{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:600}
+.search-box{position:relative}
+.search-box input{width:100%;padding:16px 20px 16px 48px;border:1.5px solid var(--border);border-radius:var(--radius);font-size:16px;background:var(--card);color:var(--text);outline:none;font-family:var(--font);box-shadow:var(--shadow-lg);transition:border-color .2s}
+.search-box input:focus{border-color:var(--accent)}
+.search-icon{position:absolute;left:18px;top:50%;transform:translateY(-50%);color:var(--text3);font-size:18px;pointer-events:none}
+.hint{margin-top:8px;font-size:12px;color:var(--text3)}
+.hint kbd{background:var(--card);border:1px solid var(--border);border-radius:4px;padding:1px 6px;font-family:inherit;font-size:11px;color:var(--text2)}
+
+/* ===== GRID ===== */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:20px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:18px 20px;box-shadow:var(--shadow);transition:box-shadow .2s,transform .2s}
+.card:hover{box-shadow:var(--shadow-lg)}
+.card.empty{display:none}
+.card-head{display:flex;align-items:center;gap:9px;margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid var(--border)}
+.card-head .ico{font-size:19px}
+.card-head h2{font-size:15px;font-weight:700;color:var(--text)}
+.card-head .count{margin-left:auto;font-size:11px;color:var(--text3);background:var(--bg2);padding:2px 8px;border-radius:10px}
+.links{display:flex;flex-direction:column;gap:2px}
+.link{display:block;padding:9px 10px;border-radius:var(--radius-sm);text-decoration:none;color:inherit;transition:background .12s;position:relative}
+.link:hover{background:var(--accent-bg)}
+.link.hidden{display:none}
+.link-top{display:flex;align-items:center;gap:8px}
+.link-name{font-size:14px;font-weight:600;color:var(--text)}
+.link-badge{font-size:10px;font-weight:700;padding:1px 6px;border-radius:8px;white-space:nowrap}
+.badge-fast{background:rgba(22,163,74,.12);color:var(--fast)}
+.badge-slow{background:rgba(234,88,12,.12);color:var(--slow)}
+.badge-mirror{background:rgba(37,99,235,.12);color:var(--mirror)}
+.dark .badge-fast{background:rgba(74,222,128,.14)}
+.dark .badge-slow{background:rgba(251,146,60,.14)}
+.dark .badge-mirror{background:rgba(96,165,250,.14)}
+.link-desc{font-size:12px;color:var(--text3);margin-top:3px;line-height:1.5}
+
+.no-result{display:none;text-align:center;color:var(--text3);padding:60px 0;font-size:14px}
+.no-result.show{display:block}
+
+/* ===== FOOTER ===== */
+footer{margin-top:48px;padding-top:24px;border-top:1px solid var(--border);text-align:center;font-size:12px;color:var(--text3);line-height:1.8}
+footer a{color:var(--accent);text-decoration:none}
+
+@media(max-width:560px){
+  .wrap{padding:32px 16px}
+  .clock{font-size:24px}
+  header{margin-bottom:24px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="greet-block">
+      <div class="greet"><b id="greet">你好</b>，今天也要保持好奇 ✨</div>
+      <div class="clock" id="clock">--:--</div>
+    </div>
+    <div class="header-right">
+      <span class="date-chip" id="date">—</span>
+      <button class="theme-btn" id="themeBtn" title="切换主题">🌙</button>
+    </div>
+  </header>
+
+  <section class="search-section">
+    <div class="engines" id="engines"></div>
+    <div class="search-box">
+      <span class="search-icon">🔍</span>
+      <input id="q" type="text" placeholder="输入过滤下方书签，回车用引擎搜索…" autocomplete="off" spellcheck="false">
+    </div>
+    <div class="hint">快捷键 <kbd>/</kbd> 聚焦搜索框 · <kbd>Esc</kbd> 清空 · 访问标记：<span style="color:var(--fast)">✅秒开</span> <span style="color:var(--slow)">🟡慢/波动</span> <span style="color:var(--mirror)">🪞镜像</span></div>
+  </section>
+
+  <main class="grid" id="grid"></main>
+  <div class="no-result" id="noResult">没有匹配的书签 🤔</div>
+
+  <footer>
+    AI 趋势起始页 · 数据整理自多轮检索，链接以官网为准 ·
+    <a href="https://ossinsight.io/trending/ai">OSSInsight</a> 数据源正常（国内访问需挂代理）
+  </footer>
+</div>
+
+<script>
+/* ===== 数据：access → fast(秒开) / slow(慢波动) / mirror(镜像) ===== */
+const SECTIONS = [
+  { title:'开源项目趋势', icon:'📈', links:[
+    { name:'GitCode', url:'https://gitcode.com/', desc:'24h 新增 Star 实时排名，国内秒开', access:'fast' },
+    { name:'GitHub Trending（中文）', url:'https://github.com/trending?spoken_language_code=zh', desc:'官方日/周/月榜 + 中文项目筛选', access:'slow' },
+    { name:'OpenGithubs 月榜', url:'https://github.com/OpenGithubs/github-monthly-rank', desc:'中文整理飙升榜 Top30，每月1号更新', access:'slow' },
+    { name:'OpenGithubs 周榜', url:'https://github.com/OpenGithubs/github-weekly-rank', desc:'周一早8点更新 Top20', access:'slow' },
+    { name:'GitHubDaily', url:'https://github.com/githubdaily/githubdaily', desc:'老牌中文 AI 开源项目分享，配论文摘要', access:'slow' },
+    { name:'HelloGitHub', url:'https://hellogithub.com/', desc:'中文开源社区，月刊式精选', access:'fast' },
+    { name:'Gitee GVP', url:'https://gitee.com/gvp', desc:'最有价值开源项目推荐', access:'fast' },
+    { name:'开源中国', url:'https://www.oschina.net/', desc:'老牌开源 + AI 生态社区', access:'fast' },
+    { name:'OSSInsight（原数据源）', url:'https://ossinsight.io/trending/ai', desc:'数据源正常，前端拉取卡时挂代理', access:'slow' },
+  ]},
+  { title:'模型 & 论文', icon:'🧠', links:[
+    { name:'魔搭 ModelScope', url:'https://modelscope.cn/', desc:'阿里官方，12万+ 模型 + 排行榜，可在线跑', access:'fast' },
+    { name:'智源社区', url:'https://hub.baai.ac.cn/papers', desc:'BAAI，AI 热门论文 + 年度趋势报告', access:'fast' },
+    { name:'AMiner', url:'https://www.aminer.cn/', desc:'智谱系，3亿+论文 + AI前沿月报', access:'fast' },
+    { name:'hf-mirror', url:'https://hf-mirror.com/', desc:'HuggingFace 国内镜像，换域名即用', access:'mirror' },
+    { name:'始智 WiseModel', url:'https://wisemodel.cn/', desc:'社区型开源模型平台', access:'fast' },
+  ]},
+  { title:'AI 资讯', icon:'📰', links:[
+    { name:'机器之心', url:'https://www.jiqizhixin.com/', desc:'硬核技术解读 / 论文 / 模型发布', access:'fast' },
+    { name:'量子位', url:'https://www.qbitai.com/', desc:'泛科技 AI 热点，偏科普/产业', access:'fast' },
+    { name:'InfoQ / AI前线', url:'https://www.infoq.cn/', desc:'工程实践 + 架构 + AICon 大会', access:'fast' },
+    { name:'36氪 AI 主题', url:'https://36kr.com/motif/327686782977', desc:'创投 / 商业落地视角', access:'fast' },
+  ]},
+  { title:'产品 & 工具导航', icon:'🧰', links:[
+    { name:'Toolify 中文版', url:'https://www.toolify.ai/zh/', desc:'3万+ AI 工具目录，趋势榜/使用榜每日更新', access:'fast' },
+    { name:'AI 工具集', url:'https://ai-bot.cn/', desc:'国内老牌 AI 工具导航，1000+ 工具', access:'fast' },
+  ]},
+  { title:'自建聚合（开源）', icon:'⚙️', links:[
+    { name:'TrendRadar', url:'https://github.com/SANSAN0/TRENDRADAR', desc:'AI 驱动情报雷达，自动生成趋势概述', access:'slow' },
+    { name:'DailyAiReport', url:'https://github.com/GeziP/DailyAiReport', desc:'多源融合自动生成 AI 日报', access:'slow' },
+    { name:'Awesome-AISourceHub', url:'https://github.com/AmbroseX/Awesome-AISourceHub', desc:'国内外高质量 AI 信息源聚合清单', access:'slow' },
+  ]},
+];
+
+const ENGINES = [
+  { name:'Bing', url:'https://www.bing.com/search?q=' },
+  { name:'Google', url:'https://www.google.com/search?q=' },
+  { name:'百度', url:'https://www.baidu.com/s?wd=' },
+  { name:'GitHub', url:'https://www.github.com/search?q=' },
+  { name:'掘金', url:'https://juejin.cn/search?query=' },
+];
+
+const BADGE = { fast:['✅','fast','秒开'], slow:['🟡','slow','慢/波动'], mirror:['🪞','mirror','镜像'] };
+
+/* ===== 引擎 tab ===== */
+let curEngine = 0;
+const enginesEl = document.getElementById('engines');
+ENGINES.forEach((e,i)=>{
+  const b=document.createElement('button');
+  b.className='engine'+(i===0?' active':'');
+  b.textContent=e.name;
+  b.onclick=()=>{ curEngine=i; document.querySelectorAll('.engine').forEach(x=>x.classList.remove('active')); b.classList.add('active'); doSearch(); };
+  enginesEl.appendChild(b);
+});
+
+/* ===== 渲染卡片 ===== */
+const gridEl=document.getElementById('grid');
+function render(filter=''){
+  gridEl.innerHTML='';
+  const q=filter.trim().toLowerCase();
+  let totalShown=0;
+  SECTIONS.forEach(sec=>{
+    const matched = sec.links.filter(l=> !q || (l.name+l.desc).toLowerCase().includes(q));
+    if(!matched.length) return;
+    totalShown+=matched.length;
+    const card=document.createElement('div');
+    card.className='card';
+    card.innerHTML=`<div class="card-head"><span class="ico">${sec.icon}</span><h2>${sec.title}</h2><span class="count">${matched.length}</span></div>`;
+    const links=document.createElement('div'); links.className='links';
+    matched.forEach(l=>{
+      const [emoji,cls,label]=BADGE[l.access];
+      const a=document.createElement('a');
+      a.className='link'; a.href=l.url; a.target='_blank'; a.rel='noopener';
+      a.innerHTML=`<div class="link-top"><span class="link-name">${l.name}</span><span class="link-badge badge-${cls}" title="${label}">${emoji}</span></div><div class="link-desc">${l.desc}</div>`;
+      links.appendChild(a);
+    });
+    card.appendChild(links);
+    gridEl.appendChild(card);
+  });
+  document.getElementById('noResult').classList.toggle('show', totalShown===0 && q!=='');
+}
+render();
+
+/* ===== 搜索框 ===== */
+const qInput=document.getElementById('q');
+qInput.addEventListener('input', e=>render(e.target.value));
+function doSearch(){
+  const q=qInput.value.trim();
+  if(!q) return; // 空查询不跳
+  window.open(ENGINES[curEngine].url+encodeURIComponent(q),'_blank');
+}
+qInput.addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); doSearch(); } if(e.key==='Escape'){ qInput.value=''; render(''); qInput.blur(); } });
+document.addEventListener('keydown', e=>{
+  if(e.key==='/' && document.activeElement!==qInput){ e.preventDefault(); qInput.focus(); }
+});
+
+/* ===== 时钟 / 问候 ===== */
+const clockEl=document.getElementById('clock'), greetEl=document.getElementById('greet'), dateEl=document.getElementById('date');
+function tick(){
+  const n=new Date();
+  clockEl.textContent=n.toLocaleTimeString('zh-CN',{hour12:false});
+  dateEl.textContent=n.toLocaleDateString('zh-CN',{month:'long',day:'numeric',weekday:'long'});
+  const h=n.getHours();
+  let g='你好';
+  if(h<5) g='夜深了'; else if(h<9) g='早上好'; else if(h<12) g='上午好'; else if(h<14) g='中午好'; else if(h<18) g='下午好'; else if(h<22) g='晚上好'; else g='夜深了';
+  greetEl.textContent=g;
+}
+tick(); setInterval(tick,1000);
+
+/* ===== 主题 ===== */
+const themeBtn=document.getElementById('themeBtn');
+function applyTheme(dark){ document.documentElement.classList.toggle('dark',dark); themeBtn.textContent=dark?'☀️':'🌙'; }
+const saved=localStorage.getItem('aihub-theme');
+applyTheme(saved?saved==='dark':matchMedia('(prefers-color-scheme:dark)').matches);
+themeBtn.onclick=()=>{ const d=!document.documentElement.classList.contains('dark'); applyTheme(d); localStorage.setItem('aihub-theme',d?'dark':'light'); };
+</script>
+</body>
+</html>
