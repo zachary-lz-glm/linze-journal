@@ -2,6 +2,3 @@
 .claude/settings.local.json
 node_modules/
 package-lock.json
-
-# 个人面试 AI 知识库上传包 — 含敏感的「诚实边界」内容,作者 README 明确要求不进 git/不上公开平台
-learning/interview-kb/
