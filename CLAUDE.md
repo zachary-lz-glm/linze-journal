@@ -70,3 +70,16 @@ Strong success criteria let you loop independently. Weak criteria ("make it work
 ---
 
 **These guidelines are working if:** fewer unnecessary changes in diffs, fewer rewrites due to overcomplication, and clarifying questions come before implementation rather than after mistakes.
+
+---
+
+## 5. stealth.html 卡片（面试手机速查页 · 核心资产）
+
+`learning/interview-tools/stealth.html` 是面试中手机速查用的单页。**改它前必读 `learning/interview-tools/STEALTH-CARDS-GUIDE.md`**（完整方法论 + 卡片模板 + 踩坑记录）。铁律：
+
+- **语气口语化**：第一人称、像真懂项目的人在聊天；禁速查表腔（"必背 / 杀手锏 / 被问 X 必答 / ①②③ / 金句钩子"），少滥用 `<strong>`。不用太工整。
+- **标题不带英文项目名前缀**（"Manager_Agent xxx" 会让侧边栏索引没法看）。
+- **数字必须核对源码**：Agent 项目查 `D:/work/agent-main/`，再对照 `learning/interview-kb/明日面试_预测题校准与匹配分析.md`。简历话术 / AI 生成的"预测答案"里的百分比、倍数、团队规模**大多编造**，不确定就软化（"小范围验证过"）或省略。
+- **分组用 `data-g` 显式挂**（getGroup 开头 `if(c.dataset.g)return c.dataset.g`），别依赖 tag 的 textContent——曾因 `class="tag Manager"` 的 textContent 是 "M0" 导致 39 张卡全错位。
+- 改完**必须 bump `sw.js` 的 `CACHE_NAME`**（kb-vN → kb-vN+1），否则 Service Worker 给访客旧缓存。
+- 大改动走多 agent 流程（每子模块一个 agent 读源+校准+铁律产 HTML，主会话组装），见指南 §3。
