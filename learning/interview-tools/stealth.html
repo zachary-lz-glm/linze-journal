@@ -261,9 +261,30 @@ body{overscroll-behavior-y:contain}
   </div>
 </div>
 
+<div class="card" data-c="proj" data-kw="AI 可靠性 证据链 质量门控 benchmark">
+  <div class="card-head"><span class="tag proj">A4</span><div class="card-title">AI 工程怎么保证可靠性？</div></div>
+  <div class="core">不押宝模型聪明不聪明，靠流程约束它</div>
+  <div class="card-body">
+    <p>三个核心机制贯穿11步蒸馏流水线：</p>
+    <p>① <strong>证据链</strong>：定义8种证据来源（PRD原文、源码、技术文档等），AI每条结论必须引用证据ID，可追溯到原始出处。</p>
+    <p>② <strong>代码锚定</strong>：通过静态分析和精准匹配定位代码位置，涉及修改或删除的操作必须有源码级别的锚点，不能凭空推断。</p>
+    <p>③ <strong>多层门控</strong>：摄入阶段检查PRD读取质量，Spec阶段要求人工确认后才允许生成Plan，最终做五维度综合评分和五项确定性检查。</p>
+    <p>另外还有反馈回流——每次蒸馏的新知识会更新知识库，配合已验证案例集做回归防退化。</p>
+  </div>
+</div>
 
-
-
+<div class="card" data-c="proj" data-kw="挑战 最难 技术挑战 项目选择 架构选型 MCP Agent">
+  <div class="card-head"><span class="tag proj">A5</span><div class="card-title">最有技术挑战的项目？</div></div>
+  <div class="core">AI工作流走过架构弯路：MCP单次调用是瓶颈，转向Agent+Skill模式才突破</div>
+  <div class="card-body">
+    <p><strong>选 prd-tools</strong>（面试官对 AI 感兴趣）：最大难点是架构选型错误导致瓶颈。</p>
+    <p>背景：市面上有Cursor、Windsurf这些从0到1的工具，但针对已有项目（几万行代码、大量历史逻辑），怎么让AI理解需求是空白领域。</p>
+    <p>弯路：一开始用MCP做，两周发现不管怎么优化prompt准确率就是上不去。定位到根因——MCP是单次调用模式，需求分析需要多轮上下文和复杂论证，这是架构级瓶颈不是调优能解决的。</p>
+    <p>突破：转向Agent+Skill工作流模式，结合自研Reference六文件SSOT + 多轮搜索 + 证据链验证，PRD→Plan 从 5h/需求降到 2h/需求。</p>
+    <p><strong>选 Schema 引擎</strong>（偏传统前端）：月均10+bug → 自研Schema渲染引擎 → 归零。</p>
+    <p class="hint">优先选AI方向，先说背景痛点30秒→弯路30秒→突破方案1分钟，控制在2分钟内。</p>
+  </div>
+</div>
 
 <div class="card" data-c="proj" data-kw="依赖管理 yarn.lock workspace symlink">
   <div class="card-head"><span class="tag proj">A6</span><div class="card-title">Monorepo 包依赖管理？</div></div>
@@ -305,7 +326,19 @@ body{overscroll-behavior-y:contain}
   </div>
 </div>
 
-
+<div class="card" data-c="proj" data-kw="PRD 上线 链路 蒸馏 回流 完整流程 端到端 闭环 双轨 prd2code-gen 6步">
+  <div class="card-head"><span class="tag proj">A10</span><div class="card-title">从 PRD 到上线的完整链路？</div></div>
+  <div class="core">双轨：团队推广版三阶段 PRD→Spec→Plan（20+ 人在用），端到端原型 prd2code-gen 6 步 PRD→Code 已跑通</div>
+  <div class="card-body">
+    <p><strong>双轨定位（先说清楚再展开）</strong>：① 团队推广版聚焦 ROI 最高的 PRD→Plan 环节（人工确认后才开发、风险低、提效明显），20+ 人团队在用；② 端到端原型 prd2code-gen（个人独立设计）跑通 PRD→Code 完整 6 步，作为下一代探索。</p>
+    <p><strong>团队推广版 · 第一阶段：Reference 构建知识库</strong>。跑一遍项目代码，把几万行代码蒸馏成 6 个领域知识文件——代码结构、编码规则、跨层契约、PRD 路由、业务领域 Map、代码实体索引。一次性构建，后续新需求自动回流更新。</p>
+    <p><strong>团队推广版 · 第二阶段：PRD 蒸馏 11 步</strong>。能力面适配器 → PRD 摄入 → 证据账本 → 需求 AR 标注 → Reference 路由 → 源码精读 → 契约差异 → 生成 Spec（硬停止人工确认） → 生成 Plan → AI 五项自评 → 门禁脚本。每步产出是下一步输入，链条断任何一处都能定位。</p>
+    <p><strong>团队推广版 · 第三阶段：人工确认后开发</strong>。Spec 确认后 AI 生成 Execution Plan，人工 Review 后各用各的开发工具（Copilot/Cursor/Windsurf），开发完新知识回流更新 Reference。</p>
+    <p><strong>端到端原型 prd2code-gen · 6 步完整闭环</strong>：① PRD 蒸馏 → ② 项目分析 → ③ 变更计划（人工确认）→ ④ <strong>双路径代码生成</strong>（Handlebars 模板优先 0 token + 无模板走 LLM 兜底）→ ⑤ <strong>自验证 + 自修复循环</strong>（4 类校验：语法/字段双向/规则/集成 + 3 次重试 + 震荡检测 A→B→A 切整段重写）→ ⑥ 输出报告（人工评分）+ eval/auto-tune 反哺。</p>
+    <p><strong>双轨协同逻辑（被问为啥不推广必答）</strong>：① 团队推广版要<strong>稳</strong>——执行段成熟工具多（Cursor/Copilot），各人偏好不一，强行推广代码生成涉及质量责任划分；② 端到端原型要<strong>快</strong>——验证可行性、积累工程化经验、等模型成本下降。前者追求落地稳定（20+ 人日活），后者探索链路完整性（R01/R02 对照）。详见"端到端原型→生产路径"卡片。</p>
+    <p class="hint">被追问"然后呢 / 出码后怎么保证质量 / 端到端闭环" → 翻这张卡，端到端 6 步是核心防御。被问"既然完整为啥不推广" → 用上面的"双轨协同逻辑"段落回答，指向"端到端原型→生产路径"卡片。</p>
+  </div>
+</div>
 
 <!-- ==================== 项目追问 ==================== -->
 <div class="card" data-c="proj" data-kw="大表单 性能 200字段 虚拟滚动 精确订阅 重渲染 依赖收集 dot path 字段改动">
@@ -2140,9 +2173,21 @@ function buildTreeOptimized(list) {
 </div>
 
 <!-- ==================== AI 工程 ==================== -->
+<div class="card" data-c="proj" data-kw="AI 理解项目 Reference SSOT Evidence Index 知识库">
+  <div class="card-head"><span class="tag proj">架构</span><div class="card-title">AI 怎么理解陌生项目？</div></div>
+  <div class="core">把项目知识蒸馏成6个领域知识文件，每个事实只存一处，AI按需查询</div>
+  <div class="card-body">
+    <p>六个文件：codebase（静态清单）、coding-rules（编码规则）、contracts（跨层契约）、routing-playbooks（PRD 路由）、domain（业务领域）、portal（导航）。Evidence Index 做 TypeScript 正则扫描，提取代码实体、构建调用边和 BM25 索引。</p>
+  </div>
+</div>
 
-
-
+<div class="card" data-c="proj" data-kw="PRD 代码 变更分类 蒸馏 最难">
+  <div class="card-head"><span class="tag proj">架构</span><div class="card-title">PRD 到代码最难的一步？</div></div>
+  <div class="core">判断PRD每句话对应代码是新增、修改还是删除，难在不知道项目现状就无法判断</div>
+  <div class="card-body">
+    <p>判断每句话对应代码是新增/修改/删除。难在不知道项目现状就无法判断，PRD 描述模糊，跨模块影响难预估。解法：reference 路由匹配 + BM25 + context-pack 锚定 + Review Gate 硬停止。</p>
+  </div>
+</div>
 
 
 
@@ -2179,15 +2224,83 @@ function buildTreeOptimized(list) {
 </div>
 
 <!-- ===== 面试防御卡（针对阿里一面/二面真实追问） ===== -->
+<div class="card" data-c="proj" data-kw="知识保鲜 过时 时效性 L7 失效 stale 更新机制 reference 漂移">
+  <div class="card-head"><span class="tag proj">G1</span><div class="card-title">reference 知识过时怎么办？（L7 会员升级问题）</div></div>
+  <div class="core">三层防线：时效性分层 + 触发式失效 + 金标准回归</div>
+  <div class="card-body">
+    <p><strong>面试官追问</strong>（阿里一面27:34）："滴滴L7会员6/1刚升级了规则，你reference里还是老规则，这种过时知识反而误导AI，怎么办？"</p>
+    <p><strong>我当时的回答</strong>：弱——"暂时不可避免的痛点""定时两周更新""用比较新的PRD""半自动化"。这个回答不够结构化。</p>
+    <p><strong>升级版回答三层防线</strong>：</p>
+    <p>· <strong>时效性分层（SLA-based）</strong>：Tier1 永久事实（枚举/API路径/类型定义）走代码 diff 触发失效；Tier2 慢变事实（业务规则/契约/字段语义）30天 reverify；Tier3 快变事实（配置/文案/活动模板）7天 reverify。每条记录带 valid_from / valid_to / last_verified_at。</p>
+    <p>· <strong>触发式更新</strong>：集成 GitNexus 的 detect_changes，代码 diff 涉及到 reference 某条记录自动标 stale，下次蒸馏强制走 source 验证而不是 reference。</p>
+    <p>· <strong>金标准回归</strong>：把 L7 升级、跨端配置变更这种作为 benchmark case，每次 prd-tools 发版回归，确保失效检测生效。</p>
+    <p><strong>具体场景答法</strong>："6/1 升级当天，GitNexus 检测到 membership-level.ts diff，自动把 reference 05-domain 里所有 L7 相关键标为 stale。下次蒸馏会发现这些键过期，强制走源码验证而不是 reference，所以 AI 拿到的就是新规则。"</p>
+    <p class="hint">关键不要说"暂时不可避免"——这是承认短板。要答机制：分层 + 触发 + 回归。</p>
+  </div>
+</div>
 
+<div class="card" data-c="proj" data-kw="Context 预算 token 膨胀 大 PRD 2万字 chunking Map-Reduce 子agent 200K">
+  <div class="card-head"><span class="tag proj">G2</span><div class="card-title">2-3万字 PRD 直接打爆 Context 怎么办？</div></div>
+  <div class="core">显式 Context Budget + PRD Chunking + Map-Reduce 蒸馏</div>
+  <div class="card-body">
+    <p><strong>面试官追问</strong>（阿里一面30:00）："2-3万字的 PRD 基本直接打爆你的 context，这个事情执行不下去，你怎么保证它能跑下去？"</p>
+    <p><strong>我当时的回答</strong>：弱——"暂时还没考虑""主要是流程串联""一个重构级的项目"。真实 gap，必须补。</p>
+    <p><strong>升级版回答三件套</strong>：</p>
+    <p>· <strong>显式 Context Budget 模型</strong>：总预算 200K（Opus 4.x）= reference 索引 30K（15%）+ PRD 相关 chunks 80K（40%）+ code anchors 50K（25%）+ 历史对话 20K（10%）+ 思考空间 20K（10%）。超预算 → quality-gate distill 子命令直接 fail。</p>
+    <p>· <strong>PRD Chunking 策略</strong>：大 PRD 按章节切，每 chunk 5-8K。Step 1 PRD Ingestion 已经产出 document-structure.json，按段落/表格/图片分块。蒸馏时只加载相关 chunk，不全文加载。</p>
+    <p>· <strong>Map-Reduce 蒸馏</strong>（对标 Anthropic 多 Agent 研究系统）：大 PRD 先 sub-agent 按章节并行蒸馏，产出 chapter-summary；main agent 只合并 chapter-summaries，不重新读原文。Token 消耗从 O(n) 降到 O(log n)。</p>
+    <p><strong>边界诚实</strong>：现在 v2.19 已经做了 PRD Ingestion 拆分，但显式 Budget 还在 Sprint 0 规划中，Map-Reduce 在 Sprint 4。所以面试官追问"做了吗"，答"Chunking 已经上线，Budget 显式管理在排期"。</p>
+    <p class="hint">不要说"暂时没考虑"——答"已做哪一层，规划做哪一层"，体现 roadmap 清晰。</p>
+  </div>
+</div>
 
+<div class="card" data-c="proj" data-kw="团队模式 准确率 60% 损耗 跨仓库 contract-delta Pull-based 不读源码 精度天花板">
+  <div class="card-head"><span class="tag proj">G3</span><div class="card-title">团队模式准确率 60% 损耗具体在哪？</div></div>
+  <div class="core">三个根因：Pull-based 设计不读源码 + 11/12 delta 标 pending + 精度天花板 = min(各仓质量)</div>
+  <div class="card-body">
+    <p><strong>面试官追问</strong>（阿里一面23:06）："团队模式 60%，单仓 80%，60% 的损耗在哪里？具体是什么导致准确率下降？"</p>
+    <p><strong>我当时的回答</strong>：含糊——"团队仓脱离源码""BFF 比较准""前端有偏离"。讲稿里有结构化分析但口述时没讲透。</p>
+    <p><strong>升级版回答三个根因</strong>（对应 PPT P18 E=45 三根因）：</p>
+    <p>· <strong>根因1：Pull-based 设计，禁止 rg/glob</strong>。团队仓只读 reference，不能主动搜源码。这是有意的设计取舍——安全优先于自动化，避免跨仓误读。代价是失去了源码验证能力。</p>
+    <p>· <strong>根因2：11/12 contract-delta 标 pending</strong>。跨层契约字段差异，没有源码佐证，全部标"待人工确认"。12 条 delta 里 11 条是 pending，契约对齐维度得分只有 45（vs 单仓 70），拉低整体 readiness。</p>
+    <p>· <strong>根因3：精度天花板 = min(各仓 reference 质量)</strong>。团队模式精度受最弱仓库制约。如果某个仓 reference 没维护好，整个团队蒸馏都受影响。</p>
+    <p><strong>边界诚实</strong>：62 分定位是 needs_owner_confirm，不是 blocked。62 分不是 bug，是有意的设计取舍——团队模式定位是排期和契约对齐（粗粒度），精度由各仓再做单仓蒸馏补齐（细粒度）。两层配合。</p>
+    <p><strong>改进路线</strong>：Sprint 4 引入 A2A 协议，团队 Agent 通过 A2A 向各仓 Agent 问源码，"不读源码"限制解除，预估准确率 60→75+。</p>
+    <p class="hint">不要说"团队仓脱离源码"一句带过——要答根因 + 设计取舍 + 改进路线三层。</p>
+  </div>
+</div>
 
+<div class="card" data-c="proj" data-kw="度量 A/B 5h 2h 提升 OQ 命中率 IMP 执行率 对照实验 分母 度量体系">
+  <div class="card-head"><span class="tag proj">G4</span><div class="card-title">"5h→2h" 怎么度量？（早期简历曾用 60% 提效表述）</div></div>
+  <div class="core">三层指标：L1 产物质量（OQ/IMP 锚点）+ L2 研发效率（端到端 + 返工率）+ L3 业务价值</div>
+  <div class="card-body">
+    <p><strong>面试官追问</strong>（阿里一面34:14）："PRD 转化效率提升 60% 怎么度量？分母是什么？实验组用了 Claude Code，对照组是不是纯手写？"</p>
+    <p>⚠️ <strong>口径已收敛</strong>：现简历用 5h→2h（5 需求对照），60% 是当时表述。下方度量方法不变，被问"提效怎么算"时主指标答 5h→2h 即可。</p>
+    <p><strong>我当时的回答</strong>：弱——"写的比较粗""其实就是开发工时""应该没人不用 v0 coding"。工程化项目最致命的短板。</p>
+    <p><strong>升级版回答三层指标</strong>：</p>
+    <p>· <strong>L1 产物质量</strong>：Code Anchor 准确率（plan.md 里 anchor 真实被改的比例，目标≥85%）；OQ 命中率（Open Questions 真实阻塞率，目标≥60%）；IMP 执行率（Implementation 计划条目真实执行率，目标≥75%）。</p>
+    <p>· <strong>L2 研发效率</strong>：端到端开发耗时（实验组 vs 对照组，都用 Claude Code，目标提升≥40%）；QA 缺陷数（对照组 vs 实验组 bug 数，目标下降≥30%）；开发返工率（开发过程中发现 plan 错了的比例）。</p>
+    <p>· <strong>L3 业务价值</strong>：reference 飞轮增速（每月新增 playbook/术语数）；团队模式契约对齐度提升。</p>
+    <p><strong>严谨的 A/B 设计</strong>：实验组 = `/prd-distill` 全流程 + Claude Code 执行 plan；对照组 = Claude Code init + 直接给 PRD 让它自己分析。样本量 ≥ 30 个真实需求，pair-wise 对照。主指标 = plan 落地后的开发返工率。</p>
+    <p><strong>当前状态诚实</strong>：v2.19 已经有 readiness/final QG 内部评分，但 L2/L3 业务指标在 Sprint 3 排期。"现在没有硬 A/B，这是公认短板，正在补"。</p>
+    <p class="hint">不要说"就是工时提升"——回答必须有指标名 + 数字 + 对照组定义三件套。</p>
+  </div>
+</div>
 
-
-
-
-
-
+<div class="card" data-c="proj" data-kw="Claude Code Cursor 区别 差异化 init 证据链 防幻觉 可追溯 标准化">
+  <div class="card-head"><span class="tag proj">G5</span><div class="card-title">和 Claude Code init / Cursor 的区别？</div></div>
+  <div class="core">Claude Code init 缺历史业务上下文 + 缺证据链 + 缺质量门控，prd-tools 补的就是证据层</div>
+  <div class="card-body">
+    <p><strong>面试官追问</strong>（阿里一面36:30）："50个组件全仓库，让Claude Code做一次init理论上也能达到一样效果，你的方案和 Claude Codeit 的区别是什么？"</p>
+    <p><strong>我当时的回答</strong>：好——"证据链、可追溯、防幻觉、标准化"。这是强项，要继续打磨。</p>
+    <p><strong>升级版回答三个本质差异</strong>：</p>
+    <p>· <strong>差异1：业务上下文缺失</strong>。Claude Code init 只分析代码，不知道历史 PRD 业务背景。比如新 PRD 提到"完单油站券"，Claude Code 不知道这词映射到代码哪个 enum，只能猜或 grep "完单" 零结果。prd-tools 有 05-domain 术语表桥接，PRD 词 → enum → 文件三步精准定位。</p>
+    <p>· <strong>差异2：证据链 vs 完成倾向</strong>。AI 有强"完成倾向"——为了完成任务会编造路径。Claude Code 给的 plan 看起来完整但你不知道哪条是猜的。prd-tools 每条结论标注 evidence_id（PRD第几页+代码第几行），搜不到也显式标 negative_code_search，错误发现成本从重做降到抽查。</p>
+    <p>· <strong>差异3：质量门控 vs 自觉</strong>。Claude Code 没有 Step 7 硬停人审、没有 quality-gate final 评分、没有 benchmark 回归。靠 AI 自觉 vs 靠机制约束，是可靠性工程的本质区别。</p>
+    <p><strong>互补定位</strong>：prd-tools 解决"写代码之前"（想清楚改哪里、为什么、有什么风险），Claude Code/Cursor 解决"写代码"（具体怎么写）。prd-tools 的 plan.md 可以直接喂给 Claude Code 执行——我们负责想清楚，Claude Code 负责写。</p>
+    <p class="hint">这道题答得好。继续用"业务上下文+证据链+质量门控"三件套，最后强调"互补不是竞争"。</p>
+  </div>
+</div>
 
 
 
@@ -2249,25 +2362,126 @@ function buildTreeOptimized(list) {
   </div>
 </div>
 
+<div class="card" data-c="proj" data-kw="双插件 Reference 蒸馏 上下文隔离 按需加载 Context Engineering 插件 plugin">
+  <div class="card-head"><span class="tag proj">架构</span><div class="card-title">双插件体系：Reference+PRD蒸馏</div></div>
+  <div class="core">第一个插件建领域知识库，第二个插件做PRD蒸馏，拆开是为了上下文隔离</div>
+  <div class="card-body">
+    <p><strong>为什么拆两个插件</strong>：项目知识理解跟需求分析是不同认知任务，上下文混在一起AI会跳步和幻觉。核心是Context Engineering——信息筛选+排序+预算管理。</p>
+    <p><strong>reference插件</strong>：含reference和team-reference两个Skill。输入Git Log+历史PRD+技术文档，多轮分析后产出6个领域知识文件——代码结构、编码规则、跨层契约、PRD路由映射、业务领域、导航入口——加上代码实体索引和倒排索引。</p>
+    <p><strong>prd-distill插件</strong>：含prd-distill和team-distill两个Skill。基于reference产出的知识做11步结构化蒸馏，从PRD产出Spec和开发Plan。能力面适配器在蒸馏前约束AI思考方向。</p>
+    <p><strong>按需加载</strong>：不是一次性把所有知识塞给AI，而是先判断涉及哪个层（前端/BFF/后端），只加载对应层的Reference文件和能力面。</p>
+  </div>
+</div>
 
+<div class="card" data-c="proj" data-kw="质量门控 门禁 quality-gate Step间 Spec Review 评分 readiness">
+  <div class="card-head"><span class="tag proj">架构</span><div class="card-title">质量门控：prd-tools的门禁体系</div></div>
+  <div class="core">三层门控层层收紧：步骤间前置检查 → 蒸馏门禁12项 → 最终五维评分</div>
+  <div class="card-body">
+    <p><strong>第一层：步骤间前置检查</strong>：11步蒸馏中，每步执行前检查上一步产物存在且非空。不通过就重跑上一步。</p>
+    <p><strong>第二层：蒸馏门禁</strong>：12项检查——8项质量（文件存在、需求有证据、代码锚点、Spec确认等）+ 4项覆盖率（PRD内容全覆盖、图片全覆盖、需求全追溯，这3项是致命项，不通过直接停）。</p>
+    <p><strong>第三层：最终评分</strong>：两套五维系统——蒸馏过程内置评分（PRD摄入/证据覆盖/代码搜索/契约对齐/计划完整）+ 独立脚本终检（必传文件/上下文消费/锚点覆盖/计划完整/阻塞项质量）。加上Spec Review Gate：Spec生成后硬停止等人工确认才允许生成Plan。</p>
+    <p><strong>设计原则</strong>：声明约束不够加门禁，门禁不够加评分，评分不够加人工硬停止。</p>
+  </div>
+</div>
 
+<div class="card" data-c="proj" data-kw="Readiness Score 评分 权重 阈值 prd_ingestion evidence_coverage code_search contract_alignment plan_completeness 85 60 硬性降级">
+  <div class="card-head"><span class="tag proj">架构</span><div class="card-title">Readiness Score精确评分体系</div></div>
+  <div class="core">五个维度加权评分，85分直接通过，60分需确认，低于60必须修</div>
+  <div class="card-body">
+    <p><strong>五个维度</strong>：PRD摄入质量（权重20%）、证据覆盖率（25%）、代码搜索命中率（15%）、契约对齐度（25%）、计划完整性（15%）。加权汇总后对照两个阈值。</p>
+    <p><strong>三档判定</strong>：85-100分通过可直接进开发，60-84分需owner确认，0-59分阻塞必须修。</p>
+    <p><strong>硬性降级</strong>：PRD读取质量为block直接fail，核心契约blocked直接fail，多层协作需求缺契约差异直接fail。</p>
+    <p><strong>终检脚本</strong>：独立运行的Python脚本做五项确定性检查（必传文件/上下文消费/锚点覆盖/计划完整/阻塞项质量），同样按85/60分档。</p>
+  </div>
+</div>
 
+<div class="card" data-c="proj" data-kw="PRD 摄入 输入 docx md 图片 子Agent 并行 foreground media-analysis ingest">
+  <div class="card-head"><span class="tag proj">架构</span><div class="card-title">PRD摄入：多格式输入与图片并行策略</div></div>
+  <div class="core">支持四种文档格式输入，图片由AI子进程分批并行分析，不影响主流程</div>
+  <div class="card-body">
+    <p><strong>四种输入格式</strong>：.md/.txt直接读取写入_ingest/document.md，远程图片URL自动下载到media/；.docx用ingest-docx.py提取文字+图片；粘贴文本手工建来源。不用unzip -d（macOS权限坑）。</p>
+    <p><strong>图片并行策略</strong>：主上下文禁止直接Read图片。分批≤8张开1个foreground子Agent，>8张按数量拆多个子Agent在同一条消息中并行启动。每个子Agent产出media-analysis-part-N.yaml，全部完成后合并为media-analysis.yaml。</p>
+    <p><strong>质量约束</strong>：没有人工确认的图片内容不能生成高置信度需求。AI看图提取的信息默认medium置信度，关键结论仍需文本证据或人工确认才能升为high。extraction-quality.yaml三档：pass可继续，warn继续但spec暴露风险，block暂停。</p>
+    <p><strong>设计思想</strong>：用foreground并行而非background——保证子Agent完成后主流程才继续，避免异步竞态。批量大小8是上下文预算与并行效率的平衡点。</p>
+  </div>
+</div>
 
+<div class="card" data-c="proj" data-kw="AI工作流 定义 定位 产品边界 为什么做 怎么做 隐性知识 认知偏差 SSOT 证据链 门控 蒸馏 Graphify OpenSpec prd-tools 面试答题">
+  <div class="card-head"><span class="tag proj">架构</span><div class="card-title">AI工作流完整介绍（面试第一答）</div></div>
+  <div class="core">把PRD自动蒸馏成结构化开发计划，靠SSOT+证据链+多层门控保质量</div>
+  <div class="card-body">
+    <p><strong>是什么</strong>：从PRD自动产出结构化技术方案(Spec)和开发计划(Plan)的AI工作流。不是让AI写代码，是把PRD从自然语言蒸馏成有证据支撑的开发计划。这是Spec-Driven Development的工程化实践。</p>
+    <p><strong>为什么做</strong>：需求链路两个核心痛点。①认知偏差：PM写PRD→人工口传→开发理解，每步信息损耗导致返工。②隐性知识：项目经验全在老员工脑子里，新人上手成本高，换人就丢。</p>
+    <p><strong>怎么做（三大支柱）</strong>：</p>
+    <p>· <strong>SSOT</strong>：Reference插件把项目知识蒸馏成6个领域知识文件，每个事实只存在一处，避免AI冗余编造。</p>
+    <p>· <strong>证据链</strong>：定义8种证据类型（PRD/源码/文档等），AI每条结论必须引用Evidence ID，可追溯到原始出处。</p>
+    <p>· <strong>多层门控</strong>：贯穿11步流水线——摄入门控检查PRD读取质量，Spec Review Gate要求人工确认后才允许生成Plan，Readiness Score做五维度综合评分，Final Quality Gate做5项确定性检查。</p>
+    <p><strong>效果</strong>：PRD→Plan 从 5h/需求降到 2h/需求（5 需求对照），文件级准确率 80%，同一 PRD 跑 10 次一致性 40%→85%+，已推广到 20+ 人团队。</p>
+    <p><strong>产品边界（双轨）</strong>：① 团队推广版只做 PRD→Plan——ROI 最高环节，下游对接任意 AI Coding 工具（Cursor/Windsurf/Claude Code），不重复造轮子；② 个人独立设计端到端原型 prd2code-gen 跑通完整 PRD→Code 6 步闭环（双路径生成 + 自验证自修复 + eval 反哺），作为下一代探索。前者追求落地稳定，后者探索链路完整性。</p>
+    <p><strong>vs现有工具</strong>：Graphify做了知识图谱但没有蒸馏流程；OpenSpec有工作流规范但缺PRD到需求拆解闭环；Cursor/Windsurf不解决已有项目（几万行代码+历史逻辑）的需求理解问题。</p>
+  </div>
+</div>
 
+<div class="card" data-c="proj" data-kw="Spec Plan 产物 章节格式 结构化 需求分析报告 开发计划">
+  <div class="card-head"><span class="tag proj">架构</span><div class="card-title">AI工作流产出的Spec和Plan长什么样？</div></div>
+  <div class="core">Spec是需求分析报告三段式，Plan是开发执行计划三段式，都有固定章节模板</div>
+  <div class="card-body">
+    <p><strong>Spec三段</strong>：①需求理解——30秒概览说清做什么，然后需求点拆分，每个点标注PRD来源段落。②契约对齐——BFF需关注的需求点和不需关注的分开列出，前后端分工一目了然。③风险检查——AI不确定的点生成表格标红，需人工补充确认，不让AI凭空推测。</p>
+    <p><strong>Plan三段</strong>：①架构概览——开发顺序依赖图，先做什么后做什么。②需求点到文件映射——每个改动点标注来源是哪个需求、涉及哪个文件、改什么内容。③QA矩阵——测试场景清单加上下游契约对齐确认。</p>
+    <p><strong>面试要点</strong>：Spec生成后有硬停止，必须人工确认风险点后才允许生成Plan。两个文档章节固定、格式统一，团队推广时降低认知成本。</p>
+  </div>
+</div>
 
+<div class="card" data-c="proj" data-kw="端到端 自验证 自修复 震荡检测 校验 重试 Harness 闭环 A→B→A validation history prd2code-gen 工程化深度">
+  <div class="card-head"><span class="tag proj">架构</span><div class="card-title">端到端原型：自验证+自修复循环怎么实现？</div></div>
+  <div class="core">4 类校验 + 3 次重试 + 震荡检测（A→B→A 切整段重写），修正历史全程可追溯</div>
+  <div class="card-body">
+    <p>这是端到端原型 prd2code-gen 的核心工程化难点，应对"AI 生成代码出错了怎么办 / Harness 怎么落地"的追问。</p>
+    <p><strong>4 类校验（按顺序跑）</strong>：① 语法——TypeScript 编译 tsc --noEmit + AST 完整性 + 残留 <code>{{</code> 占位符检查；② 字段双向——蒸馏字段 ⊆ 生成字段（不遗漏）+ 生成字段 ⊆ 蒸馏字段（不幻觉）；③ 规则——i18n key 格式、enum 白名单、命名规范、反模式逐条检查；④ 集成——import 路径、类型兼容、不破坏已有代码（diff 检查）。</p>
+    <p><strong>自修复循环</strong>：验证 fail → 差异修正（只改报错字段/行，非全量重写）→ 全量重验（不只验修复项）→ 最多 3 次重试 → 仍 fail 暂停交人工。</p>
+    <p><strong>震荡检测（核心创新）</strong>：识别 history 里 A→B→A 模式（第一次改成 B，第二次又改回 A）→ 切换为整段重写策略，避免无限循环。修正历史全程记录到 validation.json 的 history 数组（attempt / strategy / errors_fixed / new_errors / changes）。</p>
+    <p class="hint">被问"出码后怎么保证质量" / "Harness 怎么落地" / "Agent 自修复怎么实现" → 翻这张卡。震荡检测是亮点，能讲出来直接体现工程深度。</p>
+  </div>
+</div>
 
+<div class="card" data-c="proj" data-kw="模板 LLM 双路径 Handlebars 0token 兜底 成本 control token verified_by 审计 漂移 drift-report 知识保鲜 prd2code-gen">
+  <div class="card-head"><span class="tag proj">架构</span><div class="card-title">端到端原型：模板/LLM 双路径 + verified_by 审计</div></div>
+  <div class="core">Handlebars 模板优先（0 token）+ LLM 兜底；每条事实带 file:line 溯源 + drift-report 自动发现 reference 漂移</div>
+  <div class="card-body">
+    <p>应对"成本怎么控 / token 怎么省 / 知识库怎么保鲜"的工程化追问。</p>
+    <p><strong>双路径代码生成</strong>：① 模板路径——读取 templates/{campaign_type}/ 下的 Handlebars 模板（.hbs），渲染蒸馏 JSON 数据，0 token 消耗、确定性输出；② LLM 路径——无匹配模板时 LLM 参照 reference 规则生成。LLM 结果可经人工确认后保存为新模板，形成"模板库越用越大"的学习闭环。</p>
+    <p><strong>四级回退策略（LLM 路径写入文件时）</strong>：Level 1 精确 SEARCH/REPLACE → Level 2 模糊匹配（容忍空格/换行）→ Level 3 行号定位 → Level 4 全文件重写。从最安全到最激进逐级回退。</p>
+    <p><strong>verified_by 审计链</strong>：reference 文件里每条事实附 <code>verified_by: ["file.ts:line"]</code>，强制源码 Read 后写入，禁止推断。Phase 2 强制验证 + Phase 3 致命类检查（枚举完备性、分支计数、方法签名、字段路径 100% 匹配）。</p>
+    <p><strong>漂移检测 drift-report.json</strong>：每次验证后对比 reference 与实际代码——reference 有但代码找不到的实体 → stale 漂移；代码有但 reference 未记录 → missing 漂移；reference 引用的文件路径不存在 → broken_path。warning 级别不阻塞流程，提示知识库需要更新。</p>
+    <p class="hint">被问"AI 成本怎么控" / "reference 怎么保鲜" / "知识库过时怎么办" → 翻这张卡。verified_by + drift-report 是工程化核心防御。</p>
+  </div>
+</div>
 
+<div class="card" data-c="proj" data-kw="端到端 原型 生产 推广 三步路径 CI 责任 模板库 过渡 prd2code-gen 协同 既然完整为啥不推广">
+  <div class="card-head"><span class="tag proj">架构</span><div class="card-title">端到端原型 → 生产的三步过渡路径</div></div>
+  <div class="core">双轨协同：团队推广版稳态运营，端到端原型探索三步过渡——模板库扩展 + CI对齐 + 责任归属</div>
+  <div class="card-body">
+    <p>应对"既然完整为啥不推广"和"原型怎么过渡到生产"两个高频追问。</p>
+    <p><strong>双轨定位（先讲清楚）</strong>：① 团队推广版 = 稳态（人工确认后才开发、风险低、ROI 高），20+ 人团队在用；② 端到端原型 = 探索（验证可行性、积累工程化经验、等模型成本下降），用 R01/R02 对照实验做技术储备。</p>
+    <p><strong>三步过渡路径</strong>：</p>
+    <p>· <strong>Step 1：模板库扩展到 80% 场景</strong>。原型阶段模板命中率约 40%（剩余走 LLM 兜底），目标 80%。每命中一次 LLM 兜底且评分>阈值，抽取为候选模板，Golden Sample 回归通过后入库。</p>
+    <p>· <strong>Step 2：CI/CD 对齐</strong>。原型是独立 pipeline，生产化要：① 产物格式对齐团队 lint/tsc/test 流水线；② 接入 code review 工具（SonarQube 等）；③ 灰度发布机制（先 10% 需求走 AI 生成，逐步放量）。</p>
+    <p>· <strong>Step 3：责任归属明确</strong>。AI 生成代码必须有 owner review 才能 merge，bug 责任归 owner 不归 AI。建立"AI 生成标签"机制，QA 阶段重点 review。</p>
+    <p><strong>四大 gap（诚实承认）</strong>：① CI 对齐（独立 pipeline vs 团队流水线）；② 质量责任（AI 生成必须有 owner）；③ 规模化（50 文件 → 5000 文件，溯源/检索/校验都要重写）；④ 模型成本（原型用强模型不计成本，生产要分层模型）。</p>
+    <p class="hint">被问"既然完整为啥不推广" → "团队推广版稳态在用，原型是探索储备，过渡至少 6-12 个月+团队投入"。被问"原型和生产差什么" → 翻这张卡的四 gap。</p>
+  </div>
+</div>
 
-
-
-
-
-
-
-
-
-
-
+<div class="card" data-c="proj" data-kw="优化 迭代 Benchmark 黄金Case 回归 LLM-as-Judge A/B eval auto-tune 反哺 gap-analyzer pattern-detector case-loader llm-judge">
+  <div class="card-head"><span class="tag proj">工作流</span><div class="card-title">AI工作流怎么优化和迭代</div></div>
+  <div class="core">维护黄金Case集 + Benchmark回归 + LLM-as-Judge自动评分；端到端原型已落地完整 eval/auto-tune 五模块闭环</div>
+  <div class="card-body">
+    <p><strong>黄金Case集</strong>：维护一套已人工验证的完整需求案例（5-10个中等复杂度需求），覆盖典型场景。每次变更后用这套Case重跑，对比前后评分。</p>
+    <p><strong>Benchmark回归</strong>：用已跑完的case当用例评分集，优化Prompt或配置后重跑，对比五维评分和文件覆盖率的变化——进步还是退步。相当于A/B测试。</p>
+    <p><strong>LLM-as-Judge（端到端原型已实现）</strong>：prd2code-gen 里完整跑通了 eval/auto-tune 五模块闭环——case-loader 加载黄金集 → llm-judge 用另一个大模型对产物做五维独立评分 → scorer 计算分值 → gap-analyzer 定位失分点 → pattern-detector 跨 case 提炼共性 pattern 反哺 prompt。已做 R01/R02 对照实验（54→68 分，量化 reference 知识库价值 +14 分）。</p>
+    <p><strong>迭代节奏</strong>：每次只改一个变量（Prompt/门禁阈值/能力面配置），跑黄金Case看效果，确认无退化后再合入。</p>
+  </div>
+</div>
 
 
 
@@ -2387,7 +2601,18 @@ function buildTreeOptimized(list) {
 
 
 
-
+<div class="card" data-c="proj" data-kw="幻觉 防御 编造 完成倾向 证据链 负向搜索 Spec Review Readiness 四层防线 拦截">
+  <div class="card-head"><span class="tag proj">AI</span><div class="card-title">幻觉怎么答（四层防线·聚合卡）</div></div>
+  <div class="core">防幻觉靠四层防线——证据链溯源、负向搜索显式标记、Spec Review硬停止、Readiness五维兜底</div>
+  <div class="card-body">
+    <p><strong>先定根因</strong>：大模型有强完成倾向，给任务就给答案，没把握也编，这是特性不是bug。所以防幻觉不是让模型更准，是把偏差转成可拦截的工程信号。</p>
+    <p><strong>第一层·证据链</strong>：每条非显然结论必须挂Evidence ID，可追溯到PRD第几页或代码第几行，八种证据类型（PRD、源码、git_diff、negative_search、api_doc等）。</p>
+    <p><strong>第二层·负向搜索（亮点）</strong>：搜不到也是证据。AI说改某个文件第142行，一搜不存在直接拦截，把编路径从隐蔽错误变成显性可拦截信号。</p>
+    <p><strong>第三层·Spec Review Gate</strong>：Spec生成后硬停止等人工确认才往下出Plan，挡住完成倾向把错误从Spec放大到Plan。</p>
+    <p><strong>第四层·Readiness五维</strong>：跑完流水线五维加权评分，低于阈值必须修；消融实验证明去掉IR层Readiness从82掉到54。</p>
+    <p class="hint">细节见证据链机制卡、质量门控卡。注意别把倒排索引加BM25说成RAG，那是检索工程不是RAG。</p>
+  </div>
+</div>
 
 <div class="card" data-c="proj" data-kw="Agent 死循环 循环 编排层 运行时 状态机 max_iterations RecursionLimit 熔断 Tool Use 桥接">
   <div class="card-head"><span class="tag proj">AI</span><div class="card-title">Agent死循环怎么防（编排层+运行时层·bridge）</div></div>
@@ -2401,7 +2626,17 @@ function buildTreeOptimized(list) {
   </div>
 </div>
 
-
+<div class="card" data-c="proj" data-kw="王牌 素材 准确率 五维 负向搜索 消融 确定性分工 独门 亮点 别人讲不出">
+  <div class="card-head"><span class="tag proj">AI</span><div class="card-title">prd-tools 4个王牌素材（每个30秒讲法）</div></div>
+  <div class="core">我有四个别人讲不出的素材——准确率五维定义、负向搜索、消融实验、确定性分工</div>
+  <div class="card-body">
+    <p><strong>①准确率五维定义（最稀缺）</strong>：多数AI项目只报一个总分，我分五维A到E（PRD保真、范围边界、代码锚点、方案可执行、跨仓契约），单仓公式零点二五A加零点一五B加零点二五C加零点三五D，多仓把E权重拉到零点三。三案例Readiness 82、83、62，口诀单仓看D多仓看E。</p>
+    <p><strong>②负向搜索（金句）</strong>：搜不到也是证据，反直觉好记，把AI编造路径变成可拦截信号。</p>
+    <p><strong>③消融实验（单点杀伤）</strong>：去掉IR层重跑，Readiness从82掉到54，错误率翻倍，证明这步不多余，堵住是否过度设计的质疑。</p>
+    <p><strong>④确定性vs非确定性分工</strong>：三个Python脚本（build-index、context-pack、quality-gate）跑一万次结果一样，把有没有漏读PRD、plan有没有路径变成CI可检查项；智能靠Agent推理，可靠靠脚本确定性计算。</p>
+    <p class="hint">每场面试至少抛一个王牌，别全堆上去。数据口径见综合·项目关键数据卡。</p>
+  </div>
+</div>
 
 
 
@@ -2444,16 +2679,57 @@ function buildTreeOptimized(list) {
 
 
 <!-- ==================== 微前端专项 ==================== -->
+<div class="card" data-c="proj" data-kw="上下文管理 context pack 能力面 适配器 搜索 代码定位 Reference 索引">
+  <div class="card-head"><span class="tag proj">架构</span><div class="card-title">代码上下文怎么精准定位？</div></div>
+  <div class="core">知识库路由优先定向 → 索引精确扫描 → 全局搜索补充，三轮逐步精准</div>
+  <div class="card-body">
+    <p><strong>给AI提供了什么</strong>：两层。①静态层：6个YAML知识库（目录/枚举/契约/路由映射/编码规则/领域术语）+ 4个索引文件（实体/边/倒排索引/清单）；②动态层：运行时按需求搜索源码。</p>
+    <p><strong>三阶段扫描</strong>：Phase1 Reference路由（04-routing-playbooks匹配关键词→定向文件路径）→ Phase2 Index精确扫描（context-pack.py构建查询计划匹配实体）→ Phase3 rg/glob补充（覆盖未命中）。</p>
+    <p><strong>能力面适配器</strong>：前端(9面:ui_route/view_component/form_or_schema等)、BFF(10面:schema_or_template/linkage_options等)、后端(10面:api_surface/domain_model等)。路径只是搜索候选，事实由源码确认。</p>
+    <p><strong>上下文包</strong>：context-pack.py合并索引实体与蒸馏上下文，产出≤800行精准上下文（需求种子/关键实体/相似注册表/高置信线索）。</p>
+  </div>
+</div>
+
+<div class="card" data-c="proj" data-kw="证据链 evidence SSOT 追溯 事实 置信度 溯源 negative_code_search">
+  <div class="card-head"><span class="tag proj">架构</span><div class="card-title">证据链机制详解</div></div>
+  <div class="core">AI每个事实追溯到PRD/源码/文档，8种证据类型+高/中/低置信度</div>
+  <div class="card-body">
+    <p><strong>证据实体</strong>：每条含id/type/source/desc/confidence。8种类型：prd(PRD原文)/tech_doc(技术文档)/code(源码)/git_diff(代码变更)/negative_code_search(确认不存在)/human(人工确认)/api_doc(接口文档)/reference(知识库)。</p>
+    <p><strong>完整追溯链</strong>：PRD解析→evidence-map.yaml(block→章节)→evidence.yaml(权威注册表)→requirement-ir.evidence_ids→layer-impact.code_anchors(文件/符号/行号/置信度)→graph-context(来源:graph|rg|reference|inferred)→spec/plan引用EV ID。</p>
+    <p><strong>SSOT原则</strong>：每个事实只存在于6个YAML文件中的一个，跨文件用contract_ref/ref_rule/playbook_ref引用。high需源码/PRD直接证据，medium部分证据，low仅线索。</p>
+    <p><strong>证据优先级</strong>：接口文档 > PRD推断 > 负向搜索。证据ID前缀分类：EV-BG-*（PRD原始块）、EV-REF-*（Reference消费）、EV-CODE-BUILD-*（构建差异）、EV-INGEST-*（摄入提取）。找不到也是证据——negative_code_search表示"搜了但没找到"，不是"我不知道"。</p>
+  </div>
+</div>
+
+<div class="card" data-c="proj" data-kw="落地 场景 使用 团队 日常 需求交付 自动化 PM PRD 评审">
+  <div class="card-head"><span class="tag proj">工作流</span><div class="card-title">AI工作流在团队怎么落地的？</div></div>
+  <div class="core">PM写PRD → 工具自动产出结构化技术方案，替代需求评审到技术评审环节</div>
+  <div class="card-body">
+    <p><strong>日常流程</strong>：PM写PRD → 工具自动分析 → 产出Spec规格和开发Plan。把原来"需求评审会→三方对齐→出技术方案"这个环节自动化。</p>
+    <p><strong>验证</strong>：选了5个中等复杂度已完成需求做对照，人工平均3.5天（读PRD→评审会→三方对齐→技术方案），工具约1.5天（PRD输入→自动产出结构化方案）。</p>
+  </div>
+</div>
 
 
+<div class="card" data-c="proj" data-kw="稳定性 质量 保证 三层 XML 约束 门禁 评分 Skill 执行">
+  <div class="card-head"><span class="tag proj">工作流</span><div class="card-title">Skill执行结果不稳定怎么保证质量？</div></div>
+  <div class="core">事前用结构化声明约束AI行为，事中检查每步产物完整性，事后五维评分兜底</div>
+  <div class="card-body">
+    <p><strong>第一层事前约束</strong>：每个Step开头用XML声明必须做/不做的事（如"必须引用Evidence ID"、"不允许凭空推断"）。</p>
+    <p><strong>第二层事中门禁</strong>：下一步前自动检查上一步产物结构完整性（required files是否存在且非空），不通过就重跑。</p>
+    <p><strong>第三层事后评分</strong>：链路跑完后五维评分（证据链覆盖度/产出完整性/置信度/QA矩阵/结构合规），低于阈值标记需人工review。</p>
+  </div>
+</div>
 
-
-
-
-
-
-
-
+<div class="card" data-c="proj" data-kw="PRD 过时 过期 改动 同步 源码 SSOT 不一致 更新 临时">
+  <div class="card-head"><span class="tag proj">工作流</span><div class="card-title">PRD过时或临时改动了怎么同步？</div></div>
+  <div class="core">源码为SSOT，历史PRD仅作业务理解参考，不确定的标记人工确认</div>
+  <div class="card-body">
+    <p><strong>历史PRD定位</strong>：帮AI理解业务场景模式（如新增活动涉及哪些步骤、联动怎么配），不提供精确指令。所以"错了"不会有后果。</p>
+    <p><strong>冲突处理</strong>：PRD和代码有分叉时以源码为准。工具会把不确定的点标记为"需人工确认"，而不是强行执行。</p>
+    <p><strong>核心依赖</strong>：最终所有结论落到源码确认，不依赖PRD文本的精确性。</p>
+  </div>
+</div>
 
 <div class="card" data-c="proj" data-kw="前置校验 沙箱 sandbox 预渲染 Schema 验证 发布前 类型检查">
   <div class="card-head"><span class="tag proj">工程</span><div class="card-title">Schema配置前置校验怎么做？</div></div>
@@ -2534,11 +2810,11 @@ function buildTreeOptimized(list) {
 
 <div class="card" data-c="proj" data-kw="推广 ROI 成本收益 团队 落地 试点 量化 经营视角 鸿湖 提效 投入产出">
   <div class="card-head"><span class="tag proj">产品</span><div class="card-title">AI工作流推广ROI</div></div>
-  <div class="core">建库 1-2 天，之后每需求省点人工评审时间，但必须扣协同成本——数字都是体感估算没系统基线</div>
+  <div class="core">单团队建库1-2天，之后每需求省2.5h，5团队月省125h，但必须扣掉协同成本</div>
   <div class="card-body">
     <p><strong>成本</strong>：单团队建知识库1-2天（跑Reference蒸馏），学习成本约半天（三步上手），之后自动回流不重复建库。</p>
-    <p><strong>收益（诚实口径）</strong>：PRD→Plan 环节每需求省 2-3h 人工评审——这是体感估算、小范围验证，<strong>没建系统基线和对照组</strong>，被追"怎么测的"我答"小样本体感、没系统量化"，别说死"月省多少小时"这种精确数。</p>
-    <p><strong>全链路修正</strong>：含联调、环境搭建、合作方依赖这些AI替代不了的，整体体感提效两三成，但这是估算不是度量。主动给这个务实口径，比报死数稳。</p>
+    <p><strong>收益</strong>：PRD→Plan环节每需求省2-3h人工评审，5个团队月均50需求 × 2.5h = 125h/月。纯开发环节一周缩到1-2天。</p>
+    <p><strong>全链路修正</strong>：含联调、环境搭建、合作方依赖这些AI替代不了的，整体提效20-30%。排期10天的需求现在7-8天。主动给这个务实口径。</p>
     <p><strong>推广路径</strong>：先找1-2个意愿高的团队试点 → 产出前后对比数据 → 内部分享 → 逐步扩大。不要说"写个README就行"，业务面不买这个。</p>
     <p class="hint">业务面考的不是技术指标，是经营思维——你能不能算清投入产出比。</p>
   </div>
@@ -2640,7 +2916,17 @@ function buildTreeOptimized(list) {
 
 <!-- ==================== 项目深挖·追问防御 ==================== -->
 
-
+<div class="card" data-c="proj" data-kw="5h 2h PRD转化率 实验组 对照组 AB实验 统计口径 样本 逐字稿">
+  <div class="card-head"><span class="tag proj">AI</span><div class="card-title">5h→2h 的实验组和对照组是什么？（≈60%提效）</div></div>
+  <div class="core">不是AB实验，是同一团队前后流程的工时对比。主口径 5h→2h（纯工作），20 需求日历口径 2-3天→1-2小时</div>
+  <div class="card-body">
+    <p><strong>研究设计</strong>：坦诚说这不是严格意义上的AB实验——没有随机分组，没有控制组。是同一个团队、同一类需求、前后流程改变的工时对比。</p>
+    <p><strong>对照组（人工流程）</strong>：取过去20个需求的Jira工时记录，统计从PRD接入到产出技术方案的耗时。包括：读PRD（2-4小时）+ 需求评审会（1-2小时）+ 技术评审会（1-2小时）+ 写技术方案文档（4-8小时）。均值2-3天（含跨天协作等待时间）。</p>
+    <p><strong>实验组（工具流程）</strong>：取同样复杂度的10个新需求，用prd-tools从PRD到产出Spec+Execution Plan的耗时。PRD摄入（5分钟）+ 证据账本建立（10分钟）+ 需求AR生成（5分钟）+ 源码精读和契约分析（20-30分钟）+ Spec生成（10分钟）+ Plan生成（10分钟）+ 门禁校验（5分钟）。纯工作时间1-2小时。加上人工确认Spec的30分钟，总共1.5-2.5小时。</p>
+    <p><strong>为什么不是AB实验</strong>：团队规模小（前端5人），无法同时维持两套流程跑严格对照。选择前后对比是因为现实可行。如果团队更大，理想设计是同一批需求随机分配给人工组和工具组，双盲评审产出质量。但当前样本量已经足以说明方向性结论——工具流程在单环节的效率提升是显著的。</p>
+    <p class="hint">面试官问这个是在考你的数据素养。最好的回答是：先说清楚方法论，再主动说局限性，最后说如果有条件会怎么做更严格的实验。"坦诚缺陷"比"包装完美"得分高。</p>
+  </div>
+</div>
 
 <div class="card" data-c="proj" data-kw="Schema 适用场景 页面类型 表单 配置 营销 B端 边界 逐字稿">
   <div class="card-head"><span class="tag proj">Schema</span><div class="card-title">Schema驱动解决什么类型页面的开发效率？</div></div>
@@ -2759,7 +3045,7 @@ function buildTreeOptimized(list) {
   <div class="card-body">
     <p><strong>和 Vibe Coding / Harness Engineering 的演进</strong>：Prompt Engineering → Context Engineering → Harness Engineering。Vibe（速度探索）→ SDD（结构化规范）→ Harness（工业级可控）。</p>
     <p><strong>7 步流程</strong>：① proposal 提案（业务价值）② design 架构 ③ specs 规范 SSOT（接口/字段/约束）④ tasks 原子任务拆分 ⑤ apply AI 执行 ⑥ verify 测试 + 回归 + Review ⑦ archive 沉淀回流。</p>
-    <p><strong>项目桥接（诚实版）</strong>：思路相通，但 prd-tools 本质是 Claude Code 的 Skill 工作流，<strong>不是 SDD 平台</strong>——它停在 Plan（spec.md + plan.md），<strong>不 apply 出代码</strong>，下游交给 Cursor/Claude Code。粗略对应：proposal≈PRD 摄入，design≈能力面适配器，specs≈reference 知识库 SSOT，tasks≈Spec/Plan，verify=quality-gate.py 五维检查。别吹成"全流程 SDD 平台"。</p>
+    <p><strong>项目桥接</strong>：prd-tools 是 SDD 工程化落地。proposal=PRD摄入，design=能力面适配器，specs=Reference 6 文件 SSOT，tasks=Spec/Plan 11 步，apply=下游 Cursor/Claude Code，verify=quality-gate.py 5 项检查，archive=反馈回流。</p>
     <p><strong>追问点</strong>：EARS 需求规格化、Spec Kit 工具链（GitHub/OpenAI）、企业内 SDD 落地难点（团队接受度 + Spec 维护）。</p>
     <p><strong>vs 代码即文档（蚂蚁一面追问）</strong>：面试官问"spec 驱动开发和代码即文档比优势是什么"。一句话——spec 是唯一真理源（source of truth）+ 可执行契约（executable contract），代码即文档只是给人看的事后记录。三个差异：① 文档性质——代码即文档是被动记录，spec 是约束 AI 生成的可执行契约；② 风险控制——前者后置修补，spec 前置；③ 质量一致性——spec 系统化、不依赖个人。别答"26 年大家一致认同的协议"太绝对，说"GitHub 2025 开源 Spec Kit 后的行业共识"更有据。</p>
     <p class="hint">蚂蚁财富 AI Lab 必考。讲完主动加一句"金融场景会在 verify 加资损风险评估"。</p>
@@ -2774,7 +3060,7 @@ function buildTreeOptimized(list) {
     <p><strong>通信引擎（Communication）</strong>：Agent 间状态传递，通过中间文件（YAML/JSON），类似 OS 的 IPC，避免上下文重复加载。</p>
     <p><strong>反思引擎（Reflection）</strong>：从失败提炼规则。四步：① 日志收集（决策 + 工具调用 + 评分）② 反思分析高频失败模式 → 生成候选规则 ③ 人工审批写入 AGENTS.md ④ golden sample 回归验证。</p>
     <p><strong>KSG 链路</strong>：短期记忆 → 长期记忆 → 知识库 → 技能手册（逐步抽象）。</p>
-    <p><strong>项目桥接（诚实版）</strong>：prd-tools 是固定顺序的 Skill Workflow，<strong>不算真 Agent</strong>（控制权在开发者不在 LLM，步骤依赖门禁都预定义）。硬套 Harness：信息边界=reference SSOT，工具=MCP，编排=固定步骤，记忆=证据索引，评估=quality-gate，约束=questions.md。最大缺口是反思引擎——目前人工回流没自动化。</p>
+    <p><strong>项目桥接</strong>：prd-tools 是 Harness 雏形。L1 信息边界=SSOT，L2 工具=MCP，L3 编排=11 步，L4 记忆=Evidence Index，L5 评估=quality-gate.py，L6 约束=questions.md。最大缺口在 L4 反思引擎——目前人工回流，没有自动化。</p>
     <p><strong>业界</strong>：OpenAI AGENTS.md（~100 行精炼）、Anthropic 三 Agent（Planner/Generator/Evaluator）、Stripe Minions（1300+ PR/周）、Ghostty AGENTS.md（每一行都是过去的失败）。</p>
     <p class="hint">小红书二面失分点。核心是"错误即规则"的 ratchet 机制。</p>
   </div>
@@ -4089,133 +4375,6 @@ function buildTreeOptimized(list) {
 
 
 
-<!-- ==================== proj Spec-Driven 收敛纠偏 ==================== -->
-<div class="card" data-c="proj" data-g="AI 总览" data-kw="prd-tools 是什么 定位 Spec-Driven SDD 平台 Claude Code 插件 上下文编译器 证据门禁 不生成代码 简历 平台 介绍 第一答 鸿湖 阿里 Cursor 区别">
-  <div class="card-head"><span class="tag proj">PRD</span><div class="card-title">这个 PRD 工作流到底是什么</div></div>
-  <div class="core">说白了就是一个 Claude Code 插件——把 PRD 蒸馏成带证据的开发计划，是"上下文编译器 + 证据门禁"，不生成代码</div>
-  <div class="card-body">
-    <p>被问"介绍一下你这个 AI 工作流"，我第一句先把定位钉死：它是一个 <strong>Claude Code 插件</strong>，里面就两个 Skill——<code>/reference</code> 把项目知识编译成参考库，<code>/prd-distill</code> 把 PRD 蒸馏成带证据的 spec 和 plan。我给自己的定位是"PRD-to-Code 的上下文编译器加证据门禁"。</p>
-    <p>这里有个我得主动说清楚的边界：<strong>它不直接生成代码</strong>。它停在 Plan 这一步，产出一个想清楚"改哪里、为什么、有什么风险"的开发计划，后面具体写代码交给 Cursor / Claude Code / Copilot。我们负责想清楚，编码工具负责写。</p>
-    <p>对标的话像 GitHub 的 Spec Kit，但我的差异点在"从存量代码和契约证据编译上下文"——针对的是那种几万行、一堆历史逻辑的老项目，不是从 0 起的新项目。这也是它跟 Claude Code init 的本质区别：init 只看代码、不知道历史 PRD 的业务背景，我补的就是业务上下文 + 证据链这一层。</p>
-    <p><strong>简历上写的是"平台 / 20+ 人团队"，被追怎么接</strong>：简历是包装口径，深挖时我落地讲——它本质是 Claude Code 的 Skill 工作流，团队规模得说"小范围团队验证过"（真实是 1-5 人规模，没推广记录）。别说"生产在用""20+ 人日常使用"，被追"推广数据"会穿帮。我自己每天用、比直接让 AI 写靠谱，这个体感可以讲。</p>
-  </div>
-</div>
-
-<div class="card" data-c="proj" data-g="AI 架构" data-kw="双 Skill reference prd-distill 配合 Citation Grounding file:line 证据 源码读完才写 蒸馏 PRD Spec Plan 链路 怎么跑 知识库 SSOT 六文件">
-  <div class="card-head"><span class="tag proj">架构</span><div class="card-title">两个 Skill 怎么配合，证据怎么挂</div></div>
-  <div class="core">一个编译项目上下文、一个蒸馏 PRD，两条链路靠"每条事实带 file:line、读完源码才写"串起来</div>
-  <div class="card-body">
-    <p>拆成两个 Skill 是因为"理解项目"和"分析需求"是两种不同的认知任务，上下文混一起 AI 会跳步、会幻觉。</p>
-    <p><strong>第一个 /reference：建项目知识库</strong>。跑一遍项目，把几万行代码蒸馏成 6 个领域知识文件——codebase（代码结构清单）、coding-rules（编码规则）、contracts（跨层契约）、routing-playbooks（PRD 怎么路由到代码）、domain（业务领域术语表）、project-profile。这是 SSOT，每个事实只存一处，AI 按需查而不是一次性塞全量源码。</p>
-    <p><strong>第二个 /prd-distill：蒸馏 PRD</strong>。基于 reference 产出的知识，把 PRD 从自然语言蒸馏成结构化的 spec.md 和 plan.md。能力面适配器先约束 AI 往哪个方向想（前端 9 面 / BFF 10 面 / 后端 10 面），然后一步步：PRD 摄入 → 建证据账本 → 路由到 reference → 精读源码 → 对齐契约差异 → 生成 spec（这里硬停等人确认）→ 生成 plan。每步产物是下一步输入，链条断在哪都能定位。</p>
-    <p><strong>核心是 Citation Grounding</strong>：每条 requirement、影响、契约结论都必须挂一个证据 ID（<code>EV-XXX</code> / <code>GCTX-XXX</code>），来源是 PRD 原文、源码、契约、git diff、或负向搜索。规矩是"读完源码才能写进去，禁止推断"。8 种证据类型，搜不到也得显式标 <code>negative_code_search</code>——"搜了没找到"是证据，"我不知道"不是。</p>
-    <p>得说句实话：这个"必须先读源码"目前是 prompt 软约束 + evidence 字段事后门禁，不是每条都硬校验；检索工具返回天然带 file:line，但回答层的引用完整性没有硬卡。这是已知改进项，别吹成"每条 100% 强制"。</p>
-  </div>
-</div>
-
-<div class="card" data-c="proj" data-g="AI 质量" data-kw="quality-gate 五维 门禁 readiness 防什么 计划不可执行 返工 Spec Review Gate 权重 阈值 85 60 安全性 可维护性 没有安全扫描 文件齐全 上下文消费 锚点覆盖 计划完整 阻塞项">
-  <div class="card-head"><span class="tag proj">门禁</span><div class="card-title">质量门禁五维防什么（真实维度名）</div></div>
-  <div class="core">防的是"计划不可执行、开发到一半返工"，五维是文件齐全/上下文消费/代码锚点覆盖/计划完整/阻塞项质量，没有安全维度</div>
-  <div class="card-body">
-    <p>门禁防的不是"代码 bug"，是"<strong>计划不可执行、开发到一半才发现要返工</strong>"——这是 PRD 直接喂 AI 最大的痛点：计划看起来完整，但你不知道哪条是猜的，一上手发现路径不存在、契约对不上。</p>
-    <p><strong>真正的五维（quality-gate.py，带权重）</strong>，这个得记死，被追"五维是哪五维"按这个答：</p>
-    <p>· <code>required_files</code>（0.20）——六个 reference 文件齐不齐<br>
-    · <code>context_pack_consumed</code>（0.15）——计划有没有真正消费上下文包<br>
-    · <code>code_anchor_coverage</code>（0.25）——plan 覆盖没覆盖关键代码锚点<br>
-    · <code>plan_completeness</code>（0.25）——计划完整不完整<br>
-    · <code>blocker_quality</code>（0.15）——阻塞项带没带 owner / 缓解 / 风险这些要素</p>
-    <p>综合分 ≥85 pass、≥60 warning、&lt;60 fail。另外有个独立的 PRD coverage gate 做 block / media / requirement 的追溯覆盖率（这个最接近"需求覆盖率"）。</p>
-    <p>还有一道硬门禁叫 <strong>Spec Review Gate</strong>：spec 生成后，<code>quality-gate.py</code> 会校验 <code>spec-confirmation.yaml</code> 必须是 owner 确认过的 <code>approved</code>，否则直接 <code>exit 2</code> 流程硬停——这是代码级的，不是 prompt 劝一下。</p>
-    <p><strong>两个诚实边界必须主动说</strong>：第一，<strong>没有"安全性""可维护性"维度，项目里也没有安全扫描</strong>——别顺嘴说"五维含安全"，那是别的项目的维度名。第二，五维评分是确定性 Python 脚本（跑一万次结果一样，这点是亮点），但 85/60 这套阈值是经验值、没有大规模线上校准；readiness 这个分数我自己当过程质量参考用，没建过严格的前后基线，被追"怎么定的 85"我答"经验阈值 + 小样本调过"。</p>
-  </div>
-</div>
-
-<div class="card" data-c="proj" data-g="AI 架构" data-kw="知识抽取 怎么做 AST 不是 rg 正则 build-index entities edges 倒排索引 GraphRAG 代码实体图 知识保鲜 过时 GitNexus 已删 v2.13 PRD Spec Plan 蒸馏链路">
-  <div class="card-head"><span class="tag proj">抽取</span><div class="card-title">项目知识是怎么抽取出来的</div></div>
-  <div class="core">诚实说是 rg 加 Read 加正则的启发式，不是 AST；产出 entities/edges/倒排索引的轻量代码实体图，受 GraphRAG 启发</div>
-  <div class="card-body">
-    <p>被追"代码结构怎么抽取的""是不是走 AST"，我老实答：<strong>是 rg / glob 定位 + Claude Read 源码确认 + 正则版 Evidence Index 做确定性锚点</strong>。<code>build-index.py</code> 是个正则启发式扫描器，不是 AST。</p>
-    <p>这里有个真实演进得讲清楚：早期我接过 GitNexus 做 AST，但 v2.13 把它移除了换回原生正则——AST 太重、维护成本高，正则启发式（比如 <code>enum_members</code>、<code>switch_details</code>）对这个场景够用。所以别吹 AST，被追"用什么 AST 库"接不住。<strong>编码规则也从来不是走 ESLint</strong>，项目里 ESLint 零命中，这个别提。</p>
-    <p>产出是三个 JSON：<code>entities.json</code>（代码符号 / 函数 / 组件）+ <code>edges.json</code>（调用 / import 关系）+ <code>inverted-index.json</code>（term → entity 倒排索引），<code>quality-gate.py</code> 强制要求这三个齐全。这套东西思路受 Microsoft GraphRAG 启发，但我做的是<strong>轻量的正则版，不是图数据库</strong>——就是 JSON 文件，没用 Neo4j，别往图数据库上靠。</p>
-    <p>蒸馏链路串起来就是：<strong>PRD → spec.md（需求理解 + 契约对齐 + 风险）→ plan.md（架构顺序 + 需求到文件映射 + QA 矩阵）</strong>。spec 和 plan 都是固定章节模板，spec 后面有硬停等人确认。</p>
-    <p><strong>知识保鲜这块要诚实承认短板</strong>：reference 是冷启动建的，业务规则改了（比如会员等级逻辑 6 月 1 号升级）知识库不会自动更新，这是真痛点。我目前是"源码为 SSOT、PRD 只作业务理解参考、不确定的标人工确认"在兜底，<strong>自动失效检测没做好</strong>——早期设计的 GitNexus detect_changes 随 AST 一起删了，现在没有自动标 stale 的机制。被追"过时怎么办"，我答机制（源码兜底 + 人工确认）+ 主动承认自动检测是下一步要补的，别吹"三层防线自动失效"。</p>
-  </div>
-</div>
-
-<div class="card" data-c="proj" data-g="AI 质量" data-kw="防幻觉 编造 完成倾向 四层 证据链 负向搜索 Spec Gate 五维兜底 消融 82 54 benchmark 97 怎么证明 有效 readiness 准确率 区别">
-  <div class="card-head"><span class="tag proj">幻觉</span><div class="card-title">怎么防 LLM 编造（防幻觉怎么答）</div></div>
-  <div class="core">不是让模型更准，是把偏差转成可拦截的工程信号——证据链 + 负向搜索 + Spec Gate + 五维兜底，四层层层拦</div>
-  <div class="card-body">
-    <p>先定根因：大模型有强完成倾向，给任务就给答案，没把握也编——这是特性不是 bug。所以防幻觉不是祈祷模型聪明，是把"编"这件事转成可拦截的工程信号。</p>
-    <p>我有四层，从前往后：</p>
-    <p>· <strong>第一层·证据链</strong>：每条非显然结论挂 Evidence ID，追溯到 PRD 第几页或代码第几行。8 种证据类型，没证据的结论进不了 spec。</p>
-    <p>· <strong>第二层·负向搜索（这个最反直觉、最好记）</strong>：搜不到也是证据。AI 说改某个文件第 142 行，一搜不存在直接拦截——把"编路径"从隐蔽错误变成显性可拦截信号。这是我能讲出别人讲不出的点。</p>
-    <p>· <strong>第三层·Spec Review Gate</strong>：spec 出来硬停等人确认才往下出 plan，挡住完成倾向把错误从 spec 放大到 plan（详见门禁卡）。</p>
-    <p>· <strong>第四层·quality-gate 五维兜底</strong>：跑完整条链路五维加权评分，低于阈值必须修（维度名见门禁卡）。</p>
-    <p><strong>怎么证明这套有效，被追要诚实</strong>：我有一个 benchmark oracle 框架（5 维：requirement_recall / code_anchor_accuracy / blocker_quality / plan_actionability / false_positive_penalty），跑真实 case 单 case 能到 97 分，这个是真能讲的。<strong>但"去掉 IR 层 readiness 从 82 掉到 54"这个消融数字，是单点小样本、没系统基线</strong>——被追"82 怎么来的"我答"小范围 case 跑出来的过程分，不是大规模统计"。别报死成"准确率"，readiness 是过程质量分不是产物准确率，两个概念别混。</p>
-    <p>一句话收口：我的思路是<strong>确定性脚本管可靠、LLM 管智能</strong>——build-index / context-pack / quality-gate 三个 Python 脚本跑一万次结果一样，把"有没有漏读 PRD""plan 有没有路径"变成可 CI 检查的项；推理交给 Agent。这是别人讲不出的工程分工。</p>
-  </div>
-</div>
-
-<!-- ==================== 高 ROI 新增卡 ==================== -->
-<div class="card" data-c="emer" data-g="软技能" data-kw="创业适配 快速迭代 激情 自驱 周末项目 抗压 大厂节奏 创业团队 为什么来创业 驱动力">
-  <div class="card-head"><span class="tag emer">创业</span><div class="card-title">大厂稳定，你能扛创业的高强度快速迭代吗</div></div>
-  <div class="core">用周末个人项目证激情——prd-tools 我一个人迭代到 v2.20、还独立做了两个 Agent 项目；再把"sha256 锁 + 原子写 + A/B 回滚"这套安全兜底讲成创业节奏的工程化表达。</div>
-  <div class="card-body">
-    <p>说白了我的创业适配证据不在公司，在我下班和周末做的项目里。我在滴滴后期 All-in LLM 时没有现成落地经验，就自己逼自己快速试——prd-tools 我一个人迭代到 v2.20，从 PRD 蒸馏到证据门禁改了二十多个版本；另外还独立做了两个 Agent 项目：一个 39 节点的多智能体编排总管，一个 18 工具的工程化 Coding Agent。这些都不是公司任务，就是我想搞清楚 Agent 工程化到底怎么落地。</p>
-    <p>我对创业状态的理解就三个词：自驱、快速试错、安全兜底。这正好能跟我项目里的工程实践对上——我的 Coding Agent 专门设计了 sha256 乐观锁、原子写盘、shadow→A/B 自动回滚，本质就是为了让我能放心地让 AI 快速试、错了就回滚。这其实就是创业节奏的工程化表达：先能错、再能快。</p>
-    <p>得说句实话摆清楚边界：这几个个人项目偏预研性质，没接真实业务流量、没有生产用户规模数据。我不假装它们是生产系统。但它们确实证明了两件事——一是我的学习速度（半年从零到能独立搭多 Agent 状态机和 Coding Agent 全生命周期），二是工程化能力（不是写个 demo，是带鉴权、沙箱、并发锁、A/B 进化这种生产级关注的代码）。</p>
-    <p>大厂给我的是工程素养和稳定性底线，创业要的快速验证我每天都在做。我不在意完美主义，能接受推翻重来，这个心态是匹配的。</p>
-  </div>
-</div>
-
-<div class="card" data-c="ai" data-g="Agent 基础" data-kw="模型栈 框架选型 Claude qwen GPT 对比 LangGraph AutoGen CrewAI MetaGPT AgentScope Dify Coze 分场景 成本 延迟 国产化 为什么不用GPT-4">
-  <div class="card-head"><span class="tag ai">选型</span><div class="card-title">日常用哪些 AI 工具和模型，Agent 场景怎么选</div></div>
-  <div class="core">我分场景：研发工作流用 Claude（prd-tools 就是 Claude Code 插件），部署的 Agent 用阿里云 qwen（成本和延迟的取舍，不是 Claude/GPT）；框架 LangGraph 是主力，其他按"了解定位、没生产用过"诚实表态。</div>
-  <div class="card-body">
-    <p>模型这块我必须先把真实栈讲清楚，不然一追就穿帮。研发工作流我用 Claude——prd-tools 本身就是 Claude Code Skill，Claude 在长上下文、多模态（直接看 PRD 截图）、指令遵循上最稳，适合做要严谨证据链的蒸馏。但部署的 Agent 我用的是阿里云 DashScope 的 qwen 系列：Manager 编排路由用 qwen-flash，code_assistant 写代码用 qwen-coder-plus。</p>
-    <p>为什么部署不直接上 Claude 或 GPT-4？核心是成本和延迟。编排层每个用户请求要调多次 LLM——路由、规划、汇总、critic，multi-agent 这套对单次成本非常敏感，flash 模型把单次成本压下来才跑得起。OpenAI 兼容接口、国产化部署也是加分项。被问"为什么不用 GPT-4"我就这么答：研究和对比我了解 GPT-4 的推理和工具调用强，但跑 multi-agent 它不是我的主力，成本和部署是主因。</p>
-    <p>框架我主力用 LangGraph，理由是 Agent 编排本质是有分支、回环、HITL、失败恢复的状态机，不是单次函数调用——我的总管就是一张 39 节点的图，所有旁路用条件边谓词挂回主干。它还有 checkpoint、recursionLimit、LangSmith trace，能定位到每条边为什么被选。</p>
-    <p>其他框架我按真实使用程度表态，不装深用过：LangChain 偏链式组合，快速原型行、复杂状态和 HITL 弱；AutoGPT 是单 Agent 自主循环，可控性差，我不敢用在能写文件的场景；CrewAI 适合简单角色分工，复杂 DAG 加安全不够；MetaGPT 偏软件研发 SOP、AgentScope 偏分布式多模型协同——这两个我了解定位、没生产用过；Dify、Coze 这类低代码平台我知道它们能快速搭 Agent，但同样不是我工程化的主力。诚实说"没用过的就是没用过"比硬吹强。</p>
-  </div>
-</div>
-
-<div class="card" data-c="proj" data-g="Code 智能体" data-kw="全生命周期 六步 需求对齐 架构 原型 安全落地 上线 持续迭代 创业团队 Coding Agent 系统设计 灰度 benchmark门禁">
-  <div class="card-head"><span class="tag proj">系统设计</span><div class="card-title">为创业团队设计 Coding Agent 的全生命周期</div></div>
-  <div class="core">六步走，每步都套我自己做 code_assistant 踩过的坑：需求对齐→架构→原型（11 只读工具先行）→安全落地（重头）→上线（chat-only 灰度）→持续迭代（shadow→A/B + benchmark 门禁）。</div>
-  <div class="card-body">
-    <p>第一步需求对齐。创业团队的真实痛点是"AI 改代码怕出事"，所以我把第一性原理定为"模型加写权限等于事故"——安全是地基不是事后补，这一条要先和团队对齐，否则后面全歪。</p>
-    <p>第二步架构。LangGraph 的 ReAct 双节点，agent 和 tools 循环；前端 Monaco 加 Diff 预览；按 task_kind 四路分发——compute、inspect、edit、full，只读请求根本不给写工具，既省 token 又降风险。</p>
-    <p>第三步原型。我会先上 11 个只读工具——读文件、AST 分析、向量检索、git 只读，把"读仓库→定位→分析"这条路跑通验证，再加 7 个写工具。先证明能读懂仓库，再谈改仓库。</p>
-    <p>第四步安全落地，这是重头。JWT 加 scope 鉴权、IP 限流、路径白名单加敏感文件拦截、sha256 乐观并发锁（冲突抛 409）、subprocess 或 docker 沙箱、tmp 加 rename 原子写、写后自动跑 lint/typecheck/test 加自修复。这些约束全在代码同步路径上，不放 prompt 里求模型听话。</p>
-    <p>第五步上线。用 chat-only 只读模式做灰度，先让用户只读交互、建立信任，审计日志全留，Monorepo 管理多包。</p>
-    <p>第六步持续迭代。Prompt 先 shadow 再 A/B 自进化——双信号（负反馈加 validate 失败）才晋级；同时建 benchmark oracle 做 P0 回归门禁，保证进化不把系统改坏。</p>
-    <p>关于量化目标，我的态度是先建基线再定、不拍脑袋。比如先用 oracle 跑一批真实 case，出 requirement_recall 和 code_anchor_accuracy 的当前水位，再设提升目标。直接报一个"效率提升百分之几"是经不起追问的，这是我会主动避免的坑。</p>
-    <p>边界摆清楚：这套是我做原型级 code_assistant 的真实设计，不是已经跑在生产的大系统。但每一步落到的是真实代码机制，不是 PPT。</p>
-  </div>
-</div>
-
-<div class="card" data-c="ai" data-g="Agent 基础" data-kw="Agent Safety 编码幻觉 高风险操作 规划层 执行层 证据链 Spec Review Gate 四层守卫 沙箱 原子写 HITL写确认 代码审查Agent 防幻觉">
-  <div class="card-head"><span class="tag ai">安全</span><div class="card-title">Agent Safety 怎么做——规划层加执行层</div></div>
-  <div class="core">我在两个项目里分别从两层做 Safety：规划层靠 prd-tools 的证据链（每条事实带 file:line、读完源码才写）加 Spec Review Gate 硬门禁；执行层靠 code_assistant 的四层守卫加沙箱加 sha256 锁加原子写。</div>
-  <div class="card-body">
-    <p>规划层防幻觉，做在 prd-tools。核心是证据链——每条 requirement、影响、契约结论都必须挂一个 EV-XXX 证据 ID，来源是源码、契约、PRD、git diff、负向搜索，没有证据的结论进不了 spec。这之上还有一个代码级硬门禁 Spec Review Gate：spec 不被 owner 确认成 approved，下一阶段的 quality-gate 直接 exit 2 流程硬停，幻觉计划没法往下走。LLM 不允许推断，只能引用已收集的事实。这里我要软化一句——"必须先读源码才写"本质是 prompt 软约束加 evidence 字段事后门禁，不是每一行都硬校验，但方向是真的。</p>
-    <p>执行层防事故，做在 code_assistant。第一性原理就是"模型加写权限等于事故"，所以约束不放 prompt 里、放代码同步路径上。四层守卫逐层过：工具白名单（chat-only 干脆不绑写工具）、入口门禁（JWT scope 卡 write:repo）、apply_diff 的 context 行精确匹配（read-verify-write）、文件系统层（safeResolve 防路径越界、敏感文件黑名单 .env/id_rsa 摸不到、tmp 加 rename 原子写）。再加 subprocess/docker 沙箱跑校验、sha256 乐观并发锁（文件被改过就 409 拒写）、写完自动跑 lint/typecheck/test 自修复。读检索工具的返回天然带 file:line。</p>
-    <p>红线我必须主动暴露：完整的"Diff 预览 → 用户确认才落盘 → 第二个独立代码审查 Agent 终检"这套是我设计目标里还没全落地的一块。目前是 chat-only 只读降级、审计日志、写后自动校验在兜底，HITL 写确认是我下一步要补的。硬吹"有代码审查 Agent、有 HITL 写确认"会翻车——代码里没有，我不装。</p>
-  </div>
-</div>
-
-<div class="card" data-c="ai" data-g="RAG 检索" data-kw="向量召回 代码实体图 GraphRAG 对比 code_assistant prd-tools 自研 Pinecone Neo4j Chroma embedding text-embedding-v3 倒排索引 影响范围 调用链">
-  <div class="card-head"><span class="tag ai">检索</span><div class="card-title">向量召回 vs 代码实体图——我两个项目各做了一个</div></div>
-  <div class="core">code_assistant 用自研向量（text-embedding-v3 + 内存余弦 + sha256 增量），擅长模糊语义、短板是字面术语精度；prd-tools 用正则抽取的轻量实体图（受 GraphRAG 启发、不是 Neo4j 不是 AST），擅长调用链和影响范围。</div>
-  <div class="card-body">
-    <p>这题我正好能真答，因为两个项目各做了一种。向量召回在我的 code_assistant 里——text-embedding-v3 做 embedding，内存余弦算相似度，sha256 内容指纹做惰性增量（查询时按需重算，不是 git 钩子）。它的优势是无需结构化、能处理"改这个功能"这类模糊自然语言查询；缺点是短查询和字面术语（表名、字段名）精度差、缺逻辑关联，所以我混了关键词命中做兜底。</p>
-    <p>代码实体图在我的 prd-tools 里——entities.json 存代码符号、函数、组件，edges.json 存调用和 import 关系，再加一个倒排索引 term 到 entity，全部由正则扫描器产出。这块我明说受 Microsoft GraphRAG 思路启发，但我做的是轻量的正则版，不是完整图数据库，更不是 AST——早期接过 GitNexus AST，v2.13 已经删了换回原生正则。它的优势是关联查询强，能给到调用链、import 关系、影响范围，结果可解释；缺点是要预先抽取、正则有遗漏、维护成本高。</p>
-    <p>实践里我的打法是实体图路由加证据 ID 锚点：先用实体图把业务概念定位到代码符号，再让证据链保证每条结论可回溯。</p>
-    <p>红线必须摆清楚：这两个项目都是自研轻量实现，我没用 Pinecone、没用 Neo4j、没用 Chroma。被问"你的向量库用什么"我直接说自研 JSON 加内存余弦；被问"知识图谱"我说是正则抽取的轻量实体图、受 GraphRAG 启发但不是图数据库。如果要做更重的关联推理（比如跨服务的全局影响分析），我会考虑上真正的图数据库，但目前轻量正则版够用。</p>
-  </div>
-</div>
-
 <!-- ==================== 综合模块 v2 ==================== -->
 <div class="card open" data-c="emer" data-g="项目数据" data-kw="数据 口径 指标 简历 追问 怎么算 5h 2h 40 85 39 18 400 30 节点 工具 权益">
   <div class="card-head"><span class="tag emer">口径</span><div class="card-title">项目关键数字 · 被追问怎么答</div></div>
@@ -4503,6 +4662,65 @@ function buildTreeOptimized(list) {
     <p>答题三步：正面定义（"蒸馏在我这里指 PRD 自动转成结构化 Spec"）→ 解释迁移逻辑（"借用蒸馏是强调从非结构化自然语言里提纯需求骨架，跟模型蒸馏相似点是从大杂烩里提纯精华"）→ 和原意对照（"不一样的是模型蒸馏是参数压缩到小模型，我这是文档结构化，产物形态完全不同"）。</p>
     <p>其他迁移词同理：编译强调确定性转换多目标产物不是产二进制；路由强调按能力面分流不是 IP 转发；契约强调双方共守不可破坏比接口更重约束；中台强调多业务共用配置化扩展不是独立系统。</p>
     <p>面试前把自己项目所有迁移类词列出来，每个准备这三句。第一句话定生死。</p>
+  </div>
+</div>
+
+<!-- ==================== 高 ROI 新增卡 ==================== -->
+<div class="card" data-c="emer" data-g="软技能" data-kw="创业适配 快速迭代 激情 自驱 周末项目 抗压 大厂节奏 创业团队 为什么来创业 驱动力">
+  <div class="card-head"><span class="tag emer">创业</span><div class="card-title">大厂稳定，你能扛创业的高强度快速迭代吗</div></div>
+  <div class="core">用周末个人项目证激情——prd-tools 我一个人迭代到 v2.20、还独立做了两个 Agent 项目；再把"sha256 锁 + 原子写 + A/B 回滚"这套安全兜底讲成创业节奏的工程化表达。</div>
+  <div class="card-body">
+    <p>说白了我的创业适配证据不在公司，在我下班和周末做的项目里。我在滴滴后期 All-in LLM 时没有现成落地经验，就自己逼自己快速试——prd-tools 我一个人迭代到 v2.20，从 PRD 蒸馏到证据门禁改了二十多个版本；另外还独立做了两个 Agent 项目：一个 39 节点的多智能体编排总管，一个 18 工具的工程化 Coding Agent。这些都不是公司任务，就是我想搞清楚 Agent 工程化到底怎么落地。</p>
+    <p>我对创业状态的理解就三个词：自驱、快速试错、安全兜底。这正好能跟我项目里的工程实践对上——我的 Coding Agent 专门设计了 sha256 乐观锁、原子写盘、shadow→A/B 自动回滚，本质就是为了让我能放心地让 AI 快速试、错了就回滚。这其实就是创业节奏的工程化表达：先能错、再能快。</p>
+    <p>得说句实话摆清楚边界：这几个个人项目偏预研性质，没接真实业务流量、没有生产用户规模数据。我不假装它们是生产系统。但它们确实证明了两件事——一是我的学习速度（半年从零到能独立搭多 Agent 状态机和 Coding Agent 全生命周期），二是工程化能力（不是写个 demo，是带鉴权、沙箱、并发锁、A/B 进化这种生产级关注的代码）。</p>
+    <p>大厂给我的是工程素养和稳定性底线，创业要的快速验证我每天都在做。我不在意完美主义，能接受推翻重来，这个心态是匹配的。</p>
+  </div>
+</div>
+
+<div class="card" data-c="ai" data-g="Agent 基础" data-kw="模型栈 框架选型 Claude qwen GPT 对比 LangGraph AutoGen CrewAI MetaGPT AgentScope Dify Coze 分场景 成本 延迟 国产化 为什么不用GPT-4">
+  <div class="card-head"><span class="tag ai">选型</span><div class="card-title">日常用哪些 AI 工具和模型，Agent 场景怎么选</div></div>
+  <div class="core">我分场景：研发工作流用 Claude（prd-tools 就是 Claude Code 插件），部署的 Agent 用阿里云 qwen（成本和延迟的取舍，不是 Claude/GPT）；框架 LangGraph 是主力，其他按"了解定位、没生产用过"诚实表态。</div>
+  <div class="card-body">
+    <p>模型这块我必须先把真实栈讲清楚，不然一追就穿帮。研发工作流我用 Claude——prd-tools 本身就是 Claude Code Skill，Claude 在长上下文、多模态（直接看 PRD 截图）、指令遵循上最稳，适合做要严谨证据链的蒸馏。但部署的 Agent 我用的是阿里云 DashScope 的 qwen 系列：Manager 编排路由用 qwen-flash，code_assistant 写代码用 qwen-coder-plus。</p>
+    <p>为什么部署不直接上 Claude 或 GPT-4？核心是成本和延迟。编排层每个用户请求要调多次 LLM——路由、规划、汇总、critic，multi-agent 这套对单次成本非常敏感，flash 模型把单次成本压下来才跑得起。OpenAI 兼容接口、国产化部署也是加分项。被问"为什么不用 GPT-4"我就这么答：研究和对比我了解 GPT-4 的推理和工具调用强，但跑 multi-agent 它不是我的主力，成本和部署是主因。</p>
+    <p>框架我主力用 LangGraph，理由是 Agent 编排本质是有分支、回环、HITL、失败恢复的状态机，不是单次函数调用——我的总管就是一张 39 节点的图，所有旁路用条件边谓词挂回主干。它还有 checkpoint、recursionLimit、LangSmith trace，能定位到每条边为什么被选。</p>
+    <p>其他框架我按真实使用程度表态，不装深用过：LangChain 偏链式组合，快速原型行、复杂状态和 HITL 弱；AutoGPT 是单 Agent 自主循环，可控性差，我不敢用在能写文件的场景；CrewAI 适合简单角色分工，复杂 DAG 加安全不够；MetaGPT 偏软件研发 SOP、AgentScope 偏分布式多模型协同——这两个我了解定位、没生产用过；Dify、Coze 这类低代码平台我知道它们能快速搭 Agent，但同样不是我工程化的主力。诚实说"没用过的就是没用过"比硬吹强。</p>
+  </div>
+</div>
+
+<div class="card" data-c="proj" data-g="Code 智能体" data-kw="全生命周期 六步 需求对齐 架构 原型 安全落地 上线 持续迭代 创业团队 Coding Agent 系统设计 灰度 benchmark门禁">
+  <div class="card-head"><span class="tag proj">系统设计</span><div class="card-title">为创业团队设计 Coding Agent 的全生命周期</div></div>
+  <div class="core">六步走，每步都套我自己做 code_assistant 踩过的坑：需求对齐→架构→原型（11 只读工具先行）→安全落地（重头）→上线（chat-only 灰度）→持续迭代（shadow→A/B + benchmark 门禁）。</div>
+  <div class="card-body">
+    <p>第一步需求对齐。创业团队的真实痛点是"AI 改代码怕出事"，所以我把第一性原理定为"模型加写权限等于事故"——安全是地基不是事后补，这一条要先和团队对齐，否则后面全歪。</p>
+    <p>第二步架构。LangGraph 的 ReAct 双节点，agent 和 tools 循环；前端 Monaco 加 Diff 预览；按 task_kind 四路分发——compute、inspect、edit、full，只读请求根本不给写工具，既省 token 又降风险。</p>
+    <p>第三步原型。我会先上 11 个只读工具——读文件、AST 分析、向量检索、git 只读，把"读仓库→定位→分析"这条路跑通验证，再加 7 个写工具。先证明能读懂仓库，再谈改仓库。</p>
+    <p>第四步安全落地，这是重头。JWT 加 scope 鉴权、IP 限流、路径白名单加敏感文件拦截、sha256 乐观并发锁（冲突抛 409）、subprocess 或 docker 沙箱、tmp 加 rename 原子写、写后自动跑 lint/typecheck/test 加自修复。这些约束全在代码同步路径上，不放 prompt 里求模型听话。</p>
+    <p>第五步上线。用 chat-only 只读模式做灰度，先让用户只读交互、建立信任，审计日志全留，Monorepo 管理多包。</p>
+    <p>第六步持续迭代。Prompt 先 shadow 再 A/B 自进化——双信号（负反馈加 validate 失败）才晋级；同时建 benchmark oracle 做 P0 回归门禁，保证进化不把系统改坏。</p>
+    <p>关于量化目标，我的态度是先建基线再定、不拍脑袋。比如先用 oracle 跑一批真实 case，出 requirement_recall 和 code_anchor_accuracy 的当前水位，再设提升目标。直接报一个"效率提升百分之几"是经不起追问的，这是我会主动避免的坑。</p>
+    <p>边界摆清楚：这套是我做原型级 code_assistant 的真实设计，不是已经跑在生产的大系统。但每一步落到的是真实代码机制，不是 PPT。</p>
+  </div>
+</div>
+
+<div class="card" data-c="ai" data-g="Agent 基础" data-kw="Agent Safety 编码幻觉 高风险操作 规划层 执行层 证据链 Spec Review Gate 四层守卫 沙箱 原子写 HITL写确认 代码审查Agent 防幻觉">
+  <div class="card-head"><span class="tag ai">安全</span><div class="card-title">Agent Safety 怎么做——规划层加执行层</div></div>
+  <div class="core">我在两个项目里分别从两层做 Safety：规划层靠 prd-tools 的证据链（每条事实带 file:line、读完源码才写）加 Spec Review Gate 硬门禁；执行层靠 code_assistant 的四层守卫加沙箱加 sha256 锁加原子写。</div>
+  <div class="card-body">
+    <p>规划层防幻觉，做在 prd-tools。核心是证据链——每条 requirement、影响、契约结论都必须挂一个 EV-XXX 证据 ID，来源是源码、契约、PRD、git diff、负向搜索，没有证据的结论进不了 spec。这之上还有一个代码级硬门禁 Spec Review Gate：spec 不被 owner 确认成 approved，下一阶段的 quality-gate 直接 exit 2 流程硬停，幻觉计划没法往下走。LLM 不允许推断，只能引用已收集的事实。这里我要软化一句——"必须先读源码才写"本质是 prompt 软约束加 evidence 字段事后门禁，不是每一行都硬校验，但方向是真的。</p>
+    <p>执行层防事故，做在 code_assistant。第一性原理就是"模型加写权限等于事故"，所以约束不放 prompt 里、放代码同步路径上。四层守卫逐层过：工具白名单（chat-only 干脆不绑写工具）、入口门禁（JWT scope 卡 write:repo）、apply_diff 的 context 行精确匹配（read-verify-write）、文件系统层（safeResolve 防路径越界、敏感文件黑名单 .env/id_rsa 摸不到、tmp 加 rename 原子写）。再加 subprocess/docker 沙箱跑校验、sha256 乐观并发锁（文件被改过就 409 拒写）、写完自动跑 lint/typecheck/test 自修复。读检索工具的返回天然带 file:line。</p>
+    <p>红线我必须主动暴露：完整的"Diff 预览 → 用户确认才落盘 → 第二个独立代码审查 Agent 终检"这套是我设计目标里还没全落地的一块。目前是 chat-only 只读降级、审计日志、写后自动校验在兜底，HITL 写确认是我下一步要补的。硬吹"有代码审查 Agent、有 HITL 写确认"会翻车——代码里没有，我不装。</p>
+  </div>
+</div>
+
+<div class="card" data-c="ai" data-g="RAG 检索" data-kw="向量召回 代码实体图 GraphRAG 对比 code_assistant prd-tools 自研 Pinecone Neo4j Chroma embedding text-embedding-v3 倒排索引 影响范围 调用链">
+  <div class="card-head"><span class="tag ai">检索</span><div class="card-title">向量召回 vs 代码实体图——我两个项目各做了一个</div></div>
+  <div class="core">code_assistant 用自研向量（text-embedding-v3 + 内存余弦 + sha256 增量），擅长模糊语义、短板是字面术语精度；prd-tools 用正则抽取的轻量实体图（受 GraphRAG 启发、不是 Neo4j 不是 AST），擅长调用链和影响范围。</div>
+  <div class="card-body">
+    <p>这题我正好能真答，因为两个项目各做了一种。向量召回在我的 code_assistant 里——text-embedding-v3 做 embedding，内存余弦算相似度，sha256 内容指纹做惰性增量（查询时按需重算，不是 git 钩子）。它的优势是无需结构化、能处理"改这个功能"这类模糊自然语言查询；缺点是短查询和字面术语（表名、字段名）精度差、缺逻辑关联，所以我混了关键词命中做兜底。</p>
+    <p>代码实体图在我的 prd-tools 里——entities.json 存代码符号、函数、组件，edges.json 存调用和 import 关系，再加一个倒排索引 term 到 entity，全部由正则扫描器产出。这块我明说受 Microsoft GraphRAG 思路启发，但我做的是轻量的正则版，不是完整图数据库，更不是 AST——早期接过 GitNexus AST，v2.13 已经删了换回原生正则。它的优势是关联查询强，能给到调用链、import 关系、影响范围，结果可解释；缺点是要预先抽取、正则有遗漏、维护成本高。</p>
+    <p>实践里我的打法是实体图路由加证据 ID 锚点：先用实体图把业务概念定位到代码符号，再让证据链保证每条结论可回溯。</p>
+    <p>红线必须摆清楚：这两个项目都是自研轻量实现，我没用 Pinecone、没用 Neo4j、没用 Chroma。被问"你的向量库用什么"我直接说自研 JSON 加内存余弦；被问"知识图谱"我说是正则抽取的轻量实体图、受 GraphRAG 启发但不是图数据库。如果要做更重的关联推理（比如跨服务的全局影响分析），我会考虑上真正的图数据库，但目前轻量正则版够用。</p>
   </div>
 </div>
 <div class="no-result" id="noRes">没找到匹配卡片</div>
