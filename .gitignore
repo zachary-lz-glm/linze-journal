@@ -2,3 +2,6 @@
 .claude/settings.local.json
 node_modules/
 package-lock.json
+
+# interview-tools stealth.html 工作流构建中间产物（extract/assemble/old 备份等，不入库）
+learning/interview-tools/.wf/
