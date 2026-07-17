@@ -410,250 +410,83 @@ body{overscroll-behavior-y:contain}
 
 <!-- ==================== 基础题 ==================== -->
 <!-- ==================== Manager 智能体 子模块（多智能体编排总管） ==================== -->
-<div class="card" data-c="proj" data-g="Manager 智能体" data-kw="Manager 多智能体 总管 电梯版 30秒 定位 是什么">
-  <div class="card-head"><span class="tag proj">定位</span><div class="card-title">30 秒说清这个项目</div></div>
-  <div class="core">一个多智能体的"总管"——自己不干活，专门拆任务、派给十几个专业 Agent、再查结果对不对</div>
+<div class="card" data-c="proj" data-g="Manager 智能体" data-kw="30秒 电梯 定位 是什么 总管 编排层 一个入口多个专家 WebSocket 技术栈 Nuxt LangGraph Supervisor Orchestrator 不写SQL">
+  <div class="card-head"><span class="tag proj">定位</span><div class="card-title">这个项目 30 秒怎么说？</div></div>
+  <div class="core">多 Agent 系统的"总管"——统一 WebSocket 入口，做语义路由和任务规划，调度十几个下游 Specialist 干专业活，自己只编排不干活</div>
   <div class="card-body">
-    <p>说白了就是一个用户问题背后常常要好几个 Agent 配合——查数据的、写代码的、画图的、发邮件的。Manager 自己这些活一个都不会干，它只管三件事：先搞清楚用户到底要干嘛（意图路由），再把活拆成步骤派下去（规划调度），最后挨个检查 Agent 跑出来的结果靠不靠谱（Critic 质检）。</p>
-    <p>底层是个挂在 LangGraph 上的状态机，节点数慢慢演进出 39 个，调度 12 个能力 Agent。我自己比较得意的几个设计：规划前会先并行探一遍下游服务是不是活的，别规划半天才发现下游挂了；有个统一的重试预算，防止某一步失败反复重试把整个流程拖死；还有一套"先影子跑、再小流量灰度、达标才晋级"的自我进化机制。</p>
-    <p>得说句实话：这项目工程量不小（五万多行 TS），但偏研究型的，没接真实业务流量，所以机制设计得比较全，实测数据不多。我一般讲设计思路，不太吹数据指标。</p>
+    <p><strong>它是什么。</strong>多 Agent 系统里的编排层、总管层，定位就是"一个入口、多个专家"的调度中心。会话状态维护、判断请求交给哪个子 Agent、流式中间事件、高风险步骤前的人工确认，都归它管。平台里对应 manager_agent 这个服务，统一挂在 WebSocket 长连接上——多轮对话、流式输出、确认和取消这些事件天然适合长连接，HTTP 那种单向请求根本撑不住一整段长会话。</p>
+    <p><strong>它不做什么。</strong>自己不写 SQL、不建向量、不改代码，这些专业能力全交给下游 Specialist——db、rag、code、crawler、多模态、音乐、视频这些十几个专家 Agent。总管只做四件事：理解意图、选能力、组装任务、汇总质检。这是 Supervisor / Orchestrator 的经典拆分，核心是不让"一个 Prompt 包打天下"，能力拆开才好维护、好扩展。</p>
+    <p><strong>技术栈 + 怎么搭起来的。</strong>Nuxt4 加 Nitro 跑服务，LangGraph 做状态机编排，OpenAI 兼容的国产 LLM 做推理，Zod 校验入参，LangSmith 做可观测。这套东西不是一上来就这么大——是从小长起来的：先让它只代理一个下游服务，再扩成多路由，加上流式和状态机，再补人工确认和反馈采集，最后接指标追踪。被问演进过程，这条线我很能讲。</p>
   </div>
 </div>
 
-<!-- Manager 智能体（第2张起） -->
-<div class="card" data-c="proj" data-g="Manager 智能体" data-kw="上线了吗 档位 demo 教程 工程量大 诚实 over-engineering 没接业务流量">
-  <div class="card-head"><span class="tag proj">诚实</span><div class="card-title">这项目真上生产了吗</div></div>
-  <div class="core">得说句实话——工程量不小（五万多行 TS），但偏研究型的，没接真实业务流量，机制设计强但实测数据弱</div>
+<div class="card" data-c="proj" data-g="Manager 智能体" data-kw="主干链路 graph 状态机 probe route plan execute synth critic finalize 画一下 为什么probe在plan前 探活 减少幻觉 为什么用LangGraph 路由错乱 怎么避免 HITL checkpoint">
+  <div class="card-head"><span class="tag proj">架构</span><div class="card-title">主干链路长什么样？</div></div>
+  <div class="core">一条 probe → route → plan → execute → synth → critic 的状态机，关键是 probe 排在 plan 前面——先探下游通不通，再让模型规划</div>
   <div class="card-body">
-    <p>被问到"上线了吗"我一般直接说：偏研究型、教程级。不是说没东西，是这个项目立项逻辑不是"现在有人用"，是想把多 Agent 编排做到能上生产的工程范式讲清楚。证据挺硬的——单测覆盖率几乎为零（就 1 个单测加 38 个 smoke 加 11 个 E2E golden），没有 ESLint/Prettier，环境变量两百多个但没有生产数据。</p>
-    <p>规模数字我现场被追会主动报真数：307 个 TS 文件、53k+ 行、145 个 managerGraph.*.ts。简历只写了节点/边/Agent 这种概数，但被 cat package.json 一查就露馅，所以主动说更稳。</p>
-    <p>如果被追"那简历为什么写 Multi-Agent 系统"，我会降级：严格按 Anthropic 的判据（控制权归 LLM 还是代码），其实是 1 个 Workflow（Spec-Driven 11 步）+ 2 个真 Agent（Manager 是真 Supervisor、code_assistent 是真 ReAct）。这话术我自己心里清楚，不藏着。</p>
-    <p>被说"过度设计"我也不反驳——上生产的关键是补三件：官方 Postgres checkpointer 替掉自研 file+Redis、接 OpenTelemetry 真实 trace、golden 从 7 个扩到 30+。机制是 roadmap，不是 PPT。</p>
+    <p><strong>完整链路（要能背出来）。</strong>resource → tool_health → probe → decompose 子句拆解 → route → prefetch → plan → execute（db/rag/code 这些）→ synth → critic → finalize。主干旁边还挂几条旁路：信息不足走 clarify 主动追问、要查外网走 web_search、碰到高风险动作走 admin_confirm 等用户确认、质检没过走 fix 修复。面试让画图就照这条背。</p>
+    <p><strong>为什么 probe 排在 plan 前面（最高频考点）。</strong>probe 在规划之前先并行探一遍下游能力——RAG 那边有没有文档、DB 的 schema 读不读得了、Code 服务通不通，先拿到一份客观快照，再喂给路由和规划。这样模型看到的是"下游现在到底通不通"，而不是它自己脑补，能明显减少那种"规划半天才发现下游挂了"的幻觉式路由。这是整个图我最得意的设计。</p>
+    <p><strong>为什么用 LangGraph + 怎么避免路由错乱。</strong>多 Agent 编排不是一次函数调用，它有分支、有回环、要等人确认、要能从失败里恢复，本质是个状态机；LangGraph 的节点加条件边、checkpoint 暂停恢复、HITL 人工介入正好一一对位。路由错乱靠三层兜底：意图分类和路由规则先分流、状态机限制节点只能往该去的方向跳、再配合日志和指标回看错误样本，基本能压住。</p>
   </div>
 </div>
 
-<div class="card" data-c="proj" data-g="Manager 智能体" data-kw="术语降级 online learning self-evolving 蒸馏 自进化 权重 prompt adaptation">
-  <div class="card-head"><span class="tag proj">防御</span><div class="card-title">简历里的高级词被拆穿怎么办</div></div>
-  <div class="core">Self-Evolution 不是 online learning——模型权重一行没动，本质是 prompt 级在线适配</div>
+<div class="card" data-c="proj" data-g="Manager 智能体" data-kw="编排层 专家层 边界 分工 为什么总管不实现子能力 Supervisor Specialist 职责 内部协作者 clean visualize report 确定性代码">
+  <div class="card-head"><span class="tag proj">架构</span><div class="card-title">编排层和专家层怎么分工？</div></div>
+  <div class="core">编排层只做"理解意图→选能力→组装任务→汇总质检"，专业能力全交给下游 Specialist——Supervisor 经典拆分</div>
   <div class="card-body">
-    <p>有三个词我会主动降级，不然懂行的面试官一击就穿。第一是"online learning loop"，online learning 在 ML 严肃含义是权重在线更新、持续 SGD；我做的是改 prompt，运行时拼 few-shot，权重一行没动。被追"权重动了没"我直接答没动。准确说法是 prompt-level online adaptation。</p>
-    <p>第二是"self-evolving"——听着像自主进化，其实是失败洞察驱动 + LLM 生成假设 + 金丝雀验证 + 显著性检验晋级，是受控迭代不是自主进化。而且关键一点：自动晋级默认是关的，只 shadow 写盘 + 人工 promote，不是线上自己跑。</p>
-    <p>第三是"distilled knowledge base"——distilled 容易让人想到模型蒸馏（KL 散度），我做的是把代码蒸馏成几个领域知识文件，是知识层不是模型层。同类风险词还有 agentic（暗示自主决策）、emergent（暗示涌现行为），炫之前先想清楚 ML 定义。</p>
+    <p><strong>编排层（总管）的职责。</strong>维护会话状态、意图路由、任务规划、结果汇总、Critic 质检、高风险 HITL——调度和编排归它，但它不碰任何专业领域的脏活：不写 SQL、不建向量、不改代码。</p>
+    <p><strong>专家层（Specialist）的职责。</strong>db 做 NL2SQL、rag 做检索、code 改代码、crawler 爬数据，各自是独立服务、独立部署、能独立扩展。把它们叫"Agent"是概念抽象，本质是总管通过 RPC（HTTP/WebSocket）调用的独立服务，不是同进程函数，也不是 LangGraph subgraph——subgraph 要求同进程，跨服务边界就用不了。</p>
+    <p><strong>内部协作者：何时用确定性代码、何时用 LLM。</strong>clean / visualize / report 这三个在图内完成，不算独立 Agent。判断原则很明确：DB 出表之后画图表，走 chartOption 规则生成，而不是再调一次大模型画 JSON——确定性的事不交给概率模型。</p>
   </div>
 </div>
 
-<div class="card" data-c="proj" data-g="Manager 智能体" data-kw="39节点 拓扑 StateGraph 画一下 graph subgraph 节点清单 怎么长出来的">
-  <div class="card-head"><span class="tag proj">架构</span><div class="card-title">39 个节点是怎么长出来的</div></div>
-  <div class="core">不是一开始就 39 个——小图慢慢加防御层堆出来的；事后统计的，不是设计目标</div>
+<div class="card" data-c="proj" data-g="Manager 智能体" data-kw="HITL 人工确认 checkpoint 暂停 续跑 恢复 高风险 写操作 怎么拦 confirm cancel 副作用 at-least-once">
+  <div class="card-head"><span class="tag proj">安全</span><div class="card-title">HITL checkpoint 解决什么问题？</div></div>
+  <div class="core">解决"高风险操作要能暂停等人确认、确认后还能从断点续跑"——靠 checkpoint 把 graph 状态落盘</div>
   <div class="card-body">
-    <p>被问"画一下 graph"我会先念压缩版：5 个预处理（resource → tool_health → probe → metacog → security_gate）+ 4 个路由（decompose → intent_classify → route → prefetch）+ 14 个专家节点 + 7 个质检闭环 + 1 个 HITL 恢复节点，外加 fix→synth 重试闭环，加起来约 39 节点。</p>
-    <p>边数口径我会主动校准——源码 managerGraph.graph.ts 实际是 20 addEdge + 20 addConditionalEdges = 40 条边（含 20 条件边）。如果简历写过别的数，我会说"那是早期口径，现在是 40 含 20 条件边"。完整链路我能背到脱口而出：START → resource → tool_health → probe → metacog → security_gate → decompose → intent_classify → route → prefetch → 各专家 → planner → scheduler → execution_mode → vote_aggregator → plan_lint → multi → synth → evaluator → critic → optimizer → fix 闭环 → verifier → monitor → finalize → END。</p>
-    <p>被追"39 是设计目标还是事后统计"我诚实答：演进而来的。最初小图，probe、metacog、security_gate 这些是后加的防御层。重做的话我会按业务域拆 subgraph（知识库/NL2SQL/代码/爬虫/GUI/办公/多模态 7-8 个），现在这个是一张大图。</p>
-    <p>被问"12 Agent 怎么对应 39 节点"——12 Agent 是被调度的专家，39 节点是编排+调度+防御+评估的总和。每个 Agent 平均对应"调用前 Probe + 调用 + 调用后 Health + 结果 Critic"四个节点，不是一对一。</p>
+    <p><strong>解决什么问题。</strong>真实业务里有高风险操作——写库、调外部服务、大批量改，编排层必须能在这些步骤前暂停等用户确认，而不是闷头执行。另外长任务中途崩了要能从断点恢复，不能从头跑一遍。</p>
+    <p><strong>怎么做。</strong>高风险步骤触达时，graph 不直接发最终结果，而是存一个 checkpoint 等人工确认；WebSocket 协议里有 confirm / cancel 事件，确认之后才续跑到 synth。这里用的是自建的业务快照，而不是 LangGraph 原生 saver——业务字段比框架的 channel 快照更可控，续跑时该恢复什么心里有数。</p>
+    <p><strong>诚实边界。</strong>checkpoint 存的是 graph 状态和节点进度，但副作用不存——已经发出的邮件、已经写的库不会因为回滚而消失。所以这是 at-least-once 不是 exactly-once，跨进程续跑可能重复执行副作用。这是 Coding/Agent 系统的共同难题，我承认没解决。</p>
   </div>
 </div>
 
-<div class="card" data-c="proj" data-g="Manager 智能体" data-kw="12 Agent 9外部 3内部 特种兵 专家 clean visualize report 外部服务包装">
-  <div class="card-head"><span class="tag proj">架构</span><div class="card-title">12 个 Agent 到底是什么</div></div>
-  <div class="core">9 个外部服务包成 Agent + 3 个真自研内部——不是 12 个都是从头写的</div>
+<div class="card" data-c="proj" data-g="Manager 智能体" data-kw="Critic 节点 质检 事实审查 和一次LLM调用区别 Evaluator fix 重试闭环 evidence 间接审查 质量门控">
+  <div class="card-head"><span class="tag proj">机制</span><div class="card-title">Critic 节点和一次 LLM 调用有啥区别？</div></div>
+  <div class="core">Critic 是图里的一个节点，做结构化事实审查、不通过还能触发 fix 重试闭环——不是"再调一次 LLM 看看"</div>
   <div class="card-body">
-    <p>这个数字我必须说清楚，不然被追"12 个都你自己写的"就穿帮。9 个外部是 db、rag、code、crawler、gui、admin、multimodal、music、video——本质是外部服务被包装成 Agent 概念，Manager 通过 RPC（HTTP/WS）调用它们，不是同一个进程里的函数。3 个内部是 clean、visualize、report，这才是真自研、跑在 Manager 进程里的。</p>
-    <p>为什么要这么分？外部那些（NL2SQL 服务、知识库服务）本来就独立部署在 13101~13106 各端口，独立扩展。把它们叫"Agent"是概念抽象，本质是 RPC 调用。被追"是不是 LangGraph subgraph"我明确说不是——subgraph 要求同进程，我的 Specialist 是跨进程独立服务。</p>
-    <p>另外有个容易混的点：意图路由是 14 路，不是 12 路。12 Agent + 2 个兜底（clarify 澄清、web_search 网页搜索）= 14 路。简历如果写 12 路是漏了兜底。</p>
+    <p><strong>区别在哪。</strong>一次普通 LLM 调用是无状态问答，问完就完。Critic 是状态机里的一个节点：它有结构化输出（比如 {pass, reason}），专门审结果的证据完整性、事实对不对，而且审完不通过能触发 fix 节点进入重试闭环，不是孤立的一问一答。</p>
+    <p><strong>为什么要单独做成节点。</strong>质检要可审计——留痕否决了几次、为什么否决，还要能驱动重试。塞进 synthesize 里质检和生成搅在一起就模糊了。顺带一句：Critic 审"事实对不对"，还有个 Evaluator 评"够不够好"，聚焦不同所以分开。</p>
+    <p><strong>一个分层上的取舍。</strong>Critic 做事实审查本来需要懂专家的产出（懂 SQL、懂截图），但这会破坏"编排层不碰专家细节"的分层。折中是让 Critic 审"Agent 自己生成的 summary + evidence 列表"做间接审查，而不是盯着 raw output——用专家自报的元数据做质检，分工就守住了。</p>
   </div>
 </div>
 
-<div class="card" data-c="proj" data-g="Manager 智能体" data-kw="模型 qwen 阿里云 国产 不用Claude 不用GPT qwen-flash qwen-plus">
-  <div class="card-head"><span class="tag proj">数据</span><div class="card-title">用什么模型，为什么不是 Claude 或 GPT</div></div>
-  <div class="core">全链路是阿里云 qwen-flash，复杂合成升 qwen-plus——不是 Claude、不是 GPT</div>
+<div class="card" data-c="proj" data-g="Manager 智能体" data-kw="managerTask 协议 跨Agent 任务契约 SSOT agentExecutors 统一入口 解耦 派活 意义">
+  <div class="card-head"><span class="tag proj">架构</span><div class="card-title">managerTask 协议是干嘛的？</div></div>
+  <div class="core">总管和下游 Specialist 之间的统一任务契约——一次定义、所有 Agent 按它消费，谁换实现协议都不变</div>
   <div class="card-body">
-    <p>这个我得先说清楚，不然被问"你 Critic 用 Claude 还是 GPT"就尴尬了。默认模型是 qwen-flash（OPENAI_MODEL=qwen-flash-2025-07-28），复杂合成任务会升到 qwen-plus（MANAGER_MODEL_SYNTH）。路由、低成本的代码权威判断这些走 qwen-flash，省成本。</p>
-    <p>选国产链路有两个考虑：一是合规，规避 OpenAI 直连的问题；二是百炼/Qwen 这条链路我自己能跑通、能调。我不会硬吹"Claude 做核心推理"——那就是穿帮。如果面试官问"为什么不上 Claude/GPT"，我会说这是国产化链路的取舍，能力够用、合规、成本可控，真要换模型层这套编排逻辑不变。</p>
-    <p>关键认知：Manager 的核心价值是编排、质检、HITL 这些框架层的东西，模型是可替换的。换 Claude 也能跑，但当前选的是 qwen 这条线。</p>
+    <p><strong>它是什么。</strong>一个跨 Agent 的任务结构。总管把活派给下游时按这个格式组装：意图、允许调用哪些 Agent、查询内容、抽出来的实体、上下文、结果怎么回传。下游每个 Specialist 都按这份契约接活、回结果，不关心总管内部怎么路由。</p>
+    <p><strong>为什么重要（SSOT）。</strong>agentExecutors 是跨 Agent 调用的统一入口，十几个下游都从这走、都按 managerTask 消费。如果每个 Agent 自己定义一套任务格式，schema 就乱了——字段对不齐、错误模型不统一、改一处得动十几个地方。统一契约让"怎么派活、怎么回结果"只有一份真相。</p>
+    <p><strong>意义：解耦。</strong>总管换路由策略、下游某个 Specialist 换实现（DB 换引擎、RAG 换召回），只要还认这个协议就能互通。这是跨进程多 Agent 能独立扩展、独立部署的根基——没有这层协议，总管和专家就焊死了，改一个得连带改另一个。</p>
   </div>
 </div>
 
-<div class="card" data-c="proj" data-g="Manager 智能体" data-kw="Probe Health 双层探活 p95 maxParallel 降级 误判 db rag 豁免">
-  <div class="card-head"><span class="tag proj">机制</span><div class="card-title">规划前先探活——两层探活怎么分工</div></div>
-  <div class="core">Probe 瞬时快筛 + Health 历史统计，p95 驱动 maxParallel 动态降并发，但 db/rag 关键路径豁免</div>
+<div class="card" data-c="proj" data-g="Manager 智能体" data-kw="自我进化 self-evolving shadow canary promote 金丝雀 Prompt补丁 经验回放 向量召回 自动晋级 默认关 没接流量 实测数据 边界">
+  <div class="card-head"><span class="tag proj">进化</span><div class="card-title">自我进化机制是什么样的，边界在哪？</div></div>
+  <div class="core">shadow → canary → promote 四件套机制是完整的，但自动晋级默认关、没接真实流量，所以实测效果数据为零</div>
   <div class="card-body">
-    <p>我自己比较得意的是 probe-before-plan 这个设计。在 planner 之前用 Promise.allSettled 并行探活 5 个下游（RAG、DB、Crawler、GUI、Code），把客观快照喂给 Router 和 Planner，让它们看到的是"下游现在到底通不通"，而不是猜。Probe 是瞬时快照，准但可能误判。</p>
-    <p>另一层是 Health——tool_health 节点读 manager-metrics.jsonl 算每个 Agent 的 p95（取最近 1200 行排序取 95 分位），分级 healthy/degraded/down/unknown。Health 是历史统计，慢但稳。两层降低误判率但不消除。</p>
-    <p>Scheduler 联动：down 的 Agent 从 allowedAgents 移除，degraded 的自动 maxParallel-1、timeoutScale+0.15。但有个细节——db、rag 即使 down，只要历史 p95 大于 0 就不强制 skip，留个希望，触发 DATA_FANIN_MIN_PARALLEL=2 的下限。因为关键路径跳了就答不了。</p>
-    <p>被问"Probe 误判 down 但其实可用怎么办"，我诚实答：会导致能力被错误降级，用户体验是"明明能答的问题被跳过"。改进方向是跳过的 Agent 定期重探、不永久跳过。误判率我没统计过，这是观测盲区。</p>
+    <p><strong>机制四件套。</strong>失败洞察生成 Prompt 补丁，先写到 shadow 文件不直接生效；策略金丝雀按 sessionId 稳定分桶放小流量试；进化实验走 hypothesis → promoted / rolled_back 的闭环；再加上定时的记忆治理。经验回放是另一条线：成功的 task 做 embedding 入库，下次相似 query 召回后注入路由的 few-shot。</p>
+    <p><strong>绝对不能吹的点。</strong>自动晋级默认是关的，shadow 只写盘，要人工 promote 才真正生效——我不会说"线上金丝雀在跑"。而且这套没接真实业务流量，所以没有实测效果数据，是框架先行、效果未验证。被追"跑出多少提升"就直接说没接流量。</p>
+    <p><strong>本质。</strong>失败洞察驱动 + 金丝雀验证的受控迭代，不是自主进化。LLM 生成假设、执行、评估都在闭环里转，缺外部 ground truth 来校正——这是已知局限，不是藏在底下的隐藏能力。</p>
   </div>
 </div>
 
-<div class="card" data-c="proj" data-g="Manager 智能体" data-kw="Critic Evaluator 仲裁 事实审查 分层悖论 成本翻倍 合并">
-  <div class="card-head"><span class="tag proj">机制</span><div class="card-title">Critic 和 Evaluator 为什么要两个 LLM</div></div>
-  <div class="core">Critic 审事实对不对，Evaluator 评够不够好——不能合并，但 Critic 审事实必须懂专家产出，这破坏了分层</div>
+<div class="card" data-c="proj" data-g="Manager 智能体" data-kw="上生产了吗 上线 研究型 没接业务流量 实测数据 self-evolving 降级 online learning 权重没动 上生产要补什么">
+  <div class="card-head"><span class="tag proj">诚实</span><div class="card-title">这项目真上生产了吗？</div></div>
+  <div class="core">偏研究型，机制设计得全但没接真实业务流量——我讲设计思路，不太吹实测数据</div>
   <div class="card-body">
-    <p>被问"两个 LLM 调用成本翻倍，能合并吗"我会拆开讲。Critic 输出 {pass, reason}，做事实性审查——结果对不对；Evaluator 输出 {recommendation, score}，做质量评分——够不够好。仲裁规则是：Critic fail 且 Evaluator retry 就重试；Critic fail 但 Evaluator accept 就强制升级 HITL，防 Evaluator 过松。两者 prompt 聚焦点不同，合并反而让 prompt 变臃肿。Evaluator 的 accept 阈值写死：大于等于 0.65 接受，小于 0.45 重试，中间是 retry_if_possible。</p>
-    <p>这里有个我自己也承认的悖论——Critic 做事实审查就必须懂专家产出（懂 SQL、懂截图、懂 JSON），懂专家产出就破坏了"编排层不碰专家细节"这个分层。破解的办法是让 Critic 审"Agent 自己生成的 summary + evidence 列表"而不是 raw output，做间接审查。</p>
-    <p>但得说句实话：靠 evidence_id 反查源码、重跑 SQL 校验这套是设计思路，没实现。当前只是 prompt 里要求 Critic 引用 evidence_id，没做闭环反查。被追"代码在哪"我就说反查校验是 roadmap，没落地——比硬吹"实现了反查"被翻车要稳。另外 Critic 自己误判的概率我也没测，改进方向是输出附 confidence，低 confidence 只 warn 不否决。</p>
-  </div>
-</div>
-
-<div class="card" data-c="proj" data-g="Manager 智能体" data-kw="HITL Checkpoint 三后端 file redis dual TTL 跨进程续跑 取消 副作用 16字段 业务快照">
-  <div class="card-head"><span class="tag proj">安全</span><div class="card-title">高风险操作怎么拦——HITL 三后端 checkpoint</div></div>
-  <div class="core">自建 16 字段业务快照，file/redis/dual 三后端 TTL 24h，但 dual 无锁静默失败是已知债</div>
-  <div class="card-body">
-    <p>先说清楚这不是 LangGraph 原生 saver——原生 saver 我默认关了，自己写了 16 字段的业务快照（composeFinal 里 intent/allowedAgents/routedQuery/entities/plan/taskPlan/results/evidence/resources/meta/probe/scheduler/executionMode/votePolicy/fixIntent/fixQuery 这些）。为什么自建？因为业务字段比 LangGraph channel 快照更可控，续跑时该恢复什么我心里有数。</p>
-    <p>三后端是 file（默认）、redis（生产）、dual（强一致兜底），TTL 24h。高风险操作（admin 写、计划多步）触达时，graph 不发 final 而是发 saveHumanConfirmCheckpoint，等人工确认。确认文本不写进 session.messages，防 RAG 上下文污染。resume 时靠 resumeAdminConfirm=true 进 admin_confirm_resume 节点续跑到 synth。</p>
-    <p>dual 模式我得诚实说：它实际是"Redis 主 + file 兜底"的最终一致，不是强一致，而且无锁。任一失败不阻塞、告警后人工 reconcile，"成功时双写失败时不管"是设计缺口。被问"Redis 主从切换 30 秒不可用怎么办"，我答当前是阻塞等恢复或直接报错，没做降级单写 file 加异步对齐。</p>
-    <p>还有一个共同难题：checkpoint 存的是 channel 快照 + node 进度，但 side effect（已发邮件、已写 DB）不存。所以这是 at-least-once 不是 exactly-once，跨进程续跑可能重复执行副作用。用户取消运行时已发半截邮件怎么办——graph 层只发 cancel_flag 加 Agent 入口检查，下游的副作用清理没做。这是 Coding/Agent 系统的共同难题，我承认没解决。</p>
-  </div>
-</div>
-
-<div class="card" data-c="proj" data-g="Manager 智能体" data-kw="14路意图 子句拆解 decompose 规则 LLM 混合路由 多意图 depends_on 并发写冲突">
-  <div class="card-head"><span class="tag proj">机制</span><div class="card-title">用户一句话怎么拆成多步——意图分发</div></div>
-  <div class="core">decompose 拆多意图 → LLM 出 14 路分类 → route 出 JSON；路由是规则粗分加 LLM 细分的混合，不是纯 LLM</div>
-  <div class="card-body">
-    <p>三步链路：decompose（默认开，可关）把多意图句子拆成多步 plan，比如"查上月销售数据并画图发给老板"拆成查数据、画图、发邮件三步；然后 intent_classify 用 LLM 出 14 路意图分类 JSON（zod discriminatedUnion 校验）；最后 route 出 {intent, allowedAgents, confidence}，routerNode.ts 是核心。</p>
-    <p>被追"路由是规则还是 LLM"我答混合——规则粗分到领域，LLM 在领域内细分。这是有意识的取舍：纯规则 95% 以上准确率但脆，纯 LLM 80% 而且贵 10 倍。如果纯规则路由 Supervisor 的 Agent 性会打折，但工程上合理。被追"那为什么不全用 LLM"就答准确率和成本的账，不是不懂。</p>
-    <p>多意图的依赖我用 plan step 里的 depends_on 表达，但这是静态依赖。"查完销售数据根据结果决定要不要发邮件"这种动态依赖静态 plan 表达不了，得 replan——执行中根据上一步结果重新规划。</p>
-    <p>并发写冲突的细节：两个意图并行执行时，state 用 keyed dict 而不是 append，key 是 task_id 不是 agent 名。两个 Agent 同时失败重试，结果按 task_id 覆盖不重复。但 LangGraph 默认 messages 用 append，长任务下 messages 会爆炸，没做 compaction 是漏洞。</p>
-  </div>
-</div>
-
-<div class="card" data-c="proj" data-g="Manager 智能体" data-kw="重试预算 recursionLimit 死循环 48 retry budget fix synth 死锁检测 横跳循环">
-  <div class="card-head"><span class="tag proj">机制</span><div class="card-title">怎么不让 fix 和 synth 死循环——重试预算</div></div>
-  <div class="core">单步/多步/全局三层 ceiling 加 recursionLimit 默认 48，但 48 是兜底不是策略——好系统在触顶前就该识别死锁</div>
-  <div class="card-body">
-    <p>预算设计在 retryBudget.ts：单步 maxRetriesSingle 默认 1（上限 3）、多步 maxRetriesMulti 默认 2（上限 5）、全局 MANAGER_MAX_RETRY 默认 1（上限 5）、recursionLimit 默认 48（25-120 可配）。为什么要分三层？因为 LangGraph 默认 recursionLimit 是 25，multi 加一次 fix 循环就超了，得区分单步多步的 ceiling 防 fix→synth 死循环耗尽预算。</p>
-    <p>这里有个坑容易被追——maxRetriesMulti=2 不是说能重试 2 次。canManagerRetryMore 是 retryCount 小于 maxRetry 且小于 ceiling，两条件取交集。全局 MANAGER_MAX_RETRY=1 时，即使 maxRetriesMulti=2 实际也最多重试 1 次。全局 budget 是更紧的约束。</p>
-    <p>48 这个数我得说"演进而来"——默认 25 不够，翻倍调到 48 留 buffer。一个真实 query 的 node 调用数推演：plan + probe + 3 个 agent 并行 + critic + synth + 若干路由节点大概 10 次，加 retry 可能 20+，48 留 2 倍 buffer。replan 是 budget 大户，所以 plan_lint 在 plan 后立即硬规则检查（visualize 必有 code 等），尽早拦废 plan。</p>
-    <p>死锁检测我得诚实分级：retry budget 计数器和 fix→synth 循环拦截是已实现的；但 state hash 重复检测、工具调用序列重复、横跳循环（A→B→A→B 但 tool 名在变）、token 累计超阈值这些都是改进方向没做。横跳循环抓不到是漏洞，需要 embedding 算语义相似度。</p>
-  </div>
-</div>
-
-<div class="card" data-c="proj" data-g="Manager 智能体" data-kw="失败归因 11类 规则 非LLM 经验回放 prompt补丁 多标签 混淆矩阵">
-  <div class="card-head"><span class="tag proj">机制</span><div class="card-title">失败了怎么归因——纯规则不是 LLM</div></div>
-  <div class="core">归因是纯规则 if-return 链，类型表 12 类、运行时约 10 类可达；单标签取主因是多标签场景的漏洞</div>
-  <div class="card-body">
-    <p>这个我必须说清楚——失败归因是纯规则的，不是 LLM 判断。源码 attributeFailure 函数是一条 if-return 链：先判 capabilityOk（能力边界拦截，policy_boundary，最优先），再判 timeout（timeLeft 小于 1500ms），再 tool_failure、synthesis_error，然后是 clarify_needed、evidence_gap、search_gap、verification_gap、route_error、plan_error，最后兜底 unclear，正常成功是 success。先返先胜，比如 policy_boundary 和 tool_failure 同时命中就归 policy_boundary。</p>
-    <p>类型表声明 12 类，实际 return 11 个分支（10 个失败类 + success），运行时约 10 类可达。按严重度分三档：高严重度 4 类（policy_boundary/timeout/tool_failure/synthesis_error）、中严重度 6 类、兜底 1 类。简历写"12 分类"是把 success 算进去了，严格说"10 类失败归因 + success 兜底"更准。</p>
-    <p>归因驱动后面的假设生成：每 30 分钟产不超过 3 条假设，针对归因生成 prompt 补丁，金丝雀验证（但默认关）、minSample 8、lift 3% 晋级。经验回放是成功 task（score 大于等于 0.75）做 embedding 入库，下次相似 query 语义召回注入 router few-shot，默认 3 条。</p>
-    <p>两个漏洞我得承认：第一，多标签场景只取主因——真实 case 经常同时命中两类（tool_failure + evidence_gap），当前只返一条，应该每标签一条假设。第二，混淆矩阵没测过，11 类的边界没经过严格分类学设计，evidence_gap 和 verification_gap 和 search_gap 边界模糊（都是"缺证据类"），改进方向是人工标注加 inter-annotator agreement。</p>
-  </div>
-</div>
-
-<div class="card" data-c="proj" data-g="Manager 智能体" data-kw="Self-Evolution shadow canary 7golden 过拟合 显著性 自动晋级 power analysis 经验衰减">
-  <div class="card-head"><span class="tag proj">机制</span><div class="card-title">自进化的边界在哪——最重要的防御</div></div>
-  <div class="core">shadow→canary→promote 四件套机制完整，但自动晋级默认关、实测数据为零、7 个 golden 做不了统计显著 A/B</div>
-  <div class="card-body">
-    <p>机制层面是四件套：Prompt 补丁写到 shadow 文件、策略金丝雀按 sessionId SHA256 稳定分桶（CANARY_PERCENT 配置，但默认不跑线上）、进化实验 hypothesis→running→promoted/rolled_back/rejected（minSample 8 / promote lift 3% / rollback drop 6%）、记忆治理每 10 分钟 maybeCurateManagerMemory（同 key 保留高分样本，小于 0.42 进 quarantine）。</p>
-    <p>这里有个绝对不能吹的点：自动晋级默认是关的，shadow 只写盘，要人工 promote。我不会说"线上金丝雀 5% 在跑"——那是穿帮。</p>
-    <p>三大致命边界我主动交代：第一，7 个 golden 做不了统计显著 A/B——Wilson 95% CI 大概 [59%, 100%]，真实可靠率可能低到 59%，7 个是冒烟级不是质量证明级。第二，经验库只进不出会污染，假设是假阳性（A/B 时运气好通过）会持续误导 router，没做经验衰减。第三，LLM 评 LLM 自嗨——假设生成、执行、评估都是 LLM，闭环但缺外部 ground truth，会在错误 prompt 上反复生成同一错 patch。</p>
-    <p>被追"A/B 50 样本 60% vs 70% 差 10pp 直接晋级 B 吗"——不行！50 样本 10pp 差异置信区间 ±27pp，可能 B 实际更差。必须做 power analysis，至少 200-500 样本才统计显著。minSample 8 / lift 3% 这些是源码默认值（都是 ?? 8 / ?? 0.03），没有 power analysis 推导，lift 3% 是绝对提升不是相对。诚实收口：框架先行，效果未严格验证，接生产后补 30+ golden + hold-out + 线上 shadow + power analysis。</p>
-  </div>
-</div>
-
-<div class="card" data-c="proj" data-g="Manager 智能体" data-kw="Pipeline Authority Code权威 数字 only 单一数据源 plan_lint 下游消费">
-  <div class="card-head"><span class="tag proj">架构</span><div class="card-title">数字只信 code Agent——对抗幻觉的工程哲学</div></div>
-  <div class="core">凡是数字（金额/占比/计数）只能由 code Agent 产出，visualize/report 只能消费——单一数据权威对抗数值幻觉</div>
-  <div class="card-body">
-    <p>这是我自己比较得意的设计。逻辑很简单：LLM 算数不可靠是共识，大模型做"这个月比上个月增长百分之几""三个数求和"经常错，而且错得自信。如果让 visualize 自己根据 RAG 文本里的零散数字算增长率再画图，等于把确定性任务交给概率模型。我的方案是把"计算"从 LLM 链路里彻底剥离给 code Agent（LLM 只负责写计算代码），数字一旦由 code 产出就锁定为权威，下游只能消费。</p>
-    <p>三层强制。第一层 prompt 硬规则：codeFirstAuthority.ts 里三条规则（与 RAG/DB/爬虫冲突时一律采信 Code，勿复述上游未计算的原始裸数），注入到 synthesize/critic 节点的 system prompt。第二层数据通道隔离：buildCodeFirstBundle 给 visualize/report 构造 downstreamContext 时，如果有 code 输出，上下文里只放 code 的 answer + mergedFacts，并且写死"ECharts series.data、表格金额、报告结论数字必须全部来自 Code 输出"。mergeFactsWithCodePriority 合并多源 facts 时 code 最后写入覆盖同名键——同名 key code 一定赢。第三层 Critic 仲裁：assessCodeDownstreamConsistencyStructural 做结构校验，下游数字和 code payload 对不上就 needsRetry=true，retryIntent 优先指向 code。</p>
-    <p>被说"这就是个 prompt 工程，算什么架构"我会反驳——它有运行时强制：plan_lint 在计划阶段检查越权，buildCodeFirstBundle 在数据流上做通道隔离，Critic 事后做一致性校验并触发重试。是"prompt 提示 + 数据通道 + 事后仲裁"三位一体，不是靠 prompt 软约束祈祷。</p>
-    <p>诚实局限：Critic 一致性校验本身也是 LLM 判断、也能被绕过，我对高价值场景加了 LLM 双保险但仍是概率兜底；而且没有 ground truth 数据集量化"数字准确率提升了多少"，这是 demo 级项目的诚实边界，我承认没法证明。</p>
-  </div>
-</div>
-
-<div class="card" data-c="proj" data-g="Manager 智能体" data-kw="写操作 安全 拦截 模型乱来 admin 写库 高风险 门控">
-  <div class="card-head"><span class="tag proj">安全</span><div class="card-title">写操作怎么拦住模型乱来</div></div>
-  <div class="core">能力边界（policy_boundary）最优先归因 + security_gate 风险分级 + HITL 在高风险前插入——三层拦</div>
-  <div class="card-body">
-    <p>AI 一旦自主决策出圈就是事故，所以写操作我是层层拦的。第一层是 capabilityOk 检查——能力边界拦截，这也就是为什么 policy_boundary 在失败归因里优先级最高、最先生效。模型想做超出能力的事，直接拦在 capability 这关。</p>
-    <p>第二层是 security_gate 节点做风险分级，决定要不要触发 HITL。高风险操作（admin 写、计划多步、外部调用、大批量改）触达时不发 final，而是存 checkpoint 等人工确认。第三层就是前面说的 HITL checkpoint 三后端，WS 协议里 human_confirm / plan_confirm 事件，确认后才续跑。</p>
-    <p>但我也得说没做的部分：取消运行时下游副作用清理（关浏览器、取消 HTTP、rollback 已写文件）没做，靠超时 + 外部 flag + 进程 kill。Agent 注册 cleanup hook 是改进方向。HITL 解决的是 graph 状态长生命周期暂停/恢复，不是副作用一致性——side effect 一致性是 Coding/Agent 系统的共同难题。</p>
-  </div>
-</div>
-
-<div class="card" data-c="proj" data-g="Manager 智能体" data-kw="vs OpenAI Swarm handoff Supervisor 选型 为什么不用 可审计 客服 Agents SDK">
-  <div class="card-head"><span class="tag proj">对比</span><div class="card-title">为什么不用 Swarm 那套 handoff</div></div>
-  <div class="core">Supervisor 中心化加 Critic 仲裁加 HITL 可审计；Swarm 去中心 handoff 灵活但难审计——企业级要可审计</div>
-  <div class="card-body">
-    <p>三种范式我分得清。Supervisor（我选的）是中心化编排 + 全局 Critic 仲裁 + HITL 单点插入，适合任务可规划、需要质量门控。Swarm handoff 是 Agent 间直接转交（A 干不完 handoff 给 B），去中心、扩展性好，适合开放对话、任务边界模糊、Agent 间需要协商。Network 是全连接图，复杂度爆炸工程上几乎不用。</p>
-    <p>选 Supervisor 的真理由是企业级 AI 助手要可审计 + 质量门控——谁调谁、为什么调、Critic 否决几次、HITL 卡在谁那里，全要留痕。Swarm 的 handoff 链路事后难追溯（谁转给谁、为什么转）。被问"什么场景 Swarm 会比我的好"我诚实答：客服转接、多轮诊断这种开放对话。我的场景是调度专家干活加全局质检，Supervisor 更合适。</p>
-    <p>Supervisor 的代价是中心节点成瓶颈 + 单点故障。我接受这个代价的兜底是：Probe + Health 探活降低"调到 down 的 Agent"概率，Critic 仲裁让"调错 Agent"也能在质检阶段拦住，HITL 在高风险操作前插。</p>
-    <p>有个坑要主动说：OpenAI Swarm 2024 年底已经改成 Agents SDK，不再是 Swarm 这个名字。用 Swarm 对比是因为它的 handoff 范式概念最清晰，被追"Swarm 已弃用"我会说"对，现在叫 Agents SDK，但 handoff 范式概念我是从 Swarm 学的"。</p>
-  </div>
-</div>
-
-<div class="card" data-c="proj" data-g="Manager 智能体" data-kw="vs Anthropic Subagent 严格定义 Specialist orchestrator Workflow Agent 控制权">
-  <div class="card-head"><span class="tag proj">对比</span><div class="card-title">我的 Agent 和 Anthropic 的 Subagent 严格定义差在哪</div></div>
-  <div class="core">Anthropic 的 subagent 有独立 context、跑完只回摘要、销毁；我的 12 个是被调度的 Specialist，不是主 Agent 的分身</div>
-  <div class="card-body">
-    <p>Anthropic 对 Subagent 有严格定义：主 Agent 用 Task tool 派生、独立 context window（主上下文不污染）、专属 system prompt、跑完只返回摘要不是全上下文、生命周期短（干完即销毁）。我项目里 loop 系统的 subagent 完全符合这个定义——这才是 Subagent 的正统用法。</p>
-    <p>但我的 12 个 Agent 不符合——它们是被 Supervisor 调度的"专家 Agent"，不是"主 Agent 的分身"。更准确的称呼是 Specialist Agent 或 Worker Agent。Spec-Driven 的 11 步更不是 Agent，是 Workflow（步骤、依赖、门禁全预定义，开发者主导控制权）。</p>
-    <p>所以"3 套 Multi-Agent 系统"这个简历话术我会降级——按 Anthropic《Building Effective Agents》的判据（控制权归 LLM 还是代码），其实是覆盖 Workflow → Agent 的完整谱系：1 个 Workflow 加 2 个真 Agent。被问"控制权归谁"我答：Spec-Driven 是 Workflow（开发者主导），Manager 是 Agent（LLM 路由），code_assistent 是 ReAct Agent（LLM 自主选工具）。</p>
-    <p>和 Anthropic multi-agent research 比：他们是 orchestrator + subagent 并行做开放调研，目标是灵活性和覆盖面；我是 Supervisor + Specialist + Critic + HITL，目标是质量门控和可审计。他们的 subagent 是 orchestrator 的调研分身无独立身份，我的 Agent 是被中心调度的专家有专业能力但无自主性。本质区别。</p>
-  </div>
-</div>
-
-<div class="card" data-c="proj" data-g="Manager 智能体" data-kw="跨Agent 通信 RPC subgraph shared协议层 文件桥 跨进程 端口 状态同步">
-  <div class="card-head"><span class="tag proj">架构</span><div class="card-title">12 个 Agent 和总管怎么通信——跨进程不是 subgraph</div></div>
-    <div class="core">Manager→Specialist 是 RPC 调用（HTTP/WS），shared/ 是协议 SSOT，cross_agent_memory 文件桥——三层架构</div>
-  <div class="card-body">
-    <p>这点容易被追穿。我的 12 个 Specialist 不是 LangGraph subgraph——它们是独立服务（NL2SQL 服务、知识库服务、Code 服务），Manager 通过 RPC（HTTP/WS）调度。subgraph 要求所有 Agent 同进程无法独立扩展，我选 RPC 是为了让每个 Specialist 独立部署（DB 跑 13101、RAG 跑 13102、Code 跑 13103、Manager 跑 13106）。代价是跨进程通信延迟加状态同步复杂。</p>
-    <p>三层通信结构。调用层是 agentExecutors.ts（1698 行），10+ Agent 客户端统一协议，超时/重试/降级/熔断，每个 Specialist 有独立 client 文件（ragClient、dbClient、crawlerClient 等）。协议层是 shared/ 这 17 个跨服务 SSOT 文件（chartOption、codeAuthorityPayload、dbPipelineDeterministic、routeAgentOrder 等）——避免每个 Agent 自己定义 chart schema 导致不一致。状态层是文件桥，code_assistent 的 code_cross_agent_memory.ts 读 ../Manager_Agent/.data 这些偏好文件。</p>
-    <p>跨进程状态同步主要靠文件桥加 shared/ schema——Manager 把经验写入 manager-memory-embeddings.jsonl，code_assistent 通过 Jaccard 相似度召回。但这是单向读取（code_assistent 读 Manager），不是双向同步，改进方向是接 Redis pubsub 或消息队列。</p>
-    <p>文件桥有个硬伤——硬编码相对路径（../Manager_Agent/.data），脱离 monorepo 全部失效。改进方向是改环境变量 AGENT_SHARED_DATA_DIR 加默认 S3。Staff 面试官会追"你的 12 个 Agent 和 Supervisor 是进程内还是跨进程"，答跨进程 RPC + shared/ 协议层显工程深度。和 Anthropic 多 Agent research 比，他们是进程内（subagent 是 orchestrator 的分身），我是跨进程（Specialist 是独立服务）——部署架构的本质差异。</p>
-  </div>
-</div>
-
-<div class="card" data-c="proj" data-g="Manager 智能体" data-kw="可观测性 manager-metrics p95 滚动窗口 LangSmith OpenTelemetry dashboard 定位 哪步慢">
-  <div class="card-head"><span class="tag proj">机制</span><div class="card-title">哪一步慢怎么定位——可观测性现状</div></div>
-  <div class="core">manager-metrics.jsonl 滚动窗口算 p95 + LangSmith trace 到 node 级，但缺 OpenTelemetry、dashboard、告警</div>
-  <div class="card-body">
-    <p>当前三层。Metrics 层每个 phase/agent 调用 append 到 .data/manager-metrics.jsonl（agent/timestamp/durationMs/success/tokens）。p95 算法是 tool_health 读最近 1200 行（slice(-1200)）按 agent 过滤后排序取 95 分位。Trace 层是 langchain/langgraph 1.2.x 自带的 LangSmith trace，到 node 级不到 span 级（code_assistent 卡在 0.2.x 是技术债）。看板是 /api/metrics 返回聚合 JSON。</p>
-    <p>被追"为什么 slice(-1200) 不是时间窗口"我答拍脑袋的兜底值——高并发下 1200 行可能只够 1-2 分钟数据，低并发下可能覆盖几小时。改进方向是按时间窗口（最近 5min）而非行数。</p>
-    <p>被问"用户反馈今天回答很差，怎么定位哪个 Agent 出错"——我诚实说能力有限。能查 LangSmith trace 看走了哪些 node、调了哪些 agent，但不能直接定位"是路由错了、某个 sub-agent 幻觉、还是 Critic 漏审"，需要人工看 trace 加抽样 LLM 原始 prompt/response。这是工程短板。</p>
-    <p>OpenTelemetry 没接、dashboard 没做、降级告警没做——Probe 误判、Critic 否决率突增、token 预算超限都靠人看 JSON，这是 demo 级的典型特征。可观测性是多 Agent 生产化的硬骨头，demo 阶段看不到价值，生产阶段定位问题全靠它。我现在这套在中低并发能用，高并发要重做 OTel + dashboard + 告警。</p>
-  </div>
-</div>
-
-<div class="card" data-c="proj" data-g="Manager 智能体" data-kw="LangGraph 版本 1.2 0.2 breaking change BaseCheckpointSaver 升级 AutoGen 选型 技术债">
-  <div class="card-head"><span class="tag proj">版本</span><div class="card-title">框架升级踩过什么坑</div></div>
-  <div class="core">Manager 升到 1.2.x，code_assistent 卡 0.2.x，跨大版本 breaking change 多——自研 FileSaver 升级要重写接口签名</div>
-  <div class="card-body">
-    <p>版本现状：Manager 是 langchain/langgraph ^1.2.2 加 langgraph-checkpoint-postgres ^1.0.3，code_assistent 卡在 ^0.2.0。不一致原因是做的时候（2024 中）LangGraph 还在 0.2，后来 Manager 升到 1.x 但 code_assistent 没同步——两套版本并存是技术债。</p>
-    <p>跨大版本（0.x → 1.x）的 breaking change 我踩过几个：BaseCheckpointSaver 接口签名变了（put/getTuple/putWrites 参数和返回值类型），自研 FileSaver 升级要重写方法签名；StateGraph API 的 channel 机制和 subgraph API 改了；Checkpointer 持久化 schema 1.x 和 0.x 不兼容，升级后老 checkpoint 不能用；HITL 的 interrupt 模式也有调整。</p>
-    <p>code_assistent 为什么不升级——技术债。升级要重写 FileSaver 接口签名 + 适配新 channel 机制 + 重测所有 checkpoint 持久化路径，工作量大但 ROI 不明显（简历项目没真实流量）。改进方向是先在 Manager 上验证 1.x 稳定后再迁移。升级期间两个版本共存靠 monorepo 内各自独立 package.json，但 shared/ 共享代码（17 个文件）要兼容两个版本，是隐藏复杂度。</p>
-    <p>没做适配层是我的技术债——直接用了 LangGraph 原生 API。生产化建议是抽象一层适配层，业务代码不直接依赖框架 API，方便未来切换或升级。被问"为什么不用 AutoGen"——AutoGen v0.2 到 v0.4 也大改、Microsoft 维护节奏不稳，选 LangGraph 是因为 HITL + Checkpoint 是它的强项，契合企业级。我没做 AutoGen POC，是按需求匹配选的不是对比选的。</p>
-  </div>
-</div>
-
-<div class="card" data-c="proj" data-g="Manager 智能体" data-kw="立项 为什么做 总管层 痛点 单入口 Dify Coze 平台补能力 国产化">
-  <div class="card-head"><span class="tag proj">动机</span><div class="card-title">为什么自己造，不直接用 Dify/Coze</div></div>
-  <div class="core">平台缺总管层 + 状态机对位多 Agent 编排 + WS 多轮 + HITL 安全网 + 自进化降本——把多 Agent 编排做成生产可用的最小集合</div>
-  <div class="card-body">
-    <p>立项逻辑是五条痛点对五条对策。第一，agent-main 单仓下 10+ Agent 各管一域，用户不可能为每类需求找不同入口，Manager 做"一个入口、多个专家"的路由层。第二，分支/回环/HITL/失败恢复不是单次 LLM call 能搞定的，LangGraph StateGraph 是天然对位（vs 一把梭的 if/else LLM chain）。第三，WebSocket 是多轮 + 流式 + 确认/取消的最佳载体，HTTP 单向请求做不了长会话。第四，HITL 是真实业务的安全网，写库/调外部/大批量改必须能暂停确认。第五，自进化 + 可观测性是降本关键，失败样本沉淀为 prompt 补丁避免每次改代码。</p>
-    <p>被问"为什么不直接用 Dify/Coze 搭"——诚实答：Dify/Coze 是低代码可视化平台，灵活但黑盒；自研 Manager 是为了把路由策略、自进化规则、HITL 流程完全可控，能解释每一跳为什么走。Dify/Coze 暂停后状态在内存重启丢，我的是跨进程 Checkpoint 三后端。Dify/Coze 没有显式自进化闭环（它们靠人调 prompt）。这是面试场景下显工程深度的差异。</p>
-    <p>被追"如果就你一个人用，做 Manager 是不是 over-engineering"——是。demo 阶段没人用，但立项逻辑不是"现在有人用"，是学习把多 Agent 编排做到能上生产的工程范式。非主流动机我也承认：国产化模型链路（百炼/Qwen 规避合规问题）、学习/面试导向。不是把 10 个 Agent 接一起就叫 Multi-Agent 系统——总管层做的是意图路由 + 任务规划 + HITL + 自进化 + 可观测性，这才是工程化。</p>
-  </div>
-</div>
-
-<div class="card" data-c="proj" data-g="Manager 智能体" data-kw="维度对比表 Dify Coze LangGraph Swarm Anthropic 编排范式 HITL 自进化 跨进程 React Excel">
-  <div class="card-head"><span class="tag proj">对比</span><div class="card-title">和竞品比强在哪弱在哪</div></div>
-    <div class="core">按维度横向比不按产品罗列——三个真差异化是跨进程部署、显式自进化闭环、跨进程 Checkpoint</div>
-  <div class="card-body">
-    <p>我不按产品罗列，按维度横向比。编排范式：我是 Supervisor + StateGraph，Dify/Coze 是可视化工作流，LangGraph 模板是 Supervisor 模板，Swarm 是 Handoff。路由决策：我是 LLM + 规则混合，Dify 是条件分支，LangGraph 模板是纯 LLM。HITL：我是 Checkpoint 三后端，Dify 是节点暂停，LangGraph 是 interrupt()，Swarm 弱。自进化：我有 Shadow→Canary→Promote，其他都没有。跨进程部署：我 Specialist 独立进程 RPC，其他都是进程内。</p>
-    <p>可观测性我是 LangSmith + /metrics，Dify 有内置面板，LangGraph 是 LangSmith，Swarm 弱。通信协议我用 WS（多轮+流式+确认），Dify 是 HTTP + SSE，其他是函数调用。调度粒度我是 12 Specialist + 14 意图，Dify 是 workflow 节点。失败恢复我是统一重试预算 + Critic，Dify 是节点重试，Swarm 是 handoff 接力。配置形态我是代码即配置（53k 行 TS），Dify 是低代码 UI。</p>
-    <p>三个真差异化（被问"哪个 Dify/Coze 没有"）：跨进程 Specialist 部署——其他都进程内拆不出来独立扩展；显式自进化闭环带 hash 分桶 + 显著性检验——其他靠人调 prompt；跨进程 Checkpoint——file + Redis 双后端 HITL 可跨进程恢复，Dify/Coze 暂停后状态在内存重启丢。</p>
-    <p>诚实收口：Dify/Coze 的低代码 UI + 工作流可视化是我没有的强项——非工程师能搭 Agent。我是工程师视角的多 Agent 系统，不是给运营/产品用的，这是赛道差异不是优劣。一句话：Dify/Coze 是给非工程师搭 Agent 的低代码平台，我是给工程师做分布式、可观测、可自进化的多 Agent 系统——一个是 Excel，一个是 React。</p>
-  </div>
-</div>
-
-<div class="card" data-c="proj" data-g="Manager 智能体" data-kw="反问 面试官 多Agent 根问题 路由 重试 长尾 Staff p99 延迟预算">
-  <div class="card-head"><span class="tag proj">动机</span><div class="card-title">反问面试官——多 Agent 的三个根问题</div></div>
-    <div class="core">路由不可靠、工具失败重试、长尾延迟——从被问变主动对话，证明有 Staff 视角</div>
-  <div class="card-body">
-    <p>第一问路由不可靠："你们多 Agent 系统怎么处理 LLM 路由不可靠？我们用 probe-before-plan + 规则粗分 LLM 细分，但都还是工程层兜底，真正解决可能要等模型层能力提升。你们怎么看？"第二问工具失败重试："工具调用失败重试策略是什么？我们用统一预算 + 死锁检测 + Critic 仲裁，但 recursionLimit 是兜底不是策略，你们有没有遇到 fix→synth 死循环？怎么破？"</p>
-    <p>第三问长尾延迟："Multi-Agent 的 p99 延迟你们怎么压？我们没做延迟预算——recursionLimit 48 是步数上限不是时间上限，单节点 LLM 调用可能 10 秒也可能 60 秒（长尾），整体 p99 可能 5 分钟。长尾是 Multi-Agent 生产化的硬骨头，你们做了预算制/并行化/早返回/超时降级哪些？"</p>
-    <p>为什么必问——从"被问"变"主动对话"，证明有 Staff Engineer 视角不是只会背自己项目；暴露面试官深度，如果对方只答"我们用 LangGraph + 自己的 router"说明没系统性思考过路由可靠性；给后续 offer 决策提供情报，这公司的 Multi-Agent 真的成熟吗。反问前我会先备好自己答案（每 Agent 设延迟预算 p95 小于 X 秒 + 超预算降级 + 无依赖 Agent 并行 + 早返回 + 超时降级），不然被反将一军。</p>
-    <p>收口话术：我用 probe-before-plan + 统一预算 + shadow A/B 把工程层兜底做扎实，但真正解决 Multi-Agent 的根问题要靠模型层提升——这是我转 LLM 工程化的判断。</p>
+    <p><strong>真实状态。</strong>立项逻辑不是"现在有人用"，是想把多 Agent 编排做到能上生产的工程范式讲清楚。所以机制设计比较全（probe、Critic、HITL、自进化都有），但实测数据不多，我一般主动说这点，不硬吹指标。</p>
+    <p><strong>术语降级。</strong>简历里"self-evolving"听着像自主进化，其实模型权重一行没动——本质是 Prompt 级在线适配，失败样本沉淀成 Prompt 补丁再注入。被追"权重动了没"直接说没动，不往 online learning 上靠。</p>
+    <p><strong>上生产要补什么。</strong>概念上三件：用官方 Postgres checkpointer 替掉自研的、接 OpenTelemetry 拿真实 trace、golden 测试样本从几个扩到几十个做统计显著。机制是 roadmap 不是 PPT——缺的是工程化补齐，不是推倒重来。</p>
   </div>
 </div>
 
