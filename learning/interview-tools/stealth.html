@@ -3568,13 +3568,14 @@ function buildTreeOptimized(list) {
   </div>
 </div>
 
-<div class="card" data-c="ai" data-g="Agent 基础" data-kw="Agent Workflow 区别 Anthropic 权威定义 预定义代码路径 动态自主控制 决策控制权 编排 LLM Building effective agents">
+<div class="card" data-c="ai" data-g="Agent 基础" data-kw="Agent Workflow 区别 Anthropic 权威定义 预定义代码路径 动态自主控制 决策控制权 编排 LLM Building effective agents 举例 翻译 调研 审批 判断口诀 代码写死 临场决定">
   <div class="card-head"><span class="tag ai">对比</span><div class="card-title">Agent 和 Workflow 到底啥区别（Anthropic 权威定义）</div></div>
   <div class="core">一句话——Workflow 是"人编排 LLM"，Agent 是"LLM 编排自己"；本质区别在决策控制权归谁，开发者还是模型</div>
   <div class="card-body">
     <p>这个题我是按 Anthropic《Building Effective Agents》那篇权威文章答的。它原文定义是：Workflow 是 LLM 和工具通过预定义的代码路径编排，开发者主导控制权，执行确定、可预测、好调试；Agent 是 LLM 动态指导自己的流程和工具使用，模型自主掌控完成任务的方式，灵活但可预测性低。</p>
     <p>一句话记忆就是 Workflow 是"人编排 LLM"，Agent 是"LLM 编排自己"。本质区别是决策控制权归属——开发者还是模型。</p>
     <p>选型建议 Anthropic 自己也说了：任务明确步骤固定走 Workflow；任务目标明确但路径不定才走 Agent；而且"从 Workflow 起步，确认不够用再升级 Agent"是它官方建议。这个顺序很重要，不是反过来。</p>
+    <p>举个具体例子你就分清了。「把这份中文文档翻成英文」——步骤是死的，模型进去、出来、做点后处理就行，它不需要临场决定"下一步翻哪段"，这就是 Workflow。但换成「帮我调研某个框架适不适合我们用」——你事先根本不知道它得先搜啥、看到个 issue 要不要深挖、比到一半要不要换方向，路径得边跑边定，那就得上 Agent，让模型自己决定下一步调哪个工具。再比如审批流，A 写完 B 审 C 发，步骤固定但要人在中间卡一下，那是 Workflow 加个 HITL 节点，也不算 Agent。说白了就一句口诀：下一步干啥是代码写死的，就是 Workflow；是模型临场定的，就是 Agent。</p>
     <p>落到我自己的项目我得诚实讲——prd-tools 本质是 Workflow + Skills 编排，步骤、依赖、门禁都是预定义的；它定位是"PRD-to-Code 的上下文编译器加证据门禁"，不直接生成代码。被问"你这算 Agent 吗"，我主动承认是 Workflow 为主，关键是可预测可调试，这正好是 Anthropic 推荐的路径。</p>
     <p>核心公式（Lilian Weng 和 OpenAI 都提过）：Agent 等于 LLM（大脑）加 Planning（规划）加 Memory（记忆）加 Tool Use（工具），四件套缺一不可。Workflow 不要求四件套完整，所以更轻。</p>
   </div>
