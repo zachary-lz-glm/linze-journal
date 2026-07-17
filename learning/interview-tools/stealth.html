@@ -425,18 +425,18 @@ body{overscroll-behavior-y:contain}
   <div class="card-head"><span class="tag proj">架构</span><div class="card-title">主干链路长什么样？</div></div>
   <div class="core">一条 probe → route → plan → execute → synth → critic 的状态机，关键是 probe 排在 plan 前面——先探下游通不通再让模型规划</div>
   <div class="card-body">
-    <p><strong>完整链路（要能背出来）。</strong>resource → tool_health → probe → decompose 子句拆解 → route → prefetch → plan → execute（db/rag/code 这些）→ synth → critic → finalize。旁路四条：信息不足走 clarify 主动追问、要查外网走 web_search、高风险走 admin_confirm 等确认节点、质检不过走 fix 修复。</p>
+    <p><strong>完整链路（要能背出来）。</strong>resource 资源准备 → tool_health 健康统计 → probe 实时探活 → decompose 子句拆解 → route 意图路由 → prefetch 预取 → plan 任务规划 → execute 执行（db/rag/code）→ synth 合成 → critic 质检 → finalize 收尾。旁路四条：信息不足走 clarify 主动追问、要查外网走 web_search、高风险走 admin_confirm 等确认节点、质检不过走 fix 修复。</p>
     <p><strong>为什么 probe 排在 plan 前面（最高频考点）。</strong>probe 在规划之前先并行探一遍下游能力——RAG 有没有文档、DB schema 能不能读、Code 服务通不通，拿到客观快照再喂给路由和规划。模型基于"下游当前是否可用"决策，而不是脑补下游状态，减少"规划完成后才发现下游不可用"的幻觉式路由。</p>
-    <p><strong>为什么用 LangGraph + 路由错乱怎么兜底。</strong>多 Agent 编排有分支、回环、人工确认、失败恢复，本质是状态机，LangGraph 的节点+条件边、checkpoint 暂停恢复、HITL 正好对位。路由错乱靠三层兜底：意图分类与路由规则分流、状态机限定节点跳转方向、日志和指标回看错误样本驱动规则进化。</p>
+    <p><strong>为什么用 LangGraph + 路由错乱怎么兜底。</strong>多 Agent 编排有分支、回环、人工确认、失败恢复，本质是状态机，LangGraph 的节点+条件边、checkpoint（检查点）暂停恢复、HITL（人工介入）正好对位。路由错乱靠三层兜底：意图分类与路由规则分流、状态机限定节点跳转方向、日志和指标回看错误样本驱动规则进化。</p>
   </div>
 </div>
 
 <div class="card" data-c="proj" data-g="Manager 智能体" data-kw="编排层 专家层 边界 分工 为什么总管不实现子能力 Supervisor Specialist 职责 内部协作者 clean visualize report 确定性代码">
   <div class="card-head"><span class="tag proj">架构</span><div class="card-title">编排层和专家层怎么分工？</div></div>
-  <div class="core">编排层只做"理解意图→选能力→组装任务→汇总质检"，专业能力全交给下游 Specialist——Supervisor / Orchestrator 经典拆分</div>
+  <div class="core">编排层只做"理解意图→选能力→组装任务→汇总质检"，专业能力全交给下游 Specialist——Supervisor / Orchestrator（主管 / 编排者）经典拆分</div>
   <div class="card-body">
     <p><strong>编排层（总管）职责。</strong>维护会话状态、意图路由、任务规划、结果汇总、Critic 质检、高风险 HITL——调度编排归它，不碰任何专业领域的脏活：不写 SQL、不建向量、不改代码。避免"一个 Prompt 包打天下"的耦合。</p>
-    <p><strong>专家层（Specialist）职责。</strong>db 做 NL2SQL、rag 做检索、code 改代码、crawler 爬数据，各自独立服务、独立部署、能独立扩展。叫"Agent"是概念抽象，本质是总管通过 RPC（HTTP/WebSocket）调用的独立服务，不是同进程函数，也不是 LangGraph subgraph——subgraph 要求同进程，跨服务边界用不了。</p>
+    <p><strong>专家层（Specialist）职责。</strong>db 做 NL2SQL（自然语言转 SQL）、rag 做检索、code 改代码、crawler 爬数据，各自独立服务、独立部署、能独立扩展。叫"Agent"是概念抽象，本质是总管通过 RPC（远程过程调用，HTTP/WebSocket）调用的独立服务，不是同进程函数，也不是 LangGraph subgraph（子图）——子图要求同进程，跨服务边界用不了。</p>
     <p><strong>内部协作者：何时用确定性代码、何时用 LLM。</strong>clean/visualize/report 在图内完成，不算独立 Agent。原则是 DB 出表后画图表走 chartOption 规则生成，而不是再调一次大模型画 JSON——确定性的事不交给概率模型。</p>
   </div>
 </div>
@@ -446,9 +446,9 @@ body{overscroll-behavior-y:contain}
   <div class="core">高风险操作能暂停等人确认、确认后从断点续跑——靠 checkpoint 把 graph 状态落盘</div>
   <div class="card-body">
     <p><strong>解决什么问题。</strong>写库、调外部服务、大批量改这类高风险操作必须能暂停确认，而不是闷头执行；长任务中途崩溃要能从断点恢复，不能从头跑。</p>
-    <p><strong>怎么做。</strong>高风险触达时 graph 不直接发最终结果，而是存 checkpoint 等人工确认；WebSocket 协议里有 confirm/cancel 事件，确认后续跑到 synth。持久化用自建业务快照而不是 LangGraph 原生 saver——业务字段比框架 channel 快照更可控。</p>
+    <p><strong>怎么做。</strong>高风险触达时 graph 不直接发最终结果，而是存 checkpoint 等人工确认；WebSocket 协议里有 confirm/cancel 事件，确认后续跑到 synth。持久化用自建业务快照而不是 LangGraph 原生 saver（持久化器）——业务字段比框架 channel（通道）快照更可控。</p>
     <p><strong>安全。</strong>WebSocket 暴露公网必须加鉴权和 TLS；高风险操作必须保留确认步骤；子 Agent 的密钥和内部 URL 不泄露到前端。</p>
-    <p><strong>诚实边界。</strong>checkpoint 存的是 graph 状态和节点进度，副作用（已发邮件、已写库）不存，所以是 at-least-once 不是 exactly-once，跨进程续跑可能重复执行副作用——Coding/Agent 系统的共同难题。</p>
+    <p><strong>诚实边界。</strong>checkpoint 存的是 graph 状态和节点进度，副作用（已发邮件、已写库）不存，所以是 at-least-once（至少一次）不是 exactly-once（恰好一次），跨进程续跑可能重复执行副作用——Coding/Agent 系统的共同难题。</p>
   </div>
 </div>
 
@@ -457,7 +457,7 @@ body{overscroll-behavior-y:contain}
   <div class="core">Critic 是图里的一个节点，做结构化事实审查、不通过还能触发 fix 重试闭环——不是"再调一次 LLM 看看"</div>
   <div class="card-body">
     <p><strong>区别在哪。</strong>一次普通 LLM 调用是无状态问答，问完就完。Critic 是状态机里的一个节点：有结构化输出（比如 {pass, reason}），专门审结果的证据完整性、事实对不对，审完不通过能触发 fix 节点进入重试闭环，不是孤立的一问一答。</p>
-    <p><strong>为什么要单独做成节点。</strong>质检要可审计（留痕否决几次、为什么）、要能驱动重试，塞进 synthesize 里质检和生成搅在一起就模糊。顺带：Critic 审"事实对不对"，还有个 Evaluator 评"够不够好"，聚焦不同所以分开。</p>
+    <p><strong>为什么要单独做成节点。</strong>质检要可审计（留痕否决几次、为什么）、要能驱动重试，塞进 synthesize 里质检和生成搅在一起就模糊。顺带：Critic 审"事实对不对"，还有个 Evaluator（评估器）评"够不够好"，聚焦不同所以分开。</p>
     <p><strong>一个分层上的取舍。</strong>Critic 做事实审查本来需要懂专家产出（懂 SQL、懂截图），但这破坏"编排层不碰专家细节"的分层。折中是让 Critic 审"Agent 自己生成的 summary + evidence 列表"做间接审查，而不是盯 raw output。</p>
   </div>
 </div>
@@ -467,7 +467,7 @@ body{overscroll-behavior-y:contain}
   <div class="core">总管和下游 Specialist 之间的统一任务契约——一次定义、所有 Agent 按它消费，谁换实现协议都不变</div>
   <div class="card-body">
     <p><strong>它是什么。</strong>一个跨 Agent 的任务结构，总管派活时按这个格式组装：意图、允许调用哪些 Agent、查询内容、抽出来的实体、上下文、结果怎么回传。下游每个 Specialist 都按这份契约接活、回结果。</p>
-    <p><strong>为什么重要（SSOT）。</strong>agentExecutors 是跨 Agent 调用的统一入口，十几个下游都按 managerTask 消费。如果每个 Agent 自定义一套任务格式，schema 就乱了——字段对不齐、错误模型不统一。统一契约让"怎么派活、怎么回结果"只有一份真相。</p>
+    <p><strong>为什么重要（SSOT 单一数据源）。</strong>agentExecutors 是跨 Agent 调用的统一入口，十几个下游都按 managerTask 消费。如果每个 Agent 自定义一套任务格式，schema 就乱了——字段对不齐、错误模型不统一。统一契约让"怎么派活、怎么回结果"只有一份真相。</p>
     <p><strong>意义：解耦。</strong>总管换路由策略、下游某个 Specialist 换实现，只要还认这个协议就能互通。这是跨进程多 Agent 能独立扩展、独立部署的根基。</p>
   </div>
 </div>
@@ -488,7 +488,7 @@ body{overscroll-behavior-y:contain}
   <div class="card-body">
     <p><strong>为什么需要。</strong>多 Agent 系统一次请求要穿过 probe、route、plan、execute、critic 一串节点和多个子 Agent，出问题（路由错了、子 Agent 幻觉、Critic 漏审）很难靠日志反推，必须能追踪到每个节点、每次调用。</p>
     <p><strong>怎么做。</strong>LangSmith 做 trace 到 node 级，看每个节点的入参出参与耗时；指标接口和脚本看路由质量和稳定性；聊天页挂进化看板。把"哪一步慢、哪一步错"从主观判断变成可查的事实。</p>
-    <p><strong>诚实边界。</strong>当前是 demo 级——trace 到 node 不到 span，dashboard 和告警没做全。可观测性是多 Agent 生产化的硬骨头：demo 阶段看不到价值，生产阶段定位问题全靠它。</p>
+    <p><strong>诚实边界。</strong>当前是 demo 级——trace（追踪）到 node（节点）不到 span（跨度），dashboard 和告警没做全。可观测性是多 Agent 生产化的硬骨头：demo 阶段看不到价值，生产阶段定位问题全靠它。</p>
   </div>
 </div>
 
@@ -507,9 +507,9 @@ body{overscroll-behavior-y:contain}
   <div class="card-head"><span class="tag proj">进化</span><div class="card-title">自我进化机制是什么样的，边界在哪？</div></div>
   <div class="core">经验回放 + Prompt/规则进化 + 策略金丝雀 + 全 Agent 健康探测——让系统越用越准，但自动晋级默认关、没接真实流量所以实测数据为零</div>
   <div class="card-body">
-    <p><strong>向量召回 + 用户画像（经验回放）。</strong>成功 task 的经验写进向量记忆，用 embedding 加相似度混合排序，下次相似 query 召回注入路由的长期记忆；会话用户画像按 sessionId 积累意图偏好与成功任务摘要。</p>
+    <p><strong>向量召回 + 用户画像（经验回放）。</strong>成功 task 的经验写进向量记忆，用 embedding（向量编码）加相似度混合排序，下次相似 query 召回注入路由的长期记忆；会话用户画像按 sessionId 积累意图偏好与成功任务摘要。</p>
     <p><strong>Prompt 补丁 + 策略金丝雀。</strong>失败洞察生成 Prompt 补丁先写 shadow 文件，金丝雀按 sessionId 稳定分桶跑小流量，达标才 promote 注入 router/planner；Planner 硬规则同样走 shadow 进化路径。</p>
-    <p><strong>Planner 硬规则 + 健康探测 + Curator。</strong>plan_lint 强制执行 Planner 硬规则，违规直接拦；tool_health 做全 Agent 健康探测，down 的不进 allowedAgents；后台 Curator 定时治理记忆、进化 Prompt 与规则；Agent 注册表对外暴露能力清单、端点和健康快照。</p>
+    <p><strong>Planner 硬规则 + 健康探测 + Curator。</strong>plan_lint（计划校验）强制执行 Planner 硬规则，违规直接拦；tool_health 做全 Agent 健康探测，down 的不进 allowedAgents；后台 Curator（治理器）定时治理记忆、进化 Prompt 与规则；Agent 注册表对外暴露能力清单、端点和健康快照。</p>
     <p><strong>关键边界与本质。</strong>自动晋级默认关——shadow 只写盘、要人工 promote；没接真实业务流量，所以没有实测效果数据。本质是失败洞察驱动 + 金丝雀验证的受控迭代，不是自主进化（模型权重一行没动）。</p>
   </div>
 </div>
@@ -520,7 +520,7 @@ body{overscroll-behavior-y:contain}
   <div class="card-body">
     <p><strong>真实状态。</strong>立项逻辑不是"现在有人用"，是把多 Agent 编排做到能上生产的工程范式讲清楚。机制设计比较全——probe、Critic、HITL、自进化都有——但实测数据不多。</p>
     <p><strong>术语降级。</strong>简历里"self-evolving"看似自主进化，其实模型权重一行没动——本质是 Prompt 级在线适配，失败样本沉淀成 Prompt 补丁再注入。权重是否变化这类追问，直接回答没动，不往 online learning 上靠。</p>
-    <p><strong>上生产要补什么。</strong>概念上三件：① 用官方 Postgres checkpointer 替掉自研的 checkpoint 存储；② 接 OpenTelemetry 拿真实 trace；③ golden 测试样本从几个扩到几十个做统计显著。机制是 roadmap，不是 PPT。</p>
+    <p><strong>上生产要补什么。</strong>概念上三件：① 用官方 Postgres 检查点存储（checkpointer）替掉自研的；② 接 OpenTelemetry 拿真实 trace；③ golden（基准）测试样本从几个扩到几十个做统计显著。机制是 roadmap，不是 PPT。</p>
   </div>
 </div>
 
