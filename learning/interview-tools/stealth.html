@@ -1007,14 +1007,6 @@ th{font-weight:600;color:#888;font-size:10.5px;letter-spacing:.02em}
   </div>
 </div>
 
-<div class="card" data-c="bagu" data-kw="useEffect useLayoutEffect 同步 异步 渲染">
-  <div class="card-head"><span class="tag bagu">#2</span><div class="card-title">useEffect vs useLayoutEffect</div></div>
-  <div class="core">useLayoutEffect 绘制前同步阻塞，useEffect 绘制后异步</div>
-  <div class="card-body">
-    <p>DOM 更新完 → useLayoutEffect → 浏览器绘制 → useEffect。</p>
-    <p>需要读 DOM 布局或防闪烁用 useLayoutEffect，其他都用 useEffect。</p>
-  </div>
-</div>
 
 <div class="card" data-c="bagu" data-kw="setState Scheduler Reconciler Fiber Committer 渲染更新 Batching lane">
   <div class="card-head"><span class="tag bagu">#2</span><div class="card-title">React 从 setState 到视图更新的完整流程</div></div>
@@ -1057,12 +1049,16 @@ th{font-weight:600;color:#888;font-size:10.5px;letter-spacing:.02em}
   </div>
 </div>
 
-<div class="card" data-c="bagu" data-kw="性能优化 首屏 LCP CDN 懒加载 虚拟列表 代码分割">
-  <div class="card-head"><span class="tag bagu">#11</span><div class="card-title">前端性能优化全链路</div></div>
-  <div class="core">从网络、渲染、资源、代码四个维度逐一优化</div>
+<div class="card" data-c="bagu" data-kw="性能优化 首屏 全链路 LCP FCP INP CLS FID CDN HTTP2 SSR 代码分割 Tree Shaking WebP 字体 preload Critical CSS prefetch Service Worker 骨架屏 React.memo Web Worker 虚拟滚动">
+  <div class="card-head"><span class="tag bagu">#11</span><div class="card-title">前端性能优化全景</div></div>
+  <div class="core">全链路四维度（网络/渲染/资源/代码）+ 首屏专项——优化的本质是"减距离、减体积、减阻塞、减重渲染"</div>
   <div class="card-body">
-    <p>网络层：CDN 缩短物理距离、HTTP/2 多路复用减少连接、Preload 预加载关键资源。渲染层：首屏用 SSR 或骨架屏、图片懒加载、长列表用虚拟滚动只渲染可视区域。资源层：代码分割 dynamic import 按需加载、Tree Shaking 删掉没用的代码、图片用 WebP。代码层：React.memo 和 useMemo 防止不必要的重渲染、耗时计算放 Web Worker 不阻塞主线程。</p>
-    <p>核心指标口诀：LCP 小于 2.5 秒、FID 小于 100 毫秒、CLS 小于 0.1。</p>
+    <p><strong>网络层</strong>：CDN 就近分发、HTTP/2 多路复用减少连接、Preload 预加载关键资源、资源 prefetch 空闲时拉下一页。</p>
+    <p><strong>渲染层</strong>：SSR/SSG 首屏直出 HTML（不用等 JS）、骨架屏降低感知时间、Critical CSS 内联、长列表用虚拟滚动只渲染可视区域、图片懒加载。</p>
+    <p><strong>资源层</strong>：代码分割（React.lazy + Suspense 路由级按需加载）、Tree Shaking 删死代码、图片 WebP + CDN 缩放、字体 preload。</p>
+    <p><strong>代码层</strong>：React.memo 和 useMemo 防不必要的重渲染、耗时计算放 Web Worker 不阻塞主线程。</p>
+    <p><strong>Service Worker</strong>：静态资源离线缓存、二次访问秒开。</p>
+    <p><strong>核心指标</strong>：LCP < 2.5s（Good）/ 4s（Poor）、FCP < 1.8s、CLS < 0.1、FID < 100ms（新项目看 INP）。</p>
   </div>
 </div>
 
@@ -1112,26 +1108,17 @@ th{font-weight:600;color:#888;font-size:10.5px;letter-spacing:.02em}
   </div>
 </div>
 
-<div class="card" data-c="bagu" data-kw="首屏优化 LCP FCP 预加载 代码分割 SSR 预渲染">
-  <div class="card-head"><span class="tag bagu">#23</span><div class="card-title">首屏优化实战方案</div></div>
-  <div class="core">资源层 + 渲染层 + 网络层三管齐下</div>
-  <div class="card-body">
-    <p><strong>资源层</strong>：代码分割（React.lazy + Suspense 路由级按需加载）、Tree Shaking 去死代码、图片 WebP + CDN 缩放、字体 preload。</p>
-    <p><strong>渲染层</strong>：SSR/SSG 首屏直出 HTML（不用等 JS）、骨架屏降低感知时间、Critical CSS 内联。</p>
-    <p><strong>网络层</strong>：CDN 静态资源就近分发、HTTP/2 多路复用减少连接、资源预加载（preload/prefetch）、Service Worker 缓存。</p>
-    <p>量化口诀：LCP < 2.5s 是 Good，FCP < 1.8s 是 Good。</p>
-  </div>
-</div>
 
-<div class="card" data-c="bagu" data-kw="SSR 服务端渲染 Hydration 水合 注水 virtual DOM mismatch React Next.js 同构">
-  <div class="card-head"><span class="tag bagu">#24</span><div class="card-title">SSR + Hydration 详解（千问一面卡壳题）</div></div>
-  <div class="core">SSR是服务端拼HTML直出首屏，Hydration是客户端React对比virtual DOM后复用节点并绑定事件</div>
+<div class="card" data-c="bagu" data-kw="SSR 服务端渲染 Hydration 水合 注水 RSC Server Components virtual DOM mismatch React Next.js 同构 use client 千问一面 阿里">
+  <div class="card-head"><span class="tag bagu">#24</span><div class="card-title">SSR + Hydration + RSC 全景（千问一面卡壳题）</div></div>
+  <div class="core">SSR 服务端拼 HTML 直出首屏，Hydration 客户端对比 vDOM 复用节点并绑事件；RSC 组件级无 hydration——SSR 是页面级、RSC 是组件级</div>
   <div class="card-body">
-    <p><strong>SSR流程6步</strong>：客户端发起请求 → Node服务器匹配路由 → 执行数据预取函数（如getServerSideProps）→ 调后端API拿数据 → React把组件树renderToString成HTML字符串 → 数据注入HTML（window.__INITIAL_STATE__）→ 返回浏览器直接绘制（首屏快）。</p>
-    <p><strong>Hydration水合6步</strong>：浏览器下载HTML立即显示（用户已能看到内容）→ JS bundle下载执行 → React在内存基于同样的组件构建virtual DOM → <strong>对比</strong>virtual DOM和SSR的DOM节点（匹配则复用，不匹配报Mismatch warning）→ 给现有DOM节点<strong>绑定事件监听</strong>（这是为什么按钮在hydration前点了没反应）→ 组件state和effect激活，页面变成可交互。</p>
-    <p><strong>关键坑——Hydration Mismatch</strong>：用了Date.now()、Math.random()、window.innerWidth等会导致服务端和客户端渲染结果不一致，React会丢弃SSR HTML重渲染，性能收益归零。解决：用useEffect里设置这些值，或typeof window !== 'undefined'判断。</p>
-    <p><strong>React 18增强</strong>：Selective Hydration（优先hydrate用户正在交互的部分）+ Concurrent Features，避免大页面hydration阻塞整个交互。</p>
-    <p class="hint">千问一面被追问到这块时只答到"DOM树构建+事件绑定"——核心漏掉了"对比virtual DOM匹配则复用"这个机制和Mismatch坑。</p>
+    <p><strong>SSR 6 步</strong>：客户端请求 → Node 服务器匹配路由 → 执行数据预取（getServerSideProps）→ 调后端 API 拿数据 → React renderToString 成 HTML → 数据注入 HTML（window.__INITIAL_STATE__）→ 返回浏览器直接绘制（首屏快）。</p>
+    <p><strong>Hydration 6 步</strong>：浏览器下载 HTML 立即显示（用户已能看到内容）→ JS bundle 下载执行 → React 在内存基于同样的组件构建 vDOM → <strong>对比</strong> vDOM 和 SSR 的 DOM（匹配则复用，不匹配报 Mismatch warning）→ 给现有 DOM 节点<strong>绑定事件</strong>（这是为什么按钮在 hydration 前点了没反应）→ 组件 state 和 effect 激活。</p>
+    <p><strong>关键坑 Hydration Mismatch</strong>：用了 Date.now()、Math.random()、window.innerWidth 会导致服务端和客户端渲染不一致，React 丢弃 SSR HTML 重渲染、性能收益归零。解法：useEffect 里设置这些值，或 typeof window !== 'undefined' 判断。</p>
+    <p><strong>RSC vs SSR</strong>：RSC 服务端渲染后输出"组件已渲染的描述"，客户端直接消费、<strong>不重新执行 JS</strong>，所以<strong>不需要 hydration</strong>。性能上首屏更快（无 hydration JS 执行）、Bundle 减 40%+（静态部分不打进 client），但 TTFB 稍慢（服务端要算）。Next.js 15 App Router 默认 RSC，<code>'use client'</code> 切 Client Component。</p>
+    <p><strong>React 18 增强</strong>：Selective Hydration 优先 hydrate 用户正在交互的部分 + Concurrent Features，避免大页面 hydration 阻塞整个交互。</p>
+    <p class="hint">千问一面被追问只答到"DOM 树构建+事件绑定"——核心漏了"对比 vDOM 匹配则复用"这个机制和 Mismatch 坑。能讲清"RSC 不需要 hydration"是阿里系加分点。</p>
   </div>
 </div>
 
@@ -1193,16 +1180,25 @@ th{font-weight:600;color:#888;font-size:10.5px;letter-spacing:.02em}
   </div>
 </div>
 
-<div class="card" data-c="bagu" data-kw="TypeScript Pick Omit Record Partial 映射类型 手写实现 泛型 keyof">
-  <div class="card-head"><span class="tag bagu">#35</span><div class="card-title">TS工具类型手写实现（Pick/Omit/Record）</div></div>
-  <div class="core">Pick = { [P in K]: T[P] }，K extends keyof T 约束子集</div>
+<div class="card" data-c="bagu" data-kw="TypeScript Pick Omit Record Partial Required Readonly infer 映射类型 修饰符 keyof 手写实现 字节 拼多多 ReturnType">
+  <div class="card-head"><span class="tag bagu">#35</span><div class="card-title">TS 工具类型手写全景</div></div>
+  <div class="core">5 个核心工具类型（Pick/Omit/Record/Partial/Required）+ infer 条件类型推断；映射类型三步法 + 加减 ? 修饰符</div>
   <div class="card-body">
-    <p><strong>Pick</strong>：从T中取K指定的属性。type MyPick&lt;T, K extends keyof T&gt; = { [P in K]: T[P] };</p>
-    <p><strong>Omit</strong>：排除K指定的属性。type MyOmit&lt;T, K extends keyof T&gt; = Pick&lt;T, Exclude&lt;keyof T, K&gt;&gt;;</p>
-    <p><strong>Record</strong>：构造键为K值为T的类型。type MyRecord&lt;K extends string, T&gt; = { [P in K]: T };</p>
-    <p><strong>Partial</strong>：所有属性变可选。type MyPartial&lt;T&gt; = { [P in keyof T]?: T[P] };</p>
-    <p><strong>三步法</strong>：① K extends keyof T 约束K必须是T的key子集；② [P in K] 遍历K的每个key；③ T[P] 取原类型对应值类型。</p>
+    <p><strong>三步法</strong>（写映射类型的固定套路）：① <code>K extends keyof T</code> 约束 K 必须是 T 的 key 子集；② <code>[P in K]</code> 遍历 K 的每个 key；③ <code>T[P]</code> 取原类型对应值类型。</p>
+    <p><strong>映射类型修饰符</strong>：<code>+</code> 加（默认可省）、<code>-</code> 去。<code>-?</code> 去可选（Required 用）、<code>-readonly</code> 去只读。</p>
+    <p><strong>infer 在条件类型里推断类型变量</strong>——ReturnType 通用版能写出来是加分。</p>
   </div>
+  <div class="code-blk">// 5 个核心工具类型
+type MyPick<T, K extends keyof T> = { [P in K]: T[P] };
+type MyOmit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
+type MyRecord<K extends string, T> = { [P in K]: T };
+type MyPartial<T> = { [P in keyof T]?: T[P] };
+type MyRequired<T> = { [P in keyof T]-?: T[P] };
+
+// infer：提取函数返回值 / Promise 值 / 数组元素
+type ReturnT<T> = T extends (...args: any[]) => infer R ? R : never;
+type Unpacked<T> = T extends Promise<infer U> ? U : T;
+type Item<T> = T extends (infer I)[] ? I : never;</div>
 </div>
 
 <!-- ===== 网易基础真题补充（2026-06-26）===== -->
@@ -1380,18 +1376,6 @@ th{font-weight:600;color:#888;font-size:10.5px;letter-spacing:.02em}
   </div>
 </div>
 
-<div class="card" data-c="bagu" data-kw="阿里 mPaaS Rax Weex 小程序 UC内核 Quark 大麦 阿里系 跨端">
-  <div class="card-head"><span class="tag bagu">#46</span><div class="card-title">阿里小程序生态 mPaaS/Rax/Weex（大麦补强）</div></div>
-  <div class="core">Rax(React 语法跨端) + mPaaS(移动平台) + UC/Quark 内核，大麦 C 端运行环境</div>
-  <div class="card-body">
-    <p>· <strong>mPaaS</strong>：阿里移动开发平台，含 H5 容器（ Nebula）、小程序框架、热修复、消息推送、移动网关。大麦/支付宝/淘系共用。</p>
-    <p>· <strong>Rax</strong>：阿里跨端框架，Write Once Run Everywhere，<strong>React 语法</strong>。可编译到 Web/RN/小程序/WebView。新版本基于 Rax 2.x + 自定义 renderer。</p>
-    <p>· <strong>Weex</strong>：阿里早期跨端方案，<strong>Vue 语法</strong>，渲染原生。已逐步被 Rax 替代，但老项目仍多。</p>
-    <p>· <strong>UC 内核 / Quark 内核</strong>：大麦 C 端 H5 主要运行环境（阿里自研浏览器内核），对自家前端框架有针对性优化。</p>
-    <p>· <strong>支付宝小程序 / 淘宝小程序</strong>：基于 mPaaS 小程序框架，多端投放。</p>
-    <p class="hint">大麦属于阿里体系，这些是常识。候选人无深度实战，了解概念+能说"qiankun 微前端思路可迁移"即可，别硬编项目。</p>
-  </div>
-</div>
 
 <div class="card" data-c="bagu" data-kw="React 状态管理 useState useReducer Context Redux Zustand MobX Recoil 全局 大麦真题">
   <div class="card-head"><span class="tag bagu">#47</span><div class="card-title">React 状态管理全景（大麦真题）</div></div>
@@ -1445,32 +1429,6 @@ const [x, setX] = useState(0);
   </div>
 </div>
 
-<div class="card" data-c="bagu" data-kw="TypeScript Partial Required infer 工具类型 映射 修饰符 字节高频">
-  <div class="card-head"><span class="tag bagu">#50</span><div class="card-title">TypeScript Partial/Required/infer 实现（字节高频）</div></div>
-  <div class="core">映射类型加减 ? 修饰符 + infer 在条件类型里推断类型变量</div>
-  <div class="card-body">
-    <p><strong>Partial（全可选）</strong>：给每个属性加 <code>?</code></p>
-    <div class="code-blk">type Partial&lt;T&gt; = {
-  [P in keyof T]?: T[P];
-};</div>
-    <p><strong>Required（全必填）</strong>：去掉 <code>?</code>，用 <code>-?</code> 修饰符</p>
-    <div class="code-blk">type Required&lt;T&gt; = {
-  [P in keyof T]-?: T[P];
-};</div>
-    <p><strong>映射类型修饰符</strong>：<code>+</code> 加（默认可省）、<code>-</code> 去。<code>-?</code> 去可选，<code>-readonly</code> 去只读。</p>
-    <p><strong>infer（条件类型里推断）</strong>：在 <code>extends</code> 子句中用 <code>infer U</code> 声明类型变量，TS 自动推断。</p>
-    <div class="code-blk">// 提取函数返回值类型
-type ReturnT&lt;T&gt; = T extends (...args: any[]) =&gt; infer R ? R : never;
-
-// 提取 Promise 的值类型
-type Unpacked&lt;T&gt; = T extends Promise&lt;infer U&gt; ? U : T;
-
-// 提取数组元素类型
-type Item&lt;T&gt; = T extends (infer I)[] ? I : never;</div>
-    <p><strong>兄弟题</strong>：Pick&lt;T,K&gt;（选子集）、Omit&lt;T,K&gt;（排除子集）、Record&lt;K,V&gt;（构造）、ReturnType（函数返回值，基于 infer）。</p>
-    <p class="hint">字节/拼多多高频，Pick/Omit 见 #35 卡。infer 是递归类型推断的核心，能写出 ReturnType 通用版是加分。</p>
-  </div>
-</div>
 
 <!-- ==================== 手撕代码 ==================== -->
 <div class="card" data-c="code" data-kw="速查 索引 题型 关键词 定位 套路 哪个 怎么搜">
@@ -1491,10 +1449,15 @@ type Item&lt;T&gt; = T extends (infer I)[] ? I : never;</div>
   </div>
 </div>
 
-<div class="card" data-c="code" data-kw="Promise 并发 控制 调度器 手写 上传 批量">
-  <div class="card-head"><span class="tag code">#6</span><div class="card-title">Promise 并发调度器</div></div>
-  <div class="core">计数器 + 等待队列，完成一个放一个</div>
-  <div class="code-blk">class Scheduler {
+<div class="card" data-c="code" data-kw="Promise 并发 调度器 all race 限制 计数器 第一个 字节 首屏竞速 批量 上传 等待队列">
+  <div class="card-head"><span class="tag code">#6</span><div class="card-title">Promise 并发（调度器+all+race）</div></div>
+  <div class="core">三个并发手写对比——调度器限并发数（计数器+等待队列）、all 全成功才 resolve、race 第一个 settle 就定胜负</div>
+  <div class="card-body">
+    <p><strong>三兄弟对比</strong>：调度器控制"最多同时跑 N 个"，all 等所有成功（一个 reject 全 reject），race 第一个完成（成功或失败）就决定整个结果。<strong>race 实战场景</strong>：① 首屏竞速（主接口+兜底接口谁先回用谁）② 超时控制 <code>race([fetch(url), timeout(3000)])</code> ③ 取消旧请求。<strong>race 坑</strong>：用 <code>Promise.resolve(p)</code> 包一层兼容非 Promise 值；第一个触发后状态不可逆，后续调用无效。<strong>vs allSettled/any</strong>：allSettled 全完成不管成败，any 第一个<strong>成功</strong>决定、全失败才失败。</p>
+    <p class="hint">三兄弟写完能讲清差异就过。串行+重试见 #7 卡。</p>
+  </div>
+  <div class="code-blk">// ① 并发调度器（限 max 个同时跑）
+class Scheduler {
   constructor(max) { this.max = max; this.count = 0; this.queue = []; }
   add(fn) {
     return new Promise(resolve => {
@@ -1511,16 +1474,37 @@ type Item&lt;T&gt; = T extends (infer I)[] ? I : never;</div>
       fn().then(() => { this.count--; resolve(); this.next(); });
     }
   }
-}</div>
+}
+
+// ② Promise.all：计数器全到齐才 resolve
+Promise.myAll = function(promises) {
+  return new Promise((resolve, reject) => {
+    const results = []; let count = 0;
+    promises.forEach((p, i) => {
+      Promise.resolve(p).then(
+        val => { results[i] = val; if (++count === promises.length) resolve(results); },
+        reject
+      );
+    });
+    if (!promises.length) resolve([]);
+  });
+};
+
+// ③ Promise.race：第一个 settle 就定胜负
+Promise.myRace = function(promises) {
+  return new Promise((resolve, reject) => {
+    promises.forEach(p => Promise.resolve(p).then(resolve, reject));
+  });
+};</div>
 </div>
 
-<div class="card" data-c="code" data-kw="手写 深拷贝 防抖 节流 instanceof EventEmitter 回城 技能CD">
-  <div class="card-head"><span class="tag code">#1-3</span><div class="card-title">深拷贝 + 防抖节流 + instanceof</div></div>
-  <div class="core">深拷贝（循环引用）+ 防抖（回城被打断重读条）+ 节流（技能CD固定频率）</div>
+<div class="card" data-c="code" data-kw="手写 深拷贝 防抖 节流 instanceof EventEmitter 发布订阅 WeakMap 循环引用 回城 技能CD">
+  <div class="card-head"><span class="tag code">#1-4</span><div class="card-title">手写专题：深拷贝 + 防抖节流 + EventEmitter + instanceof</div></div>
+  <div class="core">四件常考手写并集——深拷贝用 WeakMap 解循环引用、防抖=回城被打断重读条、节流=技能 CD 固定频率、EventEmitter 发布订阅、instanceof 沿原型链查</div>
   <div class="card-body">
-    <p><strong>正确比喻（千问一面翻车点）</strong>：<strong>防抖=英雄联盟回城</strong>——你每次按都重新读条，只有最后那次能完成（被打断就重来）；<strong>节流=技能冷却</strong>——技能用完后固定CD内不能再放，但CD到了就一定能放。<strong>核心区别</strong>：防抖只执行最后一次（quiet period后），节流执行第一次然后每隔delay执行一次。<strong>典型场景</strong>：防抖=搜索框输入/window resize；节流=scroll/mousemove/按钮防连点。</p>
+    <p><strong>防抖 vs 节流的比喻（千问一面翻车点）</strong>：<strong>防抖=英雄联盟回城</strong>——你每次按都重新读条，只有最后那次能完成（被打断就重来）；<strong>节流=技能冷却</strong>——技能用完后固定 CD 内不能再放，但 CD 到了就一定能放。<strong>核心区别</strong>：防抖只执行最后一次（quiet period 后），节流执行第一次然后每隔 delay 执行一次。<strong>典型场景</strong>：防抖=搜索框输入/window resize；节流=scroll/mousemove/按钮防连点。</p>
   </div>
-  <div class="code-blk">// 深拷贝（处理循环引用）
+  <div class="code-blk">// ① 深拷贝（WeakMap 解循环引用）
 function deepClone(obj, map = new WeakMap()) {
   if (obj === null || typeof obj !== 'object') return obj;
   if (map.has(obj)) return map.get(obj);
@@ -1530,26 +1514,23 @@ function deepClone(obj, map = new WeakMap()) {
   return clone;
 }
 
-// 防抖：每次清除前一个timer，重新计时
+// ② 防抖：每次清前一个 timer 重新计时
 function debounce(fn, delay) {
   let timer;
   return function(...args) { clearTimeout(timer); timer = setTimeout(() => fn.apply(this, args), delay); };
 }
 
-// 节流：用flag锁，CD内不再放
+// ③ 节流：用 lastTime 锁，CD 内不再放
 function throttle(fn, interval) {
   let lastTime = 0;
   return function(...args) {
     const now = Date.now();
     if (now - lastTime >= interval) { lastTime = now; fn.apply(this, args); }
   };
-}</div>
-</div>
+}
 
-<div class="card" data-c="code" data-kw="手写 EventEmitter instanceof 发布订阅 on emit off once">
-  <div class="card-head"><span class="tag code">#9</span><div class="card-title">手写 EventEmitter</div></div>
-  <div class="core">发布订阅模式 + 原型链检查</div>
-  <div class="code-blk">class EventEmitter {
+// ④ EventEmitter：发布订阅（on/emit/off/once）
+class EventEmitter {
   constructor() { this.events = {}; }
   on(event, fn) { (this.events[event] ||= []).push(fn); }
   emit(event, ...args) { (this.events[event] || []).forEach(fn => fn(...args)); }
@@ -1557,13 +1538,14 @@ function throttle(fn, interval) {
   once(event, fn) { const wrap = (...args) => { fn(...args); this.off(event, wrap); }; this.on(event, wrap); }
 }
 
-// instanceof 实现
+// ⑤ instanceof：沿原型链查
 function myInstanceof(obj, Constructor) {
   let proto = Object.getPrototypeOf(obj);
   while (proto) { if (proto === Constructor.prototype) return true; proto = Object.getPrototypeOf(proto); }
   return false;
 }</div>
 </div>
+
 
 <div class="card" data-c="code" data-kw="call apply bind 手写 this 柯里化 new">
   <div class="card-head"><span class="tag code">#4</span><div class="card-title">手写 call / apply / bind</div></div>
@@ -1611,22 +1593,6 @@ function withRetry(fn, retries = 3, delay = 1000) {
 }</div>
 </div>
 
-<div class="card" data-c="code" data-kw="Promise.all 手写 计数器 并行">
-  <div class="card-head"><span class="tag code">#8</span><div class="card-title">手写 Promise.all</div></div>
-  <div class="core">计数器全到齐才 resolve，一个 reject 全 reject</div>
-  <div class="code-blk">Promise.myAll = function(promises) {
-  return new Promise((resolve, reject) => {
-    const results = []; let count = 0;
-    promises.forEach((p, i) => {
-      Promise.resolve(p).then(
-        val => { results[i] = val; if (++count === promises.length) resolve(results); },
-        reject
-      );
-    });
-    if (!promises.length) resolve([]);
-  });
-};</div>
-</div>
 
 <div class="card" data-c="code" data-kw="模板编译 模板引擎 {{}} 替换 拼多多">
   <div class="card-head"><span class="tag code">#10</span><div class="card-title">模板编译函数（拼多多高频）</div></div>
@@ -1797,36 +1763,31 @@ function bfs(grid, r, c) {
 }</div>
 </div>
 
-<div class="card" data-c="code" data-kw="反转链表 reverse 三指针 prev cur 字节 快手 LC206">
-  <div class="card-head"><span class="tag code">T6</span><div class="card-title">反转链表（字节/快手高频 LC206）</div></div>
-  <div class="core">反转 → 三指针 prev/cur/next 逐个翻转</div>
-  <div class="card-body"><p class="hint">先说：三个指针，每次把当前节点指向前一个，然后三个都后移，O(n)O(1)</p></div>
-  <div class="code-blk">function reverseList(head) {
+<div class="card" data-c="code" data-kw="链表 反转 环检测 合并 有序 prev cur dummy 双指针 快慢指针 LC206 LC141 LC21 字节 快手">
+  <div class="card-head"><span class="tag code">T6</span><div class="card-title">链表三件套（反转+环检测+合并）</div></div>
+  <div class="core">三题共用指针套路——反转用 prev/cur/next 翻转、环检测用快慢指针、合并用 dummy 头+双指针比大小</div>
+  <div class="card-body">
+    <p class="hint">三题都是 O(n)O(1)。反转：三个指针逐个翻；环检测：快走两步慢走一步相遇就有环；合并：dummy 头节点，两指针比大小，小的接上，最后把剩余的接上。</p>
+  </div>
+  <div class="code-blk">// ① 反转链表（LC206）
+function reverseList(head) {
   let prev = null, cur = head;
   while (cur) { const next = cur.next; cur.next = prev; prev = cur; cur = next; }
   return prev;
-}</div>
-</div>
+}
 
-<div class="card" data-c="code" data-kw="环检测 快慢指针 链表 环 cycle LC141">
-  <div class="card-head"><span class="tag code">T6</span><div class="card-title">链表环检测（LC141）</div></div>
-  <div class="core">是否有环 → 快慢指针，快走两步慢走一步</div>
-  <div class="card-body"><p class="hint">先说：快慢指针，快走两步慢走一步，相遇就有环，O(n)</p></div>
-  <div class="code-blk">function hasCycle(head) {
+// ② 环检测（LC141）
+function hasCycle(head) {
   let slow = head, fast = head;
   while (fast && fast.next) {
     slow = slow.next; fast = fast.next.next;
     if (slow === fast) return true;
   }
   return false;
-}</div>
-</div>
+}
 
-<div class="card" data-c="code" data-kw="合并有序链表 merge dummy 双指针 LC21">
-  <div class="card-head"><span class="tag code">T6</span><div class="card-title">合并两个有序链表（LC21）</div></div>
-  <div class="core">合并 → dummy头 + 双指针比大小</div>
-  <div class="card-body"><p class="hint">先说：创建dummy头节点，两个指针比大小，小的接上，最后把剩余的接上</p></div>
-  <div class="code-blk">function mergeTwoLists(l1, l2) {
+// ③ 合并两个有序链表（LC21）
+function mergeTwoLists(l1, l2) {
   const dummy = { next: null }; let cur = dummy;
   while (l1 && l2) {
     if (l1.val <= l2.val) { cur.next = l1; l1 = l1.next; }
@@ -1837,6 +1798,8 @@ function bfs(grid, r, c) {
   return dummy.next;
 }</div>
 </div>
+
+
 
 <div class="card" data-c="code" data-kw="快排 快速排序 qs 挖坑填数 分治 拼多多 排序">
   <div class="card-head"><span class="tag code">T7</span><div class="card-title">快速排序（拼多多必考）</div></div>
@@ -1889,51 +1852,30 @@ function bfs(grid, r, c) {
 }</div>
 </div>
 
-<div class="card" data-c="code" data-kw="DP 贪心 最大子序和 连续子数组 最优">
-  <div class="card-head"><span class="tag code">T9</span><div class="card-title">DP贪心 — 看到"最大/最小子数组/连续最优"就用</div></div>
-  <div class="core">最大子数组和 → 当前和为负就扔掉重新开始</div>
-  <div class="card-body"><p class="hint">先说：遍历维护当前和，为负就扔掉重新开始，O(n)</p></div>
-  <div class="code-blk">function maxSubArray(nums) {
+<div class="card" data-c="code" data-kw="DP 贪心 一维 最大子序和 买卖股票 最佳时机 子数组 连续最优 LC53 LC121 字节 腾讯">
+  <div class="card-head"><span class="tag code">T9</span><div class="card-title">DP/贪心：最大子序和 + 股票</div></div>
+  <div class="core">两题都是一维 DP/贪心，一次遍历维护极值——最大子序和"当前和为负就扔掉重来"，股票"维护历史最低价算利润"</div>
+  <div class="card-body">
+    <p class="hint">两题套路一致：遍历维护一个动态极值，O(n)。最大子序和——cur 为负就重开；股票——记录最小买入价，每天算利润取最大。</p>
+  </div>
+  <div class="code-blk">// ① 最大子序和（LC53）
+function maxSubArray(nums) {
   let cur = nums[0], max = nums[0];
   for (let i = 1; i < nums.length; i++) {
     cur = Math.max(nums[i], cur + nums[i]);
     max = Math.max(max, cur);
   }
   return max;
-}</div>
-</div>
-<div class="card" data-c="code" data-kw="双指针 删除重复项 颜色分类 荷兰国旗 原地">
-  <div class="card-head"><span class="tag code">专项</span><div class="card-title">双指针专项 3 题（15 分钟一组）</div></div>
-  <div class="core">k 慢指针标记写入位置，三种变形一个套路</div>
-  <div class="code-blk">// ① 删除有序数组重复项（LeetCode 26）
-function removeDuplicates(nums) {
-  let k = 1;
-  for (let i = 1; i < nums.length; i++) {
-    if (nums[i] !== nums[k - 1]) { nums[k] = nums[i]; k++; }
-  }
-  return k; // k 是去重后长度
 }
 
-// ② 删除重复项 II（允许出现两次）
-function removeDuplicatesII(nums) {
-  let k = 2;
-  for (let i = 2; i < nums.length; i++) {
-    if (nums[i] !== nums[k - 2]) { nums[k] = nums[i]; k++; }
+// ② 买卖股票最佳时机（LC121）
+function maxProfit(prices) {
+  let minPrice = Infinity, maxProfit = 0;
+  for (const p of prices) {
+    minPrice = Math.min(minPrice, p);
+    maxProfit = Math.max(maxProfit, p - minPrice);
   }
-  return k; // 通解：允许 n 次就和 k-n 比较
-}
-
-// ③ 颜色分类 / 荷兰国旗（LeetCode 75）
-function sortColors(nums) {
-  let lo = 0, mid = 0, hi = nums.length - 1;
-  while (mid <= hi) {
-    if (nums[mid] === 0) {
-      [nums[lo], nums[mid]] = [nums[mid], nums[lo]]; lo++; mid++;
-    } else if (nums[mid] === 1) { mid++;
-    } else {
-      [nums[mid], nums[hi]] = [nums[hi], nums[mid]]; hi--;
-    } // swap hi 后 mid 不前进！换来的可能还是 2
-  }
+  return maxProfit;
 }</div>
 </div>
 
@@ -1992,21 +1934,6 @@ class LRUCache {
 }</div>
 </div>
 
-<div class="card" data-c="code" data-kw="买卖股票 最佳时机 贪心 最大利润 DP 字节 腾讯 LC121">
-  <div class="card-head"><span class="tag code">T11</span><div class="card-title">买卖股票的最佳时机 (LC121)</div></div>
-  <div class="core">维护最小买入价，每天算利润取最大。一次遍历 O(n)</div>
-  <div class="card-body">
-    <p><strong>思路：</strong>遍历时记录历史最低价，用当前价减最低价就是"今天卖出的利润"</p>
-  </div>
-  <div class="code-blk">function maxProfit(prices) {
-  let minPrice = Infinity, maxProfit = 0;
-  for (const p of prices) {
-    minPrice = Math.min(minPrice, p);
-    maxProfit = Math.max(maxProfit, p - minPrice);
-  }
-  return maxProfit;
-}</div>
-</div>
 
 <div class="card" data-c="code" data-kw="有效括号 栈 匹配 对称 stack 字节 腾讯 LC20">
   <div class="card-head"><span class="tag code">T12</span><div class="card-title">有效的括号 (LC20)</div></div>
@@ -2025,29 +1952,6 @@ class LRUCache {
 }</div>
 </div>
 
-<div class="card" data-c="code" data-kw="搜索旋转排序数组 二分查找 rotated binary search 字节 LC33">
-  <div class="card-head"><span class="tag code">T13</span><div class="card-title">搜索旋转排序数组 (LC33)</div></div>
-  <div class="core">二分变种：先判断哪半边有序，再决定去哪边找</div>
-  <div class="card-body">
-    <p><strong>思路：</strong>mid 落在有序半边 → 判断 target 在不在有序侧 → 不在就去无序侧</p>
-  </div>
-  <div class="code-blk">function search(nums, target) {
-  let lo = 0, hi = nums.length - 1;
-  while (lo <= hi) {
-    const mid = (lo + hi) >> 1;
-    if (nums[mid] === target) return mid;
-    // 左半边有序
-    if (nums[lo] <= nums[mid]) {
-      if (nums[lo] <= target && target < nums[mid]) hi = mid - 1;
-      else lo = mid + 1;
-    } else { // 右半边有序
-      if (nums[mid] < target && target <= nums[hi]) lo = mid + 1;
-      else hi = mid - 1;
-    }
-  }
-  return -1;
-}</div>
-</div>
 
 <div class="card" data-c="code" data-kw="最近公共祖先 LCA 二叉树 递归 左右子树 腾讯 字节 LC236">
   <div class="card-head"><span class="tag code">T14</span><div class="card-title">二叉树的最近公共祖先 (LC236)</div></div>
@@ -2064,24 +1968,6 @@ class LRUCache {
 }</div>
 </div>
 
-<div class="card" data-c="code" data-kw="最长公共子序列 LCS DP 二维 动态规划 腾讯 字节 LC1143">
-  <div class="card-head"><span class="tag code">T15</span><div class="card-title">最长公共子序列 (LC1143)</div></div>
-  <div class="core">经典二维 DP：dp[i][j] = 字符相同取左上+1，否则取 max(上,左)</div>
-  <div class="card-body">
-    <p><strong>思路：</strong>dp 表格，行是 s1、列是 s2。字符匹配 → dp[i-1][j-1]+1；不匹配 → max(dp[i-1][j], dp[i][j-1])</p>
-  </div>
-  <div class="code-blk">function longestCommonSubsequence(s1, s2) {
-  const m = s1.length, n = s2.length;
-  const dp = Array.from({length: m + 1}, () => Array(n + 1).fill(0));
-  for (let i = 1; i <= m; i++) {
-    for (let j = 1; j <= n; j++) {
-      if (s1[i-1] === s2[j-1]) dp[i][j] = dp[i-1][j-1] + 1;
-      else dp[i][j] = Math.max(dp[i-1][j], dp[i][j-1]);
-    }
-  }
-  return dp[m][n];
-}</div>
-</div>
 
 <div class="card" data-c="code" data-kw="数组转树 扁平 树形 parentId 递归 Map 拼多多 菜单">
   <div class="card-head"><span class="tag code">真题</span><div class="card-title">扁平数组转树结构</div></div>
@@ -2134,31 +2020,6 @@ function buildTreeOptimized(list) {
 // get({}, 'a.b', '默认')      → '默认'</div>
 </div>
 
-<div class="card" data-c="code" data-kw="flatten 对象拍平 嵌套 递归 reduce 路径拼接 起点">
-  <div class="card-head"><span class="tag code">真题</span><div class="card-title">flatten(obj) 嵌套对象拍平</div></div>
-  <div class="core">递归遍历+路径拼接，对象则递归，否则赋值</div>
-  <div class="card-body">
-    <p><strong>核心思路</strong>：遍历 entries，拼接 a.b.c 路径。值是对象则递归，否则直接赋值。</p>
-    <p><strong>注意</strong>：排除 null 和数组（typeof null === 'object'），用 reduce 累积结果。</p>
-  </div>
-  <div class="code-blk">function flatten(obj, prefix = '') {
-  return Object.entries(obj).reduce(
-    (res, [key, val]) => {
-      const path = prefix
-        ? `${prefix}.${key}` : key;
-      if (val && typeof val === 'object'
-        && !Array.isArray(val)) {
-        Object.assign(res, flatten(val, path));
-      } else {
-        res[path] = val;
-      }
-      return res;
-    }, {});
-}
-
-// flatten({a:{b:{c:1},d:2}})
-// → {'a.b.c': 1, 'a.d': 2}</div>
-</div>
 
 <!-- ===== 手撕真题补充：大麦正则题 + 字节真题（2026-06-24）===== -->
 
@@ -2217,31 +2078,6 @@ function buildTreeOptimized(list) {
   </div>
 </div>
 
-<div class="card" data-c="code" data-kw="最大数组和 贪心 K次取反 LC1005 字节真题 排序 负数">
-  <div class="card-head"><span class="tag code">真题</span><div class="card-title">贪心：最大数组和（字节一面真题 LC1005）</div></div>
-  <div class="core">排序→先翻负数→剩余奇数次翻最小值</div>
-  <div class="card-body">
-    <p><strong>题意</strong>：给整数数组和 k，可对任意元素取反 k 次，求最大数组和。</p>
-    <p><strong>贪心三步</strong>：</p>
-    <p>① <strong>排序</strong>：从小到大，优先处理负数</p>
-    <p>② <strong>翻负数</strong>：遍历，遇到负数且 k&gt;0 就取反，k--</p>
-    <p>③ <strong>处理剩余 k</strong>：若 k 为奇数，翻当前最小值（此时全正，翻最小损失最小）；偶数则抵消不影响</p>
-    <div class="code-blk">function maxSumAfterNegations(arr, k) {
-  arr.sort((a, b) =&gt; a - b);
-  for (let i = 0; i &lt; arr.length &amp;&amp; k &gt; 0 &amp;&amp; arr[i] &lt; 0; i++, k--) {
-    arr[i] = -arr[i];
-  }
-  if (k % 2 === 1) {
-    const idx = arr.indexOf(Math.min(...arr));
-    arr[idx] = -arr[idx];
-  }
-  return arr.reduce((a, b) =&gt; a + b, 0);
-}</div>
-    <p><strong>复杂度</strong>：O(n log n) 排序主导；空间 O(1)（或排序 O(log n)）。</p>
-    <p><strong>易错</strong>：剩余 k 奇偶判断（偶数次取反同一元素互相抵消）；翻最小值用 indexOf 避免改错位置。</p>
-    <p class="hint">字节 2026 年初亲历真题。字节喜欢贪心+DP，手撕时先 90 秒讲思路再写，写完主动跑用例。</p>
-  </div>
-</div>
 
 <div class="card" data-c="code" data-kw="请求终止 AbortController RequestManager 取消请求 fetch 字节真题 单例">
   <div class="card-head"><span class="tag code">真题</span><div class="card-title">手写：请求终止 AbortController（字节真题）</div></div>
@@ -2274,24 +2110,6 @@ function buildTreeOptimized(list) {
   </div>
 </div>
 
-<div class="card" data-c="code" data-kw="Promise.race 手写 并发 第一个 字节 首屏竞速">
-  <div class="card-head"><span class="tag code">真题</span><div class="card-title">手写 Promise.race（字节高频）</div></div>
-  <div class="core">第一个完成的（成功或失败）决定结果，立即 resolve/reject 外层</div>
-  <div class="card-body">
-    <div class="code-blk">function race(promises) {
-  return new Promise((resolve, reject) =&gt; {
-    promises.forEach(p =&gt; {
-      Promise.resolve(p).then(resolve, reject);
-    });
-  });
-}</div>
-    <p><strong>关键点</strong>：① 用 <code>Promise.resolve(p)</code> 包一层兼容非 Promise 值 ② 每个都直接调外层 resolve/reject，<strong>第一个触发后就定了</strong>（Promise 状态不可逆，后续调用无效）。</p>
-    <p><strong>vs Promise.all</strong>：all 全成功才成功（计数器+结果数组按索引存）；race 第一个定胜负。</p>
-    <p><strong>vs allSettled / any</strong>：allSettled 全完成不管成败；any 第一个<strong>成功</strong>决定，全失败才失败。</p>
-    <p><strong>实战场景</strong>：① 首屏竞速（主接口 + 兜底接口，谁先回用谁）② 超时控制 <code>race([fetch(url), timeout(3000)])</code> ③ 取消旧请求。</p>
-    <p class="hint">字节高频，Promise.all 已练熟的话 race 是姊妹题。追问"race 里某个抛错会怎样"→第一个 reject 立即决定整个 race 为 rejected。</p>
-  </div>
-</div>
 
 <!-- ==================== AI 工程 ==================== -->
 <div class="card" data-c="proj" data-g="PRD 工作流" data-kw="AI 理解项目 Reference SSOT Evidence Index 知识库">
@@ -3247,23 +3065,6 @@ function buildTreeOptimized(list) {
   </div>
 </div>
 
-<div class="card" data-c="bagu" data-kw="RSC Server Components SSR hydration Next.js 'use client'">
-  <div class="card-head"><span class="tag bagu">基础</span><div class="card-title">RSC vs SSR 深度对比</div></div>
-  <div class="core">RSC 组件级无 hydration，SSR 页面级需 hydration</div>
-  <div class="card-body">
-    <p><strong>本质区别</strong>：</p>
-    <p>· <strong>SSR</strong>：服务端把整个页面 renderToString 成 HTML，浏览器下载后<strong>必须 hydration</strong>（React 在内存重建 vDOM，对比 SSR 的 DOM，匹配则复用，不匹配报 Hydration Mismatch）。</p>
-    <p>· <strong>RSC</strong>：服务端渲染后<strong>不需要 hydration</strong>，因为 RSC 输出的是"组件已渲染的描述"，客户端直接消费，不重新执行 JS。</p>
-    <p><strong>性能对比</strong>：</p>
-    <p>· <strong>首屏</strong>：RSC 更快（无 hydration JS 执行）</p>
-    <p>· <strong>TTFB</strong>：RSC 稍慢（服务端要算）</p>
-    <p>· <strong>Bundle</strong>：RSC 减少 40%+ client bundle（静态部分不打进 client）</p>
-    <p><strong>适用场景</strong>：静态内容 + 动态数据混合页面（如博客、电商详情页）。完全交互的 SPA 不适合。</p>
-    <p><strong>Next.js 15 App Router</strong>：默认 RSC，'use client' 切换 Client Component。</p>
-    <p><strong>Hydration Mismatch 常见原因</strong>：用了 Date.now()、Math.random()、window.innerWidth。解决：useEffect 里设置或 typeof window !== 'undefined' 判断。</p>
-    <p class="hint">阿里系高频。能讲清"RSC 不需要 hydration"是关键加分点。</p>
-  </div>
-</div>
 
 <div class="card" data-c="bagu" data-kw="Web Vitals LCP FCP INP CLS TTFB 性能指标 Core Web Vitals">
   <div class="card-head"><span class="tag bagu">基础</span><div class="card-title">前端性能指标（LCP/FCP/INP/CLS + Web Vitals）</div></div>
@@ -3417,44 +3218,7 @@ function buildTreeOptimized(list) {
 
 <!-- ==================== 补充卡片 v2 · C端/微前端（3 张） ==================== -->
 
-<div class="card" data-c="bagu" data-kw="qiankun 微前端 single-spa 沙箱 Proxy 样式隔离 Shadow DOM HTML Entry 渐进式升级">
-  <div class="card-head"><span class="tag bagu">基础</span><div class="card-title">微前端 qiankun 原理（阿里二面空白点）</div></div>
-  <div class="core">single-spa + JS 沙箱（Proxy）+ 样式隔离 + HTML Entry</div>
-  <div class="card-body">
-    <p><strong>核心机制</strong>：</p>
-    <p>· <strong>生命周期</strong>：基于 single-spa，bootstrap → mount → unmount。子应用导出这三个生命周期函数。</p>
-    <p>· <strong>JS 沙箱</strong>：Proxy 代理 window，子应用对 window 的修改在沙箱内，卸载时恢复。多版本共存不冲突。</p>
-    <p>· <strong>样式隔离</strong>：① Shadow DOM（强隔离）② scoped CSS（子应用所有规则加前缀）③ 动态样式表（卸载时移除）。</p>
-    <p>· <strong>HTML Entry</strong>：基于 import-html-entry，fetch 子应用 HTML → 解析 script/style → 执行。不需要子应用打包成特定格式。</p>
-    <p>· <strong>通信</strong>：initGlobalState（全局状态）/ CustomEvents（事件总线）/ SharedStore（共享存储）。</p>
-    <p><strong>渐进式升级（阿里二面高频追问）</strong>：</p>
-    <p>· Schema 加 version 字段</p>
-    <p>· 运行时组件加载器按 version 动态 import</p>
-    <p>· 配置中心控制灰度比例</p>
-    <p>· 老版本和新版本并行跑一段时间，逐步下线老版本</p>
-    <p><strong>踩坑</strong>：资源路径（用 ucc-public-path 解决）、全局变量污染、沙箱逃逸、首屏白屏（prefetch 预加载）。</p>
-    <p><strong>vs Monorepo vs NPM 包</strong>：业务独立部署选微前端；共享代码选 Monorepo；通用工具选 NPM 包。</p>
-    <p class="hint">阿里二面完全空白。这是必修课。</p>
-  </div>
-</div>
 
-<div class="card" data-c="bagu" data-kw="移动端 H5 兼容 1px rem vw 安全区 键盘 iOS Android 300ms">
-  <div class="card-head"><span class="tag bagu">基础</span><div class="card-title">移动端 H5 兼容（蚂蚁 H5 方向必备）</div></div>
-  <div class="core">viewport + 1px + rem/vw + 安全区 + 键盘 + 触摸 300ms</div>
-  <div class="card-body">
-    <p><strong>viewport 配置</strong>：</p>
-    <p><code>&lt;meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"&gt;</code></p>
-    <p><strong>1px 问题</strong>：iOS retina 屏 1px 显示太粗。方案：① transform: scale(0.5) + 伪元素 ② border-image ③ box-shadow 模拟 ④ device-pixel-ratio 媒体查询。</p>
-    <p><strong>rem / vw 适配</strong>：</p>
-    <p>· <strong>rem</strong>：根字体大小按屏幕宽度变化（lib-flexible / postcss-pxtorem）</p>
-    <p>· <strong>vw/vh</strong>：直接用视口单位，1vw = 1% viewport width（更现代，postcss-px-to-viewport）</p>
-    <p><strong>iOS 安全区</strong>：iPhone X+ 顶部刘海 + 底部 home indicator。<code>env(safe-area-inset-top/bottom)</code> + viewport-fit=cover。</p>
-    <p><strong>Android 键盘遮挡</strong>：输入框聚焦时键盘弹起遮挡。方案：① resize 监听 + scrollIntoView ② VisualViewport API（现代）③ 软键盘 height 计算 + translateY。</p>
-    <p><strong>触摸 300ms 延迟</strong>：早期移动浏览器为了区分双击缩放和单击的等待。现代方案：viewport 加 <code>user-scalable=no</code> 自动消除，或用 fastclick 库（已废弃）。</p>
-    <p><strong>其他高频坑</strong>：① iOS 滚动惯性 -webkit-overflow-scrolling: touch ② 固定定位在键盘弹起时漂移 ③ Input 默认样式 reset ④ 中文字体 sans-serif 兜底。</p>
-    <p class="hint">蚂蚁财富 H5 方向必备。能讲清 1px + 安全区 + 键盘显得有实战。</p>
-  </div>
-</div>
 
 <!-- 捞回·离职动机 -->
 
@@ -3631,31 +3395,7 @@ function buildTreeOptimized(list) {
   </div>
 </div>
 
-<div class="card" data-c="ai" data-g="Agent 基础" data-kw="单Agent Multi-Agent 多Agent 区别 对比 使用场景 协作 分工 AutoGen CrewAI 编排 什么时候拆">
-  <div class="card-head"><span class="tag ai">对比</span><div class="card-title">单 Agent 还是多 Agent，什么时候才值得拆</div></div>
-  <div class="core">拆分的本质是用通信成本换单点负载——当单个 Agent 的上下文管理成本超过多 Agent 间协调的通信成本，才该拆</div>
-  <div class="card-body">
-    <p>单 Agent 就是一个 LLM 实例干所有事——感知、推理、调工具、管记忆全靠一个模型。好处是简单、好调试、上下文共享直接。坏处是上下文窗口有上限，任务越复杂越容易顾此失彼，比如又要分析 PRD 又要校验代码规范，两个维度的指令混在一起会互相干扰。</p>
-    <p>多 Agent 是每个 Agent 各司其职，各自有独立上下文窗口和专属 prompt，之间通过消息或中间文件传状态。好处是每个 Agent 专注一件事，prompt 更准，上下文不互相污染。坏处是编排复杂、调试难、Agent 间通信成本高。Token 消耗一般是单 Agent 的 2-3 倍，不过每个 Agent 可以用小模型——粗活用便宜的，精活用贵的，反而可能省成本。</p>
-    <p>什么时候该用多 Agent：任务有明显异构子任务（一个看代码、一个看文档、一个做 Review，各需要不同知识背景）；单 Agent 的 prompt 已经膨胀到互相干扰；需要并行加速。什么时候不该用：任务本身是线性单链路，拆开反而增加通信开销；团队没多 Agent 编排经验，强行上容易翻车。</p>
-    <p>我比较喜欢的一个工程化说法：拆分的本质是用通信成本换取单点负载——当单个 Agent 的上下文管理成本超过了多 Agent 间协调的通信成本，就该拆。这比"团队类比"更有理论依据，被追问深度时拿出来。</p>
-    <p>多 Agent 常见四种协作模式：Supervisor-Worker（主 Agent 拆任务派子 Agent）、Pipeline（流水线串联）、Debate（多 Agent 辩论）、Hierarchical（树状层级）。引入的新复杂度是通信协议设计、冲突解决、错误传播、终止条件。</p>
-    <p>我自己 Manager_Agent 是 9 个外部 Agent 加 3 个内部 Agent 的多 Agent 架构，用 Supervisor 模式，supervisor 做路由和仲裁，每个域 Agent 各管一摊。</p>
-  </div>
-</div>
 
-<div class="card" data-c="ai" data-g="Agent 基础" data-kw="LangChain LangGraph 框架 Chain Agent Tool Memory StateGraph Node Edge Checkpoint HITL 状态机 工作流 区别 怎么选">
-  <div class="card-head"><span class="tag ai">对比</span><div class="card-title">LangChain 和 LangGraph 啥关系，怎么选</div></div>
-  <div class="core">LangChain 是线性串链子，LangGraph 是画图做状态机——线性简单流程用前者，要循环、分支、中途让人确认就用后者</div>
-  <div class="card-body">
-    <p>这俩是同一家（LangChain 公司）出的，定位不同。</p>
-    <p>LangChain 是链式编排，把多个 LLM 调用和工具像链条一样串起来（A→B→C），用 LCEL 声明式写。它把 Agent 开发常用的几块都封装好了：Chain 串链、Agent 做 ReAct 执行、Tool 工具、Memory 对话历史（分 Buffer 全留、Summary 摘要、Window 滑动窗口）、Retriever 做 RAG、Callback 做观测日志。适合线性流程，上手快，但流程一复杂就难控。</p>
-    <p>LangGraph 是为复杂 Agent 单独搞的，核心是图状态机——定义 Node（处理步骤）和 Edge（跳转规则），支持循环、条件分支。两个我最看重的点：一是 Checkpoint，每步自动存状态，能暂停恢复、崩溃恢复；二是 Human-in-the-loop，任意节点插人工审核点，Agent 暂停等人确认再继续。需要循环、分支、中途让人确认的复杂工作流用它。</p>
-    <p>怎么选很简单：线性简单流程 LangChain；一旦要循环、分支、中途让人确认，上 LangGraph。</p>
-    <p>落到我项目上，Manager_Agent 就是直接用 LangGraph 写的——39 个节点 40 条边，里面 20 条条件边，外加 Probe 探活、Health 检查、HITL 节点。我选 LangGraph 的原因就是要循环分支加人工介入，这正是它的强项。</p>
-    <p>顺带一提，多 Agent 分工看 CrewAI，纯 RAG 看 LlamaIndex。</p>
-  </div>
-</div>
 
 <div class="card" data-c="ai" data-g="Agent 基础" data-kw="Agent Loop ReAct LangGraph 状态机 框架对比 Plan-Execute Agent架构">
   <div class="card-head"><span class="tag ai">对比</span><div class="card-title">Agent Loop、ReAct、LangGraph 这三种架构的区别</div></div>
@@ -3767,17 +3507,6 @@ function buildTreeOptimized(list) {
   </div>
 </div>
 
-<div class="card" data-c="ai" data-g="Loop 工程" data-kw="知识库 防污染 越用越准 golden sample 回归测试 anti-pollution 准确率 回流 验证 证据链">
-  <div class="card-head"><span class="tag ai">AI</span><div class="card-title">知识库怎么保证越用越准、不被污染</div></div>
-  <div class="core">三层防线：人工 check 回流、golden sample 回归、优化前后评分对比——任何更新必须证明不劣化才能上线</div>
-  <div class="card-body">
-    <p>问题本质是知识库随着使用不断积累新知识，但新知识可能出错或跟存量冲突。核心挑战是"越用越准"而不是"越用越乱"——这在 RAG 系统里叫 anti-pollution，在持续学习里叫避免灾难性遗忘。</p>
-    <p>第一层人工 check 回流。蒸馏完的中间产物文件标注了新增场景和经验，必须人工审核后才回流到 reference 知识库。比如新增了哪些 PRD 场景、哪些业务字段映射——人确认了才写入。</p>
-    <p>第二层 Golden Sample 回归。编一批基准案例（典型需求的 PRD 加预期输出），每次知识库更新后用这些 case 重跑，对比优化前后的评分。相当于回归测试——代码改了要跑测试，知识库改了也要跑测试。</p>
-    <p>第三层多维评分对比。评分维度包括证据链覆盖率、代码搜索锚点准确性、plan 跟实际开发的文件覆盖率。如果更新后评分下降，说明可能引入了污染，立即回滚分析原因。</p>
-    <p>我自己一般的总结是：知识库更新和代码发布一样——要有审批、有测试、有回滚机制。golden sample 就是知识库的单元测试，每次更新必须证明不劣化才能上线。</p>
-  </div>
-</div>
 
 <div class="card" data-c="ai" data-g="Loop 工程" data-kw="Loop Engineering 循环工程 范式 Prompt Boris Cherny 自治循环 是什么">
   <div class="card-head"><span class="tag ai">AI</span><div class="card-title">Loop Engineering 是什么，跟 Prompt Engineering 差在哪</div></div>
@@ -3839,7 +3568,7 @@ function buildTreeOptimized(list) {
   <div class="core">按控制粒度和场景选——要循环分支加 HITL 加状态机的复杂编排我选 LangGraph；快速搭多 Agent 协作用 CrewAI 或 AutoGen；不想写代码做产品用 Dify 或 Coze</div>
   <div class="card-body">
     <p>先把六个框架按定位分个层。</p>
-    <p>LangChain——链式编排框架，把 LLM 调用和工具像链条一样串（A→B→C）。适合线性流程、快速搭原型。优点是封装全（Chain、Agent、Tool、Memory、Retriever、Callback 都有）上手快，缺点是流程一复杂就难控，状态管理和循环支持弱。</p>
+    <p>LangChain——链式编排框架，用 LCEL 声明式把 LLM 调用和工具像链条一样串（A→B→C）。适合线性流程、快速搭原型。优点是封装全（Chain、Agent、Tool、Memory、Retriever、Callback 都有）上手快，缺点是流程一复杂就难控，状态管理和循环支持弱。</p>
     <p>LangGraph——LangChain 公司为复杂 Agent 单独搞的图状态机。核心是 Node 加 Edge，支持循环、条件分支、Checkpoint 持久化、Human-in-the-loop。优点是控制粒度最细、状态可恢复、HITL 原生支持，缺点是学习曲线陡、代码量大。适合需要精确控制流程、要循环分支、要中途让人确认的复杂编排。</p>
     <p>AutoGen——微软的多 Agent 对话框架，核心是 Agent 之间通过消息对话协作。优点是多 Agent 协作模式灵活（GroupChat、双 Agent 对话），适合研究型和探索型多 Agent 场景。缺点是工程化偏弱、生产部署坑多、调试链路长。</p>
     <p>CrewAI——角色分工加任务委派的多 Agent 框架。你定义 Agent（带 role、goal、backstory）和 Task，Crew 把它们组起来跑。优点是 API 直观、上手快、角色抽象符合直觉，适合"几个专精 Agent 各干一摊"的场景。缺点是定制化空间小、流程复杂时不够灵活。</p>
@@ -3890,10 +3619,11 @@ function buildTreeOptimized(list) {
   </div>
 </div>
 
-<div class="card" data-c="ai" data-g="Agent 基础" data-kw="单Agent Multi-Agent 选型 决策树 什么时候拆 拆分标准 上下文 协作">
+<div class="card" data-c="ai" data-g="Agent 基础" data-kw="单Agent Multi-Agent 选型 决策树 什么时候拆 拆分标准 上下文 协作 Supervisor Pipeline Debate Hierarchical 通信成本 单点负载">
   <div class="card-head"><span class="tag ai">选型</span><div class="card-title">单 Agent 还是多 Agent，一个决策树</div></div>
   <div class="core">先看任务是不是线性单链路，是就单 Agent；再看单 Agent 上下文是否挤到互相干扰，是就按业务域拆多 Agent；拆的代价是通信成本和调试难度，划不来就别拆</div>
   <div class="card-body">
+    <p>原理一句话：拆分的本质是用通信成本换单点负载——当单个 Agent 的上下文管理成本超过多 Agent 间协调的通信成本，才该拆。多 Agent 常见四种协作模式：Supervisor-Worker（主 Agent 拆任务派子 Agent）、Pipeline（流水线串联）、Debate（多 Agent 辩论）、Hierarchical（树状层级），引入的新复杂度是通信协议设计、冲突解决、错误传播、终止条件。</p>
     <p>这个题我画个决策树给自己用。</p>
     <p>第一问：任务是线性单链路吗（A→B→C 顺序执行，没有并行、没有异构子任务）？是 → 单 Agent，结束。线性任务拆开只增加通信开销和调试难度，没有任何收益。</p>
     <p>第二问：单 Agent 的 prompt 是不是已经膨胀到指令互相干扰（既要分析 PRD 又要校验代码规范，两个维度的指令混在一起模型分不清优先级）？是 → 考虑拆。否 → 继续单 Agent。</p>
@@ -4172,15 +3902,6 @@ function buildTreeOptimized(list) {
   </div>
 </div>
 
-<div class="card" data-c="ai" data-g="行业视野" data-kw="大模型 对比 选型 GPT Claude Gemini DeepSeek MiniMax GLM Kimi 编程 长文档 性价比 编程工具 Cursor Copilot Claude Code 对比">
-  <div class="card-head"><span class="tag ai">选型</span><div class="card-title">大模型选型 + AI 编程工具怎么选</div></div>
-  <div class="core">写代码 Claude 最强、长文档 Gemini、性价比 DeepSeek、速度 MiniMax；工具上复杂任务 Claude Code、日常 Cursor、补全 Copilot</div>
-  <div class="card-body">
-    <p><strong>大模型选型</strong>（2026-07 大致格局，具体排名随时变，面试说"据我了解"比说死数字安全）：写代码 <strong>Claude</strong> 第一梯队（Sonnet 5 / Opus 4.8）、长上下文 <strong>Gemini</strong>（3.x，1M 上下文）、通用均衡 <strong>GPT</strong>（5.6 Sol/Terra/Luna）、性价比 <strong>DeepSeek V4</strong>（中文也强）、响应速度 <strong>MiniMax</strong>、开源编程 <strong>GLM-5.2</strong>（SWE-Bench Pro 62%，开源编码最强）。六维度选型——价格看 DeepSeek、上下文看 Gemini、编程看 Claude、中文看 DeepSeek/Kimi、速度看 MiniMax。</p>
-    <p><strong>编程工具对比</strong>：<strong>Cursor</strong> 是独立 AI 编辑器（VS Code 魔改），图形界面、多模型切换，全栈/前端日常开发；<strong>GitHub Copilot</strong> 是 IDE 插件，速度快、生态广，做快速补全；<strong>Claude Code</strong> 是终端 CLI，准确率最高、复杂多文件任务强，但没图形界面、学习曲线陡。我日常是 Claude Code 处理复杂任务（代码库理解 + 多文件重构）、Cursor 做前端日常、Copilot 补全。</p>
-    <p>方法论一句：先让 AI 理解代码库再动手、单 Chat 专注单功能、AI 生成完必须人工 Review、核心路径做压测和边界测试。</p>
-  </div>
-</div>
 
 <div class="card" data-c="ai" data-g="行业视野" data-kw="模型对比 区别 Claude GPT Gemini DeepSeek GLM Qwen Kimi 闭源 开源 国产 定价 能力 适用场景 分层选型 横向对比 怎么选模型">
   <div class="card-head"><span class="tag ai">模型</span><div class="card-title">不同 AI 模型横向对比，被问区别我这样讲</div></div>
@@ -4237,6 +3958,7 @@ function buildTreeOptimized(list) {
     <p><strong>部署的 Agent 走 qwen 不上 Claude。</strong>Manager 是 39 节点 LangGraph 状态机，部署在阿里云 qwen。工程取舍：multi-agent 一次跑几十次 LLM call、自进化还要多副本并行实验，qwen 比 Opus 便宜一个量级才跑得起，加上国内合规直连。研发用 Claude、部署用 qwen——不是越贵越好，是按场景分层。</p>
     <p><strong>日常查资料用通用工具。</strong>快速问题用 ChatGPT/Claude.ai；跟前沿盯 Anthropic 工程博客、arXiv 的 agent/eval 论文、SWE-bench/Terminal-Bench 这几个 benchmark。</p>
     <p><strong>闭环 + 护城河。</strong>最有意思的是做的 agent 反过来帮我提效——Manager 的 critic 思想我搬进了 prd-tools 的 Spec Review Gate。对工具优劣的真实判断：Cursor 的 Plan/Composer/Background Agents 是开发者体验天花板，我全认输 UX；差异化只能往"企业安全 + 可内网部署"走，这是我押的那条缝。一句话收尾：做 agent 的人，自己的工作流也会慢慢 agent 化。</p>
+    <p><strong>框架诚实表态。</strong>其他框架按真实使用程度说，不装深用过：LangChain 偏链式组合、复杂状态和 HITL 弱，AutoGPT 是单 Agent 自主循环可控性差（能写文件的场景不敢用），CrewAI 适合简单角色分工、复杂 DAG 加安全不够，MetaGPT/AgentScope 我了解定位没生产用过，Dify/Coze 这类低代码平台能快速搭 Agent 但不是我工程化主力。诚实说"没用过的就是没用过"比硬吹强。</p>
   </div>
 </div>
 
@@ -4594,14 +4316,12 @@ function buildTreeOptimized(list) {
   </div>
 </div>
 
-<div class="card" data-c="emer" data-g="软技能" data-kw="最大价值 贡献 录用我 核心价值 能带来什么 入职价值">
-  <div class="card-head"><span class="tag emer">软技能</span><div class="card-title">来我们这最大的价值是什么</div></div>
-  <div class="core">核心能力 + 你们的痛点 + 能力怎么对标痛点</div>
+<div class="card" data-c="emer" data-g="软技能" data-kw="录用你 最大价值 独特优势 差异化 其他候选人 比别人强 稀缺 为什么录我 入职价值 能带来什么 核心">
+  <div class="card-head"><span class="tag emer">软技能</span><div class="card-title">为什么录用你（价值 + 差异化）</div></div>
+  <div class="core">两个问法答同一件事——"最大价值"对标痛点（能给你们带来什么），"独特优势"讲稀缺组合（不拉踩别人）</div>
   <div class="card-body">
-    <p>这题考三件：自我认知 + 业务理解 + 价值对标。三件都答到才合格。</p>
-    <p>我对做 B 端配置化、多国家多业务线的公司：能直接迁移营销中台和权益组件库的设计经验，几个月内让运营自助配置上线活动、前端零介入。</p>
-    <p>对想做 AI 提效的团队：我能提供已小范围验证的 AI 工作流方法论——SSOT 结构、证据链、质量门禁，不是"用 Cursor 写代码"那种个人级，是能往团队推的。</p>
-    <p>关键忌讳：用"我希望/我想/我愿意"这种索取口径，改成"我能/我有"；别只讲技术不讲业务——"我会 React"和"我能让运营自助配活动"差一个量级。</p>
+    <p><strong>问"来我们这最大的价值是什么"</strong>——考自我认知 + 业务理解 + 价值对标三件。对 B 端配置化、多国家多业务线的公司：能直接迁移营销中台和权益组件库的设计经验，几个月内让运营自助配置上线活动、前端零介入。对想做 AI 提效的团队：能提供已小范围验证的 AI 工作流方法论——SSOT 结构、证据链、质量门禁，不是"用 Cursor 写代码"那种个人级，是能往团队推的。<strong>忌讳</strong>：用"我希望/我想/我愿意"这种索取口径，改成"我能/我有"；别只讲技术不讲业务——"我会 React"和"我能让运营自助配活动"差一个量级。</p>
+    <p><strong>问"和其他候选人比有什么独特优势"</strong>——"我比别人好"没证据，但"我有 X+Y+Z 的组合，这种组合在市场上稀缺"有证据。我最核心的组合：前端架构 + AI 工程化双背景。大多数前端不懂 AI 工程化（只会用 Cursor），大多数搞 AI 的不懂前端工程（只会写 prompt）。我有 4 年前端架构（Schema 中台、联动引擎）加完整 AI 工作流落地的双背景。第二是从 0 到 1 完整周期加推广落地——大多数候选人要么做过小项目没完整周期，要么在大项目里只负责一个模块没整体视角。<strong>忌讳</strong>：别用通用形容词（努力/聪明/有热情），每个候选人都这么说；组合才算稀缺，单一技能不算。</p>
   </div>
 </div>
 
@@ -4616,23 +4336,13 @@ function buildTreeOptimized(list) {
   </div>
 </div>
 
-<div class="card" data-c="emer" data-g="软技能" data-kw="独特优势 差异化 其他候选人 比别人强 为什么录用你 稀缺">
-  <div class="card-head"><span class="tag emer">软技能</span><div class="card-title">和其他候选人比有什么独特优势</div></div>
-  <div class="core">讲稀缺组合，不拉踩别人</div>
-  <div class="card-body">
-    <p>"我比别人好"没证据，但"我有 X+Y+Z 的组合，这种组合在市场上稀缺"有证据。</p>
-    <p>最核心的组合：前端架构 + AI 工程化双背景。大多数前端不懂 AI 工程化（只会用 Cursor），大多数搞 AI 的不懂前端工程（只会写 prompt）。我有 4 年前端架构（Schema 中台、联动引擎）加完整 AI 工作流落地的双背景。</p>
-    <p>第二是从 0 到 1 完整周期加推广落地——大多数候选人要么做过小项目没完整周期，要么在大项目里只负责一个模块没整体视角。</p>
-    <p>别用通用形容词（努力/聪明/有热情），每个候选人都这么说。组合才算稀缺，单一技能不算。</p>
-  </div>
-</div>
 
-<div class="card" data-c="emer" data-g="软技能" data-kw="成就感 成就 最有价值 技术成果 团队 驱动力">
+<div class="card" data-c="emer" data-g="软技能" data-kw="成就感 成就 最有价值 技术成果 团队 AI 信任 驱动力 改变工作方式">
   <div class="card-head"><span class="tag emer">软技能</span><div class="card-title">最有成就感的事</div></div>
-  <div class="core">两件从 0 到 1、最后变成团队基础设施的事</div>
+  <div class="core">不是写出了什么代码，是搭了一套让团队从"不敢用 AI"变成"信任 AI 产出"的工作体系</div>
   <div class="card-body">
     <p>技术上最有成就感的是搭了一套让 AI 真正在业务里可落地的工作体系。难点不是写代码，是"怎么让 AI 产出可控可追溯"——我设计了证据链，每条结论必须挂证据能追溯到 PRD 或代码具体位置，搜不到也得显式标 negative_search 不能闷头编；设计质量门禁对中间产物打分；设计 Reference 知识库让 AI 有项目专属领域知识。这套让团队从"不敢用 AI"变成"信任 AI 产出"。</p>
-    <p>非技术上最有成就感的是把一个个人 Side Project 推成了团队基础设施。最初只是我自己用的 Claude Code Skill，要让同事用起来要解决三件事——零门槛安装、产出标准化、信任建立（前几个需求我陪着跑、产出跟人工对比）。从一个人的工具变成团队标配，这个过程教会我的比写代码多。</p>
+    <p>同样让我有成就感的是看到同事从"质疑"到"主动来问'这个 AI 能不能帮我做 X'"——前几个需求我陪着跑、产出跟人工对比建立信任，到后面同事自己拿去用。这种"改变一群人工作方式"的反馈比写出一段精妙代码更有成就感。</p>
   </div>
 </div>
 
@@ -4730,7 +4440,7 @@ function buildTreeOptimized(list) {
   </div>
 </div>
 
-<div class="card" data-c="emer" data-g="话术急救" data-kw="概念混淆 倒排 RAG 图片传参 Function Calling 原理 说不清 自检 硬伤">
+<div class="card" data-c="emer" data-g="话术急救" data-kw="三个不要 13场 AI面试 不要 禁忌 概念混淆 倒排 RAG 图片传参 Function Calling 原理 说不清 自检 硬伤">
   <div class="card-head"><span class="tag emer">话术</span><div class="card-title">AI 面试三个不要（13 场血泪）</div></div>
   <div class="core">别把工程说成算法、别把搜索说成 RAG、别只说效果不说口径</div>
   <div class="card-body">
@@ -4798,16 +4508,6 @@ function buildTreeOptimized(list) {
   </div>
 </div>
 
-<div class="card" data-c="ai" data-g="Agent 基础" data-kw="模型栈 框架选型 Claude qwen GPT 对比 LangGraph AutoGen CrewAI MetaGPT AgentScope Dify Coze 分场景 成本 延迟 国产化 为什么不用GPT-4">
-  <div class="card-head"><span class="tag ai">选型</span><div class="card-title">日常用哪些 AI 工具和模型，Agent 场景怎么选</div></div>
-  <div class="core">我分场景：研发工作流用 Claude（prd-tools 就是 Claude Code 插件），部署的 Agent 用阿里云 qwen（成本和延迟的取舍，不是 Claude/GPT）；框架 LangGraph 是主力，其他按"了解定位、没生产用过"诚实表态。</div>
-  <div class="card-body">
-    <p>模型这块我必须先把真实栈讲清楚，不然一追就穿帮。研发工作流我用 Claude——prd-tools 本身就是 Claude Code Skill，Claude 在长上下文、多模态（直接看 PRD 截图）、指令遵循上最稳，适合做要严谨证据链的蒸馏。但部署的 Agent 我用的是阿里云 DashScope 的 qwen 系列：Manager 编排路由用 qwen-flash，code_assistant 写代码用 qwen-coder-plus。</p>
-    <p>为什么部署不直接上 Claude 或 GPT-4？核心是成本和延迟。编排层每个用户请求要调多次 LLM——路由、规划、汇总、critic，multi-agent 这套对单次成本非常敏感，flash 模型把单次成本压下来才跑得起。OpenAI 兼容接口、国产化部署也是加分项。被问"为什么不用 GPT-4"我就这么答：研究和对比我了解 GPT-4 的推理和工具调用强，但跑 multi-agent 它不是我的主力，成本和部署是主因。</p>
-    <p>框架我主力用 LangGraph，理由是 Agent 编排本质是有分支、回环、HITL、失败恢复的状态机，不是单次函数调用——我的总管就是一张 39 节点的图，所有旁路用条件边谓词挂回主干。它还有 checkpoint、recursionLimit、LangSmith trace，能定位到每条边为什么被选。</p>
-    <p>其他框架我按真实使用程度表态，不装深用过：LangChain 偏链式组合，快速原型行、复杂状态和 HITL 弱；AutoGPT 是单 Agent 自主循环，可控性差，我不敢用在能写文件的场景；CrewAI 适合简单角色分工，复杂 DAG 加安全不够；MetaGPT 偏软件研发 SOP、AgentScope 偏分布式多模型协同——这两个我了解定位、没生产用过；Dify、Coze 这类低代码平台我知道它们能快速搭 Agent，但同样不是我工程化的主力。诚实说"没用过的就是没用过"比硬吹强。</p>
-  </div>
-</div>
 
 <div class="card" data-c="proj" data-g="Code 智能体" data-kw="全生命周期 六步 需求对齐 架构 原型 安全落地 上线 持续迭代 创业团队 Coding Agent 系统设计 灰度 benchmark门禁">
   <div class="card-head"><span class="tag proj">系统设计</span><div class="card-title">为创业团队设计 Coding Agent 的全生命周期</div></div>
