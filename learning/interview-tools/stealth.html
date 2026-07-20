@@ -446,7 +446,7 @@ th{font-weight:600;color:#888;font-size:10.5px;letter-spacing:.02em}
     <p><strong>一年内·补评测。</strong>先把工程基座做扎实——特别是评测体系。我自己项目的短板很清楚：Manager 的自进化每臂样本太少，做不到统计显著。所以第一年我想在一个有真实用户量的场景里，把 Agent 评测和持续优化这块补上。</p>
     <p><strong>三年·Multi-Agent 生产化。</strong>从单 Agent 走向 Multi-Agent 系统设计。我业余做的 Manager 是十几个 Agent 的 Supervisor 架构，但还没真实流量验证。三年内我想把 Multi-Agent 从 demo 级推到生产级，重点是稳定性、成本、可演进这三件事，把我简历里的递归预算、金丝雀回滚、经验回放那几块工程实践真正跑出数据。</p>
     <p><strong>五年·技术负责人。</strong>不是纯 IC，是能带 5–10 人的小团队、对 Agent 平台的技术路线负责。前端 owner 让我知道怎么对一条业务线负责，Spec-Driven 让我知道怎么对一个平台负责，下一个台阶是对一个技术方向负责。</p>
-    <p class="hint">每个阶段都有具体技术内容（评测/Multi-Agent 生产化/团队），不是空话。主动暴露项目短板显得清醒。别说"成为 AI 专家"/"想创业"/"想转管理"。</p>
+    <p class="hint">每个阶段都有具体技术内容（评测/Multi-Agent 生产化/团队），不是空话。主动暴露项目短板显得清醒。常规技术面别说"成为 AI 专家"/"想转管理"。⚠️ <strong>陈哲这类创业型 CTO 面例外</strong>：他第 1 项就考"创业激情"，这时可以主动说"想要一个东西从想法到落地归我管的 owner 身份"，用"想负责完整闭环"表达，别直接说"想创业当老板"（显得入职就跑）——详见软技能组「为什么我想要创业状态」补卡。</p>
   </div>
 </div>
 
@@ -468,8 +468,8 @@ th{font-weight:600;color:#888;font-size:10.5px;letter-spacing:.02em}
   <div class="card-body">
     <p>说实话，我在滴滴这四年过得不差——中台从 0 到 1 是我主导搭起来的，团队也认可（连续两年 A）。我对公司没有抱怨。</p>
     <p>想离开主要是两件事：一是这个中台已经跑到稳定状态了，从 0 到 1 的阶段我走完了，接下来更多是维护和迭代，成长的曲线在变平；二是我想全职做 AI 工程化，但现在的岗位主线还是前端，Spec-Driven 是我在主业之外挤时间推的，再往下做深（Agent 评测、Multi-Agent 生产化）需要一个 AI 是主线、有真实用户量的场景。</p>
-    <p>所以我不是逃，是想带着这四年攒下的工程能力——Schema 工程化、组件化、可观测、把 LLM 关进笼子的可靠性思维——去一个更大的场景、一条更专注的 AI 主线，把它们用到极致。</p>
-    <p class="hint">通用、建设性、不吐槽。核心三要素：阶段走完了 / 想全职做 AI / 带着能力去更大场景。别提具体的不满、别提钱、别提加班。</p>
+    <p>所以我不是逃，是想带着这四年攒下的工程能力——Schema 工程化、组件化、可观测、把 LLM 关进笼子的可靠性思维——去一个更大的场景、一条更专注的 AI 主线，把它们用到极致。说白了不是逃，是想要下一个 0 到 1。</p>
+    <p class="hint">通用、建设性、不吐槽。核心三要素：阶段走完了 / 想全职做 AI / 带着能力去更大场景。别提具体的不满、别提钱、别提加班。⚠️ 别说"更大平台"——字节面试官当面怼过这个说法站不住，说"AI 是业务生命线的场景"更具体。</p>
   </div>
 </div>
 
@@ -656,12 +656,46 @@ th{font-weight:600;color:#888;font-size:10.5px;letter-spacing:.02em}
 
 <!-- ==================== 项目扩展 ==================== -->
 <!-- ==================== 项目扩展（原） ==================== -->
-<div class="card" data-c="proj" data-kw="Rollup 打包 tree-shaking ESM CJS 为什么不用Webpack">
-  <div class="card-head"><span class="tag proj">扩展</span><div class="card-title">为什么用 Rollup 不用 Webpack？</div></div>
-  <div class="core">Rollup 基于 ESM 静态分析，天然 tree-shaking，产物干净</div>
+<!-- ==================== 技术选型（维度3 补） ==================== -->
+<div class="card" data-c="bagu" data-g="技术选型" data-kw="技术选型 方法论 四步 场景 约束 团队 性能 生态 招聘 可替换性 ADR 决策记录">
+  <div class="card-head"><span class="tag bagu">选型</span><div class="card-title">我的技术选型怎么做（60 秒讲完）</div></div>
+  <div class="core">四步走——场景定需求、约束做筛选（团队/性能/生态/招聘）、候选对比打分、决策写下来可回溯</div>
   <div class="card-body">
-    <p>Rollup 天生为库打包。ESM 静态 import/export 分析，未引用导出直接删除。Webpack 的 tree-shaking 靠 Terser 分析副作用，不如 Rollup 精确，且有运行时代码。</p>
-    <p>一份配置出三份产物：ESM、CJS、d.ts。peerDependencies 声明 react 避免重复打包。</p>
+    <p><strong>第一步永远是定场景。</strong>To B 配置化、To C 高并发、内部工具提效、AI Agent 编排——场景不同选型逻辑完全不一样。离开场景谈框架优劣都是耍流氓，所以被问"为什么选 X"我一般先反问"什么场景什么团队"。这步答不上来，后面全是空的。</p>
+    <p><strong>第二步过四大约束。</strong>团队能不能 hold 住（学习曲线 + 招聘难度，Vue 招人就比 Solid 容易得多）、性能够不够（现在够 + 半年后还够不够）、生态成熟度（issue 活跃、star 趋势、有没有生产案例）、可替换性（会不会被绑死，比如 Elysia 绑 Bun 这种）。权重按业务阶段变——0 到 1 验证期生态优先，规模化阶段性能和团队优先。</p>
+    <p><strong>第三步列 2-3 个候选做对比表。</strong>关键是不只列优点要列代价——每选一个就放弃 N 个，放弃的那部分要写清楚。我 Schema 那次就是 if-else、低代码、Schema 驱动三选一，每条都列了"代价是什么"，最后选 Schema 是因为业务侧自主配置这个收益压过了"实现复杂度高"这个代价。</p>
+    <p><strong>第四步决策 ADR 化。</strong>写一份 Architecture Decision Record——什么时间、什么场景、选了 X 不选 Y、原因是什么。半年后回来看不会后悔，换人接手能看懂为什么当初这么选。很多人跳过这步，但其实是选型闭环里最值钱的一环。</p>
+    <p><strong>诚实边界。</strong>不是所有领域都做过——Agent 我做了完整自研有发言权，后端 infra 和推理部署我是"了解定位、能跟人对话"，没在生产扛过主。但选型方法论是通用的，我对任何新技术都走这四步，这是能横向迁移的能力。</p>
+    <p class="hint">约 60 秒。被问"如果重新选你会选什么"正好接 ADR 那段。</p>
+  </div>
+</div>
+
+<div class="card" data-c="bagu" data-g="技术选型" data-kw="框架 全景 市场 React Vue Vite Rspack NestJS Fastify Hono Flutter Tauri vLLM pgvector LangGraph 选型视野 前端转AI">
+  <div class="card-head"><span class="tag bagu">选型</span><div class="card-title">主流框架我能聊到哪（2026）</div></div>
+  <div class="core">前端/Node 我深用过，跨端/AI 推理基建/数据库我了解定位和选型逻辑——不是只会前端</div>
+  <div class="card-body">
+    <p><strong>前端（深用）。</strong>React 为主、Vue 也做过，React 19 / RSC / Next.js 都跟进过。状态库选型有自己一套——Zustand 偏轻、Redux 偏工程化、Context 偏小规模，看场景挑。</p>
+    <p><strong>构建（深用）。</strong>自研库用 Rollup，Monorepo 走 pnpm workspace + NX。Vite 用过、Rspack 和 Turbopack 跟踪过没深用——但四者定位我能讲清楚：库打包 Rollup、应用打包 Vite、Webpack 迁移 Rspack、Next.js 生态 Turbopack。</p>
+    <p><strong>Node/后端（深用过 BFF 层）。</strong>Express / Fastify / NestJS 都做过；Hono 和 Elysia 了解定位未深用——Hono 多 runtime、Elysia 绑 Bun、吞吐近 Go/Rust 是市场共识。Python FastAPI 在 prd-tools 边缘用过，主线还是 Node+TS。</p>
+    <p><strong>跨端（了解未深用）。</strong>业务没刚需所以没投入。定位清楚：Flutter 自带渲染移动优先、React Native 吃 JS 生态 + Expo 复兴、Tauri 是 Rust 后端的轻量 Electron 替代、KMP 在逻辑层共享。我诚实说我们业务是 Web + Serverless BFF，跨端没刚需。</p>
+    <p><strong>AI 推理基建（了解未深用，这是缺口）。</strong>自研 Agent 走 qwen-flash API 没自己部署过模型。生产栈市场共识是 K8s + Ray + PyTorch + vLLM + FastAPI 网关，vLLM 现在已经归 PyTorch Foundation——但没在生产扛过推理 QPS，这是我转 AI 工程师明确要补的方向。</p>
+    <p><strong>Agent 框架（深用，这是主线）。</strong>LangGraph 自研过 39 节点状态机，对 CrewAI / AutoGen / Dify / Coze 有选型矩阵。OpenAI Agents SDK / Claude Agent SDK / Google ADK 是 2025-2026 新出的厂商方案，跟过文档没深用——这是行业趋势，我自己做的是更底层的状态机编排。</p>
+    <p><strong>数据库/MQ（浅，这也是缺口）。</strong>BFF 层用 Redis 缓存、PostgreSQL 主库，没有 Kafka 深度。向量库自研过 JSON + 内存余弦，pgvector / Pinecone / Milvus 了解定位没深用。</p>
+    <p>核心主线就是 Node + TS + 前端 + AI Agent 编排这条——后端 infra 和数据库是"了解定位没扛过生产主"，我转 AI 工程师明确要补。被问"X 怎么样"我基本能接住定位，但深度边界会主动说。</p>
+    <p class="hint">约 90 秒，信息密度大，按需挑说。被追"那你觉得 vLLM 怎么样"正好走诚实边界那段。</p>
+  </div>
+</div>
+
+<div class="card" data-c="proj" data-kw="Rollup Vite tsup Webpack esbuild 库打包 应用打包 tree-shaking ESM CJS UMD 多产物 bundler 选型 为什么不用Webpack">
+  <div class="card-head"><span class="tag proj">扩展</span><div class="card-title">库打包怎么选：Rollup / Vite 库模式 / tsup / Webpack</div></div>
+  <div class="core">应用打包（Vite/Rspack/Turbopack）和库打包（Rollup/tsup）是两件事——库要 ESM/CJS/UMD 多产物 + 干净 tree-shaking，Rollup 是默认选项</div>
+  <div class="card-body">
+    <p><strong>先把应用打包和库打包分开。</strong>这是 2026 年最关键的分野——应用打包走 Vite（新项目首选，Rollup 内核）/ Rspack（Webpack 迁移、Rust 内核）/ Turbopack（Next.js 生态、生产待核）；库打包走 Rollup 或 tsup（esbuild 内核）。两者诉求不一样，混着聊会乱。</p>
+    <p><strong>三问决定走哪条路。</strong>一是要不要出 ESM/CJS/UMD 多产物——要的话走 Rollup 或 tsup；二是要不要极致 tree-shaking——要的话走 Rollup，esbuild 那条线 tree-shaking 没那么干净；三是团队是不是已经熟 Webpack 配置链——熟的话可以 Webpack 兜底，但产物会有运行时代码、不干净。</p>
+    <p><strong>几个工具一句话定位。</strong>Rollup：库打包标杆，ESM 静态分析天然 tree-shaking。tsup：esbuild 内核零配置上手快，适合工具类库。Vite 库模式：底层也是 Rollup，配置更省心。Webpack：老牌应用打包，做库偏重。esbuild：Go 写的极速 bundler，tree-shaking 靠 minifier 不如 Rollup 精确。</p>
+    <p><strong>我自己项目当年为什么选 Rollup。</strong>ESM 静态 import/export 分析，未引用导出直接删，比 Webpack 靠 Terser 分析副作用精确得多，而且没运行时代码——一份配置出 ESM、CJS、d.ts 三份产物，peerDependencies 声明 react 避免重复打包。</p>
+    <p><strong>诚实边界。</strong>Vite 的库模式底层也是 Rollup，新项目我会直接用 Vite 库模式而不是裸 Rollup——配置更省心。我们项目当年是 2020 年，Vite 还不成熟，选 Rollup 是对的；今天重新选可能就不一样了。</p>
+    <p class="hint">约 60 秒。被追"那 Rspack / Turbopack 你怎么看"正好接应用打包那段——Webpack 迁移路径、Rust 内核。</p>
   </div>
 </div>
 
@@ -2809,14 +2843,39 @@ function buildTreeOptimized(list) {
 
 
 
-<div class="card" data-c="proj" data-kw="设计稿 AI还原 Figma to Code Design Token 组件Schema 视觉回归 截图对比 C端">
+<div class="card" data-c="proj" data-g="AI 工具" data-kw="AI设计工具 深用 选型 v0 Lovable Bolt Figma Make Galileo Stitch Builder.io Locofy Recraft MasterGo Motiff 设计稿还原 prompt-to-app 视觉素材">
+  <div class="card-head"><span class="tag proj">AI</span><div class="card-title">AI 设计工具我深用过哪些、怎么选</div></div>
+  <div class="core">按场景选——还原走 Locofy/Builder.io，生成走 v0，矢量素材走 Recraft，我自己最深用的是 Figma-to-Code 那条线</div>
+  <div class="card-body">
+    <p>设计稿还原这条线我是深用、能讲细节的：Locofy 框架覆盖最全，但复杂活动页布局还是要手动微调；Builder.io Visual Copilot 走多阶段 pipeline、输出最灵活，我的三层约束就是套在它外面加 Token+Schema 兜底。这俩是我真正拿到生产里跑过的。</p>
+    <p>prompt-to-app 这类我评估过、没接进生产：v0 的 React/shadcn 生态最完整、做组件 demo 最快；Lovable、Bolt 出 demo 飞快，但生成的是一次性代码，我的场景要绑设计系统、接不进来——这块我主动说，不装深用。</p>
+    <p>Figma 系我一直跟：2026 Figma Make 已经 GA，prompt 直接出可交互原型、走 credit 制；Code to Canvas + MCP Server 是今年的新东西，代码反向生成设计稿，我判断这一条会重塑 handoff 流程。</p>
+    <p>国产我熟悉、按需用：MasterGo AI、Motiff 都走自研模型 + 生成可编辑矢量 + 绑设计系统，是国内团队替代 Figma 的首选。视觉素材我固定用 Recraft 做 UI 图标/插画，比 Midjourney 强在矢量、几何精度，MJ 留给概念图。</p>
+    <p>两个坑别踩：Galileo AI 2024.5 被 Google 收购改名 Stitch，说「Galileo 还独立做」就暴露没跟进；Anima 偏原型不是生产，别跟 Locofy/Builder.io 并列。</p>
+    <p class="hint">约 90 秒。被问「你最深用的是哪个」别报菜名，直接锁 Locofy + Builder.io 展开。</p>
+  </div>
+</div>
+
+<div class="card" data-c="proj" data-g="AI 工具" data-kw="AI设计工具链 沉淀 方法论 评估 还原度 可控性 代码可维护 工程链路集成 pipeline 踩坑 生产可用">
+  <div class="card-head"><span class="tag proj">AI</span><div class="card-title">我的 AI 设计工具链怎么沉淀</div></div>
+  <div class="core">四个维度评估——还原度 / 可控性 / 代码可维护性 / 跟现有工程链路接不接得上，最后一条我最看重</div>
+  <div class="card-body">
+    <p>我筛工具走四个维度：还原度（能到像素级还是只能 60%）、可控性（能不能塞 Design Token / 组件库约束生成）、代码可维护性（生成的是 div 流还是组件化、能不能直接进 codebase）、工程链路集成（能不能接 CI、视觉回归、Figma sync）。前三个是工具能力，第四个决定它能不能进生产，也是我筛选时最看重的。</p>
+    <p>我的 pipeline 长这样：Figma + Design Token 做 SSOT → Locofy/Builder.io 一键出骨架 → 三层约束（Token + 组件 Schema + 视觉回归）兜底 → 人工只改最后 10%。工具是中间环节，不是终点。</p>
+    <p>踩过的坑我得提：早期信 Locofy 直出，复杂活动页布局错乱，才回头加组件 Schema；Builder.io 生成的 className 命名乱，要加 Lint 兜；v0/Lovable 生成的一次性代码进不了设计系统，只能做 demo、拿不到生产。</p>
+    <p>选型口诀我自己总结：能进设计系统 + 能接工程链路 = 生产可用；只能 demo = 玩具。这是我分场景选工具的底层标准。</p>
+    <p class="hint">约 75 秒。这是 CTO 想听的「积累」——不是知道多少工具，是你有一套能复用的评估框架。</p>
+  </div>
+</div>
+
+<div class="card" data-c="proj" data-g="AI 工具" data-kw="设计稿 AI还原 Figma to Code Design Token 组件Schema 视觉回归 截图对比 C端 v0 Lovable Figma Make prompt-to-app 市场对标">
   <div class="card-head"><span class="tag proj">AI</span><div class="card-title">设计稿AI还原：三层约束方案</div></div>
   <div class="core">Design Token管基础样式，组件Schema管组合，截图对比管最终验证</div>
   <div class="card-body">
     <p><strong>第一层 Design Token</strong>：整理基础样式token（颜色、主次色、圆角、间距、字体）成文档，让AI严格遵守，生成代码时不使用未定义的值。配合Lint规则在提交前自动拦截不符合设计系统的色值和间距。</p>
     <p><strong>第二层 组件Schema</strong>：把业务组件（卡片、弹窗、表单组）的结构描述成JSON Schema，AI生成时优先组合现有组件而不是从零写div。对于复杂布局引入Layout Token（栅格系统、常见布局模式），让AI从预定义模板中选择。</p>
     <p><strong>第三层 视觉回归测试</strong>：用Chromatic或Playwright截图断言对比AI生成的页面和设计稿，自动检测像素级偏差。这是Token和Schema之外的最终兜底。</p>
-    <p><strong>现有工具（涂虎面试官追问时参考）</strong>：Locofy.ai（Figma转React准确率最高）、Builder.io Visual Copilot（像素级还原好）、Figma原生AI React生成器。但复杂活动页面布局多变，AI读取有幻觉，这三层约束是必须的补充。</p>
+    <p>市面工具我分两派：v0、Lovable、Figma Make（2026 已 GA，prompt 直接出可交互原型、credit 制）走 prompt-to-app，生成一次性代码、hold 不住设计系统；Builder.io Visual Copilot、Locofy 走 Figma 插件路线，还原度更高但复杂页还是要人工微调。我搞这三层约束，就是因为 C 端活动页布局多变、AI 读取有幻觉，纯靠任何一个工具都到不了 90%，必须在工具外面套 Token+Schema+视觉回归三层兜底。</p>
     <p class="hint">涂虎面试官直接追问"复杂页面怎么还原"，Design Token只够回答第一层，必须补上组件Schema和视觉回归才算完整。</p>
   </div>
 </div>
@@ -3523,29 +3582,6 @@ function buildTreeOptimized(list) {
   </div>
 </div>
 
-<div class="card" data-c="bagu" data-kw="设计稿 还原 Figma Locofy Builder.io Design Token 组件 Schema 视觉回归">
-  <div class="card-head"><span class="tag bagu">基础</span><div class="card-title">C 端视觉还原（设计稿→代码三层约束）</div></div>
-  <div class="core">Design Token + 组件 Schema + 视觉回归测试，60% → 90% 的路径</div>
-  <div class="card-body">
-    <p><strong>三层约束方案</strong>：</p>
-    <p>· <strong>第一层 Design Token</strong>：基础样式（颜色/字号/间距）抽成 CSS 变量，AI 生成时引用 token 而非硬编码。</p>
-    <p>· <strong>第二层 组件 Schema</strong>：把业务组件（卡片/弹窗/表单组）的结构描述成 JSON Schema，AI 生成时优先组合现有组件而不是从零写 div。</p>
-    <p>· <strong>第三层 视觉回归测试</strong>：截图对比工具（Chromatic / Playwright 截图断言）对比 AI 生成页面和设计稿，自动检测像素级偏差。</p>
-    <p><strong>Figma-to-Code 工具对比</strong>：</p>
-    <p>· <strong>Locofy</strong>：Figma 插件，AI 生成 React/Vue，准确率不错但复杂页面需微调</p>
-    <p>· <strong>Builder.io</strong>：可视化编辑 + AI 生成，集成度高</p>
-    <p>· <strong>Anima</strong>：Figma → React/Vue，强在响应式</p>
-    <p>· <strong>Framer</strong>：设计即代码，强在动画</p>
-    <p><strong>从 60% 到 90% 的路径</strong>：</p>
-    <p>· 60%：纯 AI 生成</p>
-    <p>· 80%：AI + Design Token 约束</p>
-    <p>· 90%：AI + Token + 组件 Schema + 视觉回归</p>
-    <p>· 100%：还要 Layout Token（栅格系统）+ 人工微调</p>
-    <p><strong>Layout Token</strong>：栅格系统 + 常见布局模式（卡片网格、列表、Tab），让 AI 从预定义布局模板中选择。</p>
-    <p class="hint">涂虎养车/起点读书问过。C 端短板必补。</p>
-  </div>
-</div>
-
 <div class="card" data-c="bagu" data-kw="移动端 H5 兼容 1px rem vw 安全区 键盘 iOS Android 300ms">
   <div class="card-head"><span class="tag bagu">基础</span><div class="card-title">移动端 H5 兼容（蚂蚁 H5 方向必备）</div></div>
   <div class="core">viewport + 1px + rem/vw + 安全区 + 键盘 + 触摸 300ms</div>
@@ -3979,7 +4015,7 @@ function buildTreeOptimized(list) {
     <p>MCP（Model Context Protocol）是协议层。它不绑模型，定义的是工具发现、调用、结果返回的标准格式——你写一个 MCP Server，Claude、GPT、Gemini 任何支持 MCP 的客户端都能连。它解决的是"工具怎么标准化地连上来、跨模型跨客户端复用"。底层是 JSON-RPC，本地 stdio、远程 SSE。</p>
     <p>A2A（Agent2Agent Protocol）是谷歌提的 Agent 间通信协议。它解决的是"Agent 跟 Agent 怎么协作"——两个 Agent 都是大脑，互相发现、委托任务、返回结果。底层 HTTP 加 JSON-RPC 加 SSE，Agent 暴露 agent.json 名片。</p>
     <p>三者的本质区别在粒度和角色。FC 是单次工具调用、Agent 是大脑 Tool 是手脚、绑厂商。MCP 也是单次工具调用级别、但标准化跨模型、Agent 依然是大脑。A2A 是任务级委托（不是单次函数调用）、两个 Agent 都是大脑互相协作、跨框架。</p>
-    <p>三者不冲突，实际中经常配合。一个 Agent 通常同时用 FC 做模型侧的决策（模型决定调什么）、用 MCP 接标准化的外部工具生态（飞书、GitHub、数据库）、用 A2A 接别的 Agent 做专精分工。举个完整例子：你的 Claude Agent 用 FC 决定"这个任务我搞不定，要委派给后端 Agent"，通过 A2A 把任务委托给后端 Agent，后端 Agent 内部用 MCP 连数据库查数据——三层协议各管一段。</p>
+    <p>三者不冲突，实际中经常配合。一个 Agent 通常同时用 FC 做模型侧的决策（模型决定调什么）、用 MCP 接标准化的外部工具生态（飞书、GitHub、数据库）、用 A2A 接别的 Agent 做专精分工。举个完整例子：你的 Claude Agent 用 FC 决定"这个任务我搞不定，要委派给后端 Agent"，通过 A2A 把任务委托给后端 Agent，后端 Agent 内部用 MCP 连数据库查数据——三层协议各管一段。（补充：2026.07.28 MCP spec 发了 Release Candidate，引入 stateless core 和 Extensions 机制——Cursor/Claude Desktop 原生支持，大量 AI 平台还没接，采用迅速但不均。）</p>
     <p>选型上：只用一家模型且工具少，FC 够用，不用上 MCP；要跨模型复用工具或团队共建工具生态，上 MCP；要做多 Agent 跨框架协作，上 A2A。我自己 Manager_Agent 是单 Agent 编排加多个能力 Agent（用 LangGraph 内部调度，没走 A2A），外部工具接 MCP（飞书 PRD 那个 Server），模型侧用 qwen-flash 的 FC 做决策——三层都用到了。</p>
   </div>
 </div>
@@ -4284,7 +4320,7 @@ function buildTreeOptimized(list) {
   <div class="card-head"><span class="tag ai">选型</span><div class="card-title">大模型选型 + AI 编程工具怎么选</div></div>
   <div class="core">写代码 Claude 最强、长文档 Gemini、性价比 DeepSeek、速度 MiniMax；工具上复杂任务 Claude Code、日常 Cursor、补全 Copilot</div>
   <div class="card-body">
-    <p><strong>大模型选型</strong>（2026 年中的大致格局，具体排名随时变，面试说"据我了解"比说死数字安全）：写代码 <strong>Claude</strong> 第一梯队、长上下文 <strong>Gemini</strong>（200 万字）、通用均衡 <strong>GPT</strong>、性价比 <strong>DeepSeek</strong>（中文也强）、响应速度 <strong>MiniMax</strong>、开源编程 <strong>GLM-5</strong>。六维度选型——价格看 DeepSeek、上下文看 Gemini、编程看 Claude、中文看 DeepSeek/Kimi、速度看 MiniMax。</p>
+    <p><strong>大模型选型</strong>（2026-07 大致格局，具体排名随时变，面试说"据我了解"比说死数字安全）：写代码 <strong>Claude</strong> 第一梯队（Sonnet 5 / Opus 4.8）、长上下文 <strong>Gemini</strong>（3.x，1M 上下文）、通用均衡 <strong>GPT</strong>（5.6 Sol/Terra/Luna）、性价比 <strong>DeepSeek V4</strong>（中文也强）、响应速度 <strong>MiniMax</strong>、开源编程 <strong>GLM-5.2</strong>（SWE-Bench Pro 62%，开源编码最强）。六维度选型——价格看 DeepSeek、上下文看 Gemini、编程看 Claude、中文看 DeepSeek/Kimi、速度看 MiniMax。</p>
     <p><strong>编程工具对比</strong>：<strong>Cursor</strong> 是独立 AI 编辑器（VS Code 魔改），图形界面、多模型切换，全栈/前端日常开发；<strong>GitHub Copilot</strong> 是 IDE 插件，速度快、生态广，做快速补全；<strong>Claude Code</strong> 是终端 CLI，准确率最高、复杂多文件任务强，但没图形界面、学习曲线陡。我日常是 Claude Code 处理复杂任务（代码库理解 + 多文件重构）、Cursor 做前端日常、Copilot 补全。</p>
     <p>方法论一句：先让 AI 理解代码库再动手、单 Chat 专注单功能、AI 生成完必须人工 Review、核心路径做压测和边界测试。</p>
   </div>
@@ -4294,7 +4330,7 @@ function buildTreeOptimized(list) {
   <div class="card-head"><span class="tag ai">产品</span><div class="card-title">主流 AI 产品怎么评价（产品 sense 考察）</div></div>
   <div class="core">豆包赢交互和娱乐化、Kimi 赢专业深度、Perplexity 解决了"AI 说的对不对怎么验证"这个真问题</div>
   <div class="card-body">
-    <p><strong>几个主流产品</strong>：<strong>豆包</strong>（字节）交互最丝滑、娱乐化玩法多、用户基数大，但专业生产力弱，本质是"AI 版抖音"。<strong>千问</strong>（阿里）生态整合最强、打通阿里系场景，但产品打磨有瑕疵（键盘弹出不够丝滑这种基础问题）。<strong>Kimi</strong>（月之暗面）专业深度最强、长文本 20 万字、交互克制，定位生产力工具，缺点是用户规模小。<strong>可灵</strong>（快手）垂直于视觉生成，国产顶尖但是工具不是助手。</p>
+    <p><strong>几个主流产品</strong>：<strong>豆包</strong>（字节）交互最丝滑、娱乐化玩法多、用户基数大，但专业生产力弱，本质是"AI 版抖音"。<strong>千问</strong>（阿里）生态整合最强、打通阿里系场景，但产品打磨有瑕疵（键盘弹出不够丝滑这种基础问题）。<strong>Kimi</strong>（月之暗面）专业深度最强、长文本（K2.6 已到 1M+，待核对）、交互克制，定位生产力工具，缺点是用户规模小。<strong>可灵</strong>（快手）垂直于视觉生成，国产顶尖但是工具不是助手。</p>
     <p><strong>AI 搜索里前端体验最好的是 Perplexity</strong>：信息分卡片展示、每个来源有引用标签可点击溯源、答案和来源左右分栏让验证信息变自然、追问输入框始终在底部不遮挡内容。它解决的是一个真问题——AI 生成的内容用户怎么验证可信度，通过引用溯源把"AI 说的对不对"的判断成本降到最低。这是前端设计对产品核心问题的直接贡献。</p>
     <p>面试官考这个不是看你背参数，是考感知力和审美。好回答要有三层：事实层（你看到每个产品的优缺点）、判断层（你觉得谁最好、为什么）、方法层（你的评价标准——交互丝滑度、场景匹配度、用户心智清晰度）。我个人最认可 Kimi（定位最清晰）和 Perplexity（解决真问题）。</p>
   </div>
@@ -4341,7 +4377,7 @@ function buildTreeOptimized(list) {
   <div class="card-body">
     <p><strong>先分三档，别报菜名。</strong>IDE 内嵌是开发者写得爽、终端 CLI 是可编程能挂插件、autonomous cloud 是端到端 ship 代码——三档解决的问题完全不同，混在一起比就是报菜名。体验标杆是 Cursor（自研 Composer 模型 + Plan Mode + Background Agents），但我平时用 Claude Code 更多，它底层是 Agent SDK 当库暴露、能挂自己的 skill 插件（我的 prd-tools 就是）。</p>
     <p><strong>Devin 是 autonomous 标杆。</strong>Cognition 出品，parallel cloud agents 端到端 ship，但黑盒云端，国内企业基本不敢把代码仓发出去。Cline（开源 Plan/Act）、Aider（git-native atomic commit）、opencode（开源 75+ 模型）是终端侧的几个代表。</p>
-    <p><strong>2026 C 端在剧烈整合（必背趋势）。</strong>Cursor 收了 Continue、Cognition（Devin 母公司）收了 Windsurf 剩余资产（OpenAI $3B 黄了、Google 挖走 CEO）、Devin 和 Windsurf 在合并——C 端工具进入寡头阶段。</p>
+    <p><strong>2026 C 端在剧烈整合（必背趋势）。</strong>Cursor 收了 Continue（2026）、Cognition（Devin 母公司）收了 Windsurf 后已 OTA 合并为 Devin Desktop（2026.06）、SpaceX/xAI 传 600 亿收 Cursor（已宣布未交割）——C 端工具进入寡头阶段。</p>
     <p><strong>我的差异化。</strong>没去抢 Cursor 的 UX（全认输），卡的是"企业内网敢不敢让 agent 改生产代码"——JWT/scope/限流/路径白名单/sha256 锁/沙箱/原子写/审计这一层，Cursor/Claude Code 的 hooks 都做不到 first-class。一句话：Cursor 解决"开发者写得爽"，我解决"企业敢不敢用"。</p>
   </div>
 </div>
@@ -4364,13 +4400,30 @@ function buildTreeOptimized(list) {
     <p><strong>Coding Agent。</strong>Cursor（体验天花板、默认信任开发者无企业治理）/ Claude Code（Agent SDK 当库、能挂 skill，我 prd-tools 的宿主）/ Devin（autonomous 标杆、黑盒云端）/ Cline（开源 Plan·Act）/ Aider（git-native atomic commit）/ opencode（开源 75+ 模型）。</p>
     <p><strong>Agent 框架。</strong>LangGraph（图 + HITL，生产首选，节点 >10 + 回环选它）/ Microsoft Agent Framework（AutoGen + SK 合并、对话式）/ CrewAI（角色分工，节点 ≤5 线性选它）/ OpenAI Agents SDK（原 Swarm、handoff）/ Anthropic Skills（卖方法论"workflow 优先"不卖全家桶）。</p>
     <p><strong>MCP + RAG + Eval。</strong>MCP（AI 的 USB-C，M×N 压成 M+N，安全是最大坑）/ pgvector（中小规模 RAG 默认）/ GraphRAG（微软，全局跨文档问题）/ LangSmith·Langfuse·Braintrust·Promptfoo（eval 四件套，口号"evals are the new PRD"）/ OpenTelemetry GenAI（厂商中立逃逸层）。</p>
-    <p><strong>模型（2026-07）。</strong>Claude Opus 4.8 / Sonnet 5 / Haiku 4.5（指令遵循、证据链最严谨）/ GPT-5.6 Sol·Terra·Luna / Gemini 3.1 Pro（1M 上下文 + 多模态）/ Qwen3（开源 agent 性价比王）/ DeepSeek V3.2（地板价）。口诀：研发/防幻觉用 Claude，生产 multi-agent 用开源，按节点负载分层。</p>
+    <p><strong>模型（2026-07）。</strong>Claude Opus 4.8 / Sonnet 5（1M 上下文）/ Haiku 4.5（指令遵循、证据链最严谨）/ GPT-5.6 Sol·Terra·Luna / Gemini 3.1 Pro（1M 上下文 + 多模态）/ Qwen3（开源 agent 性价比王）/ GLM-5.2（开源编码最强、SWE-Bench Pro 62%）/ DeepSeek V4（地板价）/ Kimi K2.6（中文 + agentic）。口诀：研发/防幻觉用 Claude，生产 multi-agent 用开源，按节点负载分层。</p>
     <p><strong>趋势概念。</strong>Workflow-vs-Agent / Context Engineering（取代 prompt engineering 的提法）/ Prompt Caching（稳定前缀缓存 90% off）/ Test-Time Compute（o1/R1 推理模型，简单任务用是浪费）/ Agentic RAG（检索当 tool call + 自反思门禁）/ Computer Use（最后手段不是首选）/ Vibe → Agentic Engineering。</p>
     <p class="hint">⚠️ 模型版本号和收购事件迭代快，进场前花 10 分钟刷一遍官方博客；细节见 learning/interview-kb/AI认知题准备_工具生态与趋势.md。</p>
   </div>
 </div>
 
 <!-- ============ 系统设计（保留，轻度口语化、去速查表腔） ============ -->
+
+<div class="card" data-c="ai" data-g="系统设计" data-kw="系统设计 完整生命周期 方法论 7阶段 需求澄清 容量估算 架构 数据模型 接口 高可用 容灾 监控 灰度 演进 通用框架 从头到尾">
+  <div class="card-head"><span class="tag ai">SD0</span><div class="card-title">系统设计的完整生命周期怎么拆</div></div>
+  <div class="core">7 阶段从头到尾——需求澄清→容量估算→架构→数据模型→接口→高可用容灾→监控灰度演进，每阶段有可验收产出物，能从任意切入点讲全</div>
+  <div class="card-body">
+    <p><strong>阶段 1 需求澄清。</strong>把模糊业务问成可设计契约：① 功能一句话定义；② 非功能指标（QPS / 读写比 / 延迟 p99 / 一致性 / 可用性 SLA / 数据规模）；③ scope 边界（in / out）。产出功能契约 + 非功能指标表 + scope 清单——后面所有判断都建立在这步之上，漏一个维度后面全得返工。</p>
+    <p><strong>阶段 2 容量估算。</strong>从 DAU / 峰值倒推存储、QPS、带宽、算力（LLM 场景加 token/s 与 GPU 卡数）。产出资源估算表 + 机器数 + 成本量级。关键是 order of magnitude + 单点瓶颈识别，不是精确——通常按 10 倍冗余估算就够。</p>
+    <p><strong>阶段 3 架构。</strong>先 monolithic 画清数据流，再按瓶颈拆：接入（网关 / LB）→ 逻辑（无状态水平扩）→ 存储（主从 / 分片）。产出架构图 + 每组件职责 + 关键 tradeoff。简单架构先于精巧架构，拆分点由容量与故障隔离需求决定。</p>
+    <p><strong>阶段 4 数据模型。</strong>表结构 + 索引 + 分片键 + 范式 vs 反范式。产出 schema + 分片策略 + 数据生命周期（归档 / TTL）。SQL / NoSQL、强一致 / 最终一致的选型在这步定。</p>
+    <p><strong>阶段 5 接口。</strong>REST / RPC、同步 / 异步、幂等键、错误码、限流位置（网关 vs 应用）。产出核心 API spec + 调用时序图。任何写操作都要幂等可重试，长链路改消息。</p>
+    <p><strong>阶段 6 高可用 / 容灾。</strong>单点消除（主从 / 同城多活）、限流熔断降级三件套、备份恢复（RPO / RTO）、故障切换。产出 SLO 数字 + 故障预案手册 + 依赖链降级路径。这步直接对标"系统出事能不能扛"。</p>
+    <p><strong>阶段 7 监控 / 灰度 / 演进。</strong>黄金四信号（延迟 / 错误 / 流量 / 饱和）、链路追踪、灰度（蓝绿 / 金丝雀 / 流量比例）、回滚 SOP、6-12 个月 roadmap。产出监控看板 + 发布 SOP + 演进路径。灰度是生命周期最后一道保险。</p>
+    <p><strong>CTO 视角。</strong>"完整生命周期"考的不是背 7 步，是他打断任意一步都能展开——打断容量估算能讲存储选型，打断高可用能讲一致性 vs 可用性的 tradeoff。我自己做 Manager / Code 项目走的也是这 7 步，只是当时没显式标注：Probe-before-plan 对应阶段 6 的健康检查，Checkpoint 对应阶段 6 的故障恢复，Self-Evolution 对应阶段 7 的演进机制。</p>
+    <p><strong>诚实边界。</strong>这套是我基于 Agent + Schema BFF 经验的事后归纳，不是大厂 SD 模板的标准答案；生产规模数据有限，但方法论的通用性不依赖项目规模——7 步是骨架，具体数字每次现场估。</p>
+    <p class="hint">约 90 秒。CTO 打断任意一步都能展开。我自己 Agent 项目的 Probe / Checkpoint / Self-Evolution 能一一对应回阶段 6 / 7，证明不是背模板。</p>
+  </div>
+</div>
 
 <div class="card" data-c="ai" data-g="系统设计" data-kw="重设计 Manager 瘦身 39节点 subgraph 业务域 拆分 删合并 Critic降级 过度设计 架构债 系统设计">
   <div class="card-head"><span class="tag ai">SD1</span><div class="card-title">把 39 节点的多智能体编排瘦身重构</div></div>
@@ -4456,7 +4509,9 @@ function buildTreeOptimized(list) {
 
 总结：Multi-Agent 调度系统的核心矛盾是路由不确定 + 工具不可靠 + 延迟长尾——这三者用重试预算 / 置信度降级 / 分布式可观测三个模式系统性治理，不是靠单个模型变聪明。
 
-诚实边界：Manager 没真实用户（MAU / DAU 为零），这些模式的效用是基于代码逻辑推演 + 小规模自测，没经过大规模流量验证。这是诚实承认——生产级验证是下一步。</div></div>
+诚实边界：Manager 没真实用户（MAU / DAU 为零），这些模式的效用是基于代码逻辑推演 + 小规模自测，没经过大规模流量验证。这是诚实承认——生产级验证是下一步。
+
+<strong>对应通用 SD。</strong>这五大支柱对应通用系统设计里的负载均衡 / 重试熔断 / 长尾治理 / 状态持久化 / 可观测——Agent 域的矛盾是通用 SD 矛盾在非确定性场景下的强化版，方案可迁移。被问通用 SD 题不强行套 Agent，但讲完通用方案后可以锚一句"这块我在 Agent 系统里做过更难的版本，因为路由非确定性，重试 / 熔断 / 降级我都做得比传统服务重"。</div></div>
 </div>
 
 <div class="card" data-c="ai" data-g="系统设计" data-kw="Self-Evolution 统计学 power analysis SPRT 序贯检验 hold-out shadow 经验衰减 回音室 p-value 显著性 系统设计">
@@ -4504,6 +4559,18 @@ function buildTreeOptimized(list) {
 
 诚实边界：spec-driven 的 rubric 我落地过（82 到 54 是真的），code_assistent 的 RAG 召回质量评测我没做（minHits:0 是漏洞），Manager 的线上 metric 因为没真实用户全缺。所以这套体系部分已验证、部分是改进方向——诚实区分。</div></div>
 </div>
+<div class="card" data-c="ai" data-g="系统设计" data-kw="系统设计 非Agent 经典题 短链 秒杀 消息队列 读放大 写突发 异步解耦 骨架 多级缓存 布隆 漏斗">
+  <div class="card-head"><span class="tag ai">SD7</span><div class="card-title">非 Agent 经典系统设计怎么接</div></div>
+  <div class="core">三道经典题骨架——短链（读多写少 + 多级缓存 + 布隆）、秒杀（漏斗削峰 + 库存预热 + 熔断）、消息队列（append-only log + 分区副本 + 消费语义），证明 SD 框架不只套 Agent</div>
+  <div class="card-body">
+    <p><strong>短链系统。</strong>读多写少（参考读 10k QPS / 写 100）。架构走发号器（雪花 / 自增 ID）→ KV 存储 → Redis 多级缓存 → 布隆过滤器防穿透；数据是短码（主键）→ 长 URL（值），按短码 hash 分片；高可用靠 302 临时跳转便于统计 + 缓存击穿 / 穿透 / 雪崩三件套（空值缓存 / 互斥锁 / 随机 TTL）；演进加自定义短码、分组、过期。</p>
+    <p><strong>秒杀。</strong>瞬时高 QPS、防超卖防黄牛。架构走 CDN 静态 + 资源预热 + 三层漏斗（网关限流 → 应用令牌桶 → Redis 库存）；数据把库存预热到 Redis、Lua 原子扣减、DB 异步对账；高可用是限流 + 熔断 + 降级（排队 / 异步下单）、热点 key 隔离；演进加分桶库存、答题验证码、风控。</p>
+    <p><strong>消息队列。</strong>解耦 + 削峰 + 异步，高 TPS。架构走生产者 → broker（partition + 多副本）→ 消费者组；数据是 append-only log + offset，partition 分片，ISR 副本；高可用靠 leader-follower 多副本、ack 策略（0 / 1 / all）、消费者 rebalance、at-least-once + 业务幂等；演进加事务消息、死信队列、exactly-once。</p>
+    <p><strong>三题覆盖面。</strong>这三题分别覆盖 SD 的三个高频考点——读放大（短链）、写突发（秒杀）、异步解耦（MQ）。讲清这三题，90% 的经典 SD 题都能套同一套 7 阶段框架（SD0），不再需要每题单独背。</p>
+    <p class="hint">约 90 秒。被问非 Agent 题，先按这张骨架答，再用 SD0 框架兜底。数字按参考值念，别"就是 X 倍"。</p>
+  </div>
+</div>
+
 <!-- ==================== 综合模块 ==================== -->
 <!-- 综合模块 -->
 
@@ -4585,16 +4652,6 @@ function buildTreeOptimized(list) {
   </div>
 </div>
 
-<div class="card" data-c="emer" data-g="HR面" data-kw="离职 离开 跳槽 看机会 动机 为什么走 换工作">
-  <div class="card-head"><span class="tag emer">HR</span><div class="card-title">为什么离开滴滴</div></div>
-  <div class="core">不是逃，是 4 年 0-1 验证完了，想全职做 AI</div>
-  <div class="card-body">
-    <p>滴滴国际化这四年对我特别关键，从 0 到 1 搭了 Schema 中台，连续两年 A 绩效，该验证的都验证完了。</p>
-    <p>但我越做 AI 工程化越发现，真正让我兴奋的是 Agent 工程化本身。在滴滴它是内部工具、AI 是赋能不是主线，我想去一家 AI 是核心战场的地方，把它当第一身份来做。</p>
-    <p>不说"更大平台"——字节面试官当面怼过这个说法站不住。说"AI 是业务生命线的场景"更具体。</p>
-  </div>
-</div>
-
 <div class="card" data-c="emer" data-g="HR面" data-kw="空窗 裸辞 gap 间隔 辞职 休息 为什么离职">
   <div class="card-head"><span class="tag emer">HR</span><div class="card-title">空窗期怎么解释</div></div>
   <div class="core">主动选择 + 持续在做事，不是被动空着</div>
@@ -4668,17 +4725,6 @@ function buildTreeOptimized(list) {
   </div>
 </div>
 
-<div class="card" data-c="emer" data-g="软技能" data-kw="选我们 为什么来 选择理由 匹配度 兴趣 为什么选">
-  <div class="card-head"><span class="tag emer">软技能</span><div class="card-title">为什么选我们公司</div></div>
-  <div class="core">我的方向 + 你们做的事 + 交集在哪，三句说完</div>
-  <div class="card-body">
-    <p>公式就三句：[我的方向] + [你们做的事] + [交集在哪]。</p>
-    <p>"我个人方向是想深入 AI 应用层，你们做的是 XX，这两个正好重叠。而且我 XX 的背景让我对这块有真实感知，不是纯技术视角。这种结合点我觉得很难得。"</p>
-    <p>反例别犯："觉得 AI 有前景想来试试"——太空，没连任何具体的东西。</p>
-    <p>面试前必须想好这句话，自然说出来；说不出来说明对公司了解不够。</p>
-  </div>
-</div>
-
 <div class="card" data-c="emer" data-g="软技能" data-kw="最大价值 贡献 录用我 核心价值 能带来什么 入职价值">
   <div class="card-head"><span class="tag emer">软技能</span><div class="card-title">来我们这最大的价值是什么</div></div>
   <div class="core">核心能力 + 你们的痛点 + 能力怎么对标痛点</div>
@@ -4709,17 +4755,6 @@ function buildTreeOptimized(list) {
     <p>最核心的组合：前端架构 + AI 工程化双背景。大多数前端不懂 AI 工程化（只会用 Cursor），大多数搞 AI 的不懂前端工程（只会写 prompt）。我有 4 年前端架构（Schema 中台、联动引擎）加完整 AI 工作流落地的双背景。</p>
     <p>第二是从 0 到 1 完整周期加推广落地——大多数候选人要么做过小项目没完整周期，要么在大项目里只负责一个模块没整体视角。</p>
     <p>别用通用形容词（努力/聪明/有热情），每个候选人都这么说。组合才算稀缺，单一技能不算。</p>
-  </div>
-</div>
-
-<div class="card" data-c="emer" data-g="软技能" data-kw="职业规划 发展 方向 目标 长期">
-  <div class="card-head"><span class="tag emer">软技能</span><div class="card-title">职业规划是什么</div></div>
-  <div class="core">前端架构 → AI 工程融合 → 工作流设计者</div>
-  <div class="card-body">
-    <p>短期一两年，继续深化前端架构同时在 AI 工程方向建立壁垒。AI 工作流的方法论已经验证了，下一步是在更复杂场景下验证通用性。</p>
-    <p>中期三五年，成为前端加 AI 交叉领域的架构师——不是写代码，是设计 AI 和工程融合的方案，类似 Context Engineering 和 Harness Engineering 这块，国内前端圈还在早期，我有先发优势。</p>
-    <p>长期推动团队从"AI 辅助写代码"到"AI 驱动的工程工作流"转型，前端从实现者变成工作流设计者，这个转型已经在发生，我想做推动者。</p>
-    <p>别空谈"我要当架构师"，用已有项目证明你在往这个方向走。</p>
   </div>
 </div>
 
@@ -4859,14 +4894,38 @@ function buildTreeOptimized(list) {
 </div>
 
 <!-- ==================== 高 ROI 新增卡 ==================== -->
-<div class="card" data-c="emer" data-g="软技能" data-kw="创业适配 快速迭代 激情 自驱 周末项目 抗压 大厂节奏 创业团队 为什么来创业 驱动力">
-  <div class="card-head"><span class="tag emer">创业</span><div class="card-title">大厂稳定，你能扛创业的高强度快速迭代吗</div></div>
-  <div class="core">用周末个人项目证激情——prd-tools 我一个人迭代到 v2.20、还独立做了两个 Agent 项目；再把"sha256 锁 + 原子写 + A/B 回滚"这套安全兜底讲成创业节奏的工程化表达。</div>
+<div class="card" data-c="emer" data-g="软技能" data-kw="想要创业 owner 身份 从想法到落地 决策权 为什么创业 不确定性 边界 主动选 代价 想要 创业激情 想要什么状态">
+  <div class="card-head"><span class="tag emer">创业</span><div class="card-title">为什么我想要创业状态</div></div>
+  <div class="core">不是能扛，是想要——想要的是 owner 身份：一个东西从想法到落地都归我管，大厂给我最后一步是把这层边界拿掉</div>
   <div class="card-body">
-    <p>说白了我的创业适配证据不在公司，在我下班和周末做的项目里。我在滴滴后期 All-in LLM 时没有现成落地经验，就自己逼自己快速试——prd-tools 我一个人迭代到 v2.20，从 PRD 蒸馏到证据门禁改了二十多个版本；另外还独立做了两个 Agent 项目：一个 39 节点的多智能体编排总管，一个 18 工具的工程化 Coding Agent。这些都不是公司任务，就是我想搞清楚 Agent 工程化到底怎么落地。</p>
-    <p>我对创业状态的理解就三个词：自驱、快速试错、安全兜底。这正好能跟我项目里的工程实践对上——我的 Coding Agent 专门设计了 sha256 乐观锁、原子写盘、shadow→A/B 自动回滚，本质就是为了让我能放心地让 AI 快速试、错了就回滚。这其实就是创业节奏的工程化表达：先能错、再能快。</p>
-    <p>得说句实话摆清楚边界：这几个个人项目偏预研性质，没接真实业务流量、没有生产用户规模数据。我不假装它们是生产系统。但它们确实证明了两件事——一是我的学习速度（半年从零到能独立搭多 Agent 状态机和 Coding Agent 全生命周期），二是工程化能力（不是写个 demo，是带鉴权、沙箱、并发锁、A/B 进化这种生产级关注的代码）。</p>
-    <p>大厂给我的是工程素养和稳定性底线，创业要的快速验证我每天都在做。我不在意完美主义，能接受推翻重来，这个心态是匹配的。</p>
+    <p>其实我对创业的渴望不是浪漫想象，是已经在过这种日子。去年到今年大半年，prd-tools、Manager 多智能体、code_assistant 这几个项目都是我一个人从想法到落地——Manager 长成 39 节点状态机、code_assistant 从空白到能改代码能回滚。这套节奏对我不是想象，是下班和周末的日常。</p>
+    <p>我自己最想要的是决策权在我手里。大厂边界感太清晰了，做中台那几年很爽，但越往后越是「在大框框里优化」，框框是上层定的。我下一个台阶想的是，框框也归我定。这是大厂给不了的——它最多给我「负责一个模块」，给不到「负责一个东西从无到有」。</p>
+    <p>不确定性对我是吸引力，不是成本。滴滴最后一年我明显感觉到，确定的事做多了成长曲线就平了——「该验证的都验证完了」就是这个意思。我周末的项目都冲着没人给答案的地方去，这才是兴奋点。</p>
+    <p>代价我也算过：稳定的资源、清晰的边界、专业分工，换的是 owner 身份和从想法到落地的完整闭环。这笔交易我主动愿意做，不是被迫接受，也不是被裁了才想创业。</p>
+    <p class="hint">约 60 秒。被问"为什么创业 / 想过创业吗 / 你想要什么状态"走这张。正面说"我想要"，别绕成"我能扛"。</p>
+  </div>
+</div>
+
+<div class="card" data-c="emer" data-g="软技能" data-kw="兴奋 从0到1 上瘾 成就感 别人在用 基础设施 维护没劲 离开大厂真因 激情 什么让你兴奋 0到1和1到N">
+  <div class="card-head"><span class="tag emer">创业</span><div class="card-title">从 0 到 1 让我兴奋在哪</div></div>
+  <div class="core">不是"做出东西"让我兴奋，是"一个东西从没有到有、最后变成别人在用"这件事让我上瘾——这是我想离开大厂稳定最真实的原因</div>
+  <div class="card-body">
+    <p>最具体的兴奋点是 Schema 中台。它最早只是我自己的痛点——配一个活动要复制粘贴一堆代码、改十几个地方，我就想把这层抹掉。等我离开滴滴的时候，几个团队在用，新活动上线前端基本零代码。一个想法长成了别人日常工作里的基础设施，这过程是我做过最爽的事。</p>
+    <p>周末做 Agent 项目是同一个爽法。Manager 从一个想法长成 39 节点状态机、code_assistant 从空白到能改代码能回滚，大半年做完靠的就是这种兴奋在推——不需要意志力逼自己，睡前忍不住再调一调。</p>
+    <p>反过来说——维护和迭代一个已经稳定的系统，我能做，但提不起劲。这是我想离开大厂稳定状态最诚实的原因，不是公司不好、不是团队不行，是兴奋点不匹配。我已经验证过自己了：同样的精力，投在 0 到 1 上我状态完全不一样。</p>
+    <p>创业状态我最不担心的就是这一条——不需要外力推，我自己会往前跑，过去几年的周末已经证明了。这是我对创业激情这件事最有底气的回答。</p>
+    <p class="hint">约 60 秒。被问"什么让你兴奋 / 为什么离开稳定 / 0 到 1 和 1 到 N 你偏好哪个"走这张。</p>
+  </div>
+</div>
+
+<div class="card" data-c="emer" data-g="软技能" data-kw="创业适配 快速迭代 激情 自驱 周末项目 抗压 大厂节奏 创业团队 为什么来创业 驱动力 想要 主动选 owner 大厂稳定 你能扛 高强度">
+  <div class="card-head"><span class="tag emer">创业</span><div class="card-title">我为什么主动选创业节奏</div></div>
+  <div class="core">不是能扛，是已经在过这种日子——prd-tools 我一个人迭代到 v2.20、还独立做了两个 Agent 项目；我想正式把这种状态变成全职，不是只在周末做</div>
+  <div class="card-body">
+    <p>被问「你能扛吗」这个问题，我先反转一下：创业节奏对我不是代价，是已经在过的日子。我在滴滴后期 All-in LLM 时没有现成落地经验，就自己逼自己快速试——prd-tools 我一个人迭代到 v2.20，从 PRD 蒸馏到证据门禁改了二十多个版本；另外还独立做了两个 Agent 项目，一个 39 节点的多智能体编排总管，一个 18 工具的工程化 Coding Agent。这些不是公司任务，是我想搞清楚 Agent 工程化怎么落地，下班周末就在做，靠的是兴奋，不是咬牙。</p>
+    <p>这套周末项目里专门设计的 sha256 乐观锁、原子写盘、shadow→A/B 自动回滚，本质是我让自己能放心地快速试错——错了就回滚、版本对得上、不会污染主分支。这其实就是创业节奏的工程化表达：先能错、再能快。我把这套兜底当基础设施在搭，不是出事才补。</p>
+    <p>得说句实话摆清楚边界：这几个个人项目偏预研性质，没接真实业务流量、没有生产用户规模数据。我不假装它们是生产系统。但它们确实证明了两件事——一是我的学习速度（大半年从零到能独立搭多 Agent 状态机和 Coding Agent 全生命周期），二是工程化能力（不是写个 demo，是带鉴权、沙箱、并发锁、A/B 进化这种生产级关注的代码）。</p>
+    <p class="hint">被问"你能扛吗"→ 反转成"我想要"，再用项目证据收。别真去解释"我能扛高强度"——一旦进入解释模式就输了。原标题「大厂稳定你能扛创业的高强度快速迭代吗」仍能搜到。</p>
   </div>
 </div>
 
@@ -4927,7 +4986,7 @@ let scrollLock=false,scrollLockT,spyT;
 const catNames={all:'全部',open:'开场',proj:'项目',bagu:'基础',code:'手撕',ai:'AI',emer:'综合'};
 const subOrder={
   'Schema 项目':8,'Manager 智能体':1.5,'Code 智能体':1.6,'AI 总览':2,'AI 架构':3,'AI 质量':4,'AI 端到端':5,'AI 工具':6,'产品思维':7,
-  'React':1,'JS 核心':2,'CSS':3,'网络':4,'浏览器/性能':5,'TypeScript':6,'工程化':7,'框架扩展':8,
+  'React':1,'JS 核心':2,'CSS':3,'网络':4,'浏览器/性能':5,'TypeScript':6,'工程化':7,'框架扩展':8,'技术选型':9,
   'Agent 基础':1,'RAG 检索':2,'LLM 工程':3,'工具协议':4,'AI 评测':5,'Loop 工程':6,'AI 前端':7,'行业视野':8,'追问':9,'系统设计':10,
   '速查':0,'手写 API':1,'数组/双指针':2,'链表':3,'树/BFS/DFS':4,'回溯':5,'排序/TopK':6,'DP/贪心':7,'栈':8,'二分':9,'综合':10,
   '项目数据':1,'软技能':2,'HR面':3,'反问':4,'话术急救':5
