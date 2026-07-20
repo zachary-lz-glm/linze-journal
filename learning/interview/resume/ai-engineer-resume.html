@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>邓泽霖 · AI 工程师（Agent 工程化） · 简历</title>
+<style>
+/* ============ Page setup ============ */
+@page { size: A4; margin: 0; }
+* { box-sizing: border-box; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+
+:root {
+  --ink: #0f1b2d;          /* 深墨蓝 - 标题 */
+  --ink-soft: #1A2B4A;     /* 主品牌色 */
+  --accent: #0d9488;       /* 翡翠青 - 数据/强调 */
+  --accent-deep: #047857;  /* 深翡翠 - hover */
+  --muted: #5b6675;        /* 次级文本 */
+  --line: #e3e8ef;         /* 分割线 */
+  --surface: #f7f9fc;      /* sidebar 背景 */
+  --bg: #ffffff;
+  --chip: #eef2f7;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: #eef1f5;
+  font-family: -apple-system, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue", sans-serif;
+  font-size: 9.6pt;
+  line-height: 1.5;
+  color: #1f2733;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ============ Page container ============ */
+.page {
+  width: 210mm;
+  min-height: 297mm;
+  margin: 16px auto;
+  background: var(--bg);
+  box-shadow: 0 10px 40px rgba(15, 27, 45, 0.12);
+  display: grid;
+  grid-template-columns: 64mm 1fr;
+}
+
+/* ============ Sidebar (left) ============ */
+.sidebar {
+  background: var(--ink);
+  color: #cfd6e2;
+  padding: 14mm 7mm 10mm 7mm;
+}
+
+.photo {
+  width: 34mm;
+  height: 45mm;
+  object-fit: cover;
+  border-radius: 3px;
+  display: block;
+  margin: 0 auto 6mm auto;
+  border: 1.5px solid rgba(255,255,255,0.18);
+  background: #fff;
+}
+
+.sidebar h1 {
+  font-size: 17pt;
+  color: #fff;
+  margin: 0 0 2pt 0;
+  font-weight: 700;
+  letter-spacing: 1pt;
+  text-align: center;
+}
+
+.sidebar .role {
+  font-size: 9pt;
+  color: var(--accent);
+  text-align: center;
+  margin-bottom: 4mm;
+  letter-spacing: 0.6pt;
+  font-weight: 600;
+}
+
+.sidebar h2 {
+  font-size: 8.5pt;
+  color: #ffffff;
+  text-transform: uppercase;
+  letter-spacing: 1.4pt;
+  margin: 4mm 0 2.5mm 0;
+  padding-bottom: 1.5mm;
+  border-bottom: 0.6pt solid rgba(255,255,255,0.18);
+  font-weight: 600;
+}
+
+.sidebar .contact-line {
+  font-size: 8.8pt;
+  margin: 1.5mm 0;
+  word-break: break-all;
+  color: #b8c0ce;
+}
+.sidebar .contact-line a { color: #b8c0ce; text-decoration: none; }
+
+.sidebar .skill-group {
+  margin-bottom: 2.5mm;
+}
+.sidebar .skill-group .label {
+  color: var(--accent);
+  font-weight: 600;
+  font-size: 8.4pt;
+  letter-spacing: 0.4pt;
+  margin-bottom: 0.8mm;
+  display: block;
+}
+.sidebar .skill-group .items {
+  font-size: 8.3pt;
+  line-height: 1.45;
+  color: #cdd4e0;
+}
+
+.sidebar .edu-title {
+  font-size: 9.5pt;
+  color: #fff;
+  font-weight: 600;
+  margin: 0;
+}
+.sidebar .edu-meta {
+  font-size: 8.5pt;
+  color: #9aa3b3;
+  margin-top: 1mm;
+}
+
+.sidebar .highlight-pill {
+  display: inline-block;
+  background: rgba(13, 148, 136, 0.18);
+  color: #6ee7d8;
+  padding: 1mm 2.5mm;
+  border-radius: 2mm;
+  font-size: 8.3pt;
+  font-weight: 600;
+  margin: 0.8mm 0.8mm 0.8mm 0;
+  letter-spacing: 0.3pt;
+}
+
+/* ============ Main content (right) ============ */
+.main {
+  padding: 12mm 10mm 10mm 10mm;
+}
+
+.main h2.section-title {
+  font-size: 11pt;
+  color: var(--ink);
+  margin: 0 0 3mm 0;
+  padding-bottom: 1.5mm;
+  border-bottom: 1pt solid var(--ink-soft);
+  display: flex;
+  align-items: center;
+  gap: 3mm;
+  font-weight: 700;
+  letter-spacing: 0.4pt;
+}
+.main h2.section-title::before {
+  content: "";
+  width: 2.6mm;
+  height: 2.6mm;
+  background: var(--accent);
+  display: inline-block;
+  border-radius: 0.6mm;
+  transform: rotate(45deg);
+}
+.main h2.section-title .en {
+  margin-left: auto;
+  font-size: 7.5pt;
+  color: #a0a8b5;
+  letter-spacing: 1.2pt;
+  font-weight: 500;
+  text-transform: uppercase;
+}
+
+.main h3.project-title {
+  font-size: 10.2pt;
+  color: var(--ink);
+  margin: 3mm 0 1mm 0;
+  font-weight: 700;
+  letter-spacing: 0.2pt;
+}
+
+.main .project-meta {
+  font-size: 8pt;
+  color: var(--muted);
+  margin-bottom: 1mm;
+  letter-spacing: 0.1pt;
+}
+.main .project-meta .tag {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.main p { margin: 1.5mm 0; }
+.main ul { margin: 1mm 0 1.5mm 0; padding-left: 4mm; }
+.main li { margin: 0.8mm 0; line-height: 1.5; }
+.main li::marker { color: var(--accent); }
+
+.main strong { color: var(--ink-soft); font-weight: 700; }
+.main .data {
+  color: var(--accent);
+  font-weight: 700;
+  font-feature-settings: "tnum";
+}
+.main .num { font-feature-settings: "tnum"; }
+
+.main .lead {
+  font-size: 9.8pt;
+  line-height: 1.6;
+  color: #2c3540;
+  margin-bottom: 3mm;
+}
+
+.main .impact-row {
+  background: var(--surface);
+  border-left: 2pt solid var(--accent);
+  padding: 1.5mm 3mm;
+  margin: 1.5mm 0;
+  font-size: 8.7pt;
+  border-radius: 0 2pt 2pt 0;
+}
+
+/* Experience entry */
+.exp-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 1mm;
+}
+.exp-header .exp-title {
+  font-weight: 700;
+  color: var(--ink);
+  font-size: 10pt;
+}
+.exp-header .exp-date {
+  font-size: 8pt;
+  color: var(--muted);
+  font-feature-settings: "tnum";
+}
+
+/* ============ Action buttons (screen only) ============ */
+.toolbar {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  display: flex;
+  gap: 8px;
+  z-index: 99;
+}
+.toolbar a {
+  display: inline-block;
+  padding: 7pt 14pt;
+  font-size: 9pt;
+  border-radius: 4pt;
+  text-decoration: none;
+  font-weight: 600;
+  letter-spacing: 0.3pt;
+  backdrop-filter: blur(8px);
+  background: rgba(15, 27, 45, 0.85);
+  color: #fff;
+  border: 0.6pt solid rgba(255,255,255,0.2);
+  box-shadow: 0 4pt 12pt rgba(15, 27, 45, 0.25);
+  transition: all .15s;
+}
+.toolbar a:hover {
+  background: var(--accent-deep);
+  transform: translateY(-1px);
+}
+.toolbar a.primary { background: var(--accent); border-color: var(--accent); }
+.toolbar a.primary:hover { background: var(--accent-deep); }
+
+/* ============ Print rules ============ */
+@media print {
+  html, body { background: #fff; margin: 0; padding: 0; }
+  .page {
+    width: 210mm;
+    min-height: 297mm;
+    margin: 0;
+    box-shadow: none;
+  }
+  .toolbar { display: none !important; }
+
+  h2.section-title, h3.project-title { break-after: avoid; page-break-after: avoid; }
+  li, p, .impact-row, .project-meta { break-inside: avoid; }
+  .project-block { break-inside: auto; }
+}
+
+/* ============ Responsive (screen preview on small devices) ============ */
+@media (max-width: 720px) {
+  body { background: var(--bg); }
+  .page {
+    width: 100%;
+    min-height: auto;
+    grid-template-columns: 1fr;
+    margin: 0;
+    box-shadow: none;
+  }
+  .sidebar { padding: 12mm 8mm; }
+  .main { padding: 10mm 8mm; }
+}
+</style>
+</head>
+<body>
+
+<div class="toolbar">
+  <a href="javascript:window.print()" class="primary">⬇ 下载 PDF</a>
+  <a href="javascript:window.print()">🖨 打印</a>
+</div>
+
+<div class="page">
+  <!-- ============ SIDEBAR ============ -->
+  <aside class="sidebar">
+    <img src="photo.jpg" class="photo" alt="邓泽霖" />
+
+    <h1>邓泽霖</h1>
+    <div class="role">AI 工程师 · Agent 工程化</div>
+
+    <h2>联系方式</h2>
+    <div class="contact-line">📞 188-4617-4594</div>
+    <div class="contact-line">✉ 2597419838@qq.com</div>
+    <div class="contact-line">🌐 zachary-lz.vercel.app</div>
+    <div class="contact-line">⌥ github.com/zachary-lz-glm</div>
+
+    <h2>核心方向</h2>
+    <div>
+      <span class="highlight-pill">Coding Agent</span>
+      <span class="highlight-pill">Multi-Agent 编排</span>
+      <span class="highlight-pill">Agent Safety</span>
+      <span class="highlight-pill">RAG 工程</span>
+      <span class="highlight-pill">Spec-Driven</span>
+    </div>
+
+    <h2>专业技能</h2>
+
+    <div class="skill-group">
+      <span class="label">编程语言</span>
+      <div class="items">TypeScript（主） · Python · Bash</div>
+    </div>
+
+    <div class="skill-group">
+      <span class="label">AI 工程 / Agent</span>
+      <div class="items">Claude Code Skill · LangGraph · Plan-Execute / Supervisor / ReAct · HITL · Checkpoint 状态恢复 · Self-Evolution · Agent Safety</div>
+    </div>
+
+    <div class="skill-group">
+      <span class="label">RAG &amp; LLM Eval</span>
+      <div class="items">代码知识图谱检索 · 向量召回 · Citation Grounding · LLM-as-Judge · Golden Set · Regression Gate</div>
+    </div>
+
+    <div class="skill-group">
+      <span class="label">前端工程（4 年主业）</span>
+      <div class="items">React + TypeScript · Serverless BFF · Server-Driven UI · Schema-as-Code · Plugin Architecture · Monorepo</div>
+    </div>
+
+    <div class="skill-group">
+      <span class="label">了解</span>
+      <div class="items">MCP 协议 · Transformer / Attention 原理 · Prompt 工程 · LLM 成本与延迟优化</div>
+    </div>
+
+    <h2>教育背景</h2>
+    <p class="edu-title">黑龙江大学</p>
+    <div class="edu-meta">计算机科学与技术 · 本科<br/>2018.09 — 2022.06</div>
+
+    <h2>亮点</h2>
+    <div class="contact-line" style="color:#cdd4e0;">· 4 年大厂前端 + 1 年 LLM 工程化</div>
+    <div class="contact-line" style="color:#cdd4e0;">· 连续 <span style="color:var(--accent); font-weight:700;">2 年 A 绩效</span></div>
+    <div class="contact-line" style="color:#cdd4e0;">· 主导公司级 SDD 平台</div>
+    <div class="contact-line" style="color:#cdd4e0;">· 服务 <span style="color:var(--accent); font-weight:700;">20+ 人团队</span>日常使用</div>
+  </aside>
+
+  <!-- ============ MAIN ============ -->
+  <main class="main">
+
+    <h2 class="section-title">个人优势 <span class="en">PROFILE</span></h2>
+    <p class="lead">
+      <strong>4 年大厂前端 + 1 年 LLM 工程化</strong>，求职 AI 工程师（Agent 工程化方向）。主导公司级 Spec-Driven 平台落地（<span class="data">20+ 人</span>日常使用），独立设计实现 <strong>code_assistant（Coding Agent）</strong> 与 <strong>Manager_Agent（Multi-Agent Orchestrator）</strong>两个完整 Agent 系统。核心方向：<strong>Coding Agent · Multi-Agent 编排 · Agent Safety · RAG 工程</strong>。
+    </p>
+
+    <h2 class="section-title">工作经历 <span class="en">EXPERIENCE</span></h2>
+    <div class="exp-header">
+      <span class="exp-title">滴滴出行 · 国际化事业部 ｜ 高级前端工程师</span>
+      <span class="exp-date">2022.06 — 至今</span>
+    </div>
+    <p>
+      前端 owner，主导国际化营销中台从 0 到 1（Server-Driven UI + <span class="data">400+</span> 权益组件库）；2026 起 All-in LLM 工程化，主导团队 SDD（Spec-Driven Development）工作流落地，服务 <span class="data">20+ 人团队</span>日常使用，连续 <span class="data">2 年 A 绩效</span>。
+    </p>
+
+    <h2 class="section-title">项目经历 <span class="en">PROJECTS</span></h2>
+
+    <!-- Project 1 -->
+    <div class="project-block">
+      <h3 class="project-title">Spec-Driven Development Platform — Agentic Coding 工作流</h3>
+      <div class="project-meta">
+        <span class="tag">公司团队项目</span> · 主导 · PRD/Spec 工程层 · Claude Code Skill · Citation Grounding · Sub-agent
+      </div>
+      <p><strong>项目定位</strong>：把 Spec 作为可追溯工程中间产物的企业级平台，用 Agentic RAG + Citation Grounding 把 LLM 编码约束在可审计边界内，解决 B 端 PRD 缺历史代码上下文导致计划不可执行、返工频发的痛点。</p>
+      <ul>
+        <li><strong>结构化知识库 + 代码知识图谱检索</strong> — 历史代码 / PRD / 跨层契约抽取为 6 类知识（代码结构 / 编码规则 / 契约 / PRD 路由 / 业务领域 / 实体索引），倒排索引 + 实体图按需检索</li>
+        <li><strong>Plan-and-Execute 闭环 + Quality Gate</strong> — 单次运行产出三份产物（精确到行号的开发计划 + QA Matrix + Rollback Plan）+ Final Quality Gate 5 维质量报告，区别于单点 PRD → Plan 工具</li>
+        <li><strong>Citation Grounding + Spec Review Gate</strong> — 每条事实附带 <span class="num">file:line</span> citation，源码 Read 后才写入、禁止推断；Spec 必须用户确认后才能进入 Plan（HITL gate），降低幻觉与错误计划被执行风险</li>
+      </ul>
+      <div class="impact-row">
+        需求理解耗时 <span class="data">5h → 2h / 需求</span>（n=5 PRDs） · 知识抽取确定性 <span class="data">40% → 85%+</span>（n=10） · <span class="data">20+ 人团队</span>日常使用
+      </div>
+    </div>
+
+    <!-- Project 2 -->
+    <div class="project-block">
+      <h3 class="project-title">Manager_Agent — Multi-Agent Supervisor Orchestrator</h3>
+      <div class="project-meta">
+        <span class="tag">个人项目</span> · 独立设计实现 · Multi-Agent 编排层 · LangGraph · Supervisor · Self-Evolution
+      </div>
+      <p><strong>业务场景</strong>：通用 AI 助手需统一调度多个专业 Agent（知识库 / NL2SQL / 代码 / 爬虫 / GUI / 办公 / 多模态），基于 LangGraph Supervisor 编排模式调度 <span class="data">12 个能力 Agent</span>（8 外部 + 4 内部）。</p>
+      <ul>
+        <li><strong>Multi-Agent Supervisor 编排</strong> — <span class="data">39 节点</span>状态机，编排层与专家层分离（Supervisor 仅负责意图路由 / 任务规划 / 结果汇总），支持 <span class="data">14 路意图分发</span>与子句拆解（多意图 → 多步 plan）</li>
+        <li><strong>Plan-and-Execute + Critic 闭环 + HITL</strong> — Planner → Executor 并行 → Critic 事实性审查 → Synthesis 综合；高风险写操作 HITL 确认；file + Redis 双后端 Checkpoint 支持跨进程续跑；<span class="num">recursionLimit 48</span> 内复杂任务稳定执行</li>
+        <li><strong>Self-Evolution Layer（失败回放驱动）</strong> — ① 失败归因 12 分类 → ② LLM 假设生成（每 30min ≤3 条）→ ③ 金丝雀 A/B 验证命中后晋级 Prompt 补丁 → ④ 经验回放注入 router few-shot，闭环优化无需人工标注</li>
+      </ul>
+      <div class="impact-row">
+        <span class="data">39 节点 / 40 条边</span>（含 20 条条件边） · <span class="data">12 Agent</span>（8 外部 + 4 内部） · 8 类 WS 消息 · 7 个 eval golden + 34 个 smoke 脚本
+      </div>
+    </div>
+
+    <!-- Project 3 -->
+    <div class="project-block">
+      <h3 class="project-title">code_assistant — Agentic Coding / Coding Agent Safety</h3>
+      <div class="project-meta">
+        <span class="tag">个人项目</span> · 独立设计实现 · Coding Agent 执行层 · LangGraph · ReAct · Agent Safety · 代码 RAG
+      </div>
+      <p><strong>业务场景</strong>：LLM 改仓库的高风险场景下"模型 + 写权限 = 事故"，本 Agent 完整覆盖 <strong>Read-before-Write → 语义检索 → 静态分析 → Diff 预览 → 受控写盘</strong>工程闭环。</p>
+      <ul>
+        <li><strong>ReAct Tool Use + 代码 RAG</strong> — <span class="data">18 个</span>仓库工具（读 / 检索 / AST / Patch / 校验 / 执行 / Git）的 Agent-Tool 循环 + 仓库语义检索（向量召回 + 增量索引），区别于端到端 chat 把全量 repo 塞 context；Custom CheckpointSaver 支持跨进程会话恢复</li>
+        <li><strong>Agent Safety — 三层写盘守卫 + Sandbox Isolation</strong> — 路径黑名单 + 受保护目录 + sha256 乐观锁，任一层拦截即拒绝；subprocess 环境变量白名单 + Docker 网络隔离双沙箱，优先强隔离、不可用时自动降级</li>
+        <li><strong>Auto-Validation + Prompt A/B（Shadow Patch）</strong> — autoValidateAfterWrite 跑 typecheck / lint / test，失败针对性修复；Shadow Patch 多次命中晋升正式库，hash 分桶 A/B 对照</li>
+      </ul>
+      <div class="impact-row">
+        <span class="data">18 工具</span>覆盖 read / search / vector / AST / patch / validate / exec / git 全链路 · 单仓库 <span class="num">90s</span> 超时内完成索引 + 改动 · 跨进程会话恢复回归测试 <span class="data">0 丢失</span>
+      </div>
+    </div>
+
+    <!-- Project 4 -->
+    <div class="project-block">
+      <h3 class="project-title">Server-Driven UI 中台 + 400+ 权益组件库</h3>
+      <div class="project-meta">
+        <span class="tag">前端 + BFF 架构设计</span> · Server-Driven UI · Schema-as-Code · Plugin Architecture · React · TypeScript
+      </div>
+      <p><strong>业务场景</strong>：国际化营销中台覆盖 <span class="data">10+ 国家 / 20+ 活动类型 / 400+ 营销权益</span>全生命周期，4 年前端 owner 主导。</p>
+      <ul>
+        <li><strong>Server-Driven UI + Plugin Architecture + Schema-as-Code</strong> — Schema 化页面指令驱动运行时渲染，权益作为插件 SDK 注入（新增无需改 SDK / 无需发版）；DSL 引擎两阶段求值（编译期 schema 校验 + 运行期求值）解决跨国家 / 跨活动动态组合</li>
+        <li><strong>Plugin Registry + Hot Swap</strong> — <span class="data">35+ 渲染组件</span>通过 Registry 注册，发布订阅驱动运行时渲染，组件 hot-swap 不停机</li>
+      </ul>
+      <div class="impact-row">
+        标准活动上线 <span class="data">2 周 → 3 天</span> · 权益库 <span class="data">400+ SKU</span>服务 8 个业务项目 · 新权益接入 <span class="data">2 天 → 2 小时</span> · 运行 18 个月+ 仅 <span class="data">2 起低危 bug</span>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+</body>
+</html>

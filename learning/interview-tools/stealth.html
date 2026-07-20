@@ -4326,6 +4326,19 @@ function buildTreeOptimized(list) {
   </div>
 </div>
 
+<div class="card" data-c="ai" data-g="行业视野" data-kw="模型对比 区别 Claude GPT Gemini DeepSeek GLM Qwen Kimi 闭源 开源 国产 定价 能力 适用场景 分层选型 横向对比 怎么选模型">
+  <div class="card-head"><span class="tag ai">模型</span><div class="card-title">不同 AI 模型横向对比，被问区别我这样讲</div></div>
+  <div class="core">三维矩阵——能力长板 / 定价量级 / 适用场景；我自己研发防幻觉用 Claude、生产 multi-agent 用开源 qwen，按节点负载分层</div>
+  <div class="card-body">
+    <p>被问模型区别我一般分三档讲，别报菜名。</p>
+    <p><strong>闭源旗舰（Claude / GPT / Gemini）拼能力和生态。</strong>Claude Sonnet 5（约 $3/$15、1M 上下文、编码第一梯队、指令遵循和证据链最严谨）、Opus 4.8（$5/$25、定位长 agent）；GPT-5.6 三档 Sol/Terra/Luna（$5/$30 到 $1/$6、推理 SOTA、生态广）；Gemini 3.x（1M + 多模态 + 嵌 Google Search）。短板统一是贵、国内合规麻烦。</p>
+    <p><strong>开源旗舰（GLM-5.2 / DeepSeek V4）拼性价比和可控。</strong>DeepSeek V4（2026.04、1T MoE、能力匹配 GPT-5.5/Opus 4.7、成本约 1/10~1/13，性价比天花板）；GLM-5.2（2026.06、SWE-Bench Pro 62%、MIT 开源，开源编码最强）。要私有化部署、要可控选这档。</p>
+    <p><strong>国产商业 API（Qwen / Kimi / 豆包）拼中文和合规。</strong>Qwen3 Coder、Kimi K2.6（agentic + 工具调用 + 中文强）。⚠️ 这里有个坑：我自己生产用的 qwen-flash 是阿里云 DashScope 商业版，跟开源的 Qwen3 Coder 是两条线，别混着说。</p>
+    <p>我自己怎么分层：研发侧不计较 token 用 Claude（防幻觉、证据链要稳）；部署的 multi-agent 一次跑几十次 LLM call、自进化还要多副本并行，用 qwen-flash——差一个量级才跑得起，加上国内合规直连。不是越贵越好，是按场景分层。</p>
+    <p class="hint">约 60 秒。被问"不同模型区别 / 怎么选模型"走这张，分三档 + 自己的分层逻辑。定价讲量级别说死（官方价 vs 第三方市场价差很多），版本号进场前刷一遍。</p>
+  </div>
+</div>
+
 <div class="card" data-c="ai" data-g="行业视野" data-kw="AI产品 对比 豆包 Kimi 千问 Perplexity AI搜索 体验 sense 审美 引用溯源 问一问">
   <div class="card-head"><span class="tag ai">产品</span><div class="card-title">主流 AI 产品怎么评价（产品 sense 考察）</div></div>
   <div class="core">豆包赢交互和娱乐化、Kimi 赢专业深度、Perplexity 解决了"AI 说的对不对怎么验证"这个真问题</div>
