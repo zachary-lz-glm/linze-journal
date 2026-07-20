@@ -4067,6 +4067,52 @@ function buildTreeOptimized(list) {
   </div>
 </div>
 
+<div class="card" data-c="ai" data-g="行业视野" data-kw="日常 怎么用AI 用什么工具 工作流 Claude Code Cursor qwen 分场景 研发 部署 查资料 插件 prd-tools 反哺 黄金答法 必问 破冰">
+  <div class="card-head"><span class="tag ai">日常</span><div class="card-title">日常怎么用 AI（这题几乎必问，怎么答）</div></div>
+  <div class="core">分场景三套工作流——研发用 Claude Code + 自己写的 skill 插件、部署的 Agent 走阿里云 qwen、日常查资料用 ChatGPT/Claude.ai；做的 agent 反过来帮自己提效，全认输 Cursor 的 UX，只押"企业安全 + 可内网"这条缝</div>
+  <div class="card-body">
+    <p><strong>研发工作流用 Claude。</strong>我自己写代码用 Claude Code，挂我自己写的两个 skill 插件（/reference 查领域知识、/prd-distill 把 PRD 蒸馏成 spec + plan），配套 EV-XXX 证据链防幻觉 + 代码级 Spec Review Gate 硬门禁。研发不计较 token，要的是"宁可慢也要对"——所以研发侧用 Claude 不用开源。</p>
+    <p><strong>部署的 Agent 走 qwen 不上 Claude。</strong>Manager 是 39 节点 LangGraph 状态机，部署在阿里云 qwen。工程取舍：multi-agent 一次跑几十次 LLM call、自进化还要多副本并行实验，qwen 比 Opus 便宜一个量级才跑得起，加上国内合规直连。研发用 Claude、部署用 qwen——不是越贵越好，是按场景分层。</p>
+    <p><strong>日常查资料用通用工具。</strong>快速问题用 ChatGPT/Claude.ai；跟前沿盯 Anthropic 工程博客、arXiv 的 agent/eval 论文、SWE-bench/Terminal-Bench 这几个 benchmark。</p>
+    <p><strong>闭环 + 护城河。</strong>最有意思的是做的 agent 反过来帮我提效——Manager 的 critic 思想我搬进了 prd-tools 的 Spec Review Gate。对工具优劣的真实判断：Cursor 的 Plan/Composer/Background Agents 是开发者体验天花板，我全认输 UX；差异化只能往"企业安全 + 可内网部署"走，这是我押的那条缝。一句话收尾：做 agent 的人，自己的工作流也会慢慢 agent 化。</p>
+  </div>
+</div>
+
+<div class="card" data-c="ai" data-g="行业视野" data-kw="coding agent 对比 Cursor Claude Code Devin Cline Aider opencode Windsurf 三档 IDE 终端 autonomous 整合 收购 差异化 企业安全 用过哪些">
+  <div class="card-head"><span class="tag ai">生态</span><div class="card-title">用过哪些 coding agent，怎么对比优劣</div></div>
+  <div class="core">分三档比——IDE 内嵌（Cursor/Copilot/Windsurf）、终端 CLI（Claude Code/Cline/opencode/Aider）、autonomous cloud（Devin/OpenHands）；2026 C 端剧烈整合，差异化只能往企业安全走</div>
+  <div class="card-body">
+    <p><strong>先分三档，别报菜名。</strong>IDE 内嵌是开发者写得爽、终端 CLI 是可编程能挂插件、autonomous cloud 是端到端 ship 代码——三档解决的问题完全不同，混在一起比就是报菜名。体验标杆是 Cursor（自研 Composer 模型 + Plan Mode + Background Agents），但我平时用 Claude Code 更多，它底层是 Agent SDK 当库暴露、能挂自己的 skill 插件（我的 prd-tools 就是）。</p>
+    <p><strong>Devin 是 autonomous 标杆。</strong>Cognition 出品，parallel cloud agents 端到端 ship，但黑盒云端，国内企业基本不敢把代码仓发出去。Cline（开源 Plan/Act）、Aider（git-native atomic commit）、opencode（开源 75+ 模型）是终端侧的几个代表。</p>
+    <p><strong>2026 C 端在剧烈整合（必背趋势）。</strong>Cursor 收了 Continue、Cognition（Devin 母公司）收了 Windsurf 剩余资产（OpenAI $3B 黄了、Google 挖走 CEO）、Devin 和 Windsurf 在合并——C 端工具进入寡头阶段。</p>
+    <p><strong>我的差异化。</strong>没去抢 Cursor 的 UX（全认输），卡的是"企业内网敢不敢让 agent 改生产代码"——JWT/scope/限流/路径白名单/sha256 锁/沙箱/原子写/审计这一层，Cursor/Claude Code 的 hooks 都做不到 first-class。一句话：Cursor 解决"开发者写得爽"，我解决"企业敢不敢用"。</p>
+  </div>
+</div>
+
+<div class="card" data-c="ai" data-g="行业视野" data-kw="workflow agent 区分 范式 Anthropic Building Effective Agents 自主 硬编码 ReAct 5种模式 回潮 场景 选型 vibe coding 什么场景上agent">
+  <div class="card-head"><span class="tag ai">范式</span><div class="card-title">workflow 和 agent 怎么区分，什么场景该上 agent</div></div>
+  <div class="core">workflow 是预设路径编排 LLM、agent 是 LLM 自主决定路径和工具；Anthropic 圣经原则"能 workflow 就别 autonomous"——2026 业界在回潮，autonomy 只在关键节点用</div>
+  <div class="card-body">
+    <p><strong>定义分清。</strong>workflow = 预设路径编排 LLM（边写死、LLM 只在节点内干活），agent = LLM 自主决定下一步路径和工具调用。Anthropic《Building Effective Agents》的核心原则是"从最简方案开始，需要再加自主性"。</p>
+    <p><strong>判断口诀。</strong>路径可枚举 → workflow；开放探索或工具组合不可预测 → agent。Anthropic 给了 5 种 workflow 模式（prompt chaining / routing / parallelization / orchestrator-workers / evaluator-optimizer），从简到繁，autonomous agent 是最后手段不是默认。</p>
+    <p><strong>2026 业界在回潮。</strong>autonomous agent 生产里不可控，企业级普遍退回 durable deterministic workflow，autonomy 只在关键节点用。Karpathy 2026 自己都宣布 vibe coding 过时、进入 agentic engineering 时代——AI 上生产需要工程护栏，不是靠模型自己。</p>
+    <p><strong>我的实践：先 workflow 验证再放权。</strong>Manager 39 节点是 workflow（边硬编码、只有 probe/route/critic 几个节点真调 LLM），Code Agent 的 ReAct 双节点（LLM 自选 18 工具）才是真 agent。同一个我两种都用，场景决定选型——不是只会一种。</p>
+  </div>
+</div>
+
+<div class="card" data-c="ai" data-g="行业视野" data-kw="速查表 工具 了解哪些 脱口而出 coding agent 框架 MCP RAG eval 模型 趋势 Cursor LangGraph Claude Qwen 弹药 全景 市面">
+  <div class="card-head"><span class="tag ai">速查</span><div class="card-title">市面 AI 工具全景 · 5 类速记（被问"了解哪些"用）</div></div>
+  <div class="core">5 类各记 3-5 个一句话定位——coding agent / agent 框架 / MCP+RAG+eval / 模型 / 趋势；背不到脱口而出就别在面试里提它</div>
+  <div class="card-body">
+    <p><strong>Coding Agent。</strong>Cursor（体验天花板、默认信任开发者无企业治理）/ Claude Code（Agent SDK 当库、能挂 skill，我 prd-tools 的宿主）/ Devin（autonomous 标杆、黑盒云端）/ Cline（开源 Plan·Act）/ Aider（git-native atomic commit）/ opencode（开源 75+ 模型）。</p>
+    <p><strong>Agent 框架。</strong>LangGraph（图 + HITL，生产首选，节点 >10 + 回环选它）/ Microsoft Agent Framework（AutoGen + SK 合并、对话式）/ CrewAI（角色分工，节点 ≤5 线性选它）/ OpenAI Agents SDK（原 Swarm、handoff）/ Anthropic Skills（卖方法论"workflow 优先"不卖全家桶）。</p>
+    <p><strong>MCP + RAG + Eval。</strong>MCP（AI 的 USB-C，M×N 压成 M+N，安全是最大坑）/ pgvector（中小规模 RAG 默认）/ GraphRAG（微软，全局跨文档问题）/ LangSmith·Langfuse·Braintrust·Promptfoo（eval 四件套，口号"evals are the new PRD"）/ OpenTelemetry GenAI（厂商中立逃逸层）。</p>
+    <p><strong>模型（2026-07）。</strong>Claude Opus 4.8 / Sonnet 5 / Haiku 4.5（指令遵循、证据链最严谨）/ GPT-5.6 Sol·Terra·Luna / Gemini 3.1 Pro（1M 上下文 + 多模态）/ Qwen3（开源 agent 性价比王）/ DeepSeek V3.2（地板价）。口诀：研发/防幻觉用 Claude，生产 multi-agent 用开源，按节点负载分层。</p>
+    <p><strong>趋势概念。</strong>Workflow-vs-Agent / Context Engineering（取代 prompt engineering 的提法）/ Prompt Caching（稳定前缀缓存 90% off）/ Test-Time Compute（o1/R1 推理模型，简单任务用是浪费）/ Agentic RAG（检索当 tool call + 自反思门禁）/ Computer Use（最后手段不是首选）/ Vibe → Agentic Engineering。</p>
+    <p class="hint">⚠️ 模型版本号和收购事件迭代快，进场前花 10 分钟刷一遍官方博客；细节见 learning/interview-kb/AI认知题准备_工具生态与趋势.md。</p>
+  </div>
+</div>
+
 <!-- ============ 系统设计（保留，轻度口语化、去速查表腔） ============ -->
 
 <div class="card" data-c="ai" data-g="系统设计" data-kw="重设计 Manager 瘦身 39节点 subgraph 业务域 拆分 删合并 Critic降级 过度设计 架构债 系统设计">
