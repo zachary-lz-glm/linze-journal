@@ -524,6 +524,39 @@ body{overscroll-behavior-y:contain}
   </div>
 </div>
 
+<div class="card" data-c="proj" data-g="Manager 智能体" data-kw="自动流转 状态机 LLM Supervisor Swarm createSupervisor 动态路由 硬编码 为什么不用 Anthropic workflow agent 混合架构 ReAct 对比 自主 决定下一步 路由">
+  <div class="card-head"><span class="tag proj">权衡</span><div class="card-title">为什么用硬编码状态机，不用 LLM 自主流转？</div></div>
+  <div class="core">不是不会用自动流转——Code Agent 就是 ReAct 自主流转；Manager 用硬编码 graph，是因为调度的是能写库/写文件的高风险下游，确定性步骤钉死、需要判断的才交给 LLM，是混合架构</div>
+  <div class="card-body">
+    <p><strong>两种范式先分清。</strong>LLM Supervisor / Swarm（让 LLM 看运行时状态动态决定下一步去哪个 Agent，如 LangGraph 的 createSupervisor、OpenAI Swarm 的 handoff）对位的是硬编码状态机（add_conditional_edges 在构建期把边写死）。LangGraph 两种都支持，不是非此即彼——区别只是"路由决策放在 LLM 里还是放在条件边里"。</p>
+    <p><strong>业界共识是 workflow 优先。</strong>Anthropic《Building effective agents》的核心观点：能用确定性 workflow 编排就别上自主 agent，尤其高风险、要审计的场景——自主循环是兜底手段不是默认选项。原因是自主路由会幻觉选错路、多一次 LLM 调用更贵更慢、决策链不可复现。</p>
+    <p><strong>我的取舍是混合，不是纯硬编码。</strong>Manager 调度的下游能写库（NL2SQL）、能爬数据、未来能改代码——高风险、要 HITL、要可审计。所以把"必经的确定性步骤"用条件边钉死（probe 必在 plan 前、高风险必经 admin_confirm、critic 不过必走 fix），只把"需要语义判断的"交给 LLM（route 意图分类、decompose 子句拆解）。该确定的确定、该判断的判断。</p>
+    <p><strong>诚实边界。</strong>反证我不会只用硬编码：Code Agent 就是 ReAct，LLM 自主选工具循环，因为代码任务探索式、步骤不可预知。硬编码的代价是不够灵活（改流程要改图），autonomous 的代价是 misroute 不可控。换到开放式场景（比如通用聊天），我会更倾向 autonomous——场景决定选型，不是只会一种。</p>
+  </div>
+</div>
+
+<div class="card" data-c="proj" data-g="Manager 智能体" data-kw="竞品 为什么做 AutoGen CrewAI MetaGPT Manus LangGraph Supervisor 差异化 动机 价值判断 编排 不替代 安全第一 可观测 个人项目 为什么要做">
+  <div class="card-head"><span class="tag proj">竞品</span><div class="card-title">和市面多 Agent 竞品比，为什么要做这个总管？</div></div>
+  <div class="core">不是做竞品——agent-main 单仓十几个 Agent 缺一个能编排落地的总管；市面框架偏通用角色扮演，我的偏"能上生产的工程范式"：安全、可观测、HITL、可回滚</div>
+  <div class="card-body">
+    <p><strong>先认竞品强。</strong>市面多 Agent 编排不少：AutoGen（微软，对话式多 Agent）、CrewAI（角色分工）、MetaGPT（软件研发 SOP）、Manus（通用 autonomous）、LangGraph 官方的 Supervisor 模式。功能广度都比不过，它们是成熟框架，我的是个人研究项目。</p>
+    <p><strong>为什么要做（动机）。</strong>三件事：① agent-main 单仓十几个 Agent（db / rag / code / crawler / 多模态…）各自为政，缺一个统一入口和编排层，这是真实工程缺口；② 想搞清楚"多 Agent 编排怎么做到能上生产"——光调 API 不难，难的是可观测、HITL、失败恢复、防误路由，这些框架给得不完整；③ 个人研究项目，验证一套工程范式。</p>
+    <p><strong>差异化（我的强项）。</strong>① 安全第一——下游能写库/写文件，HITL + scope 鉴权 + 审计是地基不是补丁；② 可观测——LangSmith trace 到节点级，路由决策可回看；③ 自进化的非劣性设计（金丝雀 + A/B + 自动回滚），不是裸跑；④ Probe 排在 plan 前（规划前先探下游能不能用，减少幻觉式路由）——这个顺序多数竞品没有。</p>
+    <p><strong>诚实边界。</strong>偏研究型、没接真实业务流量、功能完整度认输。做这个最大的收获是工程认知，不是用户量——这点我直说，不包装成产品。</p>
+  </div>
+</div>
+
+<div class="card" data-c="proj" data-g="Manager 智能体" data-kw="39节点 过度设计 YAGNI 复杂度 太多 必要性 怎么长出来的 演进 做减法 生产化 每个节点挡什么坑 节点数">
+  <div class="card-head"><span class="tag proj">复杂度</span><div class="card-title">39 个节点是不是过度设计了？</div></div>
+  <div class="core">39 是"长出来"的不是一上来设计的——单下游→多路由→状态机→HITL→自进化逐步叠加，每个节点挡一个坑；但偏研究型，生产化要先做减法</div>
+  <div class="card-body">
+    <p><strong>怎么长出来的。</strong>不是一开始就设计 39 个节点。演进路径：单下游代理（3-5 节点）→ 多路由加 route / decompose → 流式加 phase 事件 → HITL 加 admin_confirm / checkpoint → 自进化加 Curator / tool_health，每加一类需求就加几个节点，自然涨到 39（说"接近 40"最稳，代码 39、文档 38 有出入）。</p>
+    <p><strong>每个节点挡什么坑（讲必要性）。</strong>probe 规划前探活挡幻觉路由、decompose 子句拆解挡"一句两意图取平均"、admin_confirm 挡高风险误操作、critic 挡质检漏审、fix 做修复回环、Curator 治理记忆。不是堆砌，每个节点有它专门挡的坑。</p>
+    <p><strong>是不是过度设计（诚实答）。</strong>有部分是。demo / 研究阶段堆了一些理想化机制——比如三套自适应路由（Bandit / RL / Causal），职责正交但可能 over-engineered。生产化第一件事是做减法：看哪些节点在生产流量下根本不走、可以删。</p>
+    <p><strong>关键认知。</strong>复杂度本身不是问题，"无解释的复杂度"才是——能讲清每个节点为什么存在，就不算过度设计；但主动承认规模偏大、生产要精简，反而是加分。而且生产化真正要补的不是减节点，是 Postgres 原生 saver 替自研、接 OpenTelemetry 拿真 trace、golden 样本从几个扩到几十个做统计显著——节点数反而是次要的。</p>
+  </div>
+</div>
+
 <!-- Code 智能体 -->
 
 <div class="card" data-c="proj" data-g="Code 智能体" data-kw="是什么 范式主线 读仓库 语义检索 静态分析 Diff 受控写盘 不是聊天框 技术栈 Nuxt LangGraph qwen 立项 30秒 定位">
@@ -697,6 +730,28 @@ body{overscroll-behavior-y:contain}
     <p><strong>行业标杆心里有数。</strong>Cursor 强在 IDE 集成 + UX——apply model 审 patch、repo map（仓库结构图：tree-sitter + pagerank 排符号重要性）、Composer 多文件协同、Tab 补全；Aider 强在 CLI 开源轻量——whole-file / search-replace / unified-diff 三种 patch 策略 + Git 集成；Devin 强在 autonomy——完整 sandbox + knowledge base 跑长任务。功能完整度它们都远超我，IDE 集成、repo map、long context 我都没有，这块诚实认输。</p>
     <p><strong>我的差异化是它们不做的赛道。</strong>它们都假设"用的人是开发者本人、信任开发者"，所以不做企业级审计和防注入。我做的是服务端、能放内网、能被 Manager 调度、每次改动全留审计日志（.data/agent-audit.log）、能受控写盘——这是企业内部代码代理的需求，不是个人桌面工具。Shadow Patch 带 hash 分桶 A/B 的自进化、跨进程 Checkpoint，开源产品也普遍没有。</p>
     <p><strong>ROI 灵魂拷问。</strong>没算过 ROI，技术热情驱动不是业务驱动。收口的话——功能完整度我认输 Cursor，但企业 Safety + 审计赛道它不做，我赌的是企业内部代码代理的市场不是开发者工具的市场。</p>
+  </div>
+</div>
+
+<div class="card" data-c="proj" data-g="Code 智能体" data-kw="opencode ohmyopencode SST Anomaly 开源 coding agent terminal Aider OpenHands Cline 竞品 认知 生态 不锁vendor 75模型 自托管 了解过">
+  <div class="card-head"><span class="tag proj">生态</span><div class="card-title">了解 opencode / ohmyopencode 吗？</div></div>
+  <div class="core">了解。opencode 是 SST/Anomaly 的开源 terminal coding agent（75+ 模型、TUI/desktop/IDE、不锁 vendor），ohmyopencode 是社区配置生态——和我 Code Agent 同类，它赢通用生态、我赢企业 Safety 受控</div>
+  <div class="card-body">
+    <p><strong>opencode 是什么。</strong>SST 团队（已重组为 Anomaly）出的开源 AI coding agent，主打 terminal（TUI），也有 desktop 和 IDE 扩展；支持 75+ 模型 provider；完全开源、不锁 vendor。仓库 sst/opencode → anomalyco/opencode。定位类似 Claude Code / Aider 的开源版，卖点是可以自托管、自己接模型、不绑定厂商。</p>
+    <p><strong>ohmyopencode 是什么。</strong>社区围绕 opencode 做的配置 / 增强生态（类比 oh-my-zsh 之于 zsh），比如 opencode-config-tool（一个 Electron + React 桌面工具，专门管 opencode.json 配置）。它存在本身就说明 opencode 已经聚起社区生态，值得跟进。</p>
+    <p><strong>和我的 Code Agent 比。</strong>同一类（terminal coding agent），定位不同：① opencode 是通用开发者工具，生态广、模型多、开源可自托管；② 我偏研究 + 企业场景，强项是 Safety——JWT / scope / 限流 / 路径白名单 / sha256 锁 / 沙箱 / 原子写 / 审计，把安全做在代码路径上不写在 prompt 里（详见"和 Cursor / Aider / Devin 比"卡的企业 Safety 差异化）。</p>
+    <p><strong>态度与诚实。</strong>开源 coding agent 是明确趋势（opencode / Aider / OpenHands / Cline），我会跟进它的 provider 抽象和 TUI 交互；但差异化在企业可审计的受控改码，不拼功能广度。诚实说：opencode 我了解定位、没深度用过，ohmyopencode 知道是社区配置层——不装熟。</p>
+  </div>
+</div>
+
+<div class="card" data-c="proj" data-g="Code 智能体" data-kw="18工具 太多 必要性 只读11 写7 收敛 意图路由 task_kind 职责分工 砍 YAGNI 竞品对比 长尾 工具数 过度设计">
+  <div class="card-head"><span class="tag proj">复杂度</span><div class="card-title">18 个工具是不是太多了？</div></div>
+  <div class="core">18 = 11 只读 + 7 写，而且只读请求根本拿不到写工具——按读 / 检索 / 分析 / 写 / 记忆职责分，不是堆数量；demo 偏理想化，生产看调用分布砍长尾</div>
+  <div class="card-body">
+    <p><strong>先拆结构（讲分工不是堆数量）。</strong>18 = 只读 11（list / read / semantic_search / vector_search / git 只读 ×4 / ast_analyze / analyze_dependencies / remember）+ 写 7（write_file / apply_diff / validate_project / run_tests / git_commit / git_create_branch / generate_docs）。按职责分 5 类：读、检索、分析、写、记忆。</p>
+    <p><strong>关键设计：意图路由收敛工具数。</strong>按 task_kind 四路分发（compute / inspect / edit / full），只读请求（compute / inspect）只挂只读工具——模型根本看不到写工具，选不到就不会乱写。所以"18 个"是全量清单，单次请求模型实际面对的工具远少于 18。这是降复杂度，不是加。</p>
+    <p><strong>为什么不能更少（必要性）。</strong>只读 11 是"理解仓库"的最小集（文件树、读文件、语义检索、向量检索、git 状态、AST、依赖图、记忆）；写 7 是"受控改码"的最小集（写文件、打补丁、校验、测试、提交、建分支、生成文档）。砍掉哪个都有场景缺口。</p>
+    <p><strong>诚实 + 竞品水位。</strong>demo 阶段偏理想化，有些工具（比如 generate_docs）实际用得少，生产化会看调用分布砍长尾；但 read / semantic_search / apply_diff / validate_project 是命门，不能砍。和 Cursor / Aider / opencode 比，18 是工程化 coding agent 的合理水位，不算多——它们工具集相当或更多。</p>
   </div>
 </div>
 
