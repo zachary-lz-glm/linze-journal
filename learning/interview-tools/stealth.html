@@ -543,16 +543,6 @@ th{font-weight:600;color:#888;font-size:10.5px;letter-spacing:.02em}
   </div>
 </div>
 
-<div class="card" data-c="proj" data-kw="依赖管理 yarn.lock workspace symlink">
-  <div class="card-head"><span class="tag proj">A6</span><div class="card-title">Monorepo 包依赖管理？</div></div>
-  <div class="core">Yarn workspace做引用 + yarn.lock锁版本 + resolutions强制统一，踩过解析器事故后形成三道防线</div>
-  <div class="card-body">
-    <p><strong>Yarn workspace</strong>：packages目录下的共享包通过workspace协议自动symlink到业务模块，不需要手动npm link或发布到私有源。改了共享包代码，业务模块立即生效。</p>
-    <p><strong>版本锁死</strong>：yarn.lock必须锁死第三方版本。踩过解析器从rc.31自动升到rc.48导致Node 16构建全挂的事故——从此yarn.lock加入git保护，CI加lockfile diff检测，依赖升级走staging验证流程。</p>
-    <p><strong>统一公共依赖</strong>：resolutions字段强制统一React、TypeScript等公共依赖版本。否则不同模块可能安装不同版本的React，导致Hooks调用报错。Monorepo里版本碎片化是最常见的隐性问题。</p>
-  </div>
-</div>
-
 <div class="card" data-c="proj" data-kw="联动引擎 injectDActions 双重求值 fetchApi state">
   <div class="card-head"><span class="tag proj">A7</span><div class="card-title">联动引擎怎么设计？</div></div>
   <div class="core">injectDActions一次声明双重求值——BFF端先算初始状态，前端运行时再算联动，16个联动模板覆盖95%场景</div>
@@ -560,16 +550,6 @@ th{font-weight:600;color:#888;font-size:10.5px;letter-spacing:.02em}
     <p><strong>核心机制：一次声明、双重求值</strong>。开发者在Schema中用dAction DSL声明联动规则（比如"当城市=北京时，显示产品线A和C"）。BFF端injectDActions先用safeEval求值一次，计算出当前用户的初始状态——哪些字段可见、哪些禁用、默认值是什么。这样SSR出来的页面初始状态就是对的，不需要等前端JS加载完再联动。然后把联动规则序列化给前端，前端运行时再算一次处理用户交互触发的联动。</p>
     <p><strong>两种联动类型</strong>。State型：纯前端联动，用户改了一个字段，本地eval联动表达式直接更新其他字段。比如选了城市A，产品线下拉选项立即更新。FetchApi型：需要后端数据，用户改字段后回调BFF重新生成Schema片段——比如城市变化需要从后端拿新的价格策略配置。前端通过listener.on监听字段变化，支持链式联动（A变→B变→C变）。</p>
     <p><strong>16个联动模板</strong>：visible（显隐）、disable（禁用）、setValue（赋值）、setEnum（更新选项）、required（必填）等。覆盖95%的表单联动场景，剩下5%走自定义组件。</p>
-  </div>
-</div>
-
-<div class="card" data-c="proj" data-kw="异步组件 远程数据 地址选择器 级联 自定义组件 Schema声明">
-  <div class="card-head"><span class="tag proj">追问</span><div class="card-title">异步组件（地址选择器）Schema怎么描述？</div></div>
-  <div class="core">不是不支持，是远程数据组件通过自定义组件+异步属性声明来处理</div>
-  <div class="card-body">
-    <p>地址选择器这种需要按级联请求远程数据的组件，确实不是Schema声明能闭环的，因为数据不在本地。处理方式是注册为自定义组件，组件内部自己管理异步数据请求和级联逻辑。</p>
-    <p>Schema层只声明组件类型和必要的配置（比如接口地址、级联层级），具体的异步请求逻辑封装在组件代码里。这和Formily处理远程数据组件的方式本质一样——复杂异步组件都需要代码层介入，纯配置搞不定。</p>
-    <p>我们的原则是：Schema管结构和联动，代码管复杂交互。98%的表单场景Schema直接覆盖，剩下2%的自定义组件兜底。</p>
   </div>
 </div>
 
@@ -598,41 +578,11 @@ th{font-weight:600;color:#888;font-size:10.5px;letter-spacing:.02em}
 </div>
 
 <!-- ==================== 项目追问 ==================== -->
-<div class="card" data-c="proj" data-kw="大表单 性能 200字段 虚拟滚动 精确订阅 重渲染 依赖收集 dot path 字段改动">
-  <div class="card-head"><span class="tag proj">追问</span><div class="card-title">大表单 200+ 字段性能 + 字段改动重渲染</div></div>
-  <div class="core">分步渲染+精确订阅+虚拟滚动+SW缓存；字段改动不会全表单重渲染</div>
-  <div class="card-body">
-    <p><strong>渲染层</strong>：按步骤分组，当前步全渲染，前后步只渲染摘要。实测首屏从 1.2s 降到 300ms。</p>
-    <p><strong>更新层（字段改动不会全表单重渲染）</strong>：原理类似 Redux selector——每个组件按 dot path（如 <code>page1.form2.field3</code>）精确订阅，不是监听整棵 Schema 树。字段变了，引擎通过依赖映射表找到受影响联动目标，只通知这些组件更新，其余不渲染。</p>
-    <p><strong>组件层</strong>：长列表用虚拟滚动。</p>
-    <p><strong>联动接口层</strong>：性能瓶颈不在渲染在接口——用户改一个配置项可能触发1-2个联动接口调用。用Service Worker做network-first缓存，详见SW缓存专项卡片。</p>
-    <p class="hint">追问"一个字段改动会全表单重渲染吗"→ 不会，按 dot path 精确订阅。真正瓶颈是 API 型联动接口（2-3s），用 SW 缓存。</p>
-  </div>
-</div>
-
-
-<div class="card" data-c="proj" data-kw="循环依赖 死循环 联动 循环 拓扑 max depth">
-  <div class="card-head"><span class="tag proj">追问</span><div class="card-title">联动会不会循环依赖导致死循环？</div></div>
-  <div class="core">设计上约束联动只做清值不做赋值，架构层面断开循环链路</div>
-  <div class="card-body">
-    <p>两层防御。第一层：联动规则只能做清值操作——A 改了导致 B 的选项更新，B 之前的值清掉。不会出现"A 赋值给 B，B 又赋值给 A"的循环。需要默认值时用独立字段存储，不走联动路径。</p>
-    <p>第二层：引擎层做 max depth 限制，联动链超过 3 层就中断并报警。如果追问"更系统的方案"，可以说拓扑排序检测依赖图中的环，有环就编译报错不让上线。</p>
-  </div>
-</div>
-
 <div class="card" data-c="proj" data-kw="BFF 挂了 降级 缓存 兜底 容错">
   <div class="card-head"><span class="tag proj">追问</span><div class="card-title">BFF 挂了怎么办？</div></div>
   <div class="core">缓存兜底 + 降级 UI + 告警联动</div>
   <div class="card-body">
     <p>缓存兜底：成功生成的 Schema 缓存到 CDN，BFF 超时用缓存渲染。降级 UI：连缓存都没有展示骨架页。告警：错误率超阈值自动告警。</p>
-  </div>
-</div>
-
-<div class="card" data-c="proj" data-kw="竞态 race condition 序列号 废弃">
-  <div class="card-head"><span class="tag proj">追问</span><div class="card-title">injectDActions 竞态问题？</div></div>
-  <div class="core">有，请求序列号 + 废弃标记解决</div>
-  <div class="card-body">
-    <p>快速切换字段触发两次 fetchApi，旧数据覆盖新数据。解法：递增序列号，响应回来检查是否最新请求，不是就丢弃。state 型同步不存在这个问题。</p>
   </div>
 </div>
 
@@ -642,15 +592,6 @@ th{font-weight:600;color:#888;font-size:10.5px;letter-spacing:.02em}
   <div class="card-body">
     <p>resolver 从 rc.31 自动升到 rc.48 不兼容 Node 16，整个构建全挂。15 分钟回滚 yarn.lock 恢复。复盘三件事：yarn.lock 加入 git 保护；CI 加 lockfile diff 检测；依赖升级必须 staging 验证。</p>
     <p class="hint">事故处理 = 快速止血 + 根因分析 + 流程改进。</p>
-  </div>
-</div>
-
-<div class="card" data-c="proj" data-kw="版本兼容 版本迁移 Schema 版本 向前兼容 升级 迁移">
-  <div class="card-head"><span class="tag proj">追问</span><div class="card-title">Schema 版本变了怎么兼容？</div></div>
-  <div class="core">Schema 带 version 字段，BFF 层版本路由 + 迁移函数双版本并行</div>
-  <div class="card-body">
-    <p>Schema 根节点有 version 字段。BFF 层根据 version 路由到对应模板引擎版本处理，老活动和新活动可以并行运行。引擎升级时写迁移函数把老版本 Schema 转成新版本，线上双版本并行跑一段时间确认没问题后逐步下线老版本。</p>
-    <p><strong>通用方法论</strong>：任何配置化系统的版本化三要素——版本号标注（知道是哪个版本）、兼容路由（新老版本都能跑）、迁移函数（老版本能转新版本）。</p>
   </div>
 </div>
 
@@ -2353,7 +2294,7 @@ function buildTreeOptimized(list) {
 </div>
 
 <!-- ==================== AI 工程 ==================== -->
-<div class="card" data-c="proj" data-kw="AI 理解项目 Reference SSOT Evidence Index 知识库">
+<div class="card" data-c="proj" data-g="PRD 工作流" data-kw="AI 理解项目 Reference SSOT Evidence Index 知识库">
   <div class="card-head"><span class="tag proj">架构</span><div class="card-title">AI 怎么理解陌生项目？</div></div>
   <div class="core">把项目知识蒸馏成6个领域知识文件，每个事实只存一处，AI按需查询</div>
   <div class="card-body">
@@ -2361,7 +2302,7 @@ function buildTreeOptimized(list) {
   </div>
 </div>
 
-<div class="card" data-c="proj" data-kw="PRD 代码 变更分类 蒸馏 最难">
+<div class="card" data-c="proj" data-g="PRD 工作流" data-kw="PRD 代码 变更分类 蒸馏 最难">
   <div class="card-head"><span class="tag proj">架构</span><div class="card-title">PRD 到代码最难的一步？</div></div>
   <div class="core">判断PRD每句话对应代码是新增、修改还是删除，难在不知道项目现状就无法判断</div>
   <div class="card-body">
@@ -2392,7 +2333,7 @@ function buildTreeOptimized(list) {
 
 
 
-<div class="card" data-c="proj" data-kw="SSOT 边界规则 知识污染 关注点分离 冗余 文件边界 推导方法">
+<div class="card" data-c="proj" data-g="PRD 工作流" data-kw="SSOT 边界规则 知识污染 关注点分离 冗余 文件边界 推导方法">
   <div class="card-head"><span class="tag proj">追问</span><div class="card-title">SSOT 五条边界规则怎么推导出来的？</div></div>
   <div class="core">"AI 犯错 → 归因缺失知识 → 补规则"闭环迭代，跑了 20+ 轮</div>
   <div class="card-body">
@@ -2404,7 +2345,7 @@ function buildTreeOptimized(list) {
 </div>
 
 <!-- ===== 面试防御卡（针对阿里一面/二面真实追问） ===== -->
-<div class="card" data-c="proj" data-kw="知识保鲜 过时 时效性 L7 失效 stale 更新机制 reference 漂移">
+<div class="card" data-c="proj" data-g="PRD 工作流" data-kw="知识保鲜 过时 时效性 L7 失效 stale 更新机制 reference 漂移">
   <div class="card-head"><span class="tag proj">G1</span><div class="card-title">reference 知识过时怎么办？（L7 会员升级问题）</div></div>
   <div class="core">三层防线：时效性分层 + 触发式失效 + 金标准回归</div>
   <div class="card-body">
@@ -2419,7 +2360,7 @@ function buildTreeOptimized(list) {
   </div>
 </div>
 
-<div class="card" data-c="proj" data-kw="Context 预算 token 膨胀 大 PRD 2万字 chunking Map-Reduce 子agent 200K">
+<div class="card" data-c="proj" data-g="PRD 工作流" data-kw="Context 预算 token 膨胀 大 PRD 2万字 chunking Map-Reduce 子agent 200K">
   <div class="card-head"><span class="tag proj">G2</span><div class="card-title">2-3万字 PRD 直接打爆 Context 怎么办？</div></div>
   <div class="core">显式 Context Budget + PRD Chunking + Map-Reduce 蒸馏</div>
   <div class="card-body">
@@ -2434,7 +2375,7 @@ function buildTreeOptimized(list) {
   </div>
 </div>
 
-<div class="card" data-c="proj" data-kw="团队模式 准确率 60% 损耗 跨仓库 contract-delta Pull-based 不读源码 精度天花板">
+<div class="card" data-c="proj" data-g="PRD 工作流" data-kw="团队模式 准确率 60% 损耗 跨仓库 contract-delta Pull-based 不读源码 精度天花板">
   <div class="card-head"><span class="tag proj">G3</span><div class="card-title">团队模式准确率 60% 损耗具体在哪？</div></div>
   <div class="core">三个根因：Pull-based 设计不读源码 + 11/12 delta 标 pending + 精度天花板 = min(各仓质量)</div>
   <div class="card-body">
@@ -2450,7 +2391,7 @@ function buildTreeOptimized(list) {
   </div>
 </div>
 
-<div class="card" data-c="proj" data-kw="度量 A/B 5h 2h 提升 OQ 命中率 IMP 执行率 对照实验 分母 度量体系">
+<div class="card" data-c="proj" data-g="PRD 工作流" data-kw="度量 A/B 5h 2h 提升 OQ 命中率 IMP 执行率 对照实验 分母 度量体系">
   <div class="card-head"><span class="tag proj">G4</span><div class="card-title">"5h→2h" 怎么度量？（早期简历曾用 60% 提效表述）</div></div>
   <div class="core">三层指标：L1 产物质量（OQ/IMP 锚点）+ L2 研发效率（端到端 + 返工率）+ L3 业务价值</div>
   <div class="card-body">
@@ -2467,7 +2408,7 @@ function buildTreeOptimized(list) {
   </div>
 </div>
 
-<div class="card" data-c="proj" data-kw="Claude Code Cursor 区别 差异化 init 证据链 防幻觉 可追溯 标准化">
+<div class="card" data-c="proj" data-g="PRD 工作流" data-kw="Claude Code Cursor 区别 差异化 init 证据链 防幻觉 可追溯 标准化">
   <div class="card-head"><span class="tag proj">G5</span><div class="card-title">和 Claude Code init / Cursor 的区别？</div></div>
   <div class="core">Claude Code init 缺历史业务上下文 + 缺证据链 + 缺质量门控，prd-tools 补的就是证据层</div>
   <div class="card-body">
@@ -2484,20 +2425,6 @@ function buildTreeOptimized(list) {
 
 
 
-<div class="card" data-c="proj" data-kw="Schema 引擎 性能 量化 基线 SPA 微前端 插槽 损耗 Web Worker Service Worker 包体积">
-  <div class="card-head"><span class="tag proj">G6</span><div class="card-title">Schema 引擎 + 插槽 + 微前端性能损失多少？</div></div>
-  <div class="core">三大瓶颈：包体积膨胀（多版本并存）+ 联动接口重复调用 + 长列表渲染</div>
-  <div class="card-body">
-    <p><strong>面试官追问</strong>（阿里二面13:31）："Schema 引擎加微前端加插槽式加载，跟纯 SPA 相比，性能损失具体多少？这块有没有量化整理？"</p>
-    <p><strong>我当时的回答</strong>：弱——"做的少""凭个人了解""包体积、Web Worker、长列表"。缺性能基线。</p>
-    <p><strong>升级版回答三个瓶颈 + 量化思路</strong>：</p>
-    <p>· <strong>瓶颈1：包体积膨胀</strong>。组件库多版本并存（业务方用 v1.0，营销平台用 v2.0），Webpack 都打进 bundle，体积膨胀 1.5-2x。极端情况触发前端打包内存溢出。<strong>量化指标</strong>：bundle size 基线（主包 < 300KB，按路由 chunk split 后首屏 < 200KB），webpack-bundle-analyzer 周报。</p>
-    <p>· <strong>瓶颈2：联动接口重复调用</strong>。表单 50+ 字段，每个联动触发一次接口，转圈圈体感 1-2 秒。<strong>优化</strong>：Service Worker 缓存相同前置条件的联动结果；Web Worker 把序列化计算挪出主线程；同 key 请求 batch 合并。<strong>量化指标</strong>：联动接口 P95 延迟 < 300ms，缓存命中率 > 60%。</p>
-    <p>· <strong>瓶颈3：长列表渲染</strong>。50+ 字段表单，每次 schema 重渲染触发全量 diff。<strong>优化</strong>：组件按 dot-path 订阅（Redux selector 原理），只通知受影响组件；折叠区懒加载。<strong>量化指标</strong>：FPS > 50（chrome performance panel），字段编辑响应 < 16ms。</p>
-    <p><strong>诚实边界</strong>："这块目前确实缺系统化的性能基线对比，是公认短板。下一步计划用 Lighthouse + Web Vitals 建立 SPA / Schema 引擎 / Schema+微前端 三档性能基线，量化损耗。"</p>
-    <p class="hint">不要装懂——答"三大瓶颈 + 已做的优化 + 待建基线"三层，体现工程化思维。</p>
-  </div>
-</div>
 <!-- ===== 防御卡结束 ===== -->
 
 
@@ -2522,7 +2449,7 @@ function buildTreeOptimized(list) {
 
 
 
-<div class="card" data-c="proj" data-kw="能力面 适配器 目录 项目 可复用 surface">
+<div class="card" data-c="proj" data-g="PRD 工作流" data-kw="能力面 适配器 目录 项目 可复用 surface">
   <div class="card-head"><span class="tag proj">架构</span><div class="card-title">能力面适配器怎么设计？</div></div>
   <div class="core">目录结构千差万别，但研发协作的能力面是稳定的——按能力面描述，不按目录</div>
   <div class="card-body">
@@ -2531,7 +2458,7 @@ function buildTreeOptimized(list) {
   </div>
 </div>
 
-<div class="card" data-c="proj" data-kw="BMAD Skill拆分 中间文件 渐进式 上下文隔离 Bismuth 多Agent">
+<div class="card" data-c="proj" data-g="PRD 工作流" data-kw="BMAD Skill拆分 中间文件 渐进式 上下文隔离 Bismuth 多Agent">
   <div class="card-head"><span class="tag proj">架构</span><div class="card-title">BMAD架构：多Skill拆分+中间文件传递</div></div>
   <div class="core">每个Skill独立上下文窗口，Skill间通过中间文件传递状态，不共享上下文</div>
   <div class="card-body">
@@ -2542,7 +2469,7 @@ function buildTreeOptimized(list) {
   </div>
 </div>
 
-<div class="card" data-c="proj" data-kw="双插件 Reference 蒸馏 上下文隔离 按需加载 Context Engineering 插件 plugin">
+<div class="card" data-c="proj" data-g="PRD 工作流" data-kw="双插件 Reference 蒸馏 上下文隔离 按需加载 Context Engineering 插件 plugin">
   <div class="card-head"><span class="tag proj">架构</span><div class="card-title">双插件体系：Reference+PRD蒸馏</div></div>
   <div class="core">第一个插件建领域知识库，第二个插件做PRD蒸馏，拆开是为了上下文隔离</div>
   <div class="card-body">
@@ -2553,7 +2480,7 @@ function buildTreeOptimized(list) {
   </div>
 </div>
 
-<div class="card" data-c="proj" data-kw="质量门控 门禁 quality-gate Step间 Spec Review 评分 readiness">
+<div class="card" data-c="proj" data-g="PRD 工作流" data-kw="质量门控 门禁 quality-gate Step间 Spec Review 评分 readiness">
   <div class="card-head"><span class="tag proj">架构</span><div class="card-title">质量门控：prd-tools的门禁体系</div></div>
   <div class="core">三层门控层层收紧：步骤间前置检查 → 蒸馏门禁12项 → 最终五维评分</div>
   <div class="card-body">
@@ -2564,7 +2491,7 @@ function buildTreeOptimized(list) {
   </div>
 </div>
 
-<div class="card" data-c="proj" data-kw="Readiness Score 评分 权重 阈值 prd_ingestion evidence_coverage code_search contract_alignment plan_completeness 85 60 硬性降级">
+<div class="card" data-c="proj" data-g="PRD 工作流" data-kw="Readiness Score 评分 权重 阈值 prd_ingestion evidence_coverage code_search contract_alignment plan_completeness 85 60 硬性降级">
   <div class="card-head"><span class="tag proj">架构</span><div class="card-title">Readiness Score精确评分体系</div></div>
   <div class="core">五个维度加权评分，85分直接通过，60分需确认，低于60必须修</div>
   <div class="card-body">
@@ -2575,7 +2502,7 @@ function buildTreeOptimized(list) {
   </div>
 </div>
 
-<div class="card" data-c="proj" data-kw="PRD 摄入 输入 docx md 图片 子Agent 并行 foreground media-analysis ingest">
+<div class="card" data-c="proj" data-g="PRD 工作流" data-kw="PRD 摄入 输入 docx md 图片 子Agent 并行 foreground media-analysis ingest">
   <div class="card-head"><span class="tag proj">架构</span><div class="card-title">PRD摄入：多格式输入与图片并行策略</div></div>
   <div class="core">支持四种文档格式输入，图片由AI子进程分批并行分析，不影响主流程</div>
   <div class="card-body">
@@ -2586,7 +2513,7 @@ function buildTreeOptimized(list) {
   </div>
 </div>
 
-<div class="card" data-c="proj" data-kw="AI工作流 定义 定位 产品边界 为什么做 怎么做 隐性知识 认知偏差 SSOT 证据链 门控 蒸馏 Graphify OpenSpec prd-tools 面试答题">
+<div class="card" data-c="proj" data-g="PRD 工作流" data-kw="AI工作流 定义 定位 产品边界 为什么做 怎么做 隐性知识 认知偏差 SSOT 证据链 门控 蒸馏 Graphify OpenSpec prd-tools 面试答题">
   <div class="card-head"><span class="tag proj">架构</span><div class="card-title">AI工作流完整介绍（面试第一答）</div></div>
   <div class="core">把PRD自动蒸馏成结构化开发计划，靠SSOT+证据链+多层门控保质量</div>
   <div class="card-body">
@@ -2602,7 +2529,7 @@ function buildTreeOptimized(list) {
   </div>
 </div>
 
-<div class="card" data-c="proj" data-kw="Spec Plan 产物 章节格式 结构化 需求分析报告 开发计划">
+<div class="card" data-c="proj" data-g="PRD 工作流" data-kw="Spec Plan 产物 章节格式 结构化 需求分析报告 开发计划">
   <div class="card-head"><span class="tag proj">架构</span><div class="card-title">AI工作流产出的Spec和Plan长什么样？</div></div>
   <div class="core">Spec是需求分析报告三段式，Plan是开发执行计划三段式，都有固定章节模板</div>
   <div class="card-body">
@@ -2612,7 +2539,7 @@ function buildTreeOptimized(list) {
   </div>
 </div>
 
-<div class="card" data-c="proj" data-kw="端到端 自验证 自修复 震荡检测 校验 重试 Harness 闭环 A→B→A validation history prd2code-gen 工程化深度">
+<div class="card" data-c="proj" data-g="PRD 工作流" data-kw="端到端 自验证 自修复 震荡检测 校验 重试 Harness 闭环 A→B→A validation history prd2code-gen 工程化深度">
   <div class="card-head"><span class="tag proj">架构</span><div class="card-title">端到端原型：自验证+自修复循环怎么实现？</div></div>
   <div class="core">4 类校验 + 3 次重试 + 震荡检测（A→B→A 切整段重写），修正历史全程可追溯</div>
   <div class="card-body">
@@ -2624,7 +2551,7 @@ function buildTreeOptimized(list) {
   </div>
 </div>
 
-<div class="card" data-c="proj" data-kw="模板 LLM 双路径 Handlebars 0token 兜底 成本 control token verified_by 审计 漂移 drift-report 知识保鲜 prd2code-gen">
+<div class="card" data-c="proj" data-g="PRD 工作流" data-kw="模板 LLM 双路径 Handlebars 0token 兜底 成本 control token verified_by 审计 漂移 drift-report 知识保鲜 prd2code-gen">
   <div class="card-head"><span class="tag proj">架构</span><div class="card-title">端到端原型：模板/LLM 双路径 + verified_by 审计</div></div>
   <div class="core">Handlebars 模板优先（0 token）+ LLM 兜底；每条事实带 file:line 溯源 + drift-report 自动发现 reference 漂移</div>
   <div class="card-body">
@@ -2637,7 +2564,7 @@ function buildTreeOptimized(list) {
   </div>
 </div>
 
-<div class="card" data-c="proj" data-kw="端到端 原型 生产 推广 三步路径 CI 责任 模板库 过渡 prd2code-gen 协同 既然完整为啥不推广">
+<div class="card" data-c="proj" data-g="PRD 工作流" data-kw="端到端 原型 生产 推广 三步路径 CI 责任 模板库 过渡 prd2code-gen 协同 既然完整为啥不推广">
   <div class="card-head"><span class="tag proj">架构</span><div class="card-title">端到端原型 → 生产的三步过渡路径</div></div>
   <div class="core">双轨协同：团队推广版稳态运营，端到端原型探索三步过渡——模板库扩展 + CI对齐 + 责任归属</div>
   <div class="card-body">
@@ -2652,7 +2579,7 @@ function buildTreeOptimized(list) {
   </div>
 </div>
 
-<div class="card" data-c="proj" data-kw="优化 迭代 Benchmark 黄金Case 回归 LLM-as-Judge A/B eval auto-tune 反哺 gap-analyzer pattern-detector case-loader llm-judge">
+<div class="card" data-c="proj" data-g="PRD 工作流" data-kw="优化 迭代 Benchmark 黄金Case 回归 LLM-as-Judge A/B eval auto-tune 反哺 gap-analyzer pattern-detector case-loader llm-judge">
   <div class="card-head"><span class="tag proj">工作流</span><div class="card-title">AI工作流怎么优化和迭代</div></div>
   <div class="core">维护黄金Case集 + Benchmark回归 + LLM-as-Judge自动评分；端到端原型已落地完整 eval/auto-tune 五模块闭环</div>
   <div class="card-body">
@@ -2667,7 +2594,7 @@ function buildTreeOptimized(list) {
 
 
 
-<div class="card" data-c="proj" data-kw="Skill 解决什么 问题 痛点 为什么需要 直接调AI 不可复现 prompt 手写 隐性经验">
+<div class="card" data-c="proj" data-g="PRD 工作流" data-kw="Skill 解决什么 问题 痛点 为什么需要 直接调AI 不可复现 prompt 手写 隐性经验">
   <div class="card-head"><span class="tag proj">AI</span><div class="card-title">Skill解决什么问题？为什么不能直接调AI？</div></div>
   <div class="core">直接调AI每次从零开始、结果波动大、经验无法沉淀——Skill把"怎么用好AI"固化成可复用流程</div>
   <div class="card-body">
@@ -2678,7 +2605,7 @@ function buildTreeOptimized(list) {
   </div>
 </div>
 
-<div class="card" data-c="proj" data-kw="Skill vs 写代码 调AI 区别 prompt hardcode 声明式 配置 代码 部署 差异">
+<div class="card" data-c="proj" data-g="PRD 工作流" data-kw="Skill vs 写代码 调AI 区别 prompt hardcode 声明式 配置 代码 部署 差异">
   <div class="card-head"><span class="tag proj">AI</span><div class="card-title">Skill vs 写代码调AI的区别</div></div>
   <div class="core">写代码调AI是"给模型写客户端"，Skill是"给模型写操作手册"</div>
   <div class="card-body">
@@ -2698,7 +2625,7 @@ function buildTreeOptimized(list) {
 
 
 
-<div class="card" data-c="proj" data-kw="知识库 定位 约束 导航 保鲜 过时 本质 阿里 context">
+<div class="card" data-c="proj" data-g="PRD 工作流" data-kw="知识库 定位 约束 导航 保鲜 过时 本质 阿里 context">
   <div class="card-head"><span class="tag proj">AI</span><div class="card-title">AI知识库的本质定位（阿里面试官纠正）</div></div>
   <div class="core">知识库不是全量业务知识，是帮AI筛选信息和做context管理的约束层</div>
   <div class="card-body">
@@ -2709,7 +2636,7 @@ function buildTreeOptimized(list) {
   </div>
 </div>
 
-<div class="card" data-c="proj" data-kw="Tools Skill 区别 区分 Function Calling 粒度 状态 原子 编排">
+<div class="card" data-c="proj" data-g="PRD 工作流" data-kw="Tools Skill 区别 区分 Function Calling 粒度 状态 原子 编排">
   <div class="card-head"><span class="tag proj">AI</span><div class="card-title">Tools vs Skill 有什么区别？</div></div>
   <div class="core">Tool给Agent能力，Skill给Agent判断力——一个是锤子扳手，一个是施工手册</div>
   <div class="card-body">
@@ -2722,7 +2649,7 @@ function buildTreeOptimized(list) {
   </div>
 </div>
 
-<div class="card" data-c="proj" data-kw="Tool 识别率 准确率 下降 优化 多工具 路由 动态激活 描述">
+<div class="card" data-c="proj" data-g="PRD 工作流" data-kw="Tool 识别率 准确率 下降 优化 多工具 路由 动态激活 描述">
   <div class="card-head"><span class="tag proj">AI</span><div class="card-title">Tool多了识别率下降怎么优化？</div></div>
   <div class="core">三层策略——分层路由先分类再选、动态激活按需加载、优化描述降低认知负担</div>
   <div class="card-body">
@@ -2734,7 +2661,7 @@ function buildTreeOptimized(list) {
   </div>
 </div>
 
-<div class="card" data-c="proj" data-kw="传统工程 AI 设计模式 映射 架构 相同 MVC 状态机 缓存 适配器">
+<div class="card" data-c="proj" data-g="PRD 工作流" data-kw="传统工程 AI 设计模式 映射 架构 相同 MVC 状态机 缓存 适配器">
   <div class="card-head"><span class="tag proj">AI</span><div class="card-title">传统工程思维在AI系统中的映射</div></div>
   <div class="core">大量传统架构模式在AI系统里换了新名字重新出现，本质完全一样</div>
   <div class="card-body">
@@ -2754,7 +2681,7 @@ function buildTreeOptimized(list) {
 
 
 
-<div class="card" data-c="proj" data-kw="自定义Agent 为什么 Claude Code 通用 专用 业务 数据隐私 内部系统 定制 不可替代">
+<div class="card" data-c="proj" data-g="PRD 工作流" data-kw="自定义Agent 为什么 Claude Code 通用 专用 业务 数据隐私 内部系统 定制 不可替代">
   <div class="card-head"><span class="tag proj">AI</span><div class="card-title">有Claude Code了为什么还要自定义Agent？</div></div>
   <div class="core">Claude Code是通用编码助手，自定义Agent是业务专家——一个什么都能干，一个专精你的领域</div>
   <div class="card-body">
@@ -2781,7 +2708,7 @@ function buildTreeOptimized(list) {
 
 
 
-<div class="card" data-c="proj" data-kw="幻觉 防御 编造 完成倾向 证据链 负向搜索 Spec Review Readiness 四层防线 拦截">
+<div class="card" data-c="proj" data-g="PRD 工作流" data-kw="幻觉 防御 编造 完成倾向 证据链 负向搜索 Spec Review Readiness 四层防线 拦截">
   <div class="card-head"><span class="tag proj">AI</span><div class="card-title">幻觉怎么答（四层防线·聚合卡）</div></div>
   <div class="core">防幻觉靠四层防线——证据链溯源、负向搜索显式标记、Spec Review硬停止、Readiness五维兜底</div>
   <div class="card-body">
@@ -2806,7 +2733,7 @@ function buildTreeOptimized(list) {
   </div>
 </div>
 
-<div class="card" data-c="proj" data-kw="王牌 素材 准确率 五维 负向搜索 消融 确定性分工 独门 亮点 别人讲不出">
+<div class="card" data-c="proj" data-g="PRD 工作流" data-kw="王牌 素材 准确率 五维 负向搜索 消融 确定性分工 独门 亮点 别人讲不出">
   <div class="card-head"><span class="tag proj">AI</span><div class="card-title">prd-tools 4个王牌素材（每个30秒讲法）</div></div>
   <div class="core">我有四个别人讲不出的素材——准确率五维定义、负向搜索、消融实验、确定性分工</div>
   <div class="card-body">
@@ -2825,7 +2752,7 @@ function buildTreeOptimized(list) {
 
 
 
-<div class="card" data-c="proj" data-kw="PRD 质量 卡口 反推 缺项 赋能 替代 产品 AI 鸿湖">
+<div class="card" data-c="proj" data-g="PRD 工作流" data-kw="PRD 质量 卡口 反推 缺项 赋能 替代 产品 AI 鸿湖">
   <div class="card-head"><span class="tag proj">AI</span><div class="card-title">PRD质量卡口：赋能产品而非替代</div></div>
   <div class="core">AI反推PRD缺项给补全建议，让产品先确认不缺东西再给研发，是赋能不是替代</div>
   <div class="card-body">
@@ -2884,7 +2811,7 @@ function buildTreeOptimized(list) {
 
 
 <!-- ==================== 微前端专项 ==================== -->
-<div class="card" data-c="proj" data-kw="上下文管理 context pack 能力面 适配器 搜索 代码定位 Reference 索引">
+<div class="card" data-c="proj" data-g="PRD 工作流" data-kw="上下文管理 context pack 能力面 适配器 搜索 代码定位 Reference 索引">
   <div class="card-head"><span class="tag proj">架构</span><div class="card-title">代码上下文怎么精准定位？</div></div>
   <div class="core">知识库路由优先定向 → 索引精确扫描 → 全局搜索补充，三轮逐步精准</div>
   <div class="card-body">
@@ -2895,7 +2822,7 @@ function buildTreeOptimized(list) {
   </div>
 </div>
 
-<div class="card" data-c="proj" data-kw="证据链 evidence SSOT 追溯 事实 置信度 溯源 negative_code_search">
+<div class="card" data-c="proj" data-g="PRD 工作流" data-kw="证据链 evidence SSOT 追溯 事实 置信度 溯源 negative_code_search">
   <div class="card-head"><span class="tag proj">架构</span><div class="card-title">证据链机制详解</div></div>
   <div class="core">AI每个事实追溯到PRD/源码/文档，8种证据类型+高/中/低置信度</div>
   <div class="card-body">
@@ -2906,7 +2833,7 @@ function buildTreeOptimized(list) {
   </div>
 </div>
 
-<div class="card" data-c="proj" data-kw="落地 场景 使用 团队 日常 需求交付 自动化 PM PRD 评审">
+<div class="card" data-c="proj" data-g="PRD 工作流" data-kw="落地 场景 使用 团队 日常 需求交付 自动化 PM PRD 评审">
   <div class="card-head"><span class="tag proj">工作流</span><div class="card-title">AI工作流在团队怎么落地的？</div></div>
   <div class="core">PM写PRD → 工具自动产出结构化技术方案，替代需求评审到技术评审环节</div>
   <div class="card-body">
@@ -2916,7 +2843,7 @@ function buildTreeOptimized(list) {
 </div>
 
 
-<div class="card" data-c="proj" data-kw="稳定性 质量 保证 三层 XML 约束 门禁 评分 Skill 执行">
+<div class="card" data-c="proj" data-g="PRD 工作流" data-kw="稳定性 质量 保证 三层 XML 约束 门禁 评分 Skill 执行">
   <div class="card-head"><span class="tag proj">工作流</span><div class="card-title">Skill执行结果不稳定怎么保证质量？</div></div>
   <div class="core">事前用结构化声明约束AI行为，事中检查每步产物完整性，事后五维评分兜底</div>
   <div class="card-body">
@@ -2926,24 +2853,13 @@ function buildTreeOptimized(list) {
   </div>
 </div>
 
-<div class="card" data-c="proj" data-kw="PRD 过时 过期 改动 同步 源码 SSOT 不一致 更新 临时">
+<div class="card" data-c="proj" data-g="PRD 工作流" data-kw="PRD 过时 过期 改动 同步 源码 SSOT 不一致 更新 临时">
   <div class="card-head"><span class="tag proj">工作流</span><div class="card-title">PRD过时或临时改动了怎么同步？</div></div>
   <div class="core">源码为SSOT，历史PRD仅作业务理解参考，不确定的标记人工确认</div>
   <div class="card-body">
     <p><strong>历史PRD定位</strong>：帮AI理解业务场景模式（如新增活动涉及哪些步骤、联动怎么配），不提供精确指令。所以"错了"不会有后果。</p>
     <p><strong>冲突处理</strong>：PRD和代码有分叉时以源码为准。工具会把不确定的点标记为"需人工确认"，而不是强行执行。</p>
     <p><strong>核心依赖</strong>：最终所有结论落到源码确认，不依赖PRD文本的精确性。</p>
-  </div>
-</div>
-
-<div class="card" data-c="proj" data-kw="前置校验 沙箱 sandbox 预渲染 Schema 验证 发布前 类型检查">
-  <div class="card-head"><span class="tag proj">工程</span><div class="card-title">Schema配置前置校验怎么做？</div></div>
-  <div class="core">三层防线：沙箱预渲染→声明式校验→TS类型约束</div>
-  <div class="card-body">
-    <p><strong>第一层：沙箱预渲染</strong>。发布前把Schema+渲染引擎在沙箱环境跑一遍完整渲染，能发现类型不匹配、组件不支持、联动表达式语法错误等大部分运行时问题。</p>
-    <p><strong>第二层：BFF模板层Schema校验</strong>。对字段类型、必填项、枚举值做声明式约束（JSON Schema validation），配置阶段拦截非法值。</p>
-    <p><strong>第三层：TS类型约束</strong>。公共组件props有TypeScript定义，模板生成时做静态检查。</p>
-    <p><strong>事后兜底</strong>：Sentry+LogInsight全链路监控，错误码分类过滤噪音后上报报警平台，类型错误/空值触发2-3次即报警。</p>
   </div>
 </div>
 
@@ -2967,7 +2883,7 @@ function buildTreeOptimized(list) {
   </div>
 </div>
 
-<div class="card" data-c="proj" data-kw="归因 自修复 可观测性 知识库缺失 模型能力 上下文 质量诊断">
+<div class="card" data-c="proj" data-g="PRD 工作流" data-kw="归因 自修复 可观测性 知识库缺失 模型能力 上下文 质量诊断">
   <div class="card-head"><span class="tag proj">工程</span><div class="card-title">AI工作流出错了怎么归因和修复？</div></div>
   <div class="core">三维度归因——知识库缺失补数据，模型能力不足加约束，上下文不够扩检索</div>
   <div class="card-body">
@@ -3013,7 +2929,7 @@ function buildTreeOptimized(list) {
 
 
 
-<div class="card" data-c="proj" data-kw="推广 ROI 成本收益 团队 落地 试点 量化 经营视角 鸿湖 提效 投入产出">
+<div class="card" data-c="proj" data-g="PRD 工作流" data-kw="推广 ROI 成本收益 团队 落地 试点 量化 经营视角 鸿湖 提效 投入产出">
   <div class="card-head"><span class="tag proj">产品</span><div class="card-title">AI工作流推广ROI</div></div>
   <div class="core">单团队建库1-2天，之后每需求省2.5h，5团队月省125h，但必须扣掉协同成本</div>
   <div class="card-body">
@@ -3106,22 +3022,9 @@ function buildTreeOptimized(list) {
   </div>
 </div>
 
-<div class="card" data-c="proj" data-kw="Schema架构 BFF 动态生成 前端动态渲染 协同 联动 dAction 双端解析 鸿湖 逐字稿">
-  <div class="card-head"><span class="tag proj">Schema</span><div class="card-title">Schema+BFF/前端协同链路（技术深挖）</div></div>
-  <div class="core">Schema是中间协议，BFF模板引擎生成配置接口，前端渲染引擎解析生成页面，联动DSL桥接两端</div>
-  <div class="card-body">
-    <p><strong>Schema是什么</strong>：基于JSON Schema Draft-07扩展的中间协议。在标准JSON Schema上加了三个扩展——dAction联动描述（组件间依赖关系）、componentMap组件映射（Schema字段到UI组件的对应关系）、fetchConfig跨接口联动配置（城市/产品线变化时调哪个接口拿新配置）。Schema是前后端共享的唯一真相源。</p>
-    <p><strong>BFF动态生成</strong>：BFF层有一套模板引擎（Template Engine），接收运营在后台配置的Schema + 业务数据（城市列表、产品线枚举、价格策略等），模板引擎根据Schema中的条件表达式动态裁剪配置。比如巴西用户看到的字段和墨西哥不同，不是两套代码，是同一份Schema根据条件生成不同产物。BFF输出的是经过裁剪的"运行时Schema"——包含当前用户应该看到的所有字段、联动规则、初始值。</p>
-    <p><strong>前端动态渲染</strong>：前端渲染引擎拿到BFF输出的运行时Schema后，三步处理。第一步解析Schema构建组件树——根据componentMap映射到具体的React组件。第二步注入联动——injectDActions先扫描整个Schema收集所有dAction声明，构建组件间依赖图，然后为每个联动注入运行时求值函数。第三步渲染——按依赖图顺序渲染组件，联动触发时只更新受影响的组件，不重渲染整棵树。</p>
-    <p><strong>协同工作流程</strong>：运营在后台配Schema → BFF模板引擎根据用户条件裁剪 → 输出运行时Schema给前端 → 前端渲染引擎解析+注入联动+渲染 → 用户操作触发联动 → State型联动前端本地计算 → Fetch型联动调BFF拿新配置 → 新配置进入渲染引擎重新处理。整个链路是配置驱动的闭环，新增活动类型只需要配一份Schema，不需要写代码。</p>
-    <p><strong>最有成就感的点</strong>：联动从命令式变成声明式。以前新人看到一段if-else不知道在处理什么场景，现在打开Schema，联动关系、条件表达式、影响范围一眼可见。从"读代码才能理解业务"变成了"看配置就能理解业务"。</p>
-    <p class="hint">这道题是纯技术深挖，面试官想听完整链路。从Schema定义→BFF处理→前端渲染→联动触发，每段30秒，画一条线讲下来。不要只讲概念，要讲数据怎么流的。</p>
-  </div>
-</div>
-
 <!-- ==================== 项目深挖·追问防御 ==================== -->
 
-<div class="card" data-c="proj" data-kw="5h 2h PRD转化率 实验组 对照组 AB实验 统计口径 样本 逐字稿">
+<div class="card" data-c="proj" data-g="PRD 工作流" data-kw="5h 2h PRD转化率 实验组 对照组 AB实验 统计口径 样本 逐字稿">
   <div class="card-head"><span class="tag proj">AI</span><div class="card-title">5h→2h 的实验组和对照组是什么？（≈60%提效）</div></div>
   <div class="core">不是AB实验，是同一团队前后流程的工时对比。主口径 5h→2h（纯工作），20 需求日历口径 2-3天→1-2小时</div>
   <div class="card-body">
@@ -3141,53 +3044,6 @@ function buildTreeOptimized(list) {
     <p><strong>具体页面类型</strong>：活动配置页（优惠券/折扣/立减的创建和编辑）、权益投放页（选择城市+产品线+用户标签后配置权益内容）、营销规则页（条件组合+动作配置的决策表）、国际化运营页（同一套Schema根据国家/语言生成不同产物）。本质上都是"配置驱动内容"的页面，不是"设计稿驱动UI"的页面。</p>
     <p><strong>不适合的场景</strong>：三类。第一，C端自由布局页面——首页/详情页这些设计稿驱动、交互复杂的页面，Schema描述不了。第二，数据可视化大屏——图表组合和布局规则跟表单完全不同。第三，高度定制化的交互场景——拖拽排序、可视化编辑器这些，配置化方案反而增加复杂度。Schema的价值边界很清晰：把重复的配置类页面从"写代码"变成"配数据"。</p>
     <p class="hint">这道题考的是你对方案适用边界的判断力。面试官想听的不是"什么都能解决"，是"什么能解决、什么不能、边界在哪"。主动说"不适合"的场景比夸大覆盖范围更加分。</p>
-  </div>
-</div>
-
-<div class="card" data-c="proj" data-kw="Formily 技术选型 为什么不用 自研 Schema 联动 BFF 双端 差异对比 逐字稿">
-  <div class="card-head"><span class="tag proj">Schema</span><div class="card-title">为什么不用Formily？和自研方案有什么差异？</div></div>
-  <div class="core">Formily是纯前端方案，我们的联动需要BFF双端解析；但如果只需要纯前端表单，Formily是更好的选择</div>
-  <div class="card-body">
-    <p><strong>Formily的能力边界</strong>：Formily确实是成熟的JSON Schema驱动表单方案，支持x-reactions联动描述、自定义组件扩展、路径系统。对于纯前端表单场景——一个页面、一套联动、纯客户端计算——Formily完全够用，而且生态更完善。</p>
-    <p><strong>我们的场景差异在哪</strong>：核心差异是"双端联动"。我们的联动不只是前端组件间的依赖，还涉及BFF层的接口联动——用户切换城市，前端不是直接调后端拿数据，是调BFF，BFF根据城市+产品线+活动类型重新裁剪Schema再返回。这个"前端触发→BFF重新生成配置→前端重新渲染"的链路，Formily的x-reactions覆盖不了，因为它只管前端层。</p>
-    <p><strong>第二个差异——联动DSL的表达能力</strong>：我们的dAction DSL有两种联动类型。State型是组件间依赖（A变→B隐/禁/改值），这个Formily能做。Fetch型是跨接口联动（城市变→调BFF拿新配置→重新渲染），这个需要BFF有对应的模板引擎来处理，不是前端表单库能解决的。Formily如果要做Fetch型联动，需要自己写大量的自定义副作用（effects），本质上还是要自研联动层，那不如从头设计一个统一的DSL。</p>
-    <p><strong>选型决策</strong>：如果只看前端表单层，Formily是更好的选择——社区活跃、文档完善、开箱即用。但我们的场景需要前后端共享同一套Schema协议、BFF有模板引擎做动态裁剪、联动描述要双端都能解析。这不是"表单渲染"的问题，是"配置驱动双端协同"的问题。选自研不是因为Formily不好，是因为问题域不一样。</p>
-    <p class="hint">这道题考的是技术选型的判断力。好的回答不是"Formily不行"，是"问题域不同"。主动承认Formily在纯前端场景更好，反而说明你做过认真对比。千万不要贬低开源方案。</p>
-  </div>
-</div>
-
-<div class="card" data-c="proj" data-kw="Service Worker 缓存 联动接口 BFF配置 Fetch型 离线 network-first 逐字稿">
-  <div class="card-head"><span class="tag proj">Schema</span><div class="card-title">为什么用Service Worker做联动接口缓存？</div></div>
-  <div class="core">Fetch型联动调BFF拿配置数据量大且变化不频繁，SW的network-first策略让操作响应快+断网可用</div>
-  <div class="card-body">
-    <p><strong>背景</strong>：Fetch型联动的触发场景是用户在表单里切换城市或产品线，前端调BFF拿新的运行时Schema配置。这个接口返回的不是一个简单值，是整段配置（包含该城市/产品线下所有字段的显隐规则、联动规则、默认值、校验规则），数据量通常几十KB。而且海外网络环境不稳定，东南亚/拉美部分地区3G网络延迟可能500ms+。</p>
-    <p><strong>为什么用SW而不是HTTP缓存</strong>：三个原因。第一，精细控制——SW可以按业务逻辑决定缓存策略，HTML永远走网络保证页面更新，配置接口用network-first+超时回退缓存，静态资源走cache-first。HTTP缓存靠响应头控制，粒度不够。第二，离线兜底——海外弱网环境偶尔断线，SW的超时回退机制让用户操作不白费（3秒内没返回就走缓存）。第三，跨页面共享——同一个人的城市配置在不同活动页是一样的，SW缓存天然跨页面共享，不用每个页面实例单独缓存。</p>
-    <p><strong>具体策略</strong>：HTML走网络优先（保证每次打开都是最新页面）。非HTML资源（JS/CSS/配置接口）走network-first + 3秒超时回退缓存——先请求网络拿最新数据，同时缓存一份；网络慢了3秒还没返回就先用缓存让用户继续操作；网络请求到了再替换缓存。这样兼顾了数据新鲜度和操作流畅性。</p>
-    <p class="hint">这道题考的是你对缓存策略的工程化理解。关键不是"用了SW"，是"为什么SW比其他方案更适合这个场景"。核心逻辑：配置类数据的特点是"量大、变化不频繁、对响应速度敏感"，刚好匹配network-first策略。</p>
-  </div>
-</div>
-
-<div class="card" data-c="proj" data-kw="性能优化 懒加载 按需加载 Schema 渲染 组件 权益SDK 逐字稿">
-  <div class="card-head"><span class="tag proj">Schema</span><div class="card-title">性能优化和懒加载怎么做的？</div></div>
-  <div class="core">三层：Schema级按section分块渲染 + 组件级dynamic import + SDK级按业务线注册</div>
-  <div class="card-body">
-    <p><strong>Schema渲染层——按section分块</strong>：一个活动配置页可能有50+字段，不是一次性渲染所有组件。渲染引擎把Schema按section（区域/步骤）分组，首屏只渲染可见section，其他section在用户滚动或切换tab时按需渲染。联动触发时只更新受影响的组件（通过依赖图精确定位），不重渲染整棵组件树。</p>
-    <p><strong>组件层——dynamic import按需加载</strong>：componentMap不是启动时全部import，是注册了组件的加载路径（factory函数），首次渲染某个组件类型时才dynamic import对应的React组件。通用组件（Input/Select/DatePicker）打包在主bundle里直接可用，业务定制组件（地图选择器/复杂权益配置面板）按需加载。这样首屏JS体积控制在合理范围。</p>
-    <p><strong>SDK层——按业务线注册</strong>：权益SDK的register机制天然支持按需——每个业务模块只register自己用到的权益组件，不会把8个业务的400+组件全加载进来。国际化业务可能只用30个通用组件+5个定制组件，打包体积只包含实际register的部分。</p>
-    <p><strong>监控指标</strong>：首屏FCP控制在1.5s以内（海外CDN加速），配置接口响应时间P99在800ms以内，联动触发到UI更新在100ms以内（State型本地计算）。</p>
-    <p class="hint">这道题考的是从框架设计到具体实现的完整链路。不要只说"用了lazy loading"，要说清楚在哪三层做了、为什么分层、每层解决什么问题。架构层面的性能优化比单纯的代码技巧更有价值。</p>
-  </div>
-</div>
-
-<div class="card" data-c="proj" data-kw="Schema 覆盖 所有场景 满足不了 边界 定制 自定义渲染 fallback 逐字稿">
-  <div class="card-head"><span class="tag proj">Schema</span><div class="card-title">Schema能覆盖所有表单场景吗？遇到不满足的怎么处理？</div></div>
-  <div class="core">不能覆盖所有场景，遇到边界case走custom标记降级到自定义组件渲染，逐步把高频custom模式沉淀进Schema</div>
-  <div class="card-body">
-    <p><strong>坦诚说：不能覆盖所有</strong>。Schema驱动的前提是"页面结构可以用JSON描述"。但实际业务中有几类场景是Schema难以描述的——动态增删表单组（可变数组嵌套复杂联动）、条件渲染逻辑特别复杂的自定义交互（比如拖拽排序配置权益优先级）、跨步骤的全局状态依赖（后面步骤的配置影响前面步骤的显示）。</p>
-    <p><strong>遇到不满足的三步处理</strong>。第一步，Schema里标记custom类型——componentMap支持"custom"标记，渲染引擎遇到custom字段时不走标准渲染流程，直接渲染业务方register的自定义组件，自定义组件自己处理内部逻辑。第二步，联动DSL扩展——如果发现多个业务都有类似的custom需求，提取共性模式扩展dAction DSL。比如初版不支持"数组操作"类型的联动，后来扩展了arrayPush/arrayRemove/arraySort三种操作类型，从custom沉淀为标准能力。第三步，保持克制——不是所有custom都要标准化，只沉淀出现3次以上的模式，低频定制就让它待在custom里。</p>
-    <p><strong>实际案例</strong>：上线后遇到过"权益包配置"场景——用户可以动态添加多个权益包，每个权益包内部又有联动规则（选择权益类型后显示不同配置项）。初版联动DSL的value-type只支持静态值，不支持嵌套Schema引用。处理方式是先custom走通，第二个迭代扩展了$ref联动类型支持嵌套引用，然后把这个场景从custom迁回标准流程。这个过程本身就是Schema方案的持续迭代——不是一次设计到位，是在业务中逐步完善。</p>
-    <p><strong>其他已知边界</strong>：联动嵌套超过三层时模板难维护，需拆成多个模板各管一层。动态生成不能断点调试，通过Schema diff工具辅助排查。字符串键值编译时无法检查类型安全，在BFF模板层做字段枚举校验兜底。样式隔离方面，Schema渲染组件有三种方案——CSS Modules（编译时hash隔离，简单但不够灵活）、CSS-in-JS（运行时动态样式，灵活但有性能开销）、CSS原生方案（@layer+自定义属性+Shadow DOM，零运行时开销但浏览器兼容性限制），趋势是向CSS原生方案迁移。</p>
-    <p class="hint">这道题考的是方案的工程成熟度。好的回答不是"什么都能做"，是"有明确的边界、有边界case的处理机制、有持续演进的路径"。面试官想听的是你遇到了什么真实的限制、怎么务实地解决的。</p>
   </div>
 </div>
 
@@ -3244,7 +3100,7 @@ function buildTreeOptimized(list) {
 
 <!-- ==================== 补充卡片 v2 · AI 前沿（7 张） ==================== -->
 
-<div class="card" data-c="proj" data-kw="SDD Spec-Driven Development proposal design specs tasks apply verify archive">
+<div class="card" data-c="proj" data-g="PRD 工作流" data-kw="SDD Spec-Driven Development proposal design specs tasks apply verify archive">
   <div class="card-head"><span class="tag proj">AI</span><div class="card-title">SDD 完整流程（Spec-Driven Development）</div></div>
   <div class="core">编码前先创建 AI 能直接理解的 Spec，7 步：proposal → design → specs → tasks → apply → verify → archive</div>
   <div class="card-body">
@@ -3257,7 +3113,7 @@ function buildTreeOptimized(list) {
   </div>
 </div>
 
-<div class="card" data-c="proj" data-kw="Harness Engineering 合并引擎 通信引擎 反思引擎 KSG Agent">
+<div class="card" data-c="proj" data-g="PRD 工作流" data-kw="Harness Engineering 合并引擎 通信引擎 反思引擎 KSG Agent">
   <div class="card-head"><span class="tag proj">AI</span><div class="card-title">Harness 三种引擎（合并/通信/反思）</div></div>
   <div class="core">Agent = Model + Harness，三种核心引擎让 Agent 自进化</div>
   <div class="card-body">
@@ -4998,7 +4854,7 @@ let scrollLock=false,scrollLockT,spyT;
 
 const catNames={all:'全部',open:'开场',proj:'项目',bagu:'基础',code:'手撕',ai:'AI',emer:'综合'};
 const subOrder={
-  'Schema 项目':8,'Manager 智能体':1.5,'Code 智能体':1.6,'AI 总览':2,'AI 架构':3,'AI 质量':4,'AI 端到端':5,'AI 工具':6,'产品思维':7,
+  'Schema 项目':8,'Manager 智能体':1.5,'Code 智能体':1.6,'PRD 工作流':1.7,'AI 总览':2,'AI 架构':3,'AI 质量':4,'AI 端到端':5,'AI 工具':6,'产品思维':7,
   'React':1,'JS 核心':2,'CSS':3,'网络':4,'浏览器/性能':5,'TypeScript':6,'工程化':7,'框架扩展':8,'技术选型':9,
   'Agent 基础':1,'RAG 检索':2,'LLM 工程':3,'工具协议':4,'AI 评测':5,'Loop 工程':6,'AI 前端':7,'行业视野':8,'追问':9,'系统设计':10,
   '速查':0,'手写 API':1,'数组/双指针':2,'链表':3,'树/BFS/DFS':4,'回溯':5,'排序/TopK':6,'DP/贪心':7,'栈':8,'二分':9,'综合':10,
