@@ -646,11 +646,12 @@ th{font-weight:600;color:#888;font-size:10.5px;letter-spacing:.02em}
   <div class="card-head"><span class="tag proj">定位</span><div class="card-title">这个项目 30 秒怎么说？</div></div>
   <div class="core">多 Agent 系统的"总管层"——统一 WebSocket 入口、语义路由与任务规划，调度 10+ 下游 Specialist，自己只编排不干活</div>
   <div class="card-body">
-    <p><strong>定位：一个入口、多个专家。</strong>它是编排层/总管层，展示的是编排能力不是单点能力——维护会话状态、判断请求交给哪个子 Agent、处理流式中间事件、高风险前人工确认、接 LangSmith 做可观测。平台里对应 manager_agent 服务，统一挂在 WebSocket 长连接上（多轮对话、流式输出、确认/取消都更适合长连接）。</p>
-    <p><strong>能力边界（做什么、不做什么）。</strong>总管不写 SQL、不建向量、不改代码，专业能力全交给下游 Specialist（db/rag/code/crawler/multimodal/music/video 等）。适合统一聊天入口、多 Agent 路由、人工确认、任务编排；不适合在总管进程里做重型爬取、重型文件处理、复杂 GUI 自动化——那些该独立成服务。</p>
-    <p><strong>技术栈与媒体协作。</strong>Nuxt4 + Nitro 跑服务，LangGraph 做状态机，@langchain/openai 接 OpenAI 兼容 LLM，Zod 校验入参，LangSmith 做可观测。multimodal/music/video 这些媒体能力由总管直接 WebSocket/HTTP 调用，不再经多模态 Agent 转发，减少一跳延迟。</p>
-    <p><strong>演进路径（不是一上来就这么大）。</strong>单下游代理 → 多路由 → 流式与状态机 → 人工确认与反馈 → 指标追踪，逐步叠加而成。</p>
-  </div>
+  <p><strong>入口分散</strong>是它要解决的问题——我们仓库里检索、改代码、爬数据、多模态这些能力,本来都是一个一个独立服务、各占端口、各自管会话,用户得在好几个 Agent 之间来回切,上下文对不上、状态断掉。这个 Manager 就是把它们收成一个统一入口,用户只跟它聊,它在后面决定派给谁、把结果收回来——会话管理、安全兜底、可观测这些公共能力也不用每个 Agent 各造一遍。我在里面主要 drive 的就是整个编排层和状态机的设计。</p>
+  <p><strong>真正难在编排可信</strong>。单个 RAG、单个 NL2SQL 谁都会做,难的是把一堆 Agent 串成一条你敢信任的链路:请求派对了吗、中间状态丢了能不能找回、改库改代码这种高风险操作谁来拦。堆更大模型、加更多 Agent 反而让这事更糟——旁路更多、状态更多、出错点更多,所以力量不是花在"能做",是花在"做得让人敢用"。</p>
+  <p><strong>关键决策有四个</strong>。第一个,流转我用硬编码的接近 40 节点状态机驱动,没用 LLM 自己决定下一步——后者是黑盒,错了不知道卡在哪,硬编码的话每条边为什么被选 trace 里一目了然,代价是改拓扑得动一个文件。第二个,探活做了 Probe 和 Health 两层,只看 Health 有假活、只看 Probe 有假死,两层才压得住假阳假阴。第三个,加了 Critic 节点做事实审查、不通过就触发 fix 回路,而不是一次 LLM 出结果就完,代价是多一次调用,简单任务走快速路径跳过来兜成本。第四个,高风险操作前人工确认,checkpoint 我自己用 16 字段业务快照存 file 和 redis,没用原生 interrupt——原生那个跨进程不可控,我自己存的即使 Node 重启也能接着跑。</p>
+  <p><strong>效果这块</strong>,这个项目偏研究型,没接真实业务流量,没有生产 KPI,我也不编百分比。但它 work 不 work 我是靠机器信号判断的:LangSmith 把每个节点的 prompt、输出、边的选择都留痕,定位问题靠 trace 不靠脑补;下游可用性靠 Probe/Health;自进化那块有 A/B 门槛,每分支至少 8 样本,lift 到 +0.03 才晋级、掉到 -0.06 回滚,而且自动晋级默认关、要人工确认,怕它把图改坏。</p>
+  <p><strong>沉淀成方法论</strong>就一句话:路由可解释、状态能恢复、高风险有兜底——我管它叫编排可信三件套,这套任何"AI 串多步高风险操作"的场景都能套。局限得讲清:没上生产,"越用越稳"缺长期流量验证;失败归因是纯规则十来类、不是 LLM,边缘 case 落 unclear 桶,下次想试 LLM 归因但得先解决成本和可复现;checkpoint 是 best-effort、没分布式锁,多实例状态不一致,是下一步工程债。栈是 Nuxt4 加 LangGraph。</p>
+</div>
 </div>
 
 <div class="card" data-c="proj" data-g="Manager 智能体" data-kw="主干链路 graph 状态机 probe route plan execute synth critic finalize 画一下 为什么probe在plan前 探活 减少幻觉 为什么用LangGraph 路由错乱 怎么避免">
@@ -795,12 +796,12 @@ th{font-weight:600;color:#888;font-size:10.5px;letter-spacing:.02em}
   <div class="card-head"><span class="tag proj">定位</span><div class="card-title">这个 Code Agent 到底是什么？</div></div>
   <div class="core">一个真能改代码仓库的工程化 Agent——读仓库→语义检索→静态分析→出 Diff→受控写盘；安全做在代码路径上，不写在 prompt 里求模型听话。</div>
   <div class="card-body">
-    <p><strong>一句话范式。</strong>不是聊天框贴代码，是让模型真的进工程流程改东西。聊天框贴代码谁都会，难的是"改得可信"——所以核心投入不在"让它能改"，而在让它改得可控、可验、可回滚。</p>
-    <p><strong>五步主线（要能背）</strong>：① 读仓库（文件树 / git 状态）→ ② 语义检索定位相关代码 → ③ 静态分析（AST / 依赖 / 调用图）→ ④ 出 Diff → ⑤ 受控写盘。外层是 LangGraph 的 ReAct 双节点状态机（agent ↔ tools 循环）。</p>
-    <p><strong>技术栈。</strong>Nuxt 4 + Vue 3 + Pinia 全栈，编辑器 monaco-editor，语法分析 web-tree-sitter（语法树解析器），Agent 编排 LangGraph（Agent 状态机框架）+ @langchain/openai，实时通信 ws，鉴权 jose，测试 vitest。模型链路国产化——qwen-coder-plus + text-embedding-v3（阿里云百炼），规避 OpenAI 直连合规问题。默认端口 13103，能进 Manage-platform 编排、被 Manager 调度。</p>
-    <p><strong>立项动机。</strong>agent-main 单仓十来个 Agent，唯独缺真能落地写代码的——Manager 只路由不改、RAG 只检索不改。这个把"AI 模型"变成"工程工具"：能读仓库、出 Diff、受控写盘、被调度。安全是第一公民不是事后补，因为模型加写权限等于事故。</p>
-    <p><strong>诚实定位。</strong>偏研究型，800 文件 demo 跑的，没上生产（详见"上线了吗"卡）。和我另一个 Manager 项目是两套架构：这个 ReAct（模型自主选工具，探索式），Manager 是 Supervisor（路由意图调 Specialist，多意图并行）——不是只会一种，是场景不同。</p>
-  </div>
+  <p><strong>落地改代码</strong>是它要解决的问题——我们 agent-main 单仓里十来个 Agent,Manager 只负责路由不改、RAG 只检索不改,真正能进仓库把代码改了的缺一个。模型加写权限等于事故,所以这事不是接个 API 就完,得把"AI 改代码"从聊天框里搬进工程流程。不解决它就一直是贴代码让你复制粘贴,进不了真正的开发链路。我在这个项目里主要 drive 的是 ReAct 双节点循环的设计、受控写盘那套四层约束、还有 prompt 的 shadow 自进化。</p>
+  <p><strong>真正难在改得可信</strong>。让它能改不难——聊天框贴代码谁都会——难的是改完你敢不敢让它直接落盘。模型对行号和上下文幻觉率高,改错一个 import、覆盖半个文件就是事故,所以核心投入不在"让它能改",是在让它改得可控、可验、可回滚。堆更大模型解决不了这事,模型再大也会幻觉,关键是把约束放在它物理上绕不开的代码路径上,不是写在 prompt 里求它听话。</p>
+  <p><strong>关键决策有四个</strong>。第一个,主循环用 ReAct 双节点而不是 Supervisor 式路由,因为改代码是探索式——你不 read 就不知道文件 import 了啥、下一步该 grep 还是 ast,Supervisor 那种意图分发多路并行的玩法不适合,代价是每步 think+act+obs 都进 context、token 贵。第二个,代码定位用语义检索加文件名预筛而不是塞全量 context,800 文件全量 embedding 每次查询都付不起,文件名 token 先把候选从 800 砍到 60,再只对这 60 做 embedding,自研的 JSON 加内存余弦,量级小没上向量库。第三个,写盘走 apply_diff 强制逐行匹配而不是 write_file 全量覆盖,这个最关键——开发中我遇到模型把 diff 的 context 行号写错,我加的校验是把每一行 context 跟磁盘当前内容精确比对,不匹配直接抛 "Diff context mismatch near line X",错误回灌给模型,它看到具体位置会重新 read_file 再生成正确 diff,这是 git apply --3way 的严格版,宁可失败不可错改。第四个,prompt 演进用 shadow→promote 两阶段而不是固定 prompt,validate 失败和用户负反馈都先进 shadow 只计 hits、hits 到 3 才晋级到稳定 hint,坏 prompt 先小流量验证可回滚。</p>
+  <p><strong>结果这块</strong>得诚实定位——偏研究型,800 文件 demo 跑的,没上生产,我也不编百分比。它 work 不 work 是靠几层机器信号判断的:apply_diff 校验失败会回灌模型自修正,不是 vibes;写完自动跑 lint/typecheck/test,挂了触发自修复回环;shadow 进化有 code-smoke 评估器打真实 HTTP 端点收 passRate 当唯一量化证据。成本这块也有意识:模型用国产的 qwen-coder-plus、合规规避 OpenAI 直连;task_kind 四路分发,纯分析走零 LLM 快捷流、只有 edit/full 才进工具循环;向量检索带 sha256 增量缓存,文件没变就跳过 embedding。</p>
+  <p><strong>沉淀成方法论</strong>就一句话:安全做在代码路径上、不写在 prompt 里求模型听话,加上探索式 ReAct 和路由式 Supervisor 按场景选——写代码这种不可预测的探索式用 ReAct,多意图能并行的编排用 Supervisor,这套任何"AI 有副作用能力"的场景都能套。局限得讲清:没上生产,长期稳定性缺流量验证;Diff 预览用户确认、独立审查 Agent、HITL 写确认这些是我设计目标里还没全落地的,目前是 chat-only 只读降级 + 写后自动校验 + 审计日志在兜底;A/B 有选择偏差,Manager 注入 facts 的样本系统性落 control,实验只覆盖窄假设。栈是 Nuxt4 加 LangGraph。</p>
+</div>
 </div>
 
 <div class="card" data-c="proj" data-g="Code 智能体" data-kw="ReAct Tool Use 循环 think act obs 为什么选 范式选型 Plan-and-Execute ReWOO 探索式 token贵 Manager对比 自测">
@@ -2335,16 +2336,12 @@ function buildTreeOptimized(list) {
   <div class="card-head"><span class="tag proj">架构</span><div class="card-title">AI工作流完整介绍（面试第一答）</div></div>
   <div class="core">把PRD自动蒸馏成结构化开发计划，靠SSOT+证据链+多层门控保质量</div>
   <div class="card-body">
-    <p><strong>是什么</strong>：从PRD自动产出结构化技术方案(Spec)和开发计划(Plan)的AI工作流。不是让AI写代码，是把PRD从自然语言蒸馏成有证据支撑的开发计划。这是Spec-Driven Development的工程化实践。</p>
-    <p><strong>为什么做</strong>：需求链路两个核心痛点。①认知偏差：PM写PRD→人工口传→开发理解，每步信息损耗导致返工。②隐性知识：项目经验全在老员工脑子里，新人上手成本高，换人就丢。</p>
-    <p><strong>怎么做（三大支柱）</strong>：</p>
-    <p>· <strong>SSOT</strong>：Reference插件把项目知识蒸馏成6个领域知识文件，每个事实只存在一处，避免AI冗余编造。</p>
-    <p>· <strong>证据链</strong>：定义8种证据类型（PRD/源码/文档等），AI每条结论必须引用Evidence ID，可追溯到原始出处。</p>
-    <p>· <strong>多层门控</strong>：贯穿11步流水线——摄入门控检查PRD读取质量，Spec Review Gate要求人工确认后才允许生成Plan，Readiness Score做五维度综合评分，Final Quality Gate做5项确定性检查。</p>
-    <p><strong>效果</strong>：PRD→Plan 从 5h/需求降到 2h/需求（5 需求对照），文件级准确率 80%，同一 PRD 跑 10 次一致性 40%→85%+，已推广到 20+ 人团队。</p>
-    <p><strong>产品边界（双轨）</strong>：① 团队推广版只做 PRD→Plan——ROI 最高环节，下游对接任意 AI Coding 工具（Cursor/Windsurf/Claude Code），不重复造轮子；② 个人独立设计端到端原型 prd2code-gen 跑通完整 PRD→Code 6 步闭环（双路径生成 + 自验证自修复 + eval 反哺），作为下一代探索。前者追求落地稳定，后者探索链路完整性。</p>
-    <p><strong>vs现有工具</strong>：Graphify做了知识图谱但没有蒸馏流程；OpenSpec有工作流规范但缺PRD到需求拆解闭环；Cursor/Windsurf不解决已有项目（几万行代码+历史逻辑）的需求理解问题。</p>
-  </div>
+  <p><strong>需求到代码这条链</strong>是它要解决的问题——PM 写完 PRD,口传给开发,开发理解了再写,每一步都在损耗,损耗最后都变返工;项目经验又全在老员工脑子里,人一走就丢。把 PRD 直接喂给 LLM 让它出方案也不行——没有项目现状兜底,AI 连"这条需求应该改哪个文件"都会编造。不解决,返工成本和新人上手成本就一直是用人去填 AI 的幻觉。这个插件我一个人迭代到 v2.20,在里面 drive 的是 SSOT 领域知识怎么划分、8 种证据类型怎么定义、门控卡在哪几个节点。</p>
+  <p><strong>真正难在结论可信</strong>。PRD 到代码最难的不是"生成"——LLM 能生成;难的是它给的结论你敢不敢信:这条改动依据在哪、影响范围估得对不对、跑出来的方案能不能复现。把矛盾定义在这一层,方向就不是堆更大模型,是让每一条结论都可追溯、可验证、可拒绝。堆模型只会让"看起来更顺"的幻觉更多。</p>
+  <p><strong>关键决策有三个</strong>。第一个,单一事实源——把项目知识蒸馏成 6 个领域文件,每个事实只存一处,没用多处冗余存储,因为同一事实散在多处正好给 AI 编造空间,它会挑一份顺口的用。第二个,证据链——我定义了 8 种证据类型(PRD、源码、契约、git diff、negative_code_search 这些),每条结论必须挂 Evidence ID 才能进 spec,没走无引用输出那条路,因为不可追溯的结论错误发现成本极高。第三个,多层门控——Readiness 五维加权评分按 85 通过 / 60 需 owner 确认 / 小于 60 阻塞三档降级,Spec Review Gate 在 spec 未 approved 时下一阶段直接 exit 2 硬停,没选端到端直出,因为一次性出 plan 质量全靠模型自觉、不可控。开发里有个具体难题:一类需求 AI 反复编造引用,说"这个改动会影响 XX 模块",但代码里根本没那模块;一开始堵不住,因为只有正向证据——"找到了什么",AI 就钻"没找到但你说的应该有"的空子。后来我加了 negative_code_search 这类负向证据,让"我搜过源码、确实没这个东西"本身也必须留痕,才把这类编造压下去。</p>
+  <p><strong>结果是有 metrics 的</strong>,不是 vibes。5 个需求的前后工时对照,PRD → Plan 从 5h/需求降到 2h/需求;文件级准确率约 80%;同一 PRD 跑 10 次的一致性从 40% 提到 85%+。成本这块也想过:把项目知识蒸馏成 6 个领域文件、context 按需引用,比直接塞全量 PRD 省 token 又不爆窗口。推广规模按 ADR-0005 实际口径是小范围试用、约 1–5 人,不是生产级团队铺开——所谓"prd2code-gen 6 步闭环"只是个人原型探索,不存在生产级 6 步;团队推广版只做 PRD → Plan 这个 ROI 最高环节,下游对接 Cursor / Claude Code,不重复造写代码的轮子。</p>
+  <p><strong>沉淀成方法论</strong>就一句话:单一事实源 + 证据链 + 多层门控,我管它叫 AI 产出可信三支柱——只要 LLM 在产出结构化结论且要求可信,这套都成立。局限得讲清:团队模式准确率有明显损耗,大概 60% 对单仓的 80%,根因是 Pull-based 设计禁止主动搜源码、跨仓契约对不上;5h → 2h 是前后工时对比、不是严格 AB,团队规模小没法随机分组双盲,下次有条件会补。栈是 Claude Code 插件,/reference 加 /prd-distill。</p>
+</div>
 </div>
 
 <div class="card" data-c="proj" data-g="PRD 工作流" data-kw="Spec Plan 产物 章节格式 结构化 需求分析报告 开发计划">
