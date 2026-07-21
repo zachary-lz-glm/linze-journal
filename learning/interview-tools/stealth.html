@@ -3973,13 +3973,14 @@ function buildTreeOptimized(list) {
   </div>
 </div>
 
-<div class="card" data-c="ai" data-g="行业视野" data-kw="workflow agent 区分 范式 Anthropic Building Effective Agents 自主 硬编码 ReAct 5种模式 回潮 场景 选型 vibe coding 什么场景上agent">
+<div class="card" data-c="ai" data-g="行业视野" data-kw="workflow agent 区分 范式 Anthropic Building Effective Agents 自主 硬编码 ReAct 5种模式 回潮 场景 选型 vibe coding 什么场景上agent dynamic workflow 动态编排 Claude Code 模型写脚本 subagent 扇出 固定状态机 对比 39节点">
   <div class="card-head"><span class="tag ai">范式</span><div class="card-title">workflow 和 agent 怎么区分，什么场景该上 agent</div></div>
   <div class="core">workflow 是预设路径编排 LLM、agent 是 LLM 自主决定路径和工具；Anthropic 圣经原则"能 workflow 就别 autonomous"——2026 业界在回潮，autonomy 只在关键节点用</div>
   <div class="card-body">
     <p><strong>定义分清。</strong>workflow = 预设路径编排 LLM（边写死、LLM 只在节点内干活），agent = LLM 自主决定下一步路径和工具调用。Anthropic《Building Effective Agents》的核心原则是"从最简方案开始，需要再加自主性"。</p>
     <p><strong>判断口诀。</strong>路径可枚举 → workflow；开放探索或工具组合不可预测 → agent。Anthropic 给了 5 种 workflow 模式（prompt chaining / routing / parallelization / orchestrator-workers / evaluator-optimizer），从简到繁，autonomous agent 是最后手段不是默认。</p>
     <p><strong>2026 业界在回潮。</strong>autonomous agent 生产里不可控，企业级普遍退回 durable deterministic workflow，autonomy 只在关键节点用。Karpathy 2026 自己都宣布 vibe coding 过时、进入 agentic engineering 时代——AI 上生产需要工程护栏，不是靠模型自己。</p>
+    <p><strong>2026 新物种：dynamic workflow。</strong>不止 workflow 优先——Claude Code 的 dynamic workflow 让模型运行时自己写一段 JS 编排脚本，脚本（不是模型上下文）持有计划、分支、聚合，能扇出到上千个 subagent、十几个并行。它卡在 workflow 和 agent 之间：编排逻辑是模型现写的（像 agent 的自主），但写成脚本后确定性执行、可重放审计（像 workflow）。对位的是固定状态机（LangGraph 构建期把边写死）。方向上是把编排权从框架往模型挪，适合一次性大任务（代码仓审计、批量迁移）；要 SLA 和可复现的生产长链路，固定状态机仍更稳——这也是我被问"为什么 39 节点固定编排不用自主调度"时的诚实答法：知道动态是趋势，但生产要稳。</p>
     <p><strong>我的实践：先 workflow 验证再放权。</strong>Manager 39 节点是 workflow（边硬编码、只有 probe/route/critic 几个节点真调 LLM），Code Agent 的 ReAct 双节点（LLM 自选 18 工具）才是真 agent。同一个我两种都用，场景决定选型——不是只会一种。</p>
   </div>
 </div>
@@ -4469,6 +4470,17 @@ function buildTreeOptimized(list) {
     <p>答题三步：正面定义（"蒸馏在我这里指 PRD 自动转成结构化 Spec"）→ 解释迁移逻辑（"借用蒸馏是强调从非结构化自然语言里提纯需求骨架，跟模型蒸馏相似点是从大杂烩里提纯精华"）→ 和原意对照（"不一样的是模型蒸馏是参数压缩到小模型，我这是文档结构化，产物形态完全不同"）。</p>
     <p>其他迁移词同理：编译强调确定性转换多目标产物不是产二进制；路由强调按能力面分流不是 IP 转发；契约强调双方共守不可破坏比接口更重约束；中台强调多业务共用配置化扩展不是独立系统。</p>
     <p>面试前把自己项目所有迁移类词列出来，每个准备这三句。第一句话定生死。</p>
+  </div>
+</div>
+
+<div class="card" data-c="emer" data-g="话术急救" data-kw="源码 产品体验 深度 分档 降档 了解吗 看过源码 用过 读过 了解多少 AI岗 档次 分水岭 开源 OpenHands 读源码 框架 玩过 懂实现 深度边界">
+  <div class="card-head"><span class="tag emer">话术</span><div class="card-title">被追"了解 X 吗"→"看过源码还是只用过产品"怎么不降档</div></div>
+  <div class="core">AI 岗区分"用过产品"和"读过源码"是两个档次——主动分档报深度，别等被追到只剩"产品体验"</div>
+  <div class="card-body">
+    <p>opendesign 一面血泪：被问"了解哪些开源 coding agent"，我答 AutoGPT + Cursor，面试官一句"企业版你能看到源码吗，还是单纯产品体验"，我答"产品体验"——直接降档。这一问是 AI agent 岗的通用套路：探你"玩过 demo"还是"懂实现"。</p>
+    <p>正解是主动分档，别等被追。每提一个框架自己先报水位：① 深用过（项目里真跑过）；② 读过源码（能讲 runtime 设计）；③ 只用过产品（能讲体验定位）；④ 只看过文档。先报档再展开，面试官就不会拿"看源码吗"来探底。</p>
+    <p>备框架至少读 1 个开源实现。OpenHands（原 OpenDevin）最佳——MIT、文档全、model-agnostic，读它的 agent runtime 和事件流，被追"你看过哪个源码"接得住。Cursor / Claude Code 闭源只能停产品体验，诚实说；但手里至少要有一个开源的撑住"读过源码"这档。</p>
+    <p>诚实分档是加分项。"Cursor 我停在产品体验，但 OpenHands 读过 runtime"——主动报档比被追到再认，可信度高一个量级。</p>
   </div>
 </div>
 
