@@ -3351,23 +3351,24 @@ function buildTreeOptimized(list) {
   <div class="card-head"><span class="tag ai">AI</span><div class="card-title">从零设计一个 Agent，你的思路是什么</div></div>
   <div class="core">五步走：先把任务边界划清楚，再选编排模式，然后定义工具、设计记忆、最后加质量保障</div>
   <div class="card-body">
-    <p>第一步，明确任务边界。哪些步骤让 Agent 自主跑，哪些必须人介入。我的原则是低风险高确定性的让它自主，高风险低确定性的必须 HITL。这步不清，后面全白做。</p>
-    <p>第二步，选编排模式。ReAct 适合开放性探索（调研、搜索那种路径不定的）；Plan-and-Execute 适合多步骤有依赖的；多 Agent 分工适合异构子任务（一个看代码一个看文档那种）。</p>
-    <p>第三步，定义工具。Agent 需要哪些能力，每个工具的 schema（名字、参数、描述）、输入输出、错误处理怎么搞。工具数量我一般控制在 15 个以内，超了就分层路由。code_assistant 我做了 18 个工具，已经接近上限，再加就得靠 Router 先分类再让子 Agent 从一小撮里选。</p>
-    <p>第四步，设计记忆。短期靠对话窗口管理（压缩），长期用向量存储或结构化文件，工作记忆用中间文件传递任务状态。我自己做 prd-tools 的时候，Reference 那套文件本质上就是工作记忆的工程化——不靠对话传递，靠文件。</p>
-    <p>第五步，质量保障。每步设门控条件约束产出，产出做 Evidence Index 能追溯，异常设恢复策略（重试、降级、转人工）。这步不做的话 Agent 在生产环境就是定时炸弹。</p>
-  </div>
+  <p><strong>设计 Agent 的第一步不是挑工具选框架，是先定"目标可控性"。</strong>具体讲就是把三个问题先答清楚——任务何时算完成、哪些步骤必须人批、失败兜底是谁。我在 code_assistant 和 prd-tools 两个项目里都是从零搭起来的，前者是带自验证的代码生成 Agent，后者是 PRD 蒸馏成干净上下文的 Claude Code 插件。不先把可控边界划清楚后面工具越多越乱，Agent 在生产里就是定时炸弹。</p>
+  <p><strong>核心矛盾是自主性与可控性的权衡，不是功能堆得多就强。</strong>给模型的自主权越多，能力上限越高，但越容易跑偏、越难 debug；约束越多则越稳但抵消了模型本来的灵活性。本质是在两者之间定边界，不是堆功能——一个跑飞了无法定位的 Agent 比一个笨但可控的 Workflow 危险得多。</p>
+  <p><strong>关键决策是三层架构加 HITL 闸门，工具保持小而可组合。</strong>三层指规划层定目标、执行层调工具、校验层把关产出，每层职责分开可单独测试。HITL 闸门放在高风险节点（生产路径上的代码变更、外部副作用），拒绝了"让 Agent 全自主跑完一次性交付"的方案——演示好看，生产扛不住。工具粒度上拒绝"一个大工具全包"，走小工具加可组合，因为大工具 schema 描述难写、模型选不准，小工具语义清晰更容易选对。</p>
+  <p><strong>验证方式是每层都可观测、可单测、可回放。</strong>code_assistant 走自验证加自修复循环——max_iter 控制最大尝试次数，Readiness Gate 检查产出是否达标，不达标带错误反馈重试；prd-tools 走分阶段，/reference 蒸馏长期知识、/prd-distill 处理单次 PRD，每阶段产出独立可校验。指标看每层的成功率、重试次数、最终产出质量，不是凭感觉说"看起来 work 了"。</p>
+  <p><strong>可迁移的方法论是"先定可控边界再配能力，而不是先堆工具再加约束"。</strong>局限也讲清楚：两个项目都偏研究型、在小范围验证过、没接大规模真实业务流量；HITL 路径目前是 stub 式占位，真正的审批 UI 加权限流转是已知改进项，下次做生产化第一件事就是把这块补上。</p>
+</div>
 </div>
 
 <div class="card" data-c="ai" data-g="Agent 基础" data-kw="Agent 适用场景 边界 什么时候用 判断标准 工作流 脚本 决策 动态 确定性 该不该用">
   <div class="card-head"><span class="tag ai">AI</span><div class="card-title">什么场景才该上 Agent，别什么活都套 Agent</div></div>
   <div class="core">我的判断框架三层：API 解决能力问题，工作流解决流程问题，Agent 解决决策问题——不需要 LLM 在运行时做决策的，就别上 Agent</div>
   <div class="card-body">
-    <p>适合用 Agent 的信号有这么几个：任务需要根据中间结果动态决策，上一步的结果决定下一步做什么；需要调外部工具拿信息（搜索、查库、读文件）；步骤之间有复杂依赖，没法线性硬编码。</p>
-    <p>反过来这些场景不需要 Agent。单次调用就能解决的（翻译、摘要、情感分析），直接调 API 就行。流程完全确定的（A→B→C 固定步骤），用工作流或 Skill 就够，不需要 LLM 每步做决策。不需要外部工具的纯文本生成，LLM 直接答就好。</p>
-    <p>我自己的判断框架是三层：单次调用够用就 API，流程确定但多步骤就 Skill 或工作流，流程不确定需要动态决策才上 Agent。最关键的一个问题是先问自己——"我需要 LLM 在运行时做决策吗"，不需要就不是 Agent 场景，别为了显得高级硬上。</p>
-    <p>另外 Agent 的不确定性是把双刃剑，能处理意外情况但也可能跑偏。工业实践必须加约束：工具白名单限制能力范围、门控条件限制输出质量、HITL 限制自主程度。没约束的 Agent 在生产环境扛不住。</p>
-  </div>
+<p><strong>不是什么活都该套 Agent。</strong>我在 prd-tools 和 Manager 两个项目里都做过这道选择题——前者大部分走 Workflow 预定义路径，后者整套是 Agent 状态机。差别不在"哪个更高级"，而在任务本身需不需要 LLM 在运行时做决策。先回答这个问题，再决定上不上 Agent，而不是反过来为了"显得 AI"硬套。</p>
+<p><strong>本质矛盾是自主性收益和不可控成本之间的权衡。</strong>Agent 把决策权交给模型，能处理路径不确定、需要动态组合工具的任务；但每一步都让模型临场决定，就意味着可预测性下降、debug 链路变长、生产环境更容易跑偏。确定路径的任务硬上 Agent，等于拿不可控的代价换根本用不上的灵活性。本质是按任务的不确定性选范式，不是按"AI 含量"选。</p>
+<p><strong>我的判断框架分三层。</strong>第一层是单次调用能解决就直接调 LLM——翻译、摘要、情感分析这种一步到位的任务，套 Agent 纯属过度设计；第二层是流程确定但多步骤就走 Workflow 或 Skill，A→B→C 写死、中间塞门控和 HITL，比 Agent 稳且便宜；第三层是流程不确定、需要根据中间结果动态决策才上 Agent——上一步结果决定下一步、需要调外部工具、步骤之间有复杂依赖。我拒绝了"什么都要 Agent"的 over-engineering，因为生产环境每多一层自主性就多一层失控风险。</p>
+<p><strong>两个项目分别落到不同范式，这就是 eval。</strong>Manager 走 Agent，因为它的任务路径需要动态拆解和工具组合，9 个外部域 Agent 加 3 个内部管理 Agent，每步都要路由仲裁，Workflow 写不出来；prd-tools 本质是 Workflow——/reference 加 /prd-distill 的蒸馏步骤预定义、门控前置，不直接生成代码。eval 不是"Agent 多聪明"，是"按场景匹配范式有没有错"：Manager 没退化成 Workflow、prd-tools 没膨胀成 Agent，两边都在合适的位置上。</p>
+<p><strong>方法论一句话——按不确定性选范式，Agent 不是万能。</strong>不确定性高、路径需要模型临场决定的，上 Agent；反之用 Workflow 更稳。局限也讲清楚：这个三层框架是经验归纳，边界 case 要靠判断——比如任务半确定半动态，常常是 Workflow 主体加局部 Agent 节点的混合形态，prd-tools 就有这种局部升级；另外"生产 Agent 必须配约束"是硬条件，工具白名单、门控、HITL 缺一不可，没约束的 Agent 在生产扛不住。</p>
+</div>
 </div>
 
 <div class="card" data-c="ai" data-g="Agent 基础" data-kw="Agent Workflow 区别 Anthropic 权威定义 预定义代码路径 动态自主控制 决策控制权 编排 LLM Building effective agents 举例 翻译 调研 审批 判断口诀 代码写死 临场决定">
@@ -3387,12 +3388,12 @@ function buildTreeOptimized(list) {
   <div class="card-head"><span class="tag ai">AI</span><div class="card-title">Agent 的记忆怎么设计：短期、长期、工作记忆</div></div>
   <div class="core">短期靠 Context Window 装对话，长期靠 RAG 加向量库外置，中间还有个工作记忆管任务状态——三层各有各的载体</div>
   <div class="card-body">
-    <p>Agent 核心公式里 Memory 是四大组件之一，这题高频。</p>
-    <p>短期记忆，载体就是 Context Window，内容是当前会话的 Chat History、工具调用的中间结果、当前任务的即时状态。限制是受 Token 上限约束，会话结束就丢。管理上一般是滑动窗口截断或摘要压缩。</p>
-    <p>长期记忆，核心是 RAG。把历史经验或知识编码成 Embedding 存进向量库（Chroma、Pinecone、Milvus），执行任务前用 query 做相似度检索，召回相关记忆注入 Prompt。这里有个关键点是写入策略——不是所有对话都值得存，得设计重要性评分决定哪些记忆长期保留。</p>
-    <p>进阶的类人记忆分三层：工作记忆约等于短期；情景记忆是具体事件经历（比如"上次用户让我写报告失败了"）；语义记忆是抽象知识和事实。</p>
-    <p>我自己项目里 prd-tools 那套 Reference 文件本质上是长期语义记忆——把项目知识蒸馏成可检索的事实库；每次蒸馏出来的 Spec、Plan 是情景记忆，是具体需求的执行历史。</p>
-  </div>
+  <p><strong>Agent 记忆设计的本质是分层管理不同生命周期的信息，不是塞越多越好。</strong>问题背景是 Agent 跑长任务时上下文里同时混着项目长期知识、本次任务状态、历史执行轨迹三类信息，混在一起既贵又乱。prd-tools 里我把它们拆成三层——Reference 是长期项目知识库、Spec 是本次任务的蒸馏产物、Plan 是执行轨迹。我负责这三层的载体设计和注入策略。</p>
+  <p><strong>核心矛盾是召回相关性与上下文成本的权衡。</strong>把所有信息全塞进 context 召回相关性最高，但 token 成本线性涨、还会 lost-in-middle 让模型注意力被稀释；不塞又丢关键上下文。本质不是"要不要记忆"，而是分层存储加按需注入——把什么放在外面、什么时候拿进来、拿多少。</p>
+  <p><strong>关键决策是三层划分加按需注入，结构化指令优先于纯向量召回。</strong>三层各管各的生命周期：Reference 跨任务复用、Spec 单任务内有效、Plan 仅本次执行。注入上拒绝了"全塞 context"——成本高、噪声大，走 query 触发按需召回。检索上拒绝"纯向量模糊召回"处理键值精确需求，因为像"取 A 模块的接口定义"这种请求结构化路由比余弦相似度准得多，向量只在语义模糊召回时才用。</p>
+  <p><strong>验证指标是 context 长度可控、关键信息不丢。</strong>Reference 作为压缩层复用省 token——同一份项目知识不用每次重新蒸馏；Plan 可回放做断点续跑——失败后从最近 checkpoint 恢复而不是从零重来。具体测就看三个数：注入前后 token 增量、任务完成时关键事实是否还能在 context 里找到、断点续跑成功率。不靠"感觉信息都在"这种 vibes。</p>
+  <p><strong>可迁移的方法论是"记忆分层加按需注入，不是全塞 context"。</strong>局限也说清楚：prd-tools 的三层是为 PRD 蒸馏这种结构化任务定制的，硬约束是"知识能被结构化拆解"；通用 Agent 的向量长期记忆比如用户偏好、跨会话事件积累我没做过，下次接触通用对话场景得补一套 embedding 写入策略加重要性评分，不能照搬这套。</p>
+</div>
 </div>
 
 
@@ -3414,12 +3415,12 @@ function buildTreeOptimized(list) {
   <div class="card-head"><span class="tag ai">AI</span><div class="card-title">Agent 的工作记忆怎么管，对话越来越长咋办</div></div>
   <div class="core">本质是信息压缩问题——像操作系统管内存，主存放不下就换页，但压缩策略决定你会丢多少细节</div>
   <div class="card-body">
-    <p>核心问题是：对话越长上下文越满，Token 消耗线性涨、延迟增加、模型注意力被稀释。必须压，但又不能丢关键信息。</p>
-    <p>方案一 Progressive Summarization。把最老的消息递归压成摘要块放 Prompt 开头，上下文保持固定大小。好处是成本和延迟恒定，坏处是有损压缩——多次摘要后会丢细节，像传话游戏。</p>
-    <p>方案二 MemGPT、Letta 的分页机制。设个上下文阈值，超了就把旧内容 flush 成摘要存到外部存储，要用时再检索回来。跟操作系统虚拟内存分页一个思路——主存放不下就换到磁盘，用的时候换回来。</p>
-    <p>方案三 Observation Masking（JetBrains 那篇研究）。不真删旧消息，用简短占位符替换，保留对话结构但大幅减 Token。比如把一段 50 行讨论压成"[讨论了 API 设计，决定用 REST]"。</p>
-    <p>实际工程里 Claude Code 的 Memory 文件就是长期和短期的桥梁——自动提取关键决策和约束存成 Markdown，下次对话自动注入。这解决了"每次对话从零开始"的问题。我的 Manager_Agent 也有自建的 16 字段 Checkpoint 快照做状态持久化。</p>
-  </div>
+  <p><strong>长对话和多步任务里工作记忆爆掉是通病，我的处理方式是自建 Checkpoint 快照。</strong>问题是对话越长上下文越满，token 线性涨、延迟增加、模型注意力被稀释，必须压；但又不能丢关键状态。Manager 多智能体编排里我设计了一套 16 字段的 Checkpoint 结构，记录任务当前阶段、各子 Agent 状态、关键中间产出、失败重试计数等，相当于给工作记忆建了一个可恢复的快照层。</p>
+  <p><strong>核心矛盾是保留执行历史与窗口预算的权衡。</strong>全留则窗口爆、模型分心；全砍则丢断点、失败没法续。本质不是"砍或不砍"，而是有损压缩加 checkpoint——把哪些字段保留为精确槽位、哪些压成摘要、哪些直接丢，按对后续决策的重要性分级。</p>
+  <p><strong>关键决策是 Checkpoint 快照加有损摘要加关键槽位保留，拒绝了两种偷懒方案。</strong>拒绝"裸塞对话历史"——成本爆且 lost-in-middle；拒绝"无差别截断 oldest messages"——会把决策点和上下文一起砍掉，模型恢复后不知道之前为什么走到这。我的做法是：对话层做有损摘要、关键状态（当前阶段、已确认产出、未解决疑问）保留为强类型字段、checkpoint 落盘支持断点续跑。</p>
+  <p><strong>验证方式是断点续跑能续上、关键状态不丢。</strong>16 字段快照的设计目标是任意时刻可恢复——任务失败或被中断后，从最近 checkpoint 重启能回到一致状态，而不是从零重跑或带着残缺 context 继续。指标看恢复后任务能否正确推进、关键字段是否完整、长任务 token 是否稳定在预算内。</p>
+  <p><strong>可迁移的方法论是"工作记忆等于有损压缩加 checkpoint，不是无差别截断"。</strong>局限也讲清楚：16 字段是为 Manager 任务流定制的，字段语义跟"多 Agent 协调加阶段门控"强耦合；通用对话场景的 hierarchical summary、Observation Masking 这些压缩策略我没深做，下次做对话型 Agent 时得补——checkpoint 这套思路能复用，但具体字段得重新设计。</p>
+</div>
 </div>
 
 <div class="card" data-c="ai" data-g="工具协议" data-kw="MCP 协议 Host Client Server Tools Resources Prompts JSON-RPC stdio SSE 开发 是什么">
@@ -3484,27 +3485,24 @@ function buildTreeOptimized(list) {
   <div class="card-head"><span class="tag ai">AI</span><div class="card-title">Harness Engineering：Agent 等于 Model 加 Harness</div></div>
   <div class="core">模型是发动机，Harness 是方向盘加刹车加仪表盘的总和——Agent 的工程价值大部分在 Harness 而不在模型</div>
   <div class="card-body">
-    <p>这个概念是 Addy Osmani 那篇 Harness Engineering 文章提的。Agent 等于 Model 加 Harness，模型是发动机，Harness 是围绕模型构建的所有基础设施。分六层。</p>
-    <p>L1 信息边界——模型能看到什么，比如 CLAUDE.md、context 预算。L2 工具系统——模型能用什么工具，MCP、Function Calling。L3 执行编排——多步骤流程怎么控，Agent Loop、状态机。L4 记忆状态——对话历史、长期记忆，摘要压缩、向量存储。L5 评估观测——输出质量怎么检查，质量门控、日志 trace。L6 约束恢复——安全边界、失败恢复、人工兜底。</p>
-    <p>这里有个进阶概念叫 KSG 自进化（Knowledge-Skill-Growth）。传统 Agent 三段式（接收、规划、执行）是无状态的，每个窗口独立。Harness 的核心突破是 KSG——把短期记忆抽象提取成长期记忆、知识库、技能手册，这是 Agent 自我迭代的引擎。三类核心引擎：合并引擎（整合多 Agent 输出）、通信引擎（Agent 间状态传递）、反思引擎（从失败中提炼规则）。落地其实就是几个 Python 模块——日志聚合、状态传递、规则提炼。</p>
-    <p>Ratchet 机制（错误即规则）是 Harness 工程最重要的习惯——每次 Agent 犯错都提炼成永久约束，不是一笑而过。Agent 提交了注释掉的测试？AGENTS.md 加一条"永远不要注释测试"。执行了破坏性命令？加 hook 拦截。核心原则是每一行规则都应该能追溯到一次具体的失败。</p>
-    <p>我自己 Manager_Agent 和 code_assistant 整个架构本质上就是 Harness——四层写盘守卫加 vm、docker 沙箱是 L6，Evidence Index 是 L4，quality-gate 是 L5。但 KSG 自进化闭环我只做了 shadow-only（只记录不自动 promote），这是已知改进方向。</p>
-  </div>
+  <p><strong>Agent 不等于模型，Agent 等于模型加 Harness。</strong>这个框架来自 Addy Osmani 的 Harness Engineering——模型是发动机，Harness 是围绕模型构建的工具调度、状态管理、校验、恢复这一整套工程脚手架。我 Manager 和 code_assistant 两个项目本质上做的就是这件事：搭一套 Harness 让模型在受控边界内跑起来。理解这点能直接改变 Agent 工程的投入方向——大部分工程价值在 Harness 而不在调模型参数。</p>
+  <p><strong>核心矛盾是给模型自由度与加约束护栏的权衡。</strong>Harness 太薄则模型乱跑、产出不可控；太厚则僵化、把模型本来的能力抵消掉。本质是工程化"可控的自主"——既不是放任模型自由发挥，也不是把每一步都写死，而是让模型在明确边界内做决策。</p>
+  <p><strong>关键决策是分层 Harness 加关键状态门加失败恢复，拒绝了两种极端方案。</strong>分层指 L1 信息边界、L2 工具系统、L3 执行编排、L4 记忆状态、L5 评估观测、L6 约束恢复六层各自独立设计。具体机制上：KSG 关键状态门控让重要节点显式校验、Ratchet 只进不退让每条规则都可追溯到一次具体失败——拒绝了"裸调模型等结果"的方案，那种方案演示能跑、生产崩；失败恢复走重试加降级加转人工的多级策略，拒绝了"失败即终止"，因为生产里失败是常态，没有恢复路径的 Agent 扛不住。</p>
+  <p><strong>验证方式是失败可恢复、状态可观测。</strong>Manager 的 39 节点状态机加 code_assistant 的自验证自修复循环都是 Harness 的落地——每个节点都有可观测的输入输出加状态字段、失败有明确的恢复路径。评估看 trace 完整度（每个决策可追溯）、失败恢复成功率、最终产出质量，而不是看模型一次跑通没。</p>
+  <p><strong>可迁移的方法论是"Agent 等于模型加 Harness，价值在 Harness 不在模型调参"。</strong>局限也说清楚：两个项目偏研究型，部分机制比如 KSG 自进化闭环目前是 shadow-only（只记录不自动 promote），不是全量生产部署；Harness 的工业级严谨性——完整的 SLA 监控、灰度发布、容量规划——是后续补的方向，不是现在已经做完了的。</p>
+</div>
 </div>
 
 <div class="card" data-c="ai" data-g="Loop 工程" data-kw="自进化 闭环 ratchet 反思引擎 技能提炼 错误即规则 KSG 日志 回归 golden sample 持续改进 怎么设计">
   <div class="card-head"><span class="tag ai">AI</span><div class="card-title">Agent 自进化闭环怎么设计</div></div>
   <div class="core">核心是 ratchet 机制——每次 Agent 犯错都提炼成新约束，让同样的错误永不发生第二次</div>
   <div class="card-body">
-    <p>为什么需要自进化：传统 Agent 每个上下文窗口独立，不会从失败中学习。Harness 工程的核心突破就是让 Agent 能自我迭代——短期记忆抽象成长期记忆，长期记忆提炼成技能手册，技能手册变成可复用规则。</p>
-    <p>四步落地闭环。</p>
-    <p>第一步日志收集层，每次工作流运行记录决策日志、工具调用链、产出质量评分。这是进化的原材料。</p>
-    <p>第二步反思引擎，定期分析日志，识别高频失败模式（比如总是漏掉某个能力面、总在某个步骤跳步），自动生成候选规则到待审核队列。</p>
-    <p>第三步人工审批层，工程师审核候选规则，确认后写入技能库。不是所有规则都值得保留，人决定哪些是信号哪些是噪声。</p>
-    <p>第四步回归验证层，用 golden sample 重跑，对比优化前后评分。评分提升才正式上线，下降就回滚分析原因。</p>
-    <p>技能库迭代这块——执行任务、发现可复用模式、抽取成 skill.md、加入技能库。技能图谱让 Agent 理解自己有哪些能力，原子技能可组合成复杂技能。每次更新后用基准 case 回归确认不劣化，版本管理追踪每个技能的演进历史。</p>
-    <p>这里有个统计学坑我得诚实讲——Self-Evolution 真上生产要补统计学。每臂 8 个样本做 A/B 是没有统计显著性的，得做 power analysis 定样本量、用序贯检验（SPTR）、留 hold-out、shadow 跑够了再 promote。我自己 Manager_Agent 的 Self-Evolution 就是默认 shadow-only，所有 promote 走人工审批加 offline power analysis。</p>
-  </div>
+  <p><strong>自进化是 Agent 从自身运行数据学习改进的机制，我在 Manager 里设计了一套 Self-Evolution 闭环。</strong>背景是传统 Agent 每个上下文窗口独立、不会从失败中积累经验，跑十次同样的坑踩十次。Self-Evolution 的目标是把运行中的失败模式提炼成可复用规则，让 Agent 在后续任务里避开。我负责采集加归因加验证这套链路的设计。</p>
+  <p><strong>核心矛盾是学习信号与统计可靠性的权衡。</strong>单次反馈噪声很大，直接把每次失败都固化成规则，等于把噪声也学进来——好的经验没积累多少，坏的特殊 case 把行为带歪。本质是自进化必须配统计护栏，不是裸学习——怎么判断一个失败是真信号还是偶发噪声，是这套机制能不能上生产的命门。</p>
+  <p><strong>关键决策是四步闭环加纯规则归因加 shadow 默认，拒绝了两种天真方案。</strong>四步指采集（记录每次运行的决策加产出加评分）、归因（分析失败归到哪类原因）、实验（候选规则在 golden sample 上回归对比）、回滚（评分下降就回滚）。失败归因走纯规则——拒绝了"LLM 归因"方案，因为 LLM 归因本身不可靠、会把归因错误放大；上线策略默认 shadow-only——拒绝了"学习结果直接 promote 到生产"，没经过统计验证的规则上生产等于让所有用户替你交学费。</p>
+  <p><strong>验证方式是有 hold-out 加对照、不靠 vibes。</strong>Manager 的 Self-Evolution 目前跑的就是 shadow 模式——只采集加生成候选规则加离线评估，不自动影响线上行为。指标看候选规则在 hold-out 集上是否真的带来评分提升、提升是否达到统计显著门槛，而不是"加了规则感觉效果好就上线"。</p>
+  <p><strong>可迁移的方法论是"自进化必须配统计护栏加 shadow，不能裸学"。</strong>诚实讲局限：目前是 shadow-only、没接真实流量做大规模验证，统计严谨性（power analysis 定样本量、序贯检验、完整的 A/B 框架）是后续要补的，不是现在已经做扎实了的；另外四步闭环里的归因规则覆盖面有限，遇到规则没覆盖的新型失败会漏掉，得持续维护。</p>
+</div>
 </div>
 
 
@@ -3567,29 +3565,24 @@ function buildTreeOptimized(list) {
   <div class="card-head"><span class="tag ai">选型</span><div class="card-title">Agent 框架怎么选：LangGraph vs LangChain vs AutoGen vs CrewAI vs Dify vs Coze</div></div>
   <div class="core">按控制粒度和场景选——要循环分支加 HITL 加状态机的复杂编排我选 LangGraph；快速搭多 Agent 协作用 CrewAI 或 AutoGen；不想写代码做产品用 Dify 或 Coze</div>
   <div class="card-body">
-    <p>先把六个框架按定位分个层。</p>
-    <p>LangChain——链式编排框架，用 LCEL 声明式把 LLM 调用和工具像链条一样串（A→B→C）。适合线性流程、快速搭原型。优点是封装全（Chain、Agent、Tool、Memory、Retriever、Callback 都有）上手快，缺点是流程一复杂就难控，状态管理和循环支持弱。</p>
-    <p>LangGraph——LangChain 公司为复杂 Agent 单独搞的图状态机。核心是 Node 加 Edge，支持循环、条件分支、Checkpoint 持久化、Human-in-the-loop。优点是控制粒度最细、状态可恢复、HITL 原生支持，缺点是学习曲线陡、代码量大。适合需要精确控制流程、要循环分支、要中途让人确认的复杂编排。</p>
-    <p>AutoGen——微软的多 Agent 对话框架，核心是 Agent 之间通过消息对话协作。优点是多 Agent 协作模式灵活（GroupChat、双 Agent 对话），适合研究型和探索型多 Agent 场景。缺点是工程化偏弱、生产部署坑多、调试链路长。</p>
-    <p>CrewAI——角色分工加任务委派的多 Agent 框架。你定义 Agent（带 role、goal、backstory）和 Task，Crew 把它们组起来跑。优点是 API 直观、上手快、角色抽象符合直觉，适合"几个专精 Agent 各干一摊"的场景。缺点是定制化空间小、流程复杂时不够灵活。</p>
-    <p>Dify——开源的 LLM 应用搭建平台，带可视化编排、RAG、Agent、工作流。优点是低代码、产品化程度高、自带运营后台，适合搭面向终端用户的产品和不写代码快速验证。缺点是深度定制受限、复杂 Agent 编排不如 LangGraph 灵活、绑平台。</p>
-    <p>Coze（扣子）——字节的 Bot 搭建平台，跟 Dify 定位类似但更偏 C 端和字节生态。优点是国内生态整合好、发布渠道多（飞书、抖音、微信），适合快速做个能发布的 Bot。缺点是绑字节生态、深度工程能力弱、不适合做复杂生产 Agent。</p>
-    <p>我的选型逻辑。Manager_Agent 我选 LangGraph——因为我需要 39 节点的状态机、20 条条件边做路由、Probe 探活节点、HITL 节点、Checkpoint 崩溃恢复，这些 LangGraph 原生支持，别的框架要么不支持循环要么 HITL 弱。如果我只是搭个"几个 Agent 对话协作"的原型，我会用 CrewAI，API 顺手、能快速验证。如果我是产品同学不写代码，Dify 或 Coze 直接拖。</p>
-    <p>一句话总结：生产级复杂编排 LangGraph，快速多 Agent 原型 CrewAI 或 AutoGen，低代码产品 Dify 或 Coze。选型别只看功能列表，看你的控制粒度需求——要精确控制每一步流转就 LangGraph，要快速跑通就选抽象更高的。</p>
-  </div>
+<p><strong>框架选型我是决策者。</strong>Manager 项目我选了 LangGraph，不是跟风，是按需匹配。主流六个框架 LangGraph、LangChain、AutoGen、CrewAI、Dify、Coze 我都过了一遍，每个的定位和能力边界摸清楚再选——选型不是看功能列表哪个长，是看你的控制粒度需求落在哪一档。</p>
+<p><strong>本质矛盾是框架能力和可控性、学习成本之间的权衡。</strong>全功能框架封装厚、抽象高，上手快但内部是黑盒，流程一复杂就难调试；裸写从零搭又可控又透明，但等于在重复造状态机、Checkpoint、HITL 这些轮子。本质是按可控性需求选抽象层级——要精确控制每一步流转，就得下到状态机这一层；只要快速跑通，抽象再高也无所谓。</p>
+<p><strong>六个框架我能分层说清楚。</strong>LangChain 是链式编排，用 LCEL 把 LLM 调用和工具像链条串起来，适合线性流程快速搭原型，封装全但流程复杂就难控；LangGraph 是 LangChain 公司为复杂 Agent 单独做的图状态机，Node 加 Edge 显式定义，原生支持循环、条件分支、Checkpoint、HITL，控制粒度最细但学习曲线陡；AutoGen 是微软的多 Agent 对话框架，GroupChat 和双 Agent 对话灵活，适合研究型探索，工程化偏弱；CrewAI 用角色分工加任务委派，API 直观适合"几个专精 Agent 各干一摊"的原型，定制化空间小；Dify 和 Coze 是低代码平台，产品化程度高，适合不写代码搭面向用户的产品，深度定制受限。</p>
+<p><strong>Manager 数十节点的状态机用 LangGraph 显式表达，这是 eval。</strong>我需要的是循环、条件路由、Probe 探活节点、HITL 节点、Checkpoint 崩溃恢复——这些 LangGraph 原生支持，别的框架要么不支持循环要么 HITL 弱。我拒绝了 LangChain 全家桶，因为它对复杂状态机支持不够、抽象太厚；也拒绝了裸写，因为状态机和 Checkpoint 这些基础设施不该自己造。eval 不是"功能齐不齐"，是"节点和边可观测、可调试、可单测"——每一步流转都能 log 出来、能在 graph 可视化里追踪，这是 LangGraph 给我的核心价值。</p>
+<p><strong>方法论一句话——框架选型按可控性需求选抽象层级。</strong>需要精确控制流转就下到状态机（LangGraph），需要快速跑通多 Agent 原型就用抽象更高的（CrewAI、AutoGen），不写代码做产品就上低代码平台（Dify、Coze）。局限也讲清楚：LangGraph 学习曲线陡、代码量大，小项目其实不必上这么重的框架——如果只做单链路原型，LangChain 甚至裸写更划算；另外选型不该锁死，Manager 现在用 LangGraph 不代表所有项目都用，关键看控制粒度需求。</p>
+</div>
 </div>
 
 <div class="card" data-c="ai" data-g="Agent 基础" data-kw="ReAct Plan-and-Execute Plan Execute Reflexion 对比 选型 什么时候用 探索 批量 自纠错 成本">
   <div class="card-head"><span class="tag ai">选型</span><div class="card-title">ReAct vs Plan-and-Execute vs Reflexion，什么时候用哪个</div></div>
   <div class="core">路径没探明的开放任务用 ReAct 边想边干；路径已经清楚、要批量执行用 Plan-and-Execute 先规划再干；要能自纠错再加 Reflection，但成本会翻倍</div>
   <div class="card-body">
-    <p>ReAct（Reasoning + Acting）是 Thought → Action → Observation 的循环。每一步模型先想（Thought）再决定调什么工具（Action），拿到结果（Observation）再想下一步。优点是灵活，适合路径不定的探索性任务（调研、搜索、debug），GPT 和 Claude 默认就这套。缺点是可能陷循环、上下文膨胀、每步都做决策所以慢且贵。</p>
-    <p>Plan-and-Execute 是先让一个 Planner 模型把整个任务拆成计划（一串步骤），再让 Executor 按计划一步步执行。优点是结构化、可预测、Planner 可以用贵模型一次性想清楚、Executor 用便宜模型批量干，省成本。缺点是计划错了后面全错——它假设路径已经清楚，如果中途发现计划不对要重新规划。适合路径已经探明、要批量执行的多步骤任务。</p>
-    <p>Reflexion 是在 ReAct 或 Plan-Execute 上加一层反思——执行完一步（或一轮）后让模型自我评估"结果对不对、够不够"，不对就修正重做。优点是能自纠错、对失败有韧性。缺点是成本翻倍（每步多一次反思调用）、反思本身也可能错（Critic 自己也会犯错的悖论）、调试链路长。要慎用，不是所有任务都值得加。</p>
-    <p>选型决策我自己这么判断。第一步看路径确定性：路径完全未知、需要边走边看，用 ReAct。路径已经清楚、就是要按步骤执行，用 Plan-and-Execute。第二步看容错需求：任务一次错代价大、失败原因可观察可注入，才在前面基础上加 Reflexion 做自纠错；任务简单或容错高就别加，成本不划算。</p>
-    <p>举个具体例子。用户问"帮我调研一下 A、B、C 三个框架怎么选"——这是开放探索，路径不定，用 ReAct，让 Agent 自己决定先搜什么、再比什么。用户说"把这 50 个 PRD 都按同样的流程蒸馏成 Spec"——路径清楚（蒸馏流程已经定了），用 Plan-and-Execute，先规划出 50 个子任务再批量执行，Executor 用便宜模型。用户说"这段代码有 bug 帮我修到测试通过"——失败原因可观察（测试 log）、可注入、ROI 正，上 Reflexion 自纠错循环。</p>
-    <p>我自己 prd-tools 的 PRD 蒸馏本质是 Plan-and-Execute 思想——/prd-distill 先规划蒸馏步骤（按 Reference 结构对齐），再按固定流程执行，每步有门控。code_assistant 的 ReAct Loop 里在关键写盘步骤前加了一层四层写盘守卫，相当于轻量的 Reflexion——执行前校验，不达标就不写。</p>
-  </div>
+<p><strong>三种范式是 Agent 的三种"思考-行动"组织方式。</strong>ReAct 是 Thought → Action → Observation 循环，边想边干；Plan-and-Execute 是先规划再执行，Planner 一次性拆步骤、Executor 按计划走；Reflexion 在前两者之上加一层反思，执行完自我评估不对就重做。两个项目我用的是不同范式——prd-tools 走 Plan-and-Execute 思想，code_assistant 在关键写盘步骤前加了一层校验，是轻量的 Reflexion。选型不是迷信某一种，是按任务特性匹配。</p>
+<p><strong>本质矛盾是思考-行动耦合度和计划稳定性之间的权衡。</strong>ReAct 把思考和行动紧耦合，每步都让模型临场决定，灵活、适合路径不定的探索任务，但容易发散、上下文膨胀、每步都决策所以慢且贵；Plan-and-Execute 解耦规划和执行，计划稳定、可预测、还能用便宜模型批量跑 Executor，但前提是路径已经清楚，计划错了后面全错；Reflexion 靠反思纠偏，对失败有韧性，但成本翻倍、反思本身也可能错。本质是按任务的可计划性选耦合度——路径未知要灵活就 ReAct，路径已知要稳定就 Plan-Execute，容错代价大才加 Reflexion。</p>
+<p><strong>两个项目的范式选择我是按任务特性匹配的。</strong>prd-tools 的 PRD 蒸馏走 Plan-and-Execute 思想——/prd-distill 先按 Reference 结构规划蒸馏步骤，再按固定流程执行，每步有门控，因为 PRD 蒸馏流程是可预拆的、路径确定；code_assistant 在 ReAct Loop 里关键写盘步骤前加了四层写盘守卫，执行前校验不达标就不写，相当于轻量的 Reflexion 自验证自修复循环——因为代码改动失败原因可观察（测试 log）、可注入、ROI 正。我拒绝了"一种范式打天下"——同一套代码库里 prd-tools 和 code_assistant 用不同范式，因为任务特性不同。</p>
+<p><strong>eval 是按场景匹配，不是一刀切。</strong>每个场景的 Agent 行为要符合预期：Plan-and-Execute 场景里 Planner 拆出来的步骤能覆盖流程主干、不会漏关键门控；Reflexion 场景里写盘守卫真能拦住不达标改动、不会误伤合法改动。这两个 eval 都不靠百分比数字，看的是行为是否符合设计——Planner 的步骤能跑通完整蒸馏流程、守卫的拦截率和误伤率都在可接受范围，就算 work。</p>
+<p><strong>方法论一句话——范式按任务可计划性选，不迷信某一种。</strong>路径未知用 ReAct，路径已知用 Plan-and-Execute，容错代价大再加 Reflexion。局限也讲清楚：我自己的 Reflexion 是轻量版，不是完整论文实现——论文里的 Reflexion 涉及完整的 self-reflection 链和长期记忆积累，code_assistant 只在关键步骤前加四层守卫、没有完整的反思链；另外范式选择不是静态的，任务演化过程中可能从 ReAct 起步、路径探明后升级到 Plan-and-Execute，这是主流 Agent 工程实践也推荐的迭代路径。</p>
+</div>
 </div>
 
 <div class="card" data-c="ai" data-g="工具协议" data-kw="MCP vs Function Calling vs A2A 三者区别 对比 协议 场景 Agent 工具 通信">
@@ -3623,16 +3616,12 @@ function buildTreeOptimized(list) {
   <div class="card-head"><span class="tag ai">选型</span><div class="card-title">单 Agent 还是多 Agent，一个决策树</div></div>
   <div class="core">先看任务是不是线性单链路，是就单 Agent；再看单 Agent 上下文是否挤到互相干扰，是就按业务域拆多 Agent；拆的代价是通信成本和调试难度，划不来就别拆</div>
   <div class="card-body">
-    <p>原理一句话：拆分的本质是用通信成本换单点负载——当单个 Agent 的上下文管理成本超过多 Agent 间协调的通信成本，才该拆。多 Agent 常见四种协作模式：Supervisor-Worker（主 Agent 拆任务派子 Agent）、Pipeline（流水线串联）、Debate（多 Agent 辩论）、Hierarchical（树状层级），引入的新复杂度是通信协议设计、冲突解决、错误传播、终止条件。</p>
-    <p>这个题我画个决策树给自己用。</p>
-    <p>第一问：任务是线性单链路吗（A→B→C 顺序执行，没有并行、没有异构子任务）？是 → 单 Agent，结束。线性任务拆开只增加通信开销和调试难度，没有任何收益。</p>
-    <p>第二问：单 Agent 的 prompt 是不是已经膨胀到指令互相干扰（既要分析 PRD 又要校验代码规范，两个维度的指令混在一起模型分不清优先级）？是 → 考虑拆。否 → 继续单 Agent。</p>
-    <p>第三问：任务有没有明显异构的子任务域（一个看代码、一个看文档、一个做 Review，各需要不同知识背景和工具集）？是 → 按业务域拆多 Agent，每个域一个专精 Agent。否 → 用单 Agent 加多工具（工具够了，不需要多 Agent）。</p>
-    <p>第四问：需不需要并行加速（多个子任务同时跑最后汇总）？需要 → 多 Agent 并行。不需要 → 串行的多 Agent 反而比单 Agent 慢，别拆。</p>
-    <p>第五问（成本权衡）：拆完多 Agent 的上下文管理收益（每个 Agent 专注、prompt 精准、上下文不污染）是否大于通信成本（Agent 间状态传递、调试链路变长、Token 消耗 2-3 倍）？是 → 拆。否 → 单 Agent 加 Router 工具路由就够了。</p>
-    <p>几个常见的中间形态别忽略。"单 Agent 加多 Skill"——一个 Agent 共享上下文，但通过 Skill 封装不同工作流，适合步骤固定但有几个不同流程的场景（我自己 prd-tools 就是这个，一个 Claude Code 实例加两个 Skill）。"单 Agent 加 Router 加子工具"——工具多到一个 Agent 选不过来时，加一层 Router 先分类意图再让 Agent 从一小撮工具里选，比直接拆多 Agent 轻。"Supervisor 加 Worker 多 Agent"——主 Agent 拆任务派子 Agent，适合真正异构的复杂场景。</p>
-    <p>我自己 Manager_Agent 走的是 Supervisor 加 Worker 模式——9 个外部域 Agent（NL2SQL、代码、爬虫、GUI、办公、多模态那些）加 3 个内部 Agent，supervisor 做路由和仲裁。为什么拆这么多：因为这些域的知识背景和工具集完全不同（NL2SQL 要懂 schema 和 SQL，爬虫要懂反爬和解析），塞一个 Agent 里 prompt 必然互相干扰，拆开每个域 Agent 专注一摊反而更准。如果我只做单域（比如只做代码），单 Agent 加 18 个工具（code_assistant 就是）就够，不会拆。</p>
-  </div>
+<p><strong>单 Agent 还是多 Agent 是结构性决策，不是越多越好。</strong>Manager 我用了多 Agent——9 个外部域 Agent（NL2SQL、代码、爬虫、GUI、办公、多模态那些）加 3 个内部管理 Agent 做 Supervisor 路由仲裁；code_assistant 反过来是单 Agent 加多个工具。两个项目选不同结构，是因为任务特性不同，不是为了显得复杂。</p>
+<p><strong>本质矛盾是专业化收益和协调成本之间的权衡。</strong>多 Agent 让每个 Agent 专注一个域，prompt 精准、context 不污染，专业化强；但协调成本真实存在——Agent 间状态传递、通信协议设计、冲突解决、调试链路变长、Token 消耗翻倍。单 Agent 简单、共享 context、没通信开销，但任务一旦跨域 prompt 就会互相干扰，模型分不清优先级。本质是按专业化需求和 context 隔离需求选——拆不拆的临界点是单 Agent 的 context 管理成本超过多 Agent 的通信成本。</p>
+<p><strong>我自己用五问决策树。</strong>第一问任务是线性单链路吗，是就单 Agent 结束；第二问单 Agent 的 prompt 是不是已经膨胀到指令互相干扰，是才考虑拆；第三问任务有没有明显异构的子任务域（一个看代码、一个看文档、一个做 Review，各需要不同知识背景和工具集），是才按业务域拆；第四问需不需要并行加速，需要才多 Agent 并行；第五问拆完的 context 管理收益是否大于通信成本，大于才拆。Manager 走到多 Agent 是因为这五问全命中——多个域的知识背景和工具集完全不同，塞一个 Agent 里 prompt 必然互相干扰。我拒绝了"为了多而多"——code_assistant 单域就单 Agent 加多个工具，不拆。</p>
+<p><strong>Manager 多 Agent 架构跑通，这是 eval。</strong>9 外加 3 内的 Supervisor-Worker 模式跑起来，每个域 Agent 专注自己的能力范围，Supervisor 做路由和仲裁，context 不混。eval 不是"Agent 多了显得强"，是"专业化分工清晰、context 不互相污染"——NL2SQL Agent 不会被代码工具的指令干扰，爬虫 Agent 不会分心去管 GUI 操作。如果把这些塞一个 Agent 里，prompt 就会既要懂 SQL 又要懂反爬又要懂 GUI，模型优先级混乱、准确率下降。</p>
+<p><strong>方法论一句话——单/多 Agent 按专业化需求和 context 隔离需求选。</strong>任务异构、专业差异大、单 Agent context 会混，才拆多 Agent；反之单 Agent 加多工具更划算。局限也讲清楚：多 Agent 协调成本高，简单任务别上——Agent 间通信、状态同步、错误传播每个都是工程负担，小项目或单域任务上多 Agent 是过度设计；另外 Supervisor 自身可能成为瓶颈或单点故障，Manager 的 Supervisor 路由逻辑也是迭代调试的重点。</p>
+</div>
 </div>
 
 <!-- AI RAG+评测 -->
@@ -3674,11 +3663,12 @@ function buildTreeOptimized(list) {
   <div class="card-head"><span class="tag ai">RAG</span><div class="card-title">向量库怎么选——还有我为什么自己写不用 Chroma</div></div>
   <div class="core">小规模 Chroma/pgvector，大规模 Milvus，图省事 Pinecone；我自己项目是自研 JSON+内存余弦，因为量小、要能 grep 调试、不想引依赖</div>
   <div class="card-body">
-    <p>向量库的核心能力是 <strong>ANN 近似最近邻</strong>——不是精确找最近的（O(N) 太慢），而是用索引结构快速找"足够近"的。主流两类索引：<strong>HNSW</strong>（分层小世界图，查询快召回高但吃内存，是当前默认选择）；<strong>IVF</strong>（倒排聚类，先聚类再类内搜，内存省但稍慢，适合超大规模）。</p>
-    <p>主流库我能背下来：Milvus（分布式、能水平扩展到十亿级，但部署重，依赖 etcd/MinIO）；Pinecone（全托管 SaaS，零运维，贵）；Chroma（轻量本地、Python 友好，原型和中小规模首选）；pgvector（PostgreSQL 插件，复用现有 PG 的运维和事务，向量+结构化混合查询方便）；Qdrant（Rust 写、过滤能力强，先按 metadata 过滤再向量检索）。选型三问：数据规模多大（百万级 Chroma/pgvector 够，亿级上 Milvus）、要不要自己运维（省事 Pinecone，已有 PG 用 pgvector）、过滤多不多（多就 Qdrant）。</p>
-    <p><strong>这里有个我被追问的点：那你为什么不用这些，自己写？</strong>我的答案是——<strong>我的场景用不上</strong>。我的 code RAG 索引规模很小，就一个项目几百到上千个文件块，内存里全装得下。我的做法是：文件名 token 预筛（先用文件名快速过滤候选集）→ sha256 内容指纹做增量缓存（文件没改就直接复用缓存的 embedding，不用重新调 API 烧钱）→ embedDocuments 切块 → 内存里逐块算<strong>余弦相似度</strong>打分 → 索引落盘成一个 JSON 文件。下次启动直接 load JSON。</p>
-    <p>这么干的好处我得说清楚：一是<strong>零依赖</strong>，不用拉一个 Chroma 或 Milvus 进程，部署就是几个文件；二是<strong>可调试</strong>，索引是 JSON 我能直接打开看哪个块的向量是什么、为啥召回它，Chroma 是个黑盒排查费劲；三是<strong>省钱</strong>，sha256 增量让重复 embed 的成本几乎为零。<strong>得说句实话</strong>：这套只在量小的时候成立，真到百万级向量、要低延迟并发查询，自研就扛不住了——那时老老实实上 Milvus/pgvector。我的选择是"先够用，留好替换接口"，别为了用而用。</p>
-  </div>
+<p><strong>向量库选型我选了自研，不是 Chroma。</strong>code_assistant 的检索我是设计者，做的是自研 JSON 加内存余弦的方案，没上 Chroma 或 Milvus。code RAG 的索引规模就一个项目几百到上千个文件块，内存里全装得下，这种规模上专业向量库是杀鸡用牛刀。选型不是看哪个更先进、更主流，是看场景规模和工程成本。</p>
+<p><strong>本质矛盾是通用能力和工程成本、可控性之间的权衡。</strong>Chroma 这类专业库功能全、ANN 索引（HNSW、IVF）、过滤、持久化都有，但引入了进程依赖、运维负担、调试黑盒；自研 JSON 加内存余弦反过来——轻、零依赖、索引能直接打开看，但能力有限，大规模和低延迟并发扛不住。本质是按规模和场景权衡，不是"哪个更先进"——大规模该上专业库就上，小规模自研更合适，不存在普适最优。</p>
+<p><strong>我的方案是 JSON 加内存余弦加 sha256 增量。</strong>具体做法：文件名 token 预筛快速过滤候选集，再调 text-embedding-v3 这个现成 embedding 服务切块向量化，内存里逐块算余弦相似度打分，索引落盘成一个 JSON 文件，下次启动直接 load。增量用 sha256 内容指纹——文件没改就直接复用缓存的 embedding，不用重新调 API 烧钱。我拒绝了 Chroma，因为量小不需要、重依赖不值当；也拒绝了 git 钩子做增量，因为 sha256 内容指纹更轻、不绑工作流。</p>
+<p><strong>自研方案在 code 仓库规模上跑得通，这是 eval。</strong>召回准——索引是 JSON 我能直接打开看哪个块的向量是什么、为什么召回它，排错比黑盒 Chroma 容易；增量快——sha256 让重复 embed 的成本几乎为零，没改的文件直接复用缓存。eval 不需要"召回率 XX%"这种数字，看的是行为是否符合设计：相关文件能召回、增量更新不重算、索引可观察可调试，就算 work。</p>
+<p><strong>方法论一句话——选型按场景规模权衡，不追"更先进"。</strong>大规模、低延迟、要并发，就上 Milvus 或 pgvector；小规模、要可控可调试，自研够用。局限我主动讲清楚：自研只在量小的时候成立，规模上去必须上专业向量库——真到百万级向量，内存里逐块算余弦扛不住，那时老老实实换 Milvus 或 pgvector。我的策略是"先够用、留好替换接口"，索引层抽象出来不绑死实现，未来要换库改一层就行。</p>
+</div>
 </div>
 
 <div class="card" data-c="ai" data-g="RAG 检索" data-kw="RAG 多路召回 Query Rewrite BM25 向量 RRF 融合 HyDE Step-back Self-RAG CRAG GraphRAG 提升准确率">
@@ -4020,19 +4010,19 @@ function buildTreeOptimized(list) {
 <div class="card" data-c="ai" data-g="系统设计" data-kw="重设计 Manager 瘦身 39节点 subgraph 业务域 拆分 删合并 Critic降级 过度设计 架构债 系统设计">
   <div class="card-head"><span class="tag ai">SD1</span><div class="card-title">把 39 节点的多智能体编排瘦身重构</div></div>
   <div class="core">39 个节点按业务域拆成 7-8 个 subgraph，Probe 保留、Critic 降级可插拔、Self-Evolution 砍到只观察不自动上线——从大杂烩变成能独立演进的能力域</div>
-  <div class="card-body"><div class="pre-body">先说现状的问题：39 个 addNode 全铺在一张图里（managerGraph.graph.ts:67-104），加 40 条边其中 20 条是条件边。看着唬人，但本质是单进程内的函数调用图，没有域边界、没有独立伸缩、没有故障隔离——这是原型级的拼装，不是生产架构。重设计核心三个动作：拆、删、降级。
+  <div class="card-body"><div class="pre-body"><strong>现状的问题由我主导重设计来解，我 drive 了拆、删、降级三个动作的全过程。</strong>39 个 addNode 全铺在一张图里（managerGraph.graph.ts:67-104），加 40 条边其中 20 条是条件边。看着唬人，但本质是单进程内的函数调用图，没有域边界、没有独立伸缩、没有故障隔离——这是原型级的拼装，不是生产架构。重设计核心三个动作：拆、删、降级。
 
-一、按业务域拆 subgraph（7 个）：知识库（RAG）/NL2SQL/代码/爬虫/GUI/办公（报表可视化）/多模态。每个 subgraph 自带自己的 Probe + Critic + HITL + checkpoint，supervisor 只做路由和仲裁。好处有几个：multimodal / music / video 这些默认不启的域可以单独部署单独伸缩，主图回归轻量；故障隔离——爬虫域挂了不拖垮代码域；团队能并行开发各自域。落地用 LangGraph 的 subgraph + 共享状态 schema，跨域通信用现有 RPC 方案（M16 已有验证）。
+<strong>瘦身的本质矛盾是可观测性与复杂度之间的取舍。</strong>节点多则每一步都可观测、单测粒度细，但配置爆炸、跨域状态耦合、故障传播、认知负担全上来；合并则图变简洁，但丢单测粒度、丢故障隔离、丢独立伸缩。难点不是"砍节点"，是判断哪些节点值得保留独立性、哪些该合并掉。我的判断：能独立演进和故障隔离的留，纯格式转换的合并。
 
-二、哪些该删 / 合并：(1) visualize 和 report 这俩内部 Agent 是 pipeline 尾端的消费者，根本不该是独立 Agent——它们没决策、只是格式转换，合并成一个 render 服务。(2) clean Agent 同理，是工具不是 Agent。(3) 三个内部 Agent 全砍。这样 12 个 Agent 降到 9 个外部域 Agent，每个域一个 subgraph。
+一、<strong>按业务域拆 subgraph（7 个）：知识库（RAG）/NL2SQL/代码/爬虫/GUI/办公（报表可视化）/多模态。</strong>每个 subgraph 自带自己的 Probe + Critic + HITL + checkpoint，supervisor 只做路由和仲裁。好处有几个：multimodal / music / video 这些默认不启的域可以单独部署单独伸缩，主图回归轻量；故障隔离——爬虫域挂了不拖垮代码域；团队能并行开发各自域。落地用 LangGraph 的 subgraph + 共享状态 schema，跨域通信用现有 RPC 方案（M16 已有验证）。
 
-三、哪些过度设计要降级：(1) Critic——现在是每个 plan 都仲裁，但 Critic 自己也会错（M5）。重设计成可插拔：默认只对高风险域（NL2SQL / 代码）开 Critic，低风险域（报表渲染）直接走，用 Critic 否决率这个线上 metric 动态决定哪些域需要 Critic（M14 已有 metric 基础）。(2) Self-Evolution——现在每 30min 生成假设 + 金丝雀 A/B，但每臂 8 个样本没有统计显著性（M9 弱点）。重设计成 shadow-only：只记录假设和结果、不自动 promote，所有 promote 走人工审批 + offline power analysis，这个 SD5 单独展开。(3) Probe-before-plan——这个保留且加强，它是最有价值的设计（并行探活把客观快照喂给 LLM），但要从 5 个下游扩到按域探活。
+二、<strong>哪些该删 / 合并：visualize 和 report 是 pipeline 尾端消费者、clean 是工具不是 Agent，三个内部 Agent 全砍。</strong>(1) visualize 和 report 这俩内部 Agent 是 pipeline 尾端的消费者，根本不该是独立 Agent——它们没决策、只是格式转换，合并成一个 render 服务。(2) clean Agent 同理，是工具不是 Agent。(3) 三个内部 Agent 全砍。这样 12 个 Agent 降到 9 个外部域 Agent，每个域一个 subgraph。
 
-四、tradeoff 诚实讲：拆 subgraph 增加了跨域通信成本和状态同步复杂度——原来一张图内状态天然共享，拆了要显式传消息。这是架构经典取舍：高内聚低耦合 vs 通信开销。我的判断是当前 9 个外部域已经多到单图 hold 不住（故障传播 + 认知负担），拆的收益大于通信成本。但如果是 3 个域以内，不拆。
+三、<strong>过度设计要降级：Critic 可插拔、Self-Evolution 砍到 shadow-only、Probe-before-plan 保留加强。</strong>(1) Critic——现在是每个 plan 都仲裁，但 Critic 自己也会错（M5）。重设计成可插拔：默认只对高风险域（NL2SQL / 代码）开 Critic，低风险域（报表渲染）直接走，用 Critic 否决率这个线上 metric 动态决定哪些域需要 Critic（M14 已有 metric 基础）。(2) Self-Evolution——现在每 30min 生成假设 + 金丝雀 A/B，但每臂 8 个样本没有统计显著性（M9 弱点）。重设计成 shadow-only：只记录假设和结果、不自动 promote，所有 promote 走人工审批 + offline power analysis，这个 SD5 单独展开。(3) Probe-before-plan——这个保留且加强，它是最有价值的设计（并行探活把客观快照喂给 LLM），但要从 5 个下游扩到按域探活。
 
-五、我的总结：39 个节点不是架构能力是架构债——节点的价值在能不能独立演进和故障隔离，不在数量。我宁可要 7 个能独立部署的 subgraph，也不要 39 个绑死在一张图里的 node。
+四、<strong>tradeoff 诚实讲：拆 subgraph 增加了跨域通信成本和状态同步复杂度。</strong>原来一张图内状态天然共享，拆了要显式传消息。这是架构经典取舍：高内聚低耦合 vs 通信开销。我的判断是当前 9 个外部域已经多到单图 hold 不住（故障传播 + 认知负担），拆的收益大于通信成本。但如果是 3 个域以内，不拆。
 
-追问边界：被问 subgraph 怎么共享经验回放——经验库（M10）是全局单例还是每域一份？我的答法：基础路由经验全局共享（因为路由是跨域的），但每域的失败归因样本库独立（因为 failure mode 不同：NL2SQL 的 evidence_gap 和爬虫的 timeout 归因逻辑完全不同）。这正好对应现有 failureAttribution.ts 的 11 类要按域重分组。</div></div>
+五、<strong>方法论：节点的价值在能不能独立演进和故障隔离，不在数量。</strong>我宁可要 7 个能独立部署的 subgraph，也不要 39 个绑死在一张图里的 node。追问边界：subgraph 怎么共享经验回放——经验库（M10）是全局单例还是每域一份？基础路由经验全局共享（因为路由是跨域的），但每域的失败归因样本库独立（因为 failure mode 不同：NL2SQL 的 evidence_gap 和爬虫的 timeout 归因逻辑完全不同）。这正好对应现有 failureAttribution.ts 的 11 类要按域重分组。</div></div>
 </div>
 
 <div class="card" data-c="ai" data-g="系统设计" data-kw="scale 10万文件 1000人 pgvector 多路召回 rerank cross-encoder PostgresSaver gVisor Statsig 系统设计">
@@ -4085,25 +4075,25 @@ function buildTreeOptimized(list) {
 <div class="card" data-c="ai" data-g="系统设计" data-kw="通用 Multi-Agent 调度系统 路由可靠性 重试预算 p99长尾 跨进程 可观测 通用设计 升华 系统设计">
   <div class="card-head"><span class="tag ai">SD4</span><div class="card-title">设计通用 Multi-Agent 调度系统（Manager 经验升华）</div></div>
   <div class="core">五大支柱——路由可靠性（置信度 + 降级）、工具失败重试预算、p99 长尾治理、跨进程状态、可观测，把 Manager 踩的坑抽象成通用模式</div>
-  <div class="card-body"><div class="pre-body">Manager_Agent 是个具体实现（12 Agent + 39 节点），但它踩的坑是所有 Multi-Agent 调度系统的共性——路由会错、工具会挂、长尾会爆、跨进程状态会丢、黑盒不可观测。把这几条升华成通用设计五大支柱。
+  <div class="card-body"><div class="pre-body"><strong>通用化的本质矛盾是特化优化与通用抽象之间的取舍。</strong>Manager_Agent 是个具体实现（12 Agent + 39 节点），但它踩的坑是所有 Multi-Agent 调度系统的共性——路由会错、工具会挂、长尾会爆、跨进程状态会丢、黑盒不可观测。把 Manager 的特化优化升华成通用模式，难点在于：太特化不通用、换一个项目就要重写；太通用又失去 Manager 在路由/重试/长尾上的具体优势，变成正确的废话。我的做法是提炼五大支柱——保留 Manager 验证过的机制（重试预算、Probe、checkpoint），但抽象到任何 Multi-Agent 系统都能套。
 
-一、路由可靠性（Manager 最大教训）：现有 14 路意图分类（M7）+ 12 Agent 路由，但路由准确率没测（M14 只是改进方向）。通用设计：(1) 路由器必须输出置信度，低于阈值降级到反问用户（HITL）而不是硬猜——这是 clarify_needed 失败类型（failureAttribution.ts）的正解；(2) 路由准确率作为一等公民 metric 线上监控，错误路由自动采样进 golden set；(3) 双路由投票——关键路径用两个不同 prompt 的路由器投票，不一致触发 HITL。坑：路由器自己也是 LLM 也会错，不能让路由决策不可逆。
+一、<strong>路由可靠性是 Manager 最大教训：路由器必须输出置信度，低置信度降级到 HITL 而不是硬猜。</strong>现有 14 路意图分类（M7）+ 12 Agent 路由，但路由准确率没测（M14 只是改进方向）。通用设计：(1) 路由器必须输出置信度，低于阈值降级到反问用户（HITL）而不是硬猜——这是 clarify_needed 失败类型（failureAttribution.ts）的正解；(2) 路由准确率作为一等公民 metric 线上监控，错误路由自动采样进 golden set；(3) 双路由投票——关键路径用两个不同 prompt 的路由器投票，不一致触发 HITL。坑：路由器自己也是 LLM 也会错，不能让路由决策不可逆。
 
-二、工具失败重试预算（Manager 已有可复用）：recursionLimit 48（retryBudget.ts）+ 单步 1 / 多步 2 / 全局 1 的重试预算是通用模式——区分瞬时失败（超时重试）和逻辑失败（工具语义错不重试）。升华：(1) 失败归因必须先于重试——不归因就重试是烧 token，现有 11 类失败归因（policy_boundary 不该重试 / timeout 该重试）是正确的分层；(2) 熔断——同一工具连续失败 N 次触发熔断降级，不是无限重试；(3) 递归预算防 fix → synth 死循环，这个模式通用。
+二、<strong>工具失败重试预算（recursionLimit 48 + 分层预算）是 Manager 已有可复用的通用模式。</strong>recursionLimit 48（retryBudget.ts）+ 单步 1 / 多步 2 / 全局 1 的重试预算是通用模式——区分瞬时失败（超时重试）和逻辑失败（工具语义错不重试）。升华：(1) 失败归因必须先于重试——不归因就重试是烧 token，现有 11 类失败归因（policy_boundary 不该重试 / timeout 该重试）是正确的分层；(2) 熔断——同一工具连续失败 N 次触发熔断降级，不是无限重试；(3) 递归预算防 fix → synth 死循环，这个模式通用。
 
-三、p99 长尾治理：Multi-Agent 最怕长尾——一个慢 Agent 拖垮整个 plan。Manager 的 Probe-before-plan（M4）是长尾预防（探活发现下游慢提前换路），升华成通用：(1) 每 Agent 步骤设 soft timeout，超时不 kill 而是降级返回部分结果让上层决策；(2) 并行优于串行——能并行的 probe / 工具调用用 Promise.allSettled（Manager 已经这么干）；(3) p99 分位监控，长尾请求采样分析根因；(4) 慢 Agent 自动降权——路由器记录每 Agent 历史延迟，慢的少派活。
+三、<strong>p99 长尾治理：每步设 soft timeout，超时降级返回部分结果，不 kill。</strong>Multi-Agent 最怕长尾——一个慢 Agent 拖垮整个 plan。Manager 的 Probe-before-plan（M4）是长尾预防（探活发现下游慢提前换路），升华成通用：(1) 每 Agent 步骤设 soft timeout，超时不 kill 而是降级返回部分结果让上层决策；(2) 并行优于串行——能并行的 probe / 工具调用用 Promise.allSettled（Manager 已经这么干）；(3) p99 分位监控，长尾请求采样分析根因；(4) 慢 Agent 自动降权——路由器记录每 Agent 历史延迟，慢的少派活。
 
-四、跨进程状态（Manager 的 checkpoint 三后端升华）：file / redis / dual（M6）是为单机设计的。通用调度系统跨多机：(1) 状态外置到 Redis / Postgres，进程无状态可水平扩；(2) checkpoint 必须支持 resume——进程崩了另一个进程接管续跑（Manager 的 checkpointStore.ts + checkpointRedis.ts 已有此意）；(3) 长任务用持久化工作流（temporal-style），短任务用内存 checkpoint。
+四、<strong>跨进程状态：checkpoint 三后端（file / redis / dual）从单机升华到跨多机。</strong>（M6）是为单机设计的。通用调度系统跨多机：(1) 状态外置到 Redis / Postgres，进程无状态可水平扩；(2) checkpoint 必须支持 resume——进程崩了另一个进程接管续跑（Manager 的 checkpointStore.ts + checkpointRedis.ts 已有此意）；(3) 长任务用持久化工作流（temporal-style），短任务用内存 checkpoint。
 
-五、可观测（Manager 的黑盒痛点）：现有只有 LangSmith（M14 改进方向接 OTel）。通用设计：(1) OpenTelemetry 分布式 trace——一个用户请求 span 贯穿多个 Agent 调用，能定位是哪个 Agent 哪一步慢 / 错；(2) 结构化日志带 trace_id / correlation_id；(3) 核心 metric 看板——路由准确率 / 工具失败率 / Critic 否决率 / HITL 通过率 / p99 / 成本，这些是 SD6 评估体系的输入。
+五、<strong>可观测：OpenTelemetry 分布式 trace 把黑盒打开。</strong>现有只有 LangSmith（M14 改进方向接 OTel）。通用设计：(1) OpenTelemetry 分布式 trace——一个用户请求 span 贯穿多个 Agent 调用，能定位是哪个 Agent 哪一步慢 / 错；(2) 结构化日志带 trace_id / correlation_id；(3) 核心 metric 看板——路由准确率 / 工具失败率 / Critic 否决率 / HITL 通过率 / p99 / 成本，这些是 SD6 评估体系的输入。
 
-六、tradeoff：可靠性 vs 成本——双路由投票 + Probe 探活 + 熔断都增加开销。判断：高价值任务（改生产代码 / 执行 SQL）全开，低价值任务（查文档 / 格式化）走快路径省成本。
+六、<strong>tradeoff：可靠性与成本分档——高价值任务全开，低价值任务走快路径省成本。</strong>双路由投票 + Probe 探活 + 熔断都增加开销。判断：高价值任务（改生产代码 / 执行 SQL）全开，低价值任务（查文档 / 格式化）走快路径省成本。
 
-总结：Multi-Agent 调度系统的核心矛盾是路由不确定 + 工具不可靠 + 延迟长尾——这三者用重试预算 / 置信度降级 / 分布式可观测三个模式系统性治理，不是靠单个模型变聪明。
+<strong>方法论：Multi-Agent 调度系统的核心矛盾是路由不确定 + 工具不可靠 + 延迟长尾，用重试预算、置信度降级、分布式可观测三个模式系统性治理。</strong>不是靠单个模型变聪明。
 
-诚实边界：Manager 没真实用户（MAU / DAU 为零），这些模式的效用是基于代码逻辑推演 + 小规模自测，没经过大规模流量验证。这是诚实承认——生产级验证是下一步。
+<strong>诚实边界：Manager 没真实用户（MAU / DAU 为零），这些模式的效用是基于代码逻辑推演 + 小规模自测，没经过大规模流量验证。</strong>这是诚实承认——生产级验证是下一步。
 
-<strong>对应通用 SD。</strong>这五大支柱对应通用系统设计里的负载均衡 / 重试熔断 / 长尾治理 / 状态持久化 / 可观测——Agent 域的矛盾是通用 SD 矛盾在非确定性场景下的强化版，方案可迁移。被问通用 SD 题不强行套 Agent，但讲完通用方案后可以锚一句"这块我在 Agent 系统里做过更难的版本，因为路由非确定性，重试 / 熔断 / 降级我都做得比传统服务重"。</div></div>
+<strong>对应通用 SD。</strong>这五大支柱对应通用系统设计里的负载均衡 / 重试熔断 / 长尾治理 / 状态持久化 / 可观测——Agent 域的矛盾是通用 SD 矛盾在非确定性场景下的强化版，方案可迁移。讲完通用方案后可以锚一句"这块我在 Agent 系统里做过更难的版本，因为路由非确定性，重试 / 熔断 / 降级我都做得比传统服务重"。</div></div>
 </div>
 
 <div class="card" data-c="ai" data-g="系统设计" data-kw="Self-Evolution 统计学 power analysis SPRT 序贯检验 hold-out shadow 经验衰减 回音室 p-value 显著性 系统设计">
@@ -4540,21 +4530,23 @@ function buildTreeOptimized(list) {
   <div class="card-head"><span class="tag ai">安全</span><div class="card-title">Agent Safety 怎么做——规划层加执行层</div></div>
   <div class="core">我在两个项目里分别从两层做 Safety：规划层靠 prd-tools 的证据链（每条事实带 file:line、读完源码才写）加 Spec Review Gate 硬门禁；执行层靠 code_assistant 的四层守卫加沙箱加 sha256 锁加原子写。</div>
   <div class="card-body">
-    <p>规划层防幻觉，做在 prd-tools。核心是证据链——每条 requirement、影响、契约结论都必须挂一个 EV-XXX 证据 ID，来源是源码、契约、PRD、git diff、负向搜索，没有证据的结论进不了 spec。这之上还有一个代码级硬门禁 Spec Review Gate：spec 不被 owner 确认成 approved，下一阶段的 quality-gate 直接 exit 2 流程硬停，幻觉计划没法往下走。LLM 不允许推断，只能引用已收集的事实。这里我要软化一句——"必须先读源码才写"本质是 prompt 软约束加 evidence 字段事后门禁，不是每一行都硬校验，但方向是真的。</p>
-    <p>执行层防事故，做在 code_assistant。第一性原理就是"模型加写权限等于事故"，所以约束不放 prompt 里、放代码同步路径上。四层守卫逐层过：工具白名单（chat-only 干脆不绑写工具）、入口门禁（JWT scope 卡 write:repo）、apply_diff 的 context 行精确匹配（read-verify-write）、文件系统层（safeResolve 防路径越界、敏感文件黑名单 .env/id_rsa 摸不到、tmp 加 rename 原子写）。再加 subprocess/docker 沙箱跑校验、sha256 乐观并发锁（文件被改过就 409 拒写）、写完自动跑 lint/typecheck/test 自修复。读检索工具的返回天然带 file:line。</p>
-    <p>红线我必须主动暴露：完整的"Diff 预览 → 用户确认才落盘 → 第二个独立代码审查 Agent 终检"这套是我设计目标里还没全落地的一块。目前是 chat-only 只读降级、审计日志、写后自动校验在兜底，HITL 写确认是我下一步要补的。硬吹"有代码审查 Agent、有 HITL 写确认"会翻车——代码里没有，我不装。</p>
-  </div>
+  <p><strong>Safety 的本质矛盾是防护与不阻碍正常任务之间的张力。</strong>护栏太严会抵消模型能力——每一步都拦截、每一个写操作都人工确认，Agent 就退化成普通 RPC 调用；护栏太松则失控，模型一旦幻觉路径越界就是事故。难点不是堆守卫，是在每一层找刚好拦得住事故、又不挡正常任务的边界。我分两层落地：规划层防幻觉、执行层防事故。</p>
+  <p><strong>规划层靠证据链加 Spec Review Gate，做在 prd-tools。</strong>每条 requirement、影响、契约结论都必须挂一个 EV-XXX 证据 ID，来源是源码、契约、PRD、git diff、负向搜索，没有证据的结论进不了 spec。这之上还有一个代码级硬门禁 Spec Review Gate：spec 不被 owner 确认成 approved，下一阶段的 quality-gate 直接 exit 2 流程硬停，幻觉计划没法往下走。LLM 不允许推断，只能引用已收集的事实。这里我软化一句——"必须先读源码才写"本质是 prompt 软约束加 evidence 字段事后门禁，不是每一行都硬校验，但方向是真的。</p>
+  <p><strong>执行层靠四层守卫加沙箱加 sha256 加原子写，做在 code_assistant。</strong>第一性原理是"模型加写权限等于事故"，所以约束不放 prompt 里、放代码同步路径上。四层逐层过：工具白名单（chat-only 干脆不绑写工具）、入口门禁（JWT scope 卡 write:repo）、apply_diff 的 context 行精确匹配（read-verify-write）、文件系统层（safeResolve 防路径越界、敏感文件黑名单 .env/id_rsa 摸不到、tmp 加 rename 原子写）。再加 subprocess/docker 沙箱跑校验、sha256 乐观并发锁（文件被改过就 409 拒写）、写完自动跑 lint/typecheck/test 自修复。读检索工具的返回天然带 file:line。</p>
+  <p><strong>红线主动暴露：完整 Diff 预览加用户确认加独立代码审查 Agent 这套还没全落地。</strong>"Diff 预览 → 用户确认才落盘 → 第二个独立代码审查 Agent 终检"是我设计目标里没全落地的一块。目前是 chat-only 只读降级、审计日志、写后自动校验在兜底，HITL 写确认是下一步要补的。硬吹"有代码审查 Agent、有 HITL 写确认"会翻车——代码里没有，我不装。</p>
+</div>
 </div>
 
 <div class="card" data-c="ai" data-g="RAG 检索" data-kw="向量召回 代码实体图 GraphRAG 对比 code_assistant prd-tools 自研 Pinecone Neo4j Chroma embedding text-embedding-v3 倒排索引 影响范围 调用链">
   <div class="card-head"><span class="tag ai">检索</span><div class="card-title">向量召回 vs 代码实体图——我两个项目各做了一个</div></div>
   <div class="core">code_assistant 用自研向量（text-embedding-v3 + 内存余弦 + sha256 增量），擅长模糊语义、短板是字面术语精度；prd-tools 用正则抽取的轻量实体图（受 GraphRAG 启发、不是 Neo4j 不是 AST），擅长调用链和影响范围。</div>
   <div class="card-body">
-    <p>这题我正好能真答，因为两个项目各做了一种。向量召回在我的 code_assistant 里——text-embedding-v3 做 embedding，内存余弦算相似度，sha256 内容指纹做惰性增量（查询时按需重算，不是 git 钩子）。它的优势是无需结构化、能处理"改这个功能"这类模糊自然语言查询；缺点是短查询和字面术语（表名、字段名）精度差、缺逻辑关联，所以我混了关键词命中做兜底。</p>
-    <p>代码实体图在我的 prd-tools 里——entities.json 存代码符号、函数、组件，edges.json 存调用和 import 关系，再加一个倒排索引 term 到 entity，全部由正则扫描器产出。这块我明说受 Microsoft GraphRAG 思路启发，但我做的是轻量的正则版，不是完整图数据库，更不是 AST——早期接过 GitNexus AST，v2.13 已经删了换回原生正则。它的优势是关联查询强，能给到调用链、import 关系、影响范围，结果可解释；缺点是要预先抽取、正则有遗漏、维护成本高。</p>
-    <p>实践里我的打法是实体图路由加证据 ID 锚点：先用实体图把业务概念定位到代码符号，再让证据链保证每条结论可回溯。</p>
-    <p>红线必须摆清楚：这两个项目都是自研轻量实现，我没用 Pinecone、没用 Neo4j、没用 Chroma。被问"你的向量库用什么"我直接说自研 JSON 加内存余弦；被问"知识图谱"我说是正则抽取的轻量实体图、受 GraphRAG 启发但不是图数据库。如果要做更重的关联推理（比如跨服务的全局影响分析），我会考虑上真正的图数据库，但目前轻量正则版够用。</p>
-  </div>
+  <p><strong>两种检索的本质差异是模糊语义匹配与精确结构定位之别。</strong>向量召回把文档和查询都压成 embedding，靠距离找"意思相近"的东西，擅长处理"改这个功能"这类自然语言，但字面术语（表名、字段名）精度差、缺逻辑关联；实体图把代码里的符号、调用、import 显式建边，靠拓扑回答"谁调用了谁、改这个函数影响哪里"，精确但需要预先抽取。两种范式解决的是不同问题，不是哪个更先进。我两个项目各做了一种。</p>
+  <p><strong>向量召回做在 code_assistant，自研轻量、强项是模糊语义。</strong>text-embedding-v3 做 embedding，内存余弦算相似度，sha256 内容指纹做惰性增量（查询时按需重算，不是 git 钩子）。它的优势是无需结构化、能处理"改这个功能"这类模糊自然语言查询；缺点是短查询和字面术语（表名、字段名）精度差、缺逻辑关联，所以我混了关键词命中做兜底。</p>
+  <p><strong>代码实体图做在 prd-tools，受 GraphRAG 启发的正则轻量版。</strong>entities.json 存代码符号、函数、组件，edges.json 存调用和 import 关系，再加一个倒排索引 term 到 entity，全部由正则扫描器产出。这块我明说受 Microsoft GraphRAG 思路启发，但做的是轻量的正则版，不是完整图数据库，更不是 AST——早期接过 GitNexus AST，v2.13 已经删了换回原生正则。它的优势是关联查询强，能给到调用链、import 关系、影响范围，结果可解释；缺点是要预先抽取、正则有遗漏、维护成本高。</p>
+  <p><strong>实践里用实体图路由加证据 ID 锚点把两者串起来。</strong>先用实体图把业务概念定位到代码符号，再让证据链保证每条结论可回溯。</p>
+  <p><strong>红线主动暴露：两个项目都是自研轻量实现。</strong>没用 Pinecone、没用 Neo4j、没用 Chroma。问到向量库，直接说自研 JSON 加内存余弦；问到知识图谱，直接说是正则抽取的轻量实体图、受 GraphRAG 启发但不是图数据库。如果要做更重的关联推理（比如跨服务的全局影响分析），会考虑上真正的图数据库，但目前轻量正则版够用。</p>
+</div>
 </div>
 <div class="no-result" id="noRes">没找到匹配卡片</div>
 </div>
