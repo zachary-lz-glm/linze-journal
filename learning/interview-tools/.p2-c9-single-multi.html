@@ -1,7 +1,0 @@
-<div class="card-body">
-<p><strong>单 Agent 还是多 Agent 是结构性决策，不是越多越好。</strong>Manager 我用了多 Agent——9 个外部域 Agent（NL2SQL、代码、爬虫、GUI、办公、多模态那些）加 3 个内部管理 Agent 做 Supervisor 路由仲裁；code_assistant 反过来是单 Agent 加多个工具。两个项目选不同结构，是因为任务特性不同，不是为了显得复杂。</p>
-<p><strong>本质矛盾是专业化收益和协调成本之间的权衡。</strong>多 Agent 让每个 Agent 专注一个域，prompt 精准、context 不污染，专业化强；但协调成本真实存在——Agent 间状态传递、通信协议设计、冲突解决、调试链路变长、Token 消耗翻倍。单 Agent 简单、共享 context、没通信开销，但任务一旦跨域 prompt 就会互相干扰，模型分不清优先级。本质是按专业化需求和 context 隔离需求选——拆不拆的临界点是单 Agent 的 context 管理成本超过多 Agent 的通信成本。</p>
-<p><strong>我自己用五问决策树。</strong>第一问任务是线性单链路吗，是就单 Agent 结束；第二问单 Agent 的 prompt 是不是已经膨胀到指令互相干扰，是才考虑拆；第三问任务有没有明显异构的子任务域（一个看代码、一个看文档、一个做 Review，各需要不同知识背景和工具集），是才按业务域拆；第四问需不需要并行加速，需要才多 Agent 并行；第五问拆完的 context 管理收益是否大于通信成本，大于才拆。Manager 走到多 Agent 是因为这五问全命中——多个域的知识背景和工具集完全不同，塞一个 Agent 里 prompt 必然互相干扰。我拒绝了"为了多而多"——code_assistant 单域就单 Agent 加多个工具，不拆。</p>
-<p><strong>Manager 多 Agent 架构跑通，这是 eval。</strong>9 外加 3 内的 Supervisor-Worker 模式跑起来，每个域 Agent 专注自己的能力范围，Supervisor 做路由和仲裁，context 不混。eval 不是"Agent 多了显得强"，是"专业化分工清晰、context 不互相污染"——NL2SQL Agent 不会被代码工具的指令干扰，爬虫 Agent 不会分心去管 GUI 操作。如果把这些塞一个 Agent 里，prompt 就会既要懂 SQL 又要懂反爬又要懂 GUI，模型优先级混乱、准确率下降。</p>
-<p><strong>方法论一句话——单/多 Agent 按专业化需求和 context 隔离需求选。</strong>任务异构、专业差异大、单 Agent context 会混，才拆多 Agent；反之单 Agent 加多工具更划算。局限也讲清楚：多 Agent 协调成本高，简单任务别上——Agent 间通信、状态同步、错误传播每个都是工程负担，小项目或单域任务上多 Agent 是过度设计；另外 Supervisor 自身可能成为瓶颈或单点故障，Manager 的 Supervisor 路由逻辑也是迭代调试的重点。</p>
-</div>

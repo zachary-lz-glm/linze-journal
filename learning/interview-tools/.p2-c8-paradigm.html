@@ -1,7 +1,0 @@
-<div class="card-body">
-<p><strong>三种范式是 Agent 的三种"思考-行动"组织方式。</strong>ReAct 是 Thought → Action → Observation 循环，边想边干；Plan-and-Execute 是先规划再执行，Planner 一次性拆步骤、Executor 按计划走；Reflexion 在前两者之上加一层反思，执行完自我评估不对就重做。两个项目我用的是不同范式——prd-tools 走 Plan-and-Execute 思想，code_assistant 在关键写盘步骤前加了一层校验，是轻量的 Reflexion。选型不是迷信某一种，是按任务特性匹配。</p>
-<p><strong>本质矛盾是思考-行动耦合度和计划稳定性之间的权衡。</strong>ReAct 把思考和行动紧耦合，每步都让模型临场决定，灵活、适合路径不定的探索任务，但容易发散、上下文膨胀、每步都决策所以慢且贵；Plan-and-Execute 解耦规划和执行，计划稳定、可预测、还能用便宜模型批量跑 Executor，但前提是路径已经清楚，计划错了后面全错；Reflexion 靠反思纠偏，对失败有韧性，但成本翻倍、反思本身也可能错。本质是按任务的可计划性选耦合度——路径未知要灵活就 ReAct，路径已知要稳定就 Plan-Execute，容错代价大才加 Reflexion。</p>
-<p><strong>两个项目的范式选择我是按任务特性匹配的。</strong>prd-tools 的 PRD 蒸馏走 Plan-and-Execute 思想——/prd-distill 先按 Reference 结构规划蒸馏步骤，再按固定流程执行，每步有门控，因为 PRD 蒸馏流程是可预拆的、路径确定；code_assistant 在 ReAct Loop 里关键写盘步骤前加了四层写盘守卫，执行前校验不达标就不写，相当于轻量的 Reflexion 自验证自修复循环——因为代码改动失败原因可观察（测试 log）、可注入、ROI 正。我拒绝了"一种范式打天下"——同一套代码库里 prd-tools 和 code_assistant 用不同范式，因为任务特性不同。</p>
-<p><strong>eval 是按场景匹配，不是一刀切。</strong>每个场景的 Agent 行为要符合预期：Plan-and-Execute 场景里 Planner 拆出来的步骤能覆盖流程主干、不会漏关键门控；Reflexion 场景里写盘守卫真能拦住不达标改动、不会误伤合法改动。这两个 eval 都不靠百分比数字，看的是行为是否符合设计——Planner 的步骤能跑通完整蒸馏流程、守卫的拦截率和误伤率都在可接受范围，就算 work。</p>
-<p><strong>方法论一句话——范式按任务可计划性选，不迷信某一种。</strong>路径未知用 ReAct，路径已知用 Plan-and-Execute，容错代价大再加 Reflexion。局限也讲清楚：我自己的 Reflexion 是轻量版，不是完整论文实现——论文里的 Reflexion 涉及完整的 self-reflection 链和长期记忆积累，code_assistant 只在关键步骤前加四层守卫、没有完整的反思链；另外范式选择不是静态的，任务演化过程中可能从 ReAct 起步、路径探明后升级到 Plan-and-Execute，这是主流 Agent 工程实践也推荐的迭代路径。</p>
-</div>

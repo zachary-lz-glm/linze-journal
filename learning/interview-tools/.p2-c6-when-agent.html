@@ -1,7 +1,0 @@
-<div class="card-body">
-<p><strong>不是什么活都该套 Agent。</strong>我在 prd-tools 和 Manager 两个项目里都做过这道选择题——前者大部分走 Workflow 预定义路径，后者整套是 Agent 状态机。差别不在"哪个更高级"，而在任务本身需不需要 LLM 在运行时做决策。先回答这个问题，再决定上不上 Agent，而不是反过来为了"显得 AI"硬套。</p>
-<p><strong>本质矛盾是自主性收益和不可控成本之间的权衡。</strong>Agent 把决策权交给模型，能处理路径不确定、需要动态组合工具的任务；但每一步都让模型临场决定，就意味着可预测性下降、debug 链路变长、生产环境更容易跑偏。确定路径的任务硬上 Agent，等于拿不可控的代价换根本用不上的灵活性。本质是按任务的不确定性选范式，不是按"AI 含量"选。</p>
-<p><strong>我的判断框架分三层。</strong>第一层是单次调用能解决就直接调 LLM——翻译、摘要、情感分析这种一步到位的任务，套 Agent 纯属过度设计；第二层是流程确定但多步骤就走 Workflow 或 Skill，A→B→C 写死、中间塞门控和 HITL，比 Agent 稳且便宜；第三层是流程不确定、需要根据中间结果动态决策才上 Agent——上一步结果决定下一步、需要调外部工具、步骤之间有复杂依赖。我拒绝了"什么都要 Agent"的 over-engineering，因为生产环境每多一层自主性就多一层失控风险。</p>
-<p><strong>两个项目分别落到不同范式，这就是 eval。</strong>Manager 走 Agent，因为它的任务路径需要动态拆解和工具组合，9 个外部域 Agent 加 3 个内部管理 Agent，每步都要路由仲裁，Workflow 写不出来；prd-tools 本质是 Workflow——/reference 加 /prd-distill 的蒸馏步骤预定义、门控前置，不直接生成代码。eval 不是"Agent 多聪明"，是"按场景匹配范式有没有错"：Manager 没退化成 Workflow、prd-tools 没膨胀成 Agent，两边都在合适的位置上。</p>
-<p><strong>方法论一句话——按不确定性选范式，Agent 不是万能。</strong>不确定性高、路径需要模型临场决定的，上 Agent；反之用 Workflow 更稳。局限也讲清楚：这个三层框架是经验归纳，边界 case 要靠判断——比如任务半确定半动态，常常是 Workflow 主体加局部 Agent 节点的混合形态，prd-tools 就有这种局部升级；另外"生产 Agent 必须配约束"是硬条件，工具白名单、门控、HITL 缺一不可，没约束的 Agent 在生产扛不住。</p>
-</div>

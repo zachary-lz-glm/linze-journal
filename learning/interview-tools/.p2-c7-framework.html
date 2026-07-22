@@ -1,7 +1,0 @@
-<div class="card-body">
-<p><strong>框架选型我是决策者。</strong>Manager 项目我选了 LangGraph，不是跟风，是按需匹配。主流六个框架 LangGraph、LangChain、AutoGen、CrewAI、Dify、Coze 我都过了一遍，每个的定位和能力边界摸清楚再选——选型不是看功能列表哪个长，是看你的控制粒度需求落在哪一档。</p>
-<p><strong>本质矛盾是框架能力和可控性、学习成本之间的权衡。</strong>全功能框架封装厚、抽象高，上手快但内部是黑盒，流程一复杂就难调试；裸写从零搭又可控又透明，但等于在重复造状态机、Checkpoint、HITL 这些轮子。本质是按可控性需求选抽象层级——要精确控制每一步流转，就得下到状态机这一层；只要快速跑通，抽象再高也无所谓。</p>
-<p><strong>六个框架我能分层说清楚。</strong>LangChain 是链式编排，用 LCEL 把 LLM 调用和工具像链条串起来，适合线性流程快速搭原型，封装全但流程复杂就难控；LangGraph 是 LangChain 公司为复杂 Agent 单独做的图状态机，Node 加 Edge 显式定义，原生支持循环、条件分支、Checkpoint、HITL，控制粒度最细但学习曲线陡；AutoGen 是微软的多 Agent 对话框架，GroupChat 和双 Agent 对话灵活，适合研究型探索，工程化偏弱；CrewAI 用角色分工加任务委派，API 直观适合"几个专精 Agent 各干一摊"的原型，定制化空间小；Dify 和 Coze 是低代码平台，产品化程度高，适合不写代码搭面向用户的产品，深度定制受限。</p>
-<p><strong>Manager 数十节点的状态机用 LangGraph 显式表达，这是 eval。</strong>我需要的是循环、条件路由、Probe 探活节点、HITL 节点、Checkpoint 崩溃恢复——这些 LangGraph 原生支持，别的框架要么不支持循环要么 HITL 弱。我拒绝了 LangChain 全家桶，因为它对复杂状态机支持不够、抽象太厚；也拒绝了裸写，因为状态机和 Checkpoint 这些基础设施不该自己造。eval 不是"功能齐不齐"，是"节点和边可观测、可调试、可单测"——每一步流转都能 log 出来、能在 graph 可视化里追踪，这是 LangGraph 给我的核心价值。</p>
-<p><strong>方法论一句话——框架选型按可控性需求选抽象层级。</strong>需要精确控制流转就下到状态机（LangGraph），需要快速跑通多 Agent 原型就用抽象更高的（CrewAI、AutoGen），不写代码做产品就上低代码平台（Dify、Coze）。局限也讲清楚：LangGraph 学习曲线陡、代码量大，小项目其实不必上这么重的框架——如果只做单链路原型，LangChain 甚至裸写更划算；另外选型不该锁死，Manager 现在用 LangGraph 不代表所有项目都用，关键看控制粒度需求。</p>
-</div>
