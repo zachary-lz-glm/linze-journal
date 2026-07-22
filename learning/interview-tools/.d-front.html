@@ -1,0 +1,10 @@
+<div class="card" data-c="proj" data-g="前端项目" data-kw="具体实现 数据结构 怎么设计的 讲讲细节 dAction 联动引擎 双求值 渲染 DSL 声明式 依赖图 静态校验 精确更新 求值 injectDActions 拓扑排序 反向追溯">
+  <div class="card-head"><span class="tag proj">实现</span><div class="card-title">联动引擎怎么从零造的：dAction 双求值</div></div>
+  <div class="core">一条 dAction 声明联动，injectDActions 在 BFF 和浏览器各求值一次，依赖图反向追溯做精确更新，而非全量重渲染。</div>
+  <div class="card-body">
+    <p><strong>数据结构 / 形态。</strong>dAction 是声明式联动 DSL，每条联动声明是一组字段：`source` 字段路径（如 `form.city`）+ 触发事件（change/input/blur）+ `target` 字段路径 + `action`（visible/disable/setValue/setEnum/required 之一）+ 一段表达式或函数引用；组件值通过路径拍平后用 `{{path}}` 模板表达式引用。Schema 解析阶段把所有 dAction 收集成依赖图——节点是字段，边是联动依赖并带 action 类型。这张图是静态校验和运行时精确更新的共同数据结构。</p>
+    <p><strong>核心算法 / 流程。</strong>injectDActions 双求值分两轮跑。渲染期在 BFF/SSR 侧：扫描 Schema 收集 dAction、对依赖图做拓扑排序、按序求值每条联动算出字段初始态（可见/禁用/默认值/选项），序列化进 HTML——首屏出来的就是联动后的正确状态，不等前端 JS 加载。运行期在浏览器：把同样的 dAction 规则重新建图，用户操作触发 source 字段变更，沿依赖图反向追溯到受影响的 target，只对这些字段重新求值并按 action 回写——不跑全量 diff。跨接口联动（需后端数据）走另一路：回 BFF 取新 Schema 片段再合并，本地 state 型联动不等网络。</p>
+    <p><strong>为什么自研、拒绝了什么。</strong>联动 DSL 和求值调度都自研。DSL 层不用 Formily/Ajv——Formily 联动描述力覆盖不了城市→产品线→价格策略这种跨接口联动、且实现黑盒不可控，Ajv 只做结构校验不做带副作用的联动求值。调度算法也自研：构建期把依赖图算死，拒绝 React Context + 状态提升那套全量订阅 diff——四百+ 组件配置页每改一个字段全量 diff 一次会卡；也拒绝 MobX 这类运行时自动收集依赖的方案，因为联动声明是静态的，构建期就能把依赖图算死，让运行时再 trace 依赖是浪费。</p>
+    <p><strong>踩坑和边界。</strong>静态校验在构建期能拦三类问题：dAction 引用了不存在的字段、联动形成循环依赖、action 类型跟 target 字段类型不匹配（比如对 string 字段下发 setEnum）。运行时跨接口联动的失败仍要靠 reason tag 分层报警兜底，不只靠引擎本身。诚实边界：这套引擎为<strong>配置类页面</strong>设计——表单结构稳定、联动可声明式描述；400+ 是<strong>组合数</strong>非组件数（底层 24 个基础组件 + 三十多个定制组件，组合出 400+ 配置形态）；它服务的是内部国际化 B 端业务，没接过 C 端真实流量，不直接迁移到 C 端自由布局或数据可视化大屏。</p>
+  </div>
+</div>
