@@ -1,0 +1,205 @@
+<!-- ==================== P1 弹药卡补维度 · PRD 工作流下半 18 张 ==================== -->
+<!-- 🅱 半截STAR/亮点成熟档 10 张:补 eval / 方法论句(已有其一则只补缺的) -->
+<!-- 🅰 极薄/纯机制档 8 张:补 ownership + alternative -->
+
+
+<!-- ============ 🅱 半截STAR/亮点成熟档 10 张 ============ -->
+
+<!-- P1CARD: Skill解决什么问题 -->
+  <div class="card-body">
+    <p><strong>直接调AI的三大痛点</strong>：①每次手写prompt，同类任务重复劳动，换个同事又要从零摸索。②无状态，上下文靠人脑记忆和手动粘贴，做多步任务容易遗漏。③结果波动大，同样输入不同时间跑出不同质量，无法保证一致性。</p>
+    <p><strong>Skill的本质</strong>：把"人怎么用AI做好一个任务"的隐性经验显性化、结构化、可复用。不是给AI新能力，而是把"什么时候做什么判断、每步产出什么、什么算合格"的流程编码下来。</p>
+    <p><strong>类比</strong>：直接调AI像每次手写SQL查数据，Skill像存好的存储过程——把经验固化，保证一致性和质量。写代码调API是让AI"能干活"，Skill是教AI"怎么干好"。</p>
+    <p><strong>面试一句话</strong>："直接调AI的核心问题是经验无法沉淀——同样任务换人就要重新摸索。Skill把'怎么用好AI做这个任务'的过程知识固化下来，保证一致性和可复用。"</p>
+    <p><strong>怎么验证。</strong>Skill 是不是真把经验固化下来、而不是换种形式写死 prompt,目前靠"换人跑同类任务看产出一致性"粗验,没跑严格对照;若要正经度量,会按同一任务让新老同事各跑几次、看产出的五维评分方差是否收窄。这件事的本质是过程知识的显性化——能力可以买、判断力要编码,下次遇到任何"AI 出活不稳"的场景我会先问是不是过程知识没沉淀、而不是先换模型。</p>
+  </div>
+<!-- /P1CARD -->
+
+<!-- P1CARD: Skill vs 写代码 -->
+  <div class="card-body">
+    <p><strong>写代码调AI</strong>：prompt hardcode在代码里，改动要改代码重新部署。流程逻辑分散在if-else里，换人看不懂全貌。状态管理靠自己造轮子——上下文传递、中间结果存储都要手写。本质是在写"调用AI的客户端程序"。</p>
+    <p><strong>Skill方式</strong>：prompt即配置，改Markdown文件就能调整，不需要动代码。流程声明式定义在workflow.md里，步骤、依赖、门控一目了然。中间文件传递和质量门控是内置机制，不需要自己实现。本质是在写"AI的操作手册"。</p>
+    <p><strong>关键差异</strong>：写代码调AI解决的是"能不能调通"（能力问题），Skill解决的是"怎么每次都做好"（质量问题）。前者关注API调用，后者关注过程编排和质量保障。</p>
+    <p><strong>项目桥接</strong>：prd-tools最早也是写代码调AI，prompt散落在各个TypeScript文件里。后来发现同样的PRD分析逻辑每次都在重写prompt，才抽象成Skill——workflow.md管流程、steps/管约束、中间文件管状态传递。</p>
+    <p><strong>面试一句话</strong>："写代码调AI是给模型写客户端，Skill是给模型写操作手册——一个解决调通不通，一个解决每次好不好。"</p>
+    <p><strong>怎么沉淀。</strong>从写代码调 AI 迁到 Skill 这一步,效果看的是同类 PRD 分析逻辑还会不会有人重写 prompt——迁完后重写基本消失,这是粗验;若要量化,会按同一类任务每月新写的 prompt 行数看趋势。这件事的本质是把调用方式从命令式升到声明式——和 Schema 把 if-else 升成配置是同一个判断,下次遇到"换个同事就要重写"的重复劳动,我会先问能不能声明式固化、而不是继续堆代码。</p>
+  </div>
+<!-- /P1CARD -->
+
+<!-- P1CARD: AI知识库的本质定位 -->
+  <div class="card-body">
+    <p><strong>核心纠正</strong>：阿里面试官通过追问帮求职者厘清——知识库有信息丢失，本质上是在帮AI做约束，减少上下文、筛选信息、做context管理，不是维护一份全量业务知识。</p>
+    <p><strong>保鲜是核心难题</strong>：冷启动知识天然会过时。比如会员等级逻辑6月1号改了，知识库里还是旧的，AI coding就会引入错误。三层防护：冷启动用最新PRD构建、每次蒸馏后自动回流更新、产物输出前人工review。但纯动态业务知识的自动检测目前还没做好。</p>
+    <p><strong>面试用法</strong>：被问"知识库怎么设计"时，先说定位是约束层和导航层，再说保鲜的三层防护，最后承认自动检测是未解决的Gap——比回避问题更加分。</p>
+    <p><strong>小仓库口径（阿里面试官追问）</strong>：面试官犀利追问"50个组件的仓库，让Claude Code init一遍也能达到一样效果"。诚实承认：小仓库场景下自建知识库增量价值有限，大仓库（几百个文件）才有明显差异。面试时主动说"小仓库init就行，大仓库才需要结构化知识库"，比回避问题更可信。</p>
+    <p><strong>怎么验证。</strong>知识库到底是约束层还是全量业务知识,检验方式是看它服务的对象——它主要服务 AI 的 context 管理、不是产品查业务规则,目前靠"AI 引用到的 reference 条目命中率"粗验约束是否起作用;若要正经度量,会按蒸馏产物里 evidence 来源是 reference 还是凭空推断的比例来看。这件事的本质是给 AI 的知识要做减法不做加法——信息越多越分散,下次遇到"知识库越建越全"的倾向,我会先问它是在帮 AI 聚焦还是在堆噪音。</p>
+  </div>
+<!-- /P1CARD -->
+
+<!-- P1CARD: Tools vs Skill -->
+  <div class="card-body">
+    <p><strong>相同点</strong>：底层都走Function Calling机制，都是模型识别意图后注入上下文，结果都反馈给模型继续推理。</p>
+    <p><strong>三个关键区别</strong>：</p>
+    <p>· <strong>粒度不同</strong>：Tool是原子操作，比如查天气、调接口，一次调用一个结果。Skill是多步骤编排，比如分析PRD到产出Spec再到生成Plan，是一套完整的流程。</p>
+    <p>· <strong>本质不同</strong>：Tool是外部集成，本质是API的包装器，给模型"能做什么"。Skill是可复用的过程知识，本质是一组Markdown指令集，教模型"怎么做更好"。Skill不增加新能力，而是指导已有能力的使用方式。</p>
+    <p>· <strong>状态不同</strong>：Tool是无状态的一次调用，调完就结束。Skill是有状态的流程编排，包含前置条件、中间产物传递、质量门控，整个流程有生命周期。</p>
+    <p><strong>面试一句话</strong>："Tool是工人手里的工具，Skill是施工手册——工具决定能做什么，手册决定怎么做最靠谱。"</p>
+    <p><strong>怎么沉淀。</strong>Tool 和 Skill 的区分目前是设计判断、没有线上度量,在 prd-tools 里我按"原子能力归 Tool、多步过程归 Skill"切;若要验证这条切法是否有效,会看 Skill 内部调 Tool 的编排是否稳定、以及新增能力时归 Tool 还是 Skill 会不会反复。这件事的本质是能力和判断力分层建设——Tool 决定能做什么、Skill 决定怎么做靠谱,下次遇到 AI 工具体系设计,我会先分清这是在扩能力边界还是在编码使用方式,两者混着建迟早撞识别率天花板。</p>
+  </div>
+<!-- /P1CARD -->
+
+<!-- P1CARD: Tool多了识别率下降 -->
+  <div class="card-body">
+    <p><strong>问题有多严重</strong>：研究数据明确——从4个Tool增加到51个Tool时，GPT-4o准确率从43%降到2%。Tool数量和跨领域混叠是核心杀手。</p>
+    <p><strong>策略一：分层路由</strong>。不做一次性从几十个Tool里选，先用Router模型（可以是小模型）分类用户意图到具体领域（天气、金融、客服），再让对应领域的子Agent从少量Tool里选择。本质是把一个N选1的问题变成两次小范围选择。</p>
+    <p><strong>策略二：动态激活</strong>。每次请求不传所有Tool定义，先做意图匹配只注入相关Tool，减少上下文噪音和Token消耗。LangChain的ReAct实验证明，不相关Tool的混入会显著拉低准确率。</p>
+    <p><strong>策略三：优化Tool描述质量</strong>。函数名用"操作-实体-数据"命名规范，比如get_stock_data而不是stock_info。参数控制在5个以内，复杂参数展平避免深层嵌套。有固定取值的参数用枚举约束，不让模型自由发挥。描述越精确，模型选错的概率越低。</p>
+    <p><strong>效果</strong>：三策略叠加可以把准确率从33%提升到74%。</p>
+    <p><strong>怎么沉淀。</strong>卡里的准确率数字是外部研究、不是我在项目里实测的,我在 prd-tools 里借的是这三策略的思路——分层路由对应能力面、动态激活对应按需加载 reference、描述质量对应 Skill 指令写法。这件事的本质是选择空间越小模型选得越准,把 N 选 1 拆成两次小范围选择是可迁移的判断,下次遇到模型识别率下降,我会先看是不是选择空间太大、而不是先怀疑模型不够强。</p>
+  </div>
+<!-- /P1CARD -->
+
+<!-- P1CARD: 有Claude Code了为什么还要自定义 -->
+  <div class="card-body">
+    <p><strong>Claude Code能做什么</strong>：通用编码、文件操作、终端命令、Web搜索——模型能力覆盖的它都能做。适合个人开发者的日常编码、探索性任务、一次性脚本。</p>
+    <p><strong>Claude Code做不了什么</strong>：①不了解你的业务规则和历史决策（没有领域知识）；②无法接入公司内部系统（代码托管、CI/CD、监控）；③不能在公司内网运行（数据不能出域）；④无法执行团队特定的质量标准和审批流程。</p>
+    <p><strong>四种必须自定义的场景</strong>：</p>
+    <p>· <strong>领域专精</strong>：你的业务有大量隐性知识（为什么这个接口这样设计、那个字段为什么不能改），通用Agent不知道。自定义Agent把领域知识编码进Skill和Memory，产出质量远超通用Agent。项目桥接：prd-tools的Reference六文件就是领域知识工程化。</p>
+    <p>· <strong>内部系统集成</strong>：公司内部有GitLab、Jenkins、监控平台、配置中心等数十个系统，需要Agent串联。通用Agent碰不到这些系统，自定义Agent通过MCP Server接入内部工具生态。</p>
+    <p>· <strong>数据隐私合规</strong>：金融、医疗、电商等行业数据不能出域。必须私有化部署模型+自定义Agent，数据全程不离开公司环境。</p>
+    <p>· <strong>团队协作和审批</strong>：代码需要Review、方案需要审批、发布需要走流程。自定义Agent可以嵌入团队的质量门控和审批节点，通用Agent只是个人工具。</p>
+    <p><strong>面试一句话</strong>："Claude Code是通用编码助手，能力强但不懂你的业务。自定义Agent的核心价值是把领域知识、内部系统、团队流程编码进Agent——让AI不只是能干，而是在你的业务场景下干得靠谱。"</p>
+    <p><strong>怎么验证。</strong>"自定义比通用强"这个判断,我在 prd-tools 里的验证方式是同一份 PRD 分别走 Claude Code init 和走 reference 蒸馏、看 plan 里 evidence_id 的覆盖率对照,粗验领域知识是不是真的让产物更可追溯。这件事的本质是通用能力和领域专精是两条不同的价值曲线——通用 Agent 走覆盖广度、自定义 Agent 走领域深度,下次遇到"有通用工具了为什么还要自建"的追问,我会先问业务里有没有通用工具碰不到的隐性知识和内部系统,有就值得自建、没有就直接用通用。</p>
+  </div>
+<!-- /P1CARD -->
+
+<!-- P1CARD: PRD质量卡口 -->
+  <div class="card-body">
+    <p><strong>鸿湖二面面试官建议</strong>：与其自建PM工作流替产品写PRD（产品会觉得你在抢活），更落地的方案是用AI做反推——根据产品输入的PRD自动检测缺项、给出补全建议，让产品自己确认"不缺东西"再给研发。核心是给产品质量卡口工具，不替产品做产品决策。</p>
+    <p><strong>对比两种路径</strong>：自建PM工作流（替产品写PRD）看起来酷但落地阻力大，产品不买账。PRD质量卡口（帮产品检查PRD）产品欢迎、研发受益、落地阻力小。选择赋能路径而非替代路径。</p>
+    <p><strong>面试用法</strong>：被问"你的AI工作流怎么跟产品协作"时，先说"赋能而非替代"这个定位，再说具体的卡口机制（缺项检测加补全建议加产品确认），比直接说"帮产品写PRD"更被面试官认可。</p>
+    <p><strong>怎么沉淀。</strong>赋能路径比替代路径落地阻力小,这个判断目前靠产品侧的接受度反馈验证——产品愿意用卡口工具、不愿意被替写 PRD;若要正经度量,会按产品主动送检 PRD 的次数和补全采纳率来看。这件事的本质是工具要赋能流程里的人、而不是抢流程里的人的活,下次遇到 AI 工具落地推不动,我会先问它动了谁的活、而不是先调工具本身。</p>
+  </div>
+<!-- /P1CARD -->
+
+<!-- P1CARD: AI工作流出错了怎么归因 -->
+  <div class="card-body">
+    <p>当AI产物质量不达标时，门禁脚本先判断哪步出了问题，然后按三个维度归因并采取不同修复策略。</p>
+    <p><strong>知识库缺失</strong>：AI基于不完整的信息做了错误推断。修复方式是触发Reference回流，把缺失的知识补进去，下次不会再犯同样的错。</p>
+    <p><strong>模型能力不足</strong>：AI跳步或逻辑错误，信息给了但没用好。修复方式是加强那一步的prompt约束和硬校验，把软约束变成硬规则。</p>
+    <p><strong>上下文不够</strong>：AI理解偏差，检索到的相关信息不足。修复方式是扩大源码扫描的召回率，增加上下文包的信息量。</p>
+    <p><strong>目标</strong>：从"人工发现AI错了"变成"系统自动定位为什么错了"，最终形成数据飞轮。</p>
+    <p><strong>怎么验证。</strong>三维归因对不对,目前靠门禁脚本标出的错误类别和人工复核对照,看是不是真的归到了对的维度、有没有把模型能力不足误判成知识库缺失;若要正经度量,会按"按归因修复后同类错误是否消失"这个闭环验证。这件事的本质是错误归因要可执行——分维度不是为了好看,是为了每类错误指向一个不同的修复动作,下次遇到 AI 产物质量诊断,我会先建归因维度再谈修复、而不是上来就调 prompt。</p>
+  </div>
+<!-- /P1CARD -->
+
+<!-- P1CARD: AI工作流推广ROI -->
+  <div class="card-body">
+    <p><strong>成本</strong>：单团队建知识库1-2天（跑Reference蒸馏），学习成本约半天（三步上手），之后自动回流不重复建库。</p>
+    <p><strong>收益</strong>：PRD→Plan环节每需求省2-3h人工评审，5个团队月均50需求 × 2.5h = 125h/月。纯开发环节一周缩到1-2天。</p>
+    <p><strong>全链路修正</strong>：含联调、环境搭建、合作方依赖这些AI替代不了的，整体提效20-30%。排期10天的需求现在7-8天。主动给这个务实口径。</p>
+    <p><strong>推广路径</strong>：先找1-2个意愿高的团队试点 → 产出前后对比数据 → 内部分享 → 逐步扩大。不要说"写个README就行"，业务面不买这个。</p>
+    <p class="hint">业务面考的不是技术指标，是经营思维——你能不能算清投入产出比。</p>
+    <p><strong>怎么沉淀。</strong>卡里的工时和提效数字是试点推算、不是全量统计口径,严格 ROI 还没建。这件事的本质是推广 AI 工具要算清两笔账——一笔是单环节省多少工时、一笔是协同和联调这些 AI 替代不了的成本,只报第一笔是夸大、只看第二笔是悲观。下次遇到 AI 工具的 ROI 追问,我会先分清问的是哪个环节、再扣掉协同成本,不报单一百分比。</p>
+  </div>
+<!-- /P1CARD -->
+
+<!-- P1CARD: 实验组和对照组 -->
+  <div class="card-body">
+    <p><strong>研究设计</strong>：坦诚说这不是严格意义上的AB实验——没有随机分组，没有控制组。是同一个团队、同一类需求、前后流程改变的工时对比。</p>
+    <p><strong>对照组（人工流程）</strong>：取过去20个需求的Jira工时记录，统计从PRD接入到产出技术方案的耗时。包括：读PRD（2-4小时）+ 需求评审会（1-2小时）+ 技术评审会（1-2小时）+ 写技术方案文档（4-8小时）。均值2-3天（含跨天协作等待时间）。</p>
+    <p><strong>实验组（工具流程）</strong>：取同样复杂度的10个新需求，用prd-tools从PRD到产出Spec+Execution Plan的耗时。PRD摄入（5分钟）+ 证据账本建立（10分钟）+ 需求AR生成（5分钟）+ 源码精读和契约分析（20-30分钟）+ Spec生成（10分钟）+ Plan生成（10分钟）+ 门禁校验（5分钟）。纯工作时间1-2小时。加上人工确认Spec的30分钟，总共1.5-2.5小时。</p>
+    <p><strong>为什么不是AB实验</strong>：团队规模小（前端5人），无法同时维持两套流程跑严格对照。选择前后对比是因为现实可行。如果团队更大，理想设计是同一批需求随机分配给人工组和工具组，双盲评审产出质量。但当前样本量已经足以说明方向性结论——工具流程在单环节的效率提升是显著的。</p>
+    <p class="hint">面试官问这个是在考你的数据素养。最好的回答是：先说清楚方法论，再主动说局限性，最后说如果有条件会怎么做更严格的实验。"坦诚缺陷"比"包装完美"得分高。</p>
+    <p><strong>怎么沉淀。</strong>这道题考的是数据素养而不是提效数字本身——能不能说清实验设计的局限、主动承认不是严格 AB、点出有条件会怎么做更严谨,比包装一个漂亮的百分比得分高。度量指标体系（L1 产物质量 / L2 研发效率 / L3 业务价值分层、主指标选开发返工率）见另一张卡（5h→2h 怎么度量）,这里只答实验设计不重复展开。</p>
+  </div>
+<!-- /P1CARD -->
+
+
+<!-- ============ 🅰 极薄/纯机制档 8 张 ============ -->
+
+<!-- P1CARD: 传统工程思维在AI系统 -->
+  <div class="card-body">
+    <p><strong>核心观点</strong>：AI工程没有推翻传统软件工程，而是把同样的设计思维用在了新的接口层——以前接口是JSON，现在接口是自然语言。</p>
+    <p><strong>六个典型映射</strong>：</p>
+    <p>· <strong>Prompt模板引擎 = MVC的View模板</strong>。用户输入是变量，Prompt是模板，跟Jinja2或Mustache完全一样的思路。变量注入前要做输入校验防Prompt注入，就像防SQL注入。</p>
+    <p>· <strong>Function Calling = 适配器模式</strong>。把模型的自然语言输出翻译成结构化的API调用，就是经典的Adapter——把一个接口转换成另一个接口。</p>
+    <p>· <strong>MCP协议 = USB-C标准化</strong>。统一接口让任意AI客户端连接任意工具，跟USB-C让任意设备连接任意充电器一个道理。Write once, run anywhere。</p>
+    <p>· <strong>Progressive Summarization = 日志轮转压缩</strong>。递归压缩旧消息保持固定大小，跟Log Rotation一模一样——老的压缩归档，新的完整保留。</p>
+    <p>· <strong>语义缓存 = Memoization模式</strong>。相似请求直接返回缓存结果，本质就是函数式编程里的记忆化——相同的输入不重复计算。</p>
+    <p>· <strong>Flow Engineering = 状态机</strong>。用LangGraph把Agent行为建模成确定性状态转换，跟XState或Redux管理前端状态是同一个模式——节点是处理步骤，边是跳转规则。</p>
+    <p><strong>面试用法</strong>：被问"AI和传统工程有什么关系"时，用这个映射表快速展示跨领域理解力。能说出三组以上映射的候选人很少。</p>
+    <p><strong>我的取舍。</strong>我在 prd-tools 和 Schema 项目里定的是用这套映射 lens 去理解 AI 工程、而不是把 AI 当全新领域从零学;本可以只盯新名词（Agent、MCP、Context Engineering）照着教程堆,但那样每个概念都是孤岛、遇到没见过的问题就没抓手,用传统模式做锚点,代价是偶尔会硬套不上的映射（语义缓存和函数 memoization 机制其实不完全等价）,换的是已有工程直觉可以快速复用、新概念能落到熟悉的位置上。</p>
+  </div>
+<!-- /P1CARD -->
+
+<!-- P1CARD: 代码上下文怎么精准定位 -->
+  <div class="card-body">
+    <p><strong>给AI提供了什么</strong>：两层。①静态层：6个YAML知识库（目录/枚举/契约/路由映射/编码规则/领域术语）+ 4个索引文件（实体/边/倒排索引/清单）；②动态层：运行时按需求搜索源码。</p>
+    <p><strong>三阶段扫描</strong>：Phase1 Reference路由（04-routing-playbooks匹配关键词→定向文件路径）→ Phase2 Index精确扫描（context-pack.py构建查询计划匹配实体）→ Phase3 rg/glob补充（覆盖未命中）。</p>
+    <p><strong>能力面适配器</strong>：前端(9面:ui_route/view_component/form_or_schema等)、BFF(10面:schema_or_template/linkage_options等)、后端(10面:api_surface/domain_model等)。路径只是搜索候选，事实由源码确认。</p>
+    <p><strong>上下文包</strong>：context-pack.py合并索引实体与蒸馏上下文，产出≤800行精准上下文（需求种子/关键实体/相似注册表/高置信线索）。</p>
+    <p><strong>我的取舍。</strong>我在 prd-tools 里定的是 reference 路由优先、索引精确扫描居中、rg/glob 兜底这三阶段,而不是让 AI 一次性全仓搜或纯靠语义检索;本可以走语义向量检索全仓召回（实现单一、不用建索引）,但全仓召回 token 贵且容易召回无关噪音、reference 路由先把搜索范围定到几个文件,代价是要先建 6 个 YAML 知识库,换的是搜索从全仓大海捞针收窄到定向文件、精准度和 token 成本都可控。</p>
+  </div>
+<!-- /P1CARD -->
+
+<!-- P1CARD: 证据链机制详解 -->
+  <div class="card-body">
+    <p><strong>证据实体</strong>：每条含id/type/source/desc/confidence。8种类型：prd(PRD原文)/tech_doc(技术文档)/code(源码)/git_diff(代码变更)/negative_code_search(确认不存在)/human(人工确认)/api_doc(接口文档)/reference(知识库)。</p>
+    <p><strong>完整追溯链</strong>：PRD解析→evidence-map.yaml(block→章节)→evidence.yaml(权威注册表)→requirement-ir.evidence_ids→layer-impact.code_anchors(文件/符号/行号/置信度)→graph-context(来源:graph|rg|reference|inferred)→spec/plan引用EV ID。</p>
+    <p><strong>SSOT原则</strong>：每个事实只存在于6个YAML文件中的一个，跨文件用contract_ref/ref_rule/playbook_ref引用。high需源码/PRD直接证据，medium部分证据，low仅线索。</p>
+    <p><strong>证据优先级</strong>：接口文档 > PRD推断 > 负向搜索。证据ID前缀分类：EV-BG-*（PRD原始块）、EV-REF-*（Reference消费）、EV-CODE-BUILD-*（构建差异）、EV-INGEST-*（摄入提取）。找不到也是证据——negative_code_search表示"搜了但没找到"，不是"我不知道"。</p>
+    <p><strong>我的取舍。</strong>我在 prd-tools 里定的是 8 种证据类型加高低置信度分级、每条结论挂 evidence_id 可追溯,而不是只给一个总分置信度或让 AI 自由引用;本可以只打一个置信度标签（实现轻）,但总分遮盖了证据是哪一类、无法区分"PRD 原文有"和"AI 推断的",拆成类型化证据加 negative_code_search 把"搜不到"也当证据,代价是证据注册表的维护和 ID 规范要花功夫,换的是每条结论可审计、编造路径能被显式拦下。</p>
+  </div>
+<!-- /P1CARD -->
+
+<!-- P1CARD: AI工作流在团队怎么落地 -->
+  <div class="card-body">
+    <p><strong>日常流程</strong>：PM写PRD → 工具自动分析 → 产出Spec规格和开发Plan。把原来"需求评审会→三方对齐→出技术方案"这个环节自动化。</p>
+    <p><strong>验证</strong>：选了5个中等复杂度已完成需求做对照，人工平均3.5天（读PRD→评审会→三方对齐→技术方案），工具约1.5天（PRD输入→自动产出结构化方案）。</p>
+    <p><strong>我的取舍。</strong>我在团队里定的是选已完成需求做前后对照、替代需求评审到技术评审这个环节,而不是一上来全量推广或等工具完全成熟再上;本可以等 readiness 评分和严格 A/B 度量都建好再推（风险最低）,但那样永远卡在"没数据所以不推广、不推广所以没数据"的死循环,选已完成需求做对照先跑出方向性数据,代价是样本量小、不是严格 AB,换的是工具进入真实使用、拿到反馈驱动迭代。</p>
+  </div>
+<!-- /P1CARD -->
+
+<!-- P1CARD: Skill执行结果不稳定 -->
+  <div class="card-body">
+    <p><strong>第一层事前约束</strong>：每个Step开头用XML声明必须做/不做的事（如"必须引用Evidence ID"、"不允许凭空推断"）。</p>
+    <p><strong>第二层事中门禁</strong>：下一步前自动检查上一步产物结构完整性（required files是否存在且非空），不通过就重跑。</p>
+    <p><strong>第三层事后评分</strong>：链路跑完后五维评分（证据链覆盖度/产出完整性/置信度/QA矩阵/结构合规），低于阈值标记需人工review。</p>
+    <p><strong>我的取舍。</strong>我在 prd-tools 里定的是事前 XML 声明约束、事中产物完整性门禁、事后五维评分这三层叠加,而不是只靠一道最终人审或只靠 prompt 写得好;本可以只做事后总分兜底（实现最省）,但错误在前序步骤已经污染了上下文、最后才拦太晚、返工要重跑整条链,层层收紧的代价是流程节点多、偶有过度拦截,换的是错误早发现早重跑、不向下传染。</p>
+  </div>
+<!-- /P1CARD -->
+
+<!-- P1CARD: PRD过时或临时改动 -->
+  <div class="card-body">
+    <p><strong>历史PRD定位</strong>：帮AI理解业务场景模式（如新增活动涉及哪些步骤、联动怎么配），不提供精确指令。所以"错了"不会有后果。</p>
+    <p><strong>冲突处理</strong>：PRD和代码有分叉时以源码为准。工具会把不确定的点标记为"需人工确认"，而不是强行执行。</p>
+    <p><strong>核心依赖</strong>：最终所有结论落到源码确认，不依赖PRD文本的精确性。</p>
+    <p><strong>我的取舍。</strong>我在 prd-tools 里定的是源码为 SSOT、历史 PRD 只作业务理解参考、不确定的点标记人工确认,而不是让 PRD 和代码双向同步或强行以 PRD 为准;本可以建 PRD 和代码自动同步（理论最省心）,但 PRD 是自然语言、代码是结构化事实,自动同步的冲突消解目前没有可靠机制、强行同步会把 PRD 的模糊带进产物,选源码为准加人工确认标记,代价是纯动态业务规则的自动检测还没做好,换的是产物不会因为 PRD 过时而引入错误。</p>
+  </div>
+<!-- /P1CARD -->
+
+<!-- P1CARD: SDD 完整流程 -->
+  <div class="card-body">
+    <p><strong>和 Vibe Coding / Harness Engineering 的演进</strong>：Prompt Engineering → Context Engineering → Harness Engineering。Vibe（速度探索）→ SDD（结构化规范）→ Harness（工业级可控）。</p>
+    <p><strong>7 步流程</strong>：① proposal 提案（业务价值）② design 架构 ③ specs 规范 SSOT（接口/字段/约束）④ tasks 原子任务拆分 ⑤ apply AI 执行 ⑥ verify 测试 + 回归 + Review ⑦ archive 沉淀回流。</p>
+    <p><strong>项目桥接</strong>：prd-tools 是 SDD 工程化落地。proposal=PRD摄入，design=能力面适配器，specs=Reference 6 文件 SSOT，tasks=Spec/Plan 11 步，apply=下游 Cursor/Claude Code，verify=quality-gate.py 5 项检查，archive=反馈回流。</p>
+    <p><strong>追问点</strong>：EARS 需求规格化、Spec Kit 工具链（GitHub/OpenAI）、企业内 SDD 落地难点（团队接受度 + Spec 维护）。</p>
+    <p><strong>vs 代码即文档（蚂蚁一面追问）</strong>：面试官问"spec 驱动开发和代码即文档比优势是什么"。一句话——spec 是唯一真理源（source of truth）+ 可执行契约（executable contract），代码即文档只是给人看的事后记录。三个差异：① 文档性质——代码即文档是被动记录，spec 是约束 AI 生成的可执行契约；② 风险控制——前者后置修补，spec 前置；③ 质量一致性——spec 系统化、不依赖个人。别答"26 年大家一致认同的协议"太绝对，说"GitHub 2025 开源 Spec Kit 后的行业共识"更有据。</p>
+    <p class="hint">蚂蚁财富 AI Lab 必考。讲完主动加一句"金融场景会在 verify 加资损风险评估"。</p>
+    <p><strong>我的取舍。</strong>我在 prd-tools 里定的是落地 SDD 的中段（design 到 verify）、把 proposal 和 archive 留给人工,而不是照搬 7 步全自动化或退回 Vibe Coding;本可以走 Vibe Coding 速度优先（上手最快）,但快速出活的产物不可追溯、出错了不知道哪步的问题,选 SDD 结构化规范,代价是要维护 Reference SSOT 和 quality-gate 这些工程基建、前期投入重,换的是每步产物可审计、Spec 错了不会向下传染到 Plan。</p>
+  </div>
+<!-- /P1CARD -->
+
+<!-- P1CARD: Harness 三种引擎 -->
+  <div class="card-body">
+    <p><strong>合并引擎（Merge）</strong>：多 Agent 输出整合，基于优先级 + 置信度，冲突时人工介入。</p>
+    <p><strong>通信引擎（Communication）</strong>：Agent 间状态传递，通过中间文件（YAML/JSON），类似 OS 的 IPC，避免上下文重复加载。</p>
+    <p><strong>反思引擎（Reflection）</strong>：从失败提炼规则。四步：① 日志收集（决策 + 工具调用 + 评分）② 反思分析高频失败模式 → 生成候选规则 ③ 人工审批写入 AGENTS.md ④ golden sample 回归验证。</p>
+    <p><strong>KSG 链路</strong>：短期记忆 → 长期记忆 → 知识库 → 技能手册（逐步抽象）。</p>
+    <p><strong>项目桥接</strong>：prd-tools 是 Harness 雏形。L1 信息边界=SSOT，L2 工具=MCP，L3 编排=11 步，L4 记忆=Evidence Index，L5 评估=quality-gate.py，L6 约束=questions.md。最大缺口在 L4 反思引擎——目前人工回流，没有自动化。</p>
+    <p><strong>业界</strong>：OpenAI AGENTS.md（~100 行精炼）、Anthropic 三 Agent（Planner/Generator/Evaluator）、Stripe Minions（1300+ PR/周）、Ghostty AGENTS.md（每一行都是过去的失败）。</p>
+    <p class="hint">小红书二面失分点。核心是"错误即规则"的 ratchet 机制。</p>
+    <p><strong>我的取舍。</strong>我在 prd-tools 里定的是单 Agent 加脚本门控的 Harness 雏形（信息边界到评估这几层）、没做多 Agent 合并引擎和自动反思引擎,而不是一上来搭完整多 Agent Harness;本可以走多 Agent 编排（合并、通信引擎都现成）,但多 Agent 的工程复杂度和运维成本远高于单 Agent、团队推广认知门槛也高,选单 Agent 加确定性脚本兜底,代价是反思引擎还靠人工回流、没有自动化,换的是可控、可推广、复杂度和团队接受度匹配。</p>
+  </div>
+<!-- /P1CARD -->
