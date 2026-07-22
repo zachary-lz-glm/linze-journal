@@ -1,0 +1,16 @@
+# P2 ai 14 张卡精确 card-title(Task 1 验证:全唯一 + 有 card-body)
+# 全角标点原样,assemble_p2.py 的 CARDS 必须与此完全一致
+C1  从零设计一个 Agent，你的思路是什么
+C2  Agent 的记忆怎么设计：短期、长期、工作记忆
+C3  Agent 的工作记忆怎么管，对话越来越长咋办
+C4  Harness Engineering：Agent 等于 Model 加 Harness
+C5  Agent 自进化闭环怎么设计
+C6  什么场景才该上 Agent，别什么活都套 Agent
+C7  Agent 框架怎么选：LangGraph vs LangChain vs AutoGen vs CrewAI vs Dify vs Coze
+C8  ReAct vs Plan-and-Execute vs Reflexion，什么时候用哪个
+C9  单 Agent 还是多 Agent，一个决策树
+C10 向量库怎么选——还有我为什么自己写不用 Chroma
+C11 Agent Safety 怎么做——规划层加执行层
+C12 向量召回 vs 代码实体图——我两个项目各做了一个
+C13 把 39 节点的多智能体编排瘦身重构
+C14 设计通用 Multi-Agent 调度系统（Manager 经验升华）
