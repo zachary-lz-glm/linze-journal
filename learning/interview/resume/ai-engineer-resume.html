@@ -9,32 +9,28 @@
 * { box-sizing: border-box; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
 
 :root {
-  --bg: oklch(99% 0.002 240);
-  --surface: oklch(100% 0 0);
-  --fg: oklch(18% 0.012 250);
-  --muted: oklch(46% 0.014 250);
-  --border: oklch(90% 0.008 250);
-  --accent: oklch(52% 0.11 175);
-  --accent-soft: oklch(96% 0.02 175);
-  --ink: oklch(22% 0.03 250);
-  --ink-deep: oklch(18% 0.04 250);
-  --sidebar: oklch(22% 0.035 250);
-  --sidebar-fg: oklch(88% 0.01 250);
-  --sidebar-muted: oklch(72% 0.015 250);
-  --chip: oklch(94% 0.03 175);
-  --font-display: -apple-system, BlinkMacSystemFont, "SF Pro Display", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", system-ui, sans-serif;
-  --font-body: -apple-system, BlinkMacSystemFont, "SF Pro Text", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", system-ui, sans-serif;
-  --font-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  --ink: #0f1b2d;
+  --ink-soft: #1a2b4a;
+  --accent: #0d9488;
+  --accent-deep: #047857;
+  --muted: #5b6675;
+  --line: #e3e8ef;
+  --surface: #f7f9fc;
+  --bg: #ffffff;
+  --sidebar: #0f1b2d;
+  --sidebar-fg: #cfd6e2;
+  --sidebar-muted: #9aa3b3;
+  --font: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue", sans-serif;
 }
 
 html, body {
   margin: 0;
   padding: 0;
-  background: oklch(94% 0.008 250);
-  font-family: var(--font-body);
+  background: #eef1f5;
+  font-family: var(--font);
   font-size: 9.4pt;
   line-height: 1.48;
-  color: var(--fg);
+  color: #1f2733;
   -webkit-font-smoothing: antialiased;
 }
 
@@ -42,8 +38,8 @@ html, body {
   width: 210mm;
   min-height: 297mm;
   margin: 16px auto;
-  background: var(--surface);
-  box-shadow: 0 12px 40px oklch(18% 0.02 250 / 0.12);
+  background: var(--bg);
+  box-shadow: 0 10px 40px rgba(15, 27, 45, 0.12);
   display: grid;
   grid-template-columns: 62mm 1fr;
 }
@@ -52,27 +48,26 @@ html, body {
 .sidebar {
   background: var(--sidebar);
   color: var(--sidebar-fg);
-  padding: 12mm 6.5mm 9mm;
+  padding: 11mm 6.5mm 9mm;
 }
 
 .photo {
   width: 32mm;
   height: 42mm;
   object-fit: cover;
-  border-radius: 2px;
+  border-radius: 3px;
   display: block;
   margin: 0 auto 5mm;
-  border: 1px solid oklch(100% 0 0 / 0.16);
+  border: 1.5px solid rgba(255, 255, 255, 0.18);
   background: #fff;
 }
 
 .sidebar h1 {
-  font-family: var(--font-display);
   font-size: 16.5pt;
   color: #fff;
   margin: 0 0 2pt;
-  font-weight: 650;
-  letter-spacing: 0.08em;
+  font-weight: 700;
+  letter-spacing: 1pt;
   text-align: center;
 }
 
@@ -80,136 +75,128 @@ html, body {
   font-size: 8.6pt;
   color: var(--accent);
   text-align: center;
-  margin-bottom: 4.5mm;
-  letter-spacing: 0.04em;
-  font-weight: 550;
+  margin-bottom: 4.2mm;
+  letter-spacing: 0.5pt;
+  font-weight: 600;
 }
 
 .sidebar h2 {
   font-size: 8pt;
   color: #fff;
   text-transform: uppercase;
-  letter-spacing: 0.1em;
-  margin: 4.2mm 0 2.2mm;
+  letter-spacing: 1.2pt;
+  margin: 4mm 0 2.2mm;
   padding-bottom: 1.4mm;
-  border-bottom: 0.6pt solid oklch(100% 0 0 / 0.14);
-  font-weight: 550;
+  border-bottom: 0.6pt solid rgba(255, 255, 255, 0.18);
+  font-weight: 600;
 }
 
 .contact-line {
-  font-size: 8.4pt;
-  margin: 1.4mm 0;
+  font-size: 8.3pt;
+  margin: 1.3mm 0;
   word-break: break-all;
   color: var(--sidebar-muted);
   line-height: 1.4;
 }
-.contact-line a { color: var(--sidebar-muted); text-decoration: none; }
-.contact-line .k {
-  display: inline-block;
-  min-width: 1.1em;
-  color: oklch(100% 0 0 / 0.35);
-  font-family: var(--font-mono);
-  font-size: 7.5pt;
-  margin-right: 1.5mm;
-}
 
-.skill-group { margin-bottom: 2.4mm; }
+.skill-group { margin-bottom: 2.3mm; }
 .skill-group .label {
   color: var(--accent);
-  font-weight: 550;
+  font-weight: 600;
   font-size: 8pt;
-  letter-spacing: 0.03em;
+  letter-spacing: 0.3pt;
   margin-bottom: 0.6mm;
   display: block;
 }
 .skill-group .items {
-  font-size: 8pt;
+  font-size: 7.9pt;
   line-height: 1.42;
-  color: oklch(86% 0.012 250);
+  color: #cdd4e0;
 }
 
 .pill-wrap { display: flex; flex-wrap: wrap; gap: 1.2mm; }
 .highlight-pill {
   display: inline-block;
-  background: oklch(52% 0.11 175 / 0.16);
-  color: oklch(86% 0.06 175);
+  background: rgba(13, 148, 136, 0.18);
+  color: #6ee7d8;
   padding: 0.9mm 2.2mm;
-  border-radius: 2px;
-  font-size: 7.8pt;
-  font-weight: 550;
-  letter-spacing: 0.02em;
+  border-radius: 2mm;
+  font-size: 7.7pt;
+  font-weight: 600;
+  letter-spacing: 0.2pt;
 }
 
 .edu-title {
   font-size: 9.2pt;
   color: #fff;
-  font-weight: 550;
+  font-weight: 600;
   margin: 0;
 }
 .edu-meta {
-  font-size: 8.1pt;
-  color: oklch(68% 0.015 250);
+  font-size: 8pt;
+  color: var(--sidebar-muted);
   margin-top: 1mm;
   line-height: 1.45;
 }
 
 .point {
-  font-size: 8.2pt;
-  color: oklch(86% 0.012 250);
+  font-size: 8.1pt;
+  color: #cdd4e0;
   margin: 1.2mm 0;
   line-height: 1.4;
-  padding-left: 2.8mm;
-  position: relative;
 }
-.point::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 0.55em;
-  width: 1.1mm;
-  height: 1.1mm;
-  background: var(--accent);
-  border-radius: 50%;
+.point .data {
+  color: var(--accent);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
 }
-.point .data { color: oklch(86% 0.06 175); font-weight: 650; font-variant-numeric: tabular-nums; }
 
 /* —— Main —— */
 .main {
-  padding: 11mm 9.5mm 9mm;
-  background: var(--surface);
+  padding: 10mm 9mm 8mm;
+  background: var(--bg);
 }
 
 .main h2.section-title {
-  font-family: var(--font-display);
   font-size: 10.5pt;
   color: var(--ink);
-  margin: 0 0 2.6mm;
-  padding-bottom: 1.4mm;
-  border-bottom: 1pt solid var(--ink);
+  margin: 0 0 2.4mm;
+  padding-bottom: 1.3mm;
+  border-bottom: 1pt solid var(--ink-soft);
   display: flex;
-  align-items: baseline;
+  align-items: center;
   gap: 2.5mm;
-  font-weight: 650;
-  letter-spacing: -0.01em;
+  font-weight: 700;
+  letter-spacing: 0.3pt;
+}
+.main h2.section-title::before {
+  content: "";
+  width: 2.4mm;
+  height: 2.4mm;
+  background: var(--accent);
+  display: inline-block;
+  border-radius: 0.5mm;
+  transform: rotate(45deg);
+  flex-shrink: 0;
 }
 .main h2.section-title .en {
   margin-left: auto;
   font-size: 7pt;
-  color: oklch(62% 0.012 250);
-  letter-spacing: 0.12em;
+  color: #a0a8b5;
+  letter-spacing: 1.1pt;
   font-weight: 500;
   text-transform: uppercase;
 }
 
-.section + .section { margin-top: 3.8mm; }
+.section + .section { margin-top: 3.4mm; }
 
 .lead {
-  font-size: 9.5pt;
-  line-height: 1.58;
-  color: oklch(28% 0.015 250);
-  margin: 0 0 0.5mm;
+  font-size: 9.3pt;
+  line-height: 1.55;
+  color: #2c3540;
+  margin: 0;
 }
-.lead strong { color: var(--ink); font-weight: 650; }
+.lead strong { color: var(--ink); font-weight: 700; }
 
 .exp-header {
   display: flex;
@@ -219,42 +206,38 @@ html, body {
   margin-bottom: 1mm;
 }
 .exp-title {
-  font-weight: 650;
+  font-weight: 700;
   color: var(--ink);
-  font-size: 9.8pt;
-  letter-spacing: -0.01em;
+  font-size: 9.7pt;
 }
 .exp-date {
   font-size: 7.8pt;
   color: var(--muted);
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
-  font-family: var(--font-mono);
 }
 .exp-body {
   margin: 0;
-  color: oklch(30% 0.012 250);
-  font-size: 9.2pt;
-  line-height: 1.52;
+  color: #2c3540;
+  font-size: 9.1pt;
+  line-height: 1.5;
 }
 
-.project-block + .project-block { margin-top: 3.2mm; }
+.project-block + .project-block { margin-top: 2.8mm; }
 
 .project-title {
-  font-family: var(--font-display);
-  font-size: 9.9pt;
+  font-size: 9.7pt;
   color: var(--ink);
-  margin: 0 0 0.8mm;
-  font-weight: 650;
-  letter-spacing: -0.01em;
+  margin: 0 0 0.7mm;
+  font-weight: 700;
+  letter-spacing: 0.15pt;
   line-height: 1.3;
 }
 
 .project-meta {
-  font-size: 7.7pt;
+  font-size: 7.6pt;
   color: var(--muted);
-  margin-bottom: 1mm;
-  letter-spacing: 0.01em;
+  margin-bottom: 0.9mm;
   line-height: 1.35;
 }
 .project-meta .tag {
@@ -263,71 +246,67 @@ html, body {
 }
 
 .project-desc {
-  margin: 0 0 1mm;
-  font-size: 9pt;
-  line-height: 1.5;
-  color: oklch(30% 0.012 250);
+  margin: 0 0 0.9mm;
+  font-size: 8.9pt;
+  line-height: 1.48;
+  color: #2c3540;
 }
-.project-desc strong { color: var(--ink-deep); font-weight: 650; }
+.project-desc strong { color: var(--ink-soft); font-weight: 700; }
 
 .main ul {
-  margin: 0.6mm 0 1.2mm;
-  padding-left: 3.6mm;
+  margin: 0.5mm 0 1mm;
+  padding-left: 3.5mm;
 }
 .main li {
-  margin: 0.7mm 0;
-  line-height: 1.48;
-  font-size: 9pt;
-  color: oklch(28% 0.012 250);
+  margin: 0.55mm 0;
+  line-height: 1.45;
+  font-size: 8.85pt;
+  color: #2c3540;
 }
 .main li::marker { color: var(--accent); }
-.main li strong { color: var(--ink-deep); font-weight: 650; }
+.main li strong { color: var(--ink-soft); font-weight: 700; }
 
 .data {
   color: var(--accent);
   font-weight: 700;
   font-variant-numeric: tabular-nums;
-  font-feature-settings: "tnum";
 }
 .num {
-  font-family: var(--font-mono);
-  font-size: 0.92em;
   font-variant-numeric: tabular-nums;
+  font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  font-size: 0.92em;
 }
 
 .impact {
-  background: var(--accent-soft);
-  border: 0.6pt solid oklch(52% 0.11 175 / 0.18);
-  padding: 1.4mm 2.6mm;
-  margin: 1.2mm 0 0;
-  font-size: 8.3pt;
-  line-height: 1.45;
-  color: oklch(28% 0.02 250);
-  border-radius: 2px;
-}
-.impact .lab {
-  font-weight: 650;
-  color: var(--accent);
-  letter-spacing: 0.04em;
-  font-size: 7.4pt;
-  text-transform: uppercase;
-  margin-right: 1.5mm;
+  background: var(--surface);
+  border-left: 2pt solid var(--accent);
+  padding: 1.3mm 2.6mm;
+  margin: 1mm 0 0;
+  font-size: 8.2pt;
+  line-height: 1.42;
+  color: #2c3540;
+  border-radius: 0 2pt 2pt 0;
 }
 
 @media print {
-  html, body { background: #fff; margin: 0; padding: 0; }
+  html, body {
+    background: #fff;
+    margin: 0;
+    padding: 0;
+  }
   .page {
     width: 210mm;
     min-height: 297mm;
     margin: 0;
     box-shadow: none;
   }
-  h2.section-title, h3.project-title { break-after: avoid; page-break-after: avoid; }
+  h2.section-title,
+  h3.project-title { break-after: avoid; page-break-after: avoid; }
   li, p, .impact, .project-meta { break-inside: avoid; }
 }
 
-@media (max-width: 720px) {
-  body { background: var(--surface); }
+@media screen and (max-width: 720px) {
+  body { background: var(--bg); }
   .page {
     width: 100%;
     min-height: auto;
@@ -342,21 +321,21 @@ html, body {
 </head>
 <body>
 
-<div class="page" data-od-id="resume-page">
-  <aside class="sidebar" data-od-id="sidebar">
-    <img src="photo.jpg" class="photo" alt="邓泽霖" data-od-id="photo" />
+<div class="page">
+  <aside class="sidebar">
+    <img src="photo.jpg" class="photo" alt="邓泽霖" />
 
-    <h1 data-od-id="name">邓泽霖</h1>
-    <div class="role" data-od-id="role">AI 工程师 · Agent 工程化</div>
+    <h1>邓泽霖</h1>
+    <div class="role">AI 工程师 · Agent 工程化</div>
 
-    <h2 data-od-id="sec-contact">联系方式</h2>
-    <div class="contact-line" data-od-id="phone"><span class="k">P</span>188-4617-4594</div>
-    <div class="contact-line" data-od-id="email"><span class="k">E</span>2597419838@qq.com</div>
-    <div class="contact-line" data-od-id="site"><span class="k">W</span>zachary-lz.vercel.app</div>
-    <div class="contact-line" data-od-id="github"><span class="k">G</span>github.com/zachary-lz-glm</div>
+    <h2>联系方式</h2>
+    <div class="contact-line">📞 188-4617-4594</div>
+    <div class="contact-line">✉ 2597419838@qq.com</div>
+    <div class="contact-line">🌐 zachary-lz.vercel.app</div>
+    <div class="contact-line">⌥ github.com/zachary-lz-glm</div>
 
-    <h2 data-od-id="sec-focus">核心方向</h2>
-    <div class="pill-wrap" data-od-id="focus-pills">
+    <h2>核心方向</h2>
+    <div class="pill-wrap">
       <span class="highlight-pill">Coding Agent</span>
       <span class="highlight-pill">Multi-Agent 编排</span>
       <span class="highlight-pill">Agent Safety</span>
@@ -364,74 +343,73 @@ html, body {
       <span class="highlight-pill">Spec-Driven</span>
     </div>
 
-    <h2 data-od-id="sec-skills">专业技能</h2>
+    <h2>专业技能</h2>
 
-    <div class="skill-group" data-od-id="skill-lang">
+    <div class="skill-group">
       <span class="label">编程语言</span>
       <div class="items">TypeScript（主） · Python · Bash</div>
     </div>
 
-    <div class="skill-group" data-od-id="skill-agent">
+    <div class="skill-group">
       <span class="label">AI 工程 / Agent</span>
       <div class="items">LangGraph · Supervisor / Plan-Execute / ReAct · HITL · Checkpoint · Self-Evolution · Agent Safety · Claude Code Skill · Sub-agent</div>
     </div>
 
-    <div class="skill-group" data-od-id="skill-rag">
+    <div class="skill-group">
       <span class="label">RAG &amp; 知识工程</span>
-      <div class="items">代码知识图谱 · 倒排索引 · 向量召回 · Citation Grounding · AST 静态分析 · 增量索引</div>
+      <div class="items">代码知识图谱 · 倒排索引 · 向量召回 · Citation Grounding · AST · 增量索引</div>
     </div>
 
-    <div class="skill-group" data-od-id="skill-eval">
+    <div class="skill-group">
       <span class="label">评测与质量门禁</span>
-      <div class="items">Golden Set · Smoke / Regression Gate · LLM-as-Judge · 金丝雀 A/B · file:line 可追溯</div>
+      <div class="items">Golden Set · Smoke / Regression · 金丝雀 A/B · file:line 可追溯</div>
     </div>
 
-    <div class="skill-group" data-od-id="skill-fe">
+    <div class="skill-group">
       <span class="label">前端工程（4 年主业）</span>
-      <div class="items">React + TypeScript · Server-Driven UI · Schema-as-Code · Plugin Architecture · Serverless BFF · Monorepo</div>
+      <div class="items">React + TypeScript · Server-Driven UI · Schema-as-Code · Plugin Architecture · Serverless BFF</div>
     </div>
 
-    <div class="skill-group" data-od-id="skill-more">
+    <div class="skill-group">
       <span class="label">了解</span>
       <div class="items">MCP · Transformer / Attention · Prompt 工程 · LLM 成本与延迟 · Docker 沙箱 · Redis</div>
     </div>
 
-    <h2 data-od-id="sec-edu">教育背景</h2>
+    <h2>教育背景</h2>
     <p class="edu-title">黑龙江大学</p>
-    <div class="edu-meta">计算机科学与技术 · 本科<br/>2018.09 — 2022.06</div>
+    <div class="edu-meta">计算机科学与技术 · 本科<br />2018.09 — 2022.06</div>
 
-    <h2 data-od-id="sec-highlights">亮点</h2>
-    <div class="point">4 年大厂前端 + 1 年 LLM 工程化</div>
-    <div class="point">连续 <span class="data">2 年 A 绩效</span></div>
-    <div class="point">主导公司级 SDD 平台</div>
-    <div class="point">服务 <span class="data">20+ 人团队</span>日常研发</div>
+    <h2>亮点</h2>
+    <div class="point">· 4 年大厂前端 + 1 年 LLM 工程化</div>
+    <div class="point">· 连续 <span class="data">2 年 A 绩效</span></div>
+    <div class="point">· 主导公司级 SDD 平台</div>
+    <div class="point">· 服务 <span class="data">20+ 人团队</span>日常研发</div>
   </aside>
 
-  <main class="main" data-od-id="main">
+  <main class="main">
 
-    <section class="section" data-od-id="section-profile">
+    <section class="section">
       <h2 class="section-title">个人优势 <span class="en">Profile</span></h2>
-      <p class="lead" data-od-id="profile-lead">
+      <p class="lead">
         <strong>4 年大厂前端 + 1 年 LLM / Agent 工程化</strong>，求职 AI 工程师（Agent 工程化方向）。主导公司级 Spec-Driven Development 平台，将研发规范沉淀为可执行、可审计的 AI 协作链路，服务 <span class="data">20+ 人</span>日常研发；独立设计实现 <strong>Manager_Agent</strong>（Multi-Agent Supervisor）与 <strong>code_assistant</strong>（安全可控 Coding Agent）两套完整系统。核心能力：<strong>Coding Agent · Multi-Agent 编排 · Agent Safety · Agentic RAG · Spec-Driven 落地</strong>。
       </p>
     </section>
 
-    <section class="section" data-od-id="section-experience">
+    <section class="section">
       <h2 class="section-title">工作经历 <span class="en">Experience</span></h2>
-      <div class="exp-header" data-od-id="exp-header">
+      <div class="exp-header">
         <span class="exp-title">滴滴出行 · 国际化事业部 ｜ 高级前端工程师</span>
         <span class="exp-date">2022.06 — 至今</span>
       </div>
-      <p class="exp-body" data-od-id="exp-body">
+      <p class="exp-body">
         前端 Owner，主导国际化营销中台从 0 到 1（Server-Driven UI + <span class="data">400+</span> 权益组件库）；2026 起 All-in LLM 工程化，主导团队 SDD（Spec-Driven Development）与 Agentic Coding 工作流落地，打通 AI 工具与前端迭代流程，服务 <span class="data">20+ 人团队</span>日常使用，连续 <span class="data">2 年 A 绩效</span>。
       </p>
     </section>
 
-    <section class="section" data-od-id="section-projects">
+    <section class="section">
       <h2 class="section-title">项目经历 <span class="en">Projects</span></h2>
 
-      <!-- P1 -->
-      <div class="project-block" data-od-id="project-sdd">
+      <div class="project-block">
         <h3 class="project-title">Spec-Driven Development Platform — 企业级 Agentic Coding 工作流平台</h3>
         <div class="project-meta">
           <span class="tag">公司团队项目 · 整体主导</span>
@@ -445,14 +423,12 @@ html, body {
           <li><strong>结构化知识抽取与检索</strong> — 历史代码 / PRD / 跨层契约抽取为 6 类标准化知识，构建代码知识图谱，倒排索引 + 实体图按需精准检索，避免全量上下文堆叠。</li>
           <li><strong>Citation Grounding + 人工确认门禁</strong> — 每条 LLM 生成事实附带 <span class="num">file:line</span> 级引用，源码 Read 后才写入、禁止无依据推断；Spec 须人工确认后方可进入开发阶段，从机制上降低幻觉与错误执行风险。</li>
         </ul>
-        <div class="impact" data-od-id="impact-sdd">
-          <span class="lab">成果</span>
+        <div class="impact">
           单需求理解耗时 <span class="data">5h → 2h</span>（n=5 PRDs） · 知识抽取确定性 <span class="data">40% → 85%+</span>（n=10） · 服务 <span class="data">20+ 人团队</span>日常研发，成为公司级标准化 AI 开发链路核心底座
         </div>
       </div>
 
-      <!-- P2 -->
-      <div class="project-block" data-od-id="project-manager-agent">
+      <div class="project-block">
         <h3 class="project-title">Manager_Agent — 通用 Multi-Agent Supervisor 编排调度系统</h3>
         <div class="project-meta">
           <span class="tag">个人项目 · 独立设计开发</span>
@@ -466,14 +442,12 @@ html, body {
           <li><strong>Plan → 并行 Execute → Critic → 综合闭环</strong> — 引入高风险写操作人工审查门禁；file + Redis 双后端 Checkpoint 实现跨进程续跑；在 <span class="num">recursionLimit 48</span> 内保障复杂任务稳定执行。</li>
           <li><strong>失败回放驱动的自进化</strong> — 失败归因 12 分类 → LLM 假设生成 → 金丝雀 A/B 验证 → 经验注入路由 few-shot；无需人工标注即可持续提升调度能力。</li>
         </ul>
-        <div class="impact" data-od-id="impact-manager">
-          <span class="lab">成果</span>
-          调度 <span class="data">12 个</span>专业 Agent（8 外部服务 + 4 内部自研） · 覆盖 <span class="data">8 类</span>消息交互场景 · <span class="data">7</span> 个黄金评测用例 + <span class="data">34</span> 个自动化冒烟脚本，可稳定支撑跨领域复杂 AI 任务交付
+        <div class="impact">
+          调度 <span class="data">12 个</span>专业 Agent（8 外部 + 4 内部自研） · 覆盖 <span class="data">8 类</span>消息交互场景 · <span class="data">7</span> 个黄金评测用例 + <span class="data">34</span> 个自动化冒烟脚本，可稳定支撑跨领域复杂 AI 任务交付
         </div>
       </div>
 
-      <!-- P3 -->
-      <div class="project-block" data-od-id="project-code-assistant">
+      <div class="project-block">
         <h3 class="project-title">code_assistant — 安全可控的企业级 Coding Agent</h3>
         <div class="project-meta">
           <span class="tag">个人项目 · 独立架构与核心开发</span>
@@ -487,14 +461,12 @@ html, body {
           <li><strong>三层写盘守卫 + 双沙箱隔离</strong> — 路径黑名单、受保护目录校验、sha256 乐观锁任一层拦截即拒绝；Docker 网络隔离 + 进程环境白名单双沙箱，不可用时自动降级适配运行环境。</li>
           <li><strong>自动化验证与灰度迭代</strong> — 改后自动执行 typecheck / lint / 单测，失败针对性修复；以机械化门禁替代大部分人工审查，厘清 AI 生成与人工审查的效能边界。</li>
         </ul>
-        <div class="impact" data-od-id="impact-code-assistant">
-          <span class="lab">成果</span>
+        <div class="impact">
           单仓库 <span class="data">90s</span> 内完成索引构建与需求改动 · 跨进程会话恢复、回归测试 <span class="data">0 丢失</span> · 全链路覆盖代码操作流程，可直接用于企业级生产仓库的 AI 辅助开发
         </div>
       </div>
 
-      <!-- P4 -->
-      <div class="project-block" data-od-id="project-sdui">
+      <div class="project-block">
         <h3 class="project-title">国际化营销中台 — Server-Driven UI 与可扩展权益组件库</h3>
         <div class="project-meta">
           <span class="tag">滴滴出行 · 前端 Owner · 从 0 到 1</span>
@@ -508,8 +480,7 @@ html, body {
           <li><strong>插件化权益热插拔</strong> — 权益以插件 SDK 注入，新增无需改核心 SDK、无需发版；Registry + 发布订阅实现组件热替换与不停机更新（<span class="data">35+</span> 渲染组件）。</li>
           <li><strong>组件契约与跨服务规约</strong> — 沉淀标准化组件契约，突破单服务 Spec 与仓库绑定，建立跨服务需求拆解基础，直接支撑后续 Agentic / SDD 编码范式落地。</li>
         </ul>
-        <div class="impact" data-od-id="impact-sdui">
-          <span class="lab">成果</span>
+        <div class="impact">
           <span class="data">400+ SKU</span> 服务 8 个业务项目 · 标准活动上线 <span class="data">2 周 → 3 天</span> · 新权益接入 <span class="data">2 天 → 2 小时</span> · 稳定运行 18 个月+，仅 <span class="data">2 起</span>低危 bug
         </div>
       </div>
