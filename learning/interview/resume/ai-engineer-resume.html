@@ -314,32 +314,6 @@ html, body {
   margin-right: 1.5mm;
 }
 
-.toolbar {
-  position: fixed;
-  top: 16px;
-  right: 16px;
-  display: flex;
-  gap: 8px;
-  z-index: 99;
-}
-.toolbar button {
-  display: inline-block;
-  padding: 7pt 14pt;
-  font-size: 9pt;
-  border-radius: 4pt;
-  font-weight: 600;
-  letter-spacing: 0.02em;
-  backdrop-filter: blur(8px);
-  background: oklch(22% 0.035 250 / 0.9);
-  color: #fff;
-  border: 0.6pt solid oklch(100% 0 0 / 0.18);
-  box-shadow: 0 4pt 12pt oklch(18% 0.02 250 / 0.22);
-  cursor: pointer;
-  font-family: var(--font-body);
-}
-.toolbar button.primary { background: var(--accent); border-color: var(--accent); }
-.toolbar button:hover { filter: brightness(1.08); }
-
 @media print {
   html, body { background: #fff; margin: 0; padding: 0; }
   .page {
@@ -348,7 +322,6 @@ html, body {
     margin: 0;
     box-shadow: none;
   }
-  .toolbar { display: none !important; }
   h2.section-title, h3.project-title { break-after: avoid; page-break-after: avoid; }
   li, p, .impact, .project-meta { break-inside: avoid; }
 }
@@ -364,16 +337,10 @@ html, body {
   }
   .sidebar { padding: 10mm 8mm; }
   .main { padding: 9mm 7mm; }
-  .toolbar { top: 8px; right: 8px; }
 }
 </style>
 </head>
 <body>
-
-<div class="toolbar">
-  <button type="button" class="primary" onclick="window.print()">下载 PDF</button>
-  <button type="button" onclick="window.print()">打印</button>
-</div>
 
 <div class="page" data-od-id="resume-page">
   <aside class="sidebar" data-od-id="sidebar">
