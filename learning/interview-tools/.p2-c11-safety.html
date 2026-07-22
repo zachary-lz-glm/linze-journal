@@ -1,0 +1,6 @@
+<div class="card-body">
+  <p><strong>Safety 的本质矛盾是防护与不阻碍正常任务之间的张力。</strong>护栏太严会抵消模型能力——每一步都拦截、每一个写操作都人工确认，Agent 就退化成普通 RPC 调用；护栏太松则失控，模型一旦幻觉路径越界就是事故。难点不是堆守卫，是在每一层找刚好拦得住事故、又不挡正常任务的边界。我分两层落地：规划层防幻觉、执行层防事故。</p>
+  <p><strong>规划层靠证据链加 Spec Review Gate，做在 prd-tools。</strong>每条 requirement、影响、契约结论都必须挂一个 EV-XXX 证据 ID，来源是源码、契约、PRD、git diff、负向搜索，没有证据的结论进不了 spec。这之上还有一个代码级硬门禁 Spec Review Gate：spec 不被 owner 确认成 approved，下一阶段的 quality-gate 直接 exit 2 流程硬停，幻觉计划没法往下走。LLM 不允许推断，只能引用已收集的事实。这里我软化一句——"必须先读源码才写"本质是 prompt 软约束加 evidence 字段事后门禁，不是每一行都硬校验，但方向是真的。</p>
+  <p><strong>执行层靠四层守卫加沙箱加 sha256 加原子写，做在 code_assistant。</strong>第一性原理是"模型加写权限等于事故"，所以约束不放 prompt 里、放代码同步路径上。四层逐层过：工具白名单（chat-only 干脆不绑写工具）、入口门禁（JWT scope 卡 write:repo）、apply_diff 的 context 行精确匹配（read-verify-write）、文件系统层（safeResolve 防路径越界、敏感文件黑名单 .env/id_rsa 摸不到、tmp 加 rename 原子写）。再加 subprocess/docker 沙箱跑校验、sha256 乐观并发锁（文件被改过就 409 拒写）、写完自动跑 lint/typecheck/test 自修复。读检索工具的返回天然带 file:line。</p>
+  <p><strong>红线主动暴露：完整 Diff 预览加用户确认加独立代码审查 Agent 这套还没全落地。</strong>"Diff 预览 → 用户确认才落盘 → 第二个独立代码审查 Agent 终检"是我设计目标里没全落地的一块。目前是 chat-only 只读降级、审计日志、写后自动校验在兜底，HITL 写确认是下一步要补的。硬吹"有代码审查 Agent、有 HITL 写确认"会翻车——代码里没有，我不装。</p>
+</div>
