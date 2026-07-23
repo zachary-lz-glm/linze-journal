@@ -1019,14 +1019,14 @@ th{font-weight:600;color:#888;font-size:10.5px;letter-spacing:.02em}
   </div>
 </div>
 
-<div class="card" data-c="proj" data-g="Code 智能体" data-kw="opencode ohmyopencode SST Anomaly 开源 coding agent terminal Aider OpenHands Cline 竞品 认知 生态 不锁vendor 75模型 自托管 了解过">
+<div class="card" data-c="proj" data-g="Code 智能体" data-kw="opencode ohmyopencode SST Anomaly 开源 coding agent terminal Aider OpenHands Cline 竞品 认知 生态 不锁vendor 75模型 自托管 了解过 多agent编排 并行 7个 协调团队">
   <div class="card-head"><span class="tag proj">生态</span><div class="card-title">了解 opencode / ohmyopencode 吗？</div></div>
-  <div class="core">了解。opencode 是 SST/Anomaly 的开源 terminal coding agent（75+ 模型、TUI/desktop/IDE、不锁 vendor），ohmyopencode 是社区配置生态——和我 Code Agent 同类，它赢通用生态、我赢企业 Safety 受控</div>
+  <div class="core">了解。opencode 是 SST/Anomaly 的开源 terminal coding agent（75+ 模型、TUI/desktop/IDE、不锁 vendor），ohmyopencode 是 opencode 上的多 agent 编排插件（7 并行 agent+多模型）——和我 Code Agent 同类，它赢通用生态、我赢企业 Safety 受控</div>
   <div class="card-body">
     <p><strong>opencode 是什么。</strong>SST 团队（已重组为 Anomaly）出的开源 AI coding agent，主打 terminal（TUI），也有 desktop 和 IDE 扩展；支持 75+ 模型 provider；完全开源、不锁 vendor。仓库 sst/opencode → anomalyco/opencode。定位类似 Claude Code / Aider 的开源版，卖点是可以自托管、自己接模型、不绑定厂商。</p>
-    <p><strong>ohmyopencode 是什么。</strong>社区围绕 opencode 做的配置 / 增强生态（类比 oh-my-zsh 之于 zsh），比如 opencode-config-tool（一个 Electron + React 桌面工具，专门管 opencode.json 配置）。它存在本身就说明 opencode 已经聚起社区生态，值得跟进。</p>
+    <p><strong>ohmyopencode 是什么。</strong>opencode 上的社区多 agent 编排插件（社区多个同源包，如 opensoft/oh-my-opencode、npm @reinamaccready/oh-my-opencode）——在 opencode 单 agent 之上叠多模型编排 + 最多 7 个并行后台 agent + 内置 LSP/AST 工具，把单个 agent 编排成"协调的开发团队"。类比 oh-my-zsh 之于 zsh，但比配置更重、是真做多 agent 编排；它存在说明 opencode 已聚起社区生态、且大家在往多 agent 编排上卷。</p>
     <p><strong>和我的 Code Agent 比。</strong>同一类（terminal coding agent），定位不同：① opencode 是通用开发者工具，生态广、模型多、开源可自托管；② 我偏研究 + 企业场景，强项是 Safety——JWT / scope / 限流 / 路径白名单 / sha256 锁 / 沙箱 / 原子写 / 审计，把安全做在代码路径上不写在 prompt 里（详见"和 Cursor / Aider / Devin 比"卡的企业 Safety 差异化）。</p>
-    <p><strong>态度与诚实。</strong>开源 coding agent 是明确趋势（opencode / Aider / OpenHands / Cline），我会跟进它的 provider 抽象和 TUI 交互；但差异化在企业可审计的受控改码，不拼功能广度。诚实说：opencode 我了解定位、没深度用过，ohmyopencode 知道是社区配置层——不装熟。</p>
+    <p><strong>态度与诚实。</strong>开源 coding agent 是明确趋势（opencode / Aider / OpenHands / Cline），我会跟进它的 provider 抽象和 TUI 交互；但差异化在企业可审计的受控改码，不拼功能广度。诚实说：opencode 我了解定位、没深度用过，ohmyopencode 知道是 opencode 上的多 agent 编排插件、没真跑过——不装熟。</p>
     <p><strong>怎么沉淀。</strong>跟进开源生态这件事的本质是"认通用生态赢、守自己的差异化"——opencode 通用、模型多、社区广，我不拼功能广度；我的强项在企业可审计的受控改码，是它不做或做得轻的赛道。下次遇到"了解 XX 开源竞品吗"的题，我会先讲清它的定位和生态位，再落到"我做什么它不做、不做什么它做了"，而不是装熟或硬比。</p>
   </div>
 </div>
@@ -1482,6 +1482,45 @@ const [x, setX] = useState(0);
     <p><strong>为什么不用 index 做 key</strong>：列表顺序变化（插入/删除/排序）时，index 不变但实际数据错位，React 会复用错误的 fiber → 状态串台 + 不必要更新。用稳定唯一 id 才对。</p>
     <p><strong>Key 的代价</strong>：key 变化 = 触发卸载重挂（状态清空、重新触发 effect）。频繁变 key 有性能成本。</p>
     <p class="hint">字节亲历真题（千问也考过）。能讲到"fiber 链表位置映射"是加分点。追问"key 用随机数会怎样"→每次渲染都重建，性能灾难。</p>
+  </div>
+</div>
+
+<div class="card" data-c="bagu" data-kw="useEffect 执行顺序 父子组件 挂载 卸载 cleanup 子先于父 fiber 深度优先 Strict Mode 回调顺序 三个组件 A B C 动念真题">
+  <div class="card-head"><span class="tag bagu">React</span><div class="card-title">父子组件 useEffect 挂载、卸载的执行顺序</div></div>
+  <div class="core">挂载和卸载都是子先于父——挂载 B→C→A，卸载 cleanup 也是 B→C→A，同向不反向</div>
+  <div class="card-body">
+    <p>经典坑题。三个组件 A 是父、B 和 C 是子（B 渲染在前），每个里面都有 useEffect，面试官问挂载和卸载的回调各是什么顺序。</p>
+    <p><strong>挂载</strong>：B 的 effect → C 的 effect → A 的 effect，子先于父。不是父先。</p>
+    <p><strong>卸载 cleanup</strong>：B 的 cleanup → C 的 cleanup → A 的 cleanup，跟挂载同向，很多人以为是反过来的，其实不是。</p>
+    <p><strong>为什么是子先于父</strong>：React 提交完之后刷 passive effect，是<strong>深度优先遍历 fiber 树</strong>，最底层的子组件 effect 先 fire、再往上冒泡到父。想自己验证就开 Strict Mode，它 mount→cleanup→remount 双调用，日志顺序一看就懂。</p>
+    <p class="hint">别现场推导，直接甩结论：都是子先于父、BCA。常被追的一个点——依赖变更时 cleanup 跑在<strong>下一次 effect 之前</strong>，不是只有 unmount 才跑。（动念真题，我当时磕绊了，结论其实对，但过程显得在猜——先甩结论再说原理。）</p>
+  </div>
+</div>
+
+<div class="card" data-c="bagu" data-kw="HTTP 缓存 强缓存 协商缓存 304 ETag Last-Modified Cache-Control Expires 301 永久缓存 重定向 浏览器缓存 动念真题">
+  <div class="card-head"><span class="tag bagu">HTTP</span><div class="card-title">HTTP 缓存机制 + 301 会被永久缓存</div></div>
+  <div class="core">强缓存不发请求读本地、协商缓存带 ETag 问服务器拿 304；301 默认被浏览器永久缓存</div>
+  <div class="card-body">
+    <p><strong>强缓存</strong>：不发请求、直接读本地磁盘。靠 <code>Cache-Control: max-age</code> 或 <code>Expires</code> 控制，命中返回 200（from disk/memory cache）。</p>
+    <p><strong>协商缓存</strong>：强缓存过期后才走。请求带上校验字段 <code>ETag / If-None-Match</code> 或 <code>Last-Modified / If-Modified-Since</code> 问服务器，资源没变返回 <strong>304</strong>（继续用本地的）、变了返回 200 + 新资源。</p>
+    <p><strong>执行顺序</strong>：发请求 → 看强缓存命中没 → 没命中或过期 → 走协商缓存 → 304 或拉新。</p>
+    <p><strong>前端工程怎么用</strong>：带 hash 的静态资源（js/css）用强缓存、max-age 拉很长（文件名一变自动失效）；入口文件 index.html 用协商缓存（每次确认）；第三方库单独 chunk 长期强缓存。</p>
+    <p><strong>301 会被缓存（反直觉加分点）</strong>：301 默认被浏览器<strong>永久缓存、没有过期时间</strong>，改了重定向、访客还是跳旧地址，而且服务端没法远程清掉。所以正式用 301 要加 <code>Cache-Control: no-store</code>，测试期宁可先用 302。</p>
+    <p class="hint">字段名要脱口而出：强缓存 = Cache-Control/Expires，协商缓存 = ETag/Last-Modified。301 这题答对是加分项。（动念真题，我之前把校验字段含糊说成"身份认证"，其实该说 ETag。）</p>
+  </div>
+</div>
+
+<div class="card" data-c="bagu" data-kw="迭代器 生成器 iterator generator yield next Symbol.iterator async await 协程 惰性求值 状态机 动念真题">
+  <div class="card-head"><span class="tag bagu">JS</span><div class="card-title">迭代器 vs 生成器 + 生成器的应用</div></div>
+  <div class="core">迭代器是有 next 方法的对象；生成器 function* 用 yield 暂停恢复——async/await 底层就是它</div>
+  <div class="card-body">
+    <p><strong>迭代器</strong>：实现了 <code>next()</code> 方法（或 <code>[Symbol.iterator]</code>）的对象，<code>next()</code> 返回 <code>{ value, done }</code>。好处是遍历不用自己手动维护指针走到第几步。</p>
+    <p><strong>生成器</strong>：<code>function*</code> + <code>yield</code>，能在函数执行中间暂停、再恢复。它返回的是一个迭代器——所以生成器是<strong>创建迭代器的便捷方式</strong>（生成器对象既是迭代器又是可迭代对象）。</p>
+    <p><strong>应用（重点，别只说"用得少"）</strong>：</p>
+    <p>· <strong>async/await 底层</strong>就是生成器 + Promise，这是它最重要的应用，被问应用领域必须先说这个。</p>
+    <p>· <strong>惰性求值 / 无限序列</strong>：按需生产、用到才算，省内存。</p>
+    <p>· <strong>状态机</strong>：靠 yield 在状态间暂停恢复。大数据流式处理同理。</p>
+    <p class="hint">别把迭代器和生成器讲混（迭代器是对象、生成器是函数能暂停）。应用领域最高频的答法：先甩 async/await，再说惰性求值。（动念真题，我应用领域答得弱、漏了 async/await。）</p>
   </div>
 </div>
 
@@ -4564,6 +4603,18 @@ function buildTreeOptimized(list) {
     <p>反问"团队在 AI 工程化的落地"时，快手电商给了清晰定位——B 端业务团队的 AI 投入优先级是 AI for 业务，不是 AI for 研发效率，研发效率基本不涉及。</p>
     <p>AI for 业务做的是帮 B 端商家、运营提效：批量创活动、AI to UI、端智能、端模型、AI 开发上下文，整个专项叫 to AIS。</p>
     <p>面试启示：面 B 端业务团队时，AI 工程化的故事要往"帮业务提效"靠，不能只讲研发效能。我做的 AI 工作流是研发效率侧的，要主动桥接——这套方法论（蒸馏/证据链/门控）可以迁移到批量创活动的配置生成、运营策略的 PRD 蒸馏、商家端 AI 工具的 prompt 设计。</p>
+  </div>
+</div>
+
+<div class="card" data-c="emer" data-g="反问" data-kw="反问 动念 创业团队 验证期 AI工作流 难变现 AI Native 全栈 行业洞察 提效 降本">
+  <div class="card-head"><span class="tag emer">反问</span><div class="card-title">动念：AI 工作流验证期、行业还没跑通变现（行业洞察）</div></div>
+  <div class="core">连全力做 AI 的创业团队都还在验证期、没跑通变现——谈 AI 收益别吹营收，讲提效降本</div>
+  <div class="card-body">
+    <p>反问"核心项目做到哪一步"时，动念涌现（创业团队）面试官原话："还在一个验证的阶段，还没有去验证 AI 工作这种，我们就非常非常难变现回去。"</p>
+    <p><strong>价值 1——行业现实校准</strong>：连全力做 AI 的创业团队都没跑通"AI 工作流→变现"。说明 AI 工程化目前普遍是<strong>提效/降本</strong>逻辑，不是直接变现逻辑。谈收益别吹"创造多少营收"，讲提效 + 降本 + 经验沉淀更稳。</p>
+    <p><strong>价值 2——坦然承认局限</strong>：我 prd-tools"团队推广效果不理想"其实和行业现状一致（都在验证期），可以更坦然——不是我做不好，是这事儿整个行业都在摸索。</p>
+    <p><strong>价值 3——公司转型信号</strong>：面试官还提到公司正转 <strong>AI Native 组织</strong>、推各团队<strong>转全栈（app + 后端）</strong>、做跨团队知识库建设。反问桥接点：他们的跨团队知识库和我 reference 领域知识库同构；团队转全栈意味着他们要能跨界的前端，我的 BFF + 后端协作经验正好踩上。</p>
+    <p class="hint">这种"验证期难变现"是跨公司通用的行业信号，面任何 AI 岗位谈收益都用得上——别报单一营收百分比。</p>
   </div>
 </div>
 
