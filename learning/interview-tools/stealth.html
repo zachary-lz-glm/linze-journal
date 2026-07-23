@@ -2902,6 +2902,7 @@ function buildTreeOptimized(list) {
   <p><strong>三个关键决策，每个都拒绝了 alternative。</strong>Schema 驱动（拒绝低代码：B 端设计稿少、以原型为主，可视化拖拽 ROI 低，且跨接口联动描述不了）；双端解析架构——前端渲染引擎和 BFF 模板引擎共享 Schema 协议、各管各的维度（拒绝单端：SSR 初始状态不对，得等前端 JS 加载完才出联动结果）；联动 DSL dAction，组件依赖从命令式 if-else 变声明式模板表达式（拒绝 if-else：不可静态校验、新人看不懂）。</p>
   <p><strong>结果和怎么验证。</strong>新增活动前端零开发（配置化）、上线两周→三天（运营自助）、线上问题月均二十起→接近零；Schema 引擎自身的 bug 也从月均十来个降到接近零。验证不是 vibes，是三层防控：静态校验（联动引用、循环依赖、字段类型上线前拦住）、灰度发布、reason tag 分类报警（线上问题按根因打 tag 聚合，能定位是哪类联动出错）。</p>
   <p><strong>方法论和边界。</strong>可迁移的命名框架是"声明式配置驱动"——人依赖配置而非代码，把命令式业务逻辑抽象成可静态校验的配置。局限有两条：一是 Schema 有天花板，拖拽排序、实时协作这类交互仍写代码；二是只适用配置类页面，C 端自由布局和数据可视化大屏不适用，别强行套。</p>
+  <p><strong>被问"你们是把代码复杂度转移到了配置复杂度上吧？"怎么答。</strong>这是青衫面试官最高质量的一问，钩子是<strong>隐式复杂度 vs 显式复杂度</strong>——答案是解决了、不是转移。原先的复杂度是隐式的，藏在 if-else 里：看不见、不能静态校验、一改就发散；现在变成显式的声明式配置：一页协议就能看清组件依赖、能在运行前静态校验、改动收敛在局部。复杂度总量可能没少，但从"不可控"变成了"可控"——这就是解决，不是搬家。</p>
   <p class="hint">Schema 项目主陈述卡，被让展开项目时翻这张。五步每段约 20-30 秒、总 2 分钟左右；②本质矛盾和⑤方法论是加分点，别跳过直接讲技术。</p>
 </div>
 </div>
@@ -3660,6 +3661,17 @@ function buildTreeOptimized(list) {
   </div>
 </div>
 
+<div class="card" data-c="ai" data-g="Loop 工程" data-kw="强制执行 一定检查 不遗忘 prompt提醒 流程骨架 PreToolUse PostToolUse 可阻塞 阻拦 网关 权限 subagent不继承权限 CC Codex 通用框架 兜底 主动方 代码调agent 可靠性">
+  <div class="card-head"><span class="tag ai">可靠性</span><div class="card-title">怎么让 agent 一定去做某件事（不能靠 prompt 提醒）</div></div>
+  <div class="core">不能靠 prompt 提醒——模型会遗忘；要靠确定性代码在工具执行前硬拦截，Claude Code 的 PreToolUse hook 就是干这个的。</div>
+  <div class="card-body">
+    <p>问题先讲清楚：AI 是黑盒、记忆会遗忘，你不在 prompt 里反复念叨它就漏。所以不能指望"模型自觉去检查"，得在 agent 和工具之间加一层确定性代码当裁判。</p>
+    <p>具体机制，Claude Code 这套通用框架是这么做的：① <strong>PreToolUse hook</strong>——工具执行前先跑一段脚本，脚本返回非零就直接阻塞这次调用，这是唯一能"硬拦住"的环节；PostToolUse 只能在工具跑完之后记日志、拦不住（来源：Claude Code hooks 官方文档）。② <strong>permissions 白名单</strong>——allow / deny / ask，明确哪些工具能调哪些不能。③ <strong>独立上下文的 subagent 做复查</strong>——复查 agent 不共享主会话上下文（见 AI 评测那张 LLM-as-judge 隔离卡）。</p>
+    <p>这里有个坑得记住：subagent 不会自动继承主 agent 的权限，所以 PreToolUse hook 是 subagent 行为强制的最后一道闸（这是 CC 已知的一个 gap）。一句话收口——代码和 agent 谁是主动方？agent 是发起方，但确定性代码（hook）是裁判，关键操作必须 hook 拦截，不能让模型自己决定执不执行。</p>
+    <p>这套思路我自己在 prd-tools 里就是落地成质量门控：不是写 prompt 让 AI"记得校验"，而是 Spec Review Gate 这种代码级硬门禁——spec 没被 owner 确认成 approved，下一阶段直接 exit 2 流程硬停。强制的事不能交给概率，得交给代码。</p>
+  </div>
+</div>
+
 <!-- ========== 新增选型对比卡 ========== -->
 
 <div class="card" data-c="ai" data-g="工具协议" data-kw="MCP vs Skill Claude Code Skill 区别 选型 什么时候用 prd-tools 插件 对比 工作流 标准化">
@@ -3879,6 +3891,26 @@ function buildTreeOptimized(list) {
   </div>
 </div>
 
+<div class="card" data-c="ai" data-g="AI 评测" data-kw="AST 静态分析 运行时 语义 边界 管不了 i18n 国际化 组件传参 prop当key 三层校验 语法 功能 视觉 Playwright 多模态 什么时候必须用agent AI生成代码 校验 HTML XML">
+  <div class="card-head"><span class="tag ai">评测</span><div class="card-title">AI 生成的代码怎么校验：AST 管静态，运行时语义交给 agent</div></div>
+  <div class="core">AI 生成的代码要分层校验：AST 查静态结构，但 key 对不对、prop 有没有被当 i18n key 用这种运行时语义，AST 看不到，得交给 agent。</div>
+  <div class="card-body">
+    <p>AI 生成的前端代码 / 页面，校验我分三层递进：① <strong>语法层</strong>——用 AST 查结构、类型、写死的中文 / 英文、强制包裹标签里 t() 有没有被调用，编译得先过；② <strong>功能层</strong>——编译过不等于能跑，用 Playwright 真实加载，看有没有白屏、功能缺失；③ <strong>视觉层</strong>——截图对比、模糊语义匹配，但当前模型在视觉体感校验上还不够稳，只能辅助。</p>
+    <p>关键是划清 AST 的边界：它管静态结构，管不了运行时语义。拿国际化举例——AST 能查"文案有没有写死、t() 有没有被调"，但查不了三件事：这个 key 在 locale 文件里到底有没有对应文案（运行时才知道）；组件传参时 prop 在下游有没有被当成 i18n key 用（AST 看不到运行时数据流）；多语言文案长度一变有没有撑坏布局。</p>
+    <p>这些运行时语义就得交给 agent——翻译 / 文案的语义匹配是纯 agent 的活，沙箱渲染加 agent 逐节点分析传参流向才能查出来。我的教训：这题上次被面试官一步步引导才答出 AST 的边界，不够主动——下次直接主动划界，一上来就说"AST 管静态、agent 管运行时语义"，别等引导。</p>
+  </div>
+</div>
+
+<div class="card" data-c="ai" data-g="AI 评测" data-kw="上下文隔离 不共享 裁判 LLM-as-judge context contamination 污染 评估 公正 幻觉 提示词注入 成本 token爆炸 独立上下文 复查 校验agent 为什么不能">
+  <div class="card-head"><span class="tag ai">评测</span><div class="card-title">校验 agent 为什么不能共享主会话上下文</div></div>
+  <div class="core">校验用的 agent 不能共享主会话上下文——它是裁判，看了被裁判者的"草稿纸"就不公正了，输入来自产物、不能共享推理上下文。</div>
+  <div class="card-body">
+    <p>为什么校验 agent 一定不能用主会话上下文，我给三个理由：① <strong>公正性、防幻觉</strong>——裁判要的是干净的隔离上下文，一旦引用了主会话之前的推理，它就被污染了，本来是确定性裁判、结果变成模糊整合，容易误判；② <strong>防提示词注入</strong>——主会话上下文里如果混进了越狱 / 攻击内容，顺着共享进去会直接废掉校验；③ <strong>成本</strong>——主任务上下文已经够大了，校验还复用一遍，token 直接爆炸。</p>
+    <p>这是 LLM-as-judge 的公认最佳实践，业界有个专门的名字叫 <strong>context contamination / evaluator bias</strong>——裁判模型的先验知识会污染评估结果（来源：Evidently AI 的 LLM-as-judge 指南、arXiv 综述 2412.05579 都专门讨论这个问题）。</p>
+    <p>所以正确做法是：校验 agent 的<strong>输入来自产物</strong>（上一步产出的文件、结论、证据链），但<strong>推理上下文独立</strong>。我在 prd-tools 里的事后评分就是这模式——独立脚本终检加 agent 自评都用独立上下文，只读产物、不读主推理过程。</p>
+  </div>
+</div>
+
 <!-- AI 底层理论精简+前端+前沿+系统设计 -->
 
 <!-- ============ LLM 工程 · 诚实降深卡（底层理论合并） ============ -->
@@ -4039,6 +4071,17 @@ function buildTreeOptimized(list) {
     <p><strong>我觉得最重要的三种能力</strong>：① <strong>判断力（最核心）</strong>——面对模糊需求能定优先级、面对 AI 产出能判断好坏、面对选型能权衡利弊，这来自业务理解 + 踩坑，AI 替代不了；② <strong>系统设计能力</strong>——能把复杂问题拆成可执行的架构，工程师从执行者变成设计者；③ <strong>领域深度 + 学习能力</strong>——对某块业务有足够深的理解，"为什么这个字段不能改"这种隐性知识只能靠积累。</p>
     <p><strong>AI-first 团队工程师在干啥</strong>（小红书 / 腾讯实况）：80-90% 代码 AI 生成，工程师做三件事——设计运行环境（Prompt/Skill/MCP 配置，让 AI 在正确上下文里干活）、审核 AI 产出（CR + 质量门控）、建立反馈闭环（错误纠正 + 知识沉淀）。本质是从"写代码的人"变成"设计 AI 怎么干活的人"。</p>
     <p>前端具体三层递进：编码层用 AI 提效、编排层设计 AI 工作流和质量保障、交互层设计人机协作的新形态（对话式 UI、智能表单）。越往后越不可替代。</p>
+  </div>
+</div>
+
+<div class="card" data-c="ai" data-g="行业视野" data-kw="面向概率 提高概率 不确定 概率系统 提示词 流程 上下文 利用LLM特性 第一性 本质 核心思想 哲学 agent工程化 为什么 提高成功率">
+  <div class="card-head"><span class="tag ai">视野</span><div class="card-title">agent 工程化的第一性思维：它是面向概率的体系</div></div>
+  <div class="core">agent 是面向概率的体系——我们做的所有工程，本质都是为了把它成功完成任务的概率拉高，不是追求百分之百确定。</div>
+  <div class="card-body">
+    <p>这是青衫（新加坡 AI 初创、做海外视频创作 agent）面试官给的一句话，我听完觉得是整场最值钱的：除了底层模型能力，我们工程上做最多的事，就是尽量提高它成功完成任务的概率——提示词怎么引导、流程怎么设计、给它什么上下文，都是围绕一件事：利用好 LLM 本身的特性，把成功率拉高。所有 agent 工程的问题，最后都回归到这一个问题：我们到底在利用 LLM 的什么特性？</p>
+    <p>这句话也解释了为什么 agent 工程化整条线都在纠结"怎么强制执行、怎么校验、怎么隔离上下文"——不是为了追求 100% 确定，那是白费劲；而是把"可能对"的概率一步步拉到"接近一定对"。关键路径上用确定性代码兜底，本质就是在那一段把概率焊死成 1。</p>
+    <p>权威印证：Anthropic 那篇《Demystifying Evals for AI Agents》也是这个思路——把 agent 当概率系统对待，靠 evals 让问题在影响用户之前就可见，而且 evals 的价值随生命周期复合增长、越晚建越难。</p>
+    <p>落到我自己：prd-tools 这种工作流应该配一套 benchmark——固定一批 PRD 样本，每次改动跑一遍看蒸馏质量、证据链连通率有没有回归，而不是靠感觉说"质量变好了"。这是我当前缺的一块评测债，得补。</p>
   </div>
 </div>
 
