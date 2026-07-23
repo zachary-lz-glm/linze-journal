@@ -2,7 +2,7 @@
 
 > 日期:2026-07-06 晚上 | 团队:字节 TikTok 客服团队(99% AI 智能回复 / 1% 转人工)
 > 一面评估:35% 通过率,已通过。二面大概率 leader / 资深技术面。
-> 一面原文档:`reviews/qa/字节TikTok一面.md`、`reviews/transcripts/字节Tik Tok一面.txt`
+> 一面原文档:`reviews/qa/2026-07-02_字节TikTok一面.md`、`reviews/transcripts/2026-07-02_字节Tik Tok一面.txt`
 
 ---
 

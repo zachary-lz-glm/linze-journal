@@ -786,11 +786,11 @@ class TicketStateMachine {
 
 ### 本地引用（reviews/）
 - `reviews/transcripts/面经.md` 第 307 行起 — **字节一面亲历真题 8 题**（权益 SDK / JSON Schema / 错误捕获 / 回流重绘 / React Diff / 原型链 / 请求终止 / 最大数组和）
-- `reviews/qa/阿里一面.md` — Formily 选型被打穿 + 知识保鲜挑战
-- `reviews/qa/千问一面.md` — 表达冗长被批评 + 反问宏大翻车
-- `reviews/qa/小红书.md` — Skill/Agent/Tool 概念深挖
-- `reviews/qa/小红书二面.md` — Harness Engineering 答得浅
-- `reviews/qa/拼多多.md` — Schema 配置沙箱预渲染 + Monorepo 拓扑排序
+- `reviews/qa/2026-06-04_阿里一面.md` — Formily 选型被打穿 + 知识保鲜挑战
+- `reviews/qa/2026-06-12_千问一面.md` — 表达冗长被批评 + 反问宏大翻车
+- `reviews/qa/2026-06-05_小红书.md` — Skill/Agent/Tool 概念深挖
+- `reviews/qa/2026-06-12_小红书二面.md` — Harness Engineering 答得浅
+- `reviews/qa/2026-06-02_拼多多.md` — Schema 配置沙箱预渲染 + Monorepo 拓扑排序
 - `learning/interview/resume/v3.md` — 候选人最新简历
 - `archive/retrospectives/04-27-Schema渲染引擎.md` — Schema 渲染引擎细节
 - `archive/retrospectives/04-28-BFF-Schema生成与联动链路.md` — BFF 联动链路
