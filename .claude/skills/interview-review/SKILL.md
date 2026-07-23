@@ -55,8 +55,17 @@ trigger: /面试复盘
 - 核心句（20字以内）
 - 口语展开（3-5句）
 
-**搜索增强**：对以下情况的题目，先用 WebSearch 搜索相关知识再写改进答案，确保答案有高质量的外部知识支撑：
+**主动方向校验（先于润色，每道"方向性题"必做）**：回答顺但方向偏是最危险的失分——AI 不主动查就只会沿你的错误方向润色话术。所以对每道**方向性题**（项目设计 / 架构决策 / 技术选型 / 方法论 / 权衡类——方向错代价大），先做这道，再写改进答案：
+
+1. **先查业界定论**：WebSearch（英文关键词、权威源：官方文档 / 论文 / 头部博客）查"这个问题业界/权威一般怎么答、核心考察方向是什么"。
+2. **反查你的方向**：拿定论对照你录音里的回答——
+   - **方向对** → 进"搜索增强"找证据**印证**（加来源、答得更硬）。
+   - **方向偏** → 改进答案里**明确写**："偏在 X，正确方向是 Y（依据：[来源]）"，把人拽回对的线，不是沿错误方向润色。
+3. **依据必须可 cite**：每条"正确方向"挂来源；找不到权威依据就明说"AI 推断、待你核实"，不装确定。
+
+**搜索增强（印证 + 补漏，方向校验后）**：对以下情况再搜证据，把关键数据/结论融入改进答案并标注来源：
 - 候选人明显答不上来或答错的题（如被问"Tools vs Skill区别"时卡住）
+- 方向校验判定"方向对"、需要外部证据**印证**的题
 - 面试官补充了候选人不了解的知识点的题
 - 涉及行业前沿趋势但候选人的回答停留在表面的题
 
@@ -140,6 +149,13 @@ trigger: /面试复盘
 - 回答平均长度（太长/太短）
 - 结构性（是否有开头-展开-收尾）
 
+**项目回答表达诊断（storytelling 镜头，比口头禅重要——这是 opendesign 一面崩的根因、整个 stealth 重构的论点）**：讲自己项目时最容易掉进"流水账 + 自我矮化 + 被问 why 就散"。对每道项目题（介绍项目 / 最有价值 / 架构决策 / 选型），逐条查：
+- ① **有没有立 ownership**：开场说了"我在里面 drive 了什么 / 为什么是我做"吗？还是只讲项目本身、把自己讲成执行者？（CLEAR 的 L，缺了就自我矮化）
+- ② **是不是 spreadsheet-story**：按时间线讲项目怎么长大（有流程没冲突没视角），还是倒着写、先立最关键决策（tentpole）再砍背景？流水账 = 头号反模式。
+- ③ **被问 why 能答几层**：表层 → 工程 → 业务 → 战略 → 反思，卡在第 2-3 层就散了吗？（5 层 Why）
+- ④ **讲完事实就停，还是有反思**：有没有"做前以为 X、做完发现 Y、下次 Z"的拔高？
+不达标就在改进答案里补 ownership + 本质矛盾 + 方法论——而不是只帮你润色原话。方法论详见 `learning/interview-tools/STEALTH-CARDS-GUIDE.md` §6 + stealth 重构 memory。
+
 **AI 工程化 3 硬伤专项扫描**（13 场面经归纳的系统性失分，必检）：
 - ① 数据被追穿：是否出现量化数据（提效/准确率/一致性）但说不清口径或被追问崩盘？每个数字必须备"怎么算的"话术
 - ② 原理卡壳：是否被问到 AI 底层原理（图片传参/Function Calling/Skills 触发/LangGraph/RAG 机制）答不出或讲错？标注具体概念
@@ -222,6 +238,12 @@ trigger: /面试复盘
 
 复盘流程结束后，自动执行以下操作，**不需要等用户说"提交"**：
 
+0. **回流卡片校验门（先于 commit，不过就停 push）**——stealth 重构建立了校验纪律，回流不能跳过。对本次新增/改动的 stealth.html 卡片逐项过：
+   - `div` 平衡：`grep -oE '<div[^>]*>' stealth.html | wc -l` == `grep -oE '</div>' stealth.html | wc -l`
+   - 新增 proj 卡都有 `data-g`（避 tag-textContent 路由坑）
+   - 雷区词 0 正向命中：`6 步闭环`/`20+ 人` 只能在否定语境；Manager 区无 Claude/GPT 当自述模型；Code 区 Chroma 仅"不用"语境
+   - 有 `learning/interview-tools/check_d.py` 就按卡所属项目跑（`--project front|mgr|code|prd`），exit 0 才过
+   - **任一项不过 → 停在 push 前**，把问题回修复后重校验，绝不带病上线（div 不平衡会让整页渲染崩）
 1. `git add` 所有变更文件（录音转写、Q&A答案、learning/interview-tools/stealth.html、sw.js）
 2. `git commit`，消息格式：`feat: [公司名][轮次]复盘 — [新增/更新卡片摘要] + Q&A答案`
 3. `git push` 到远程 main 分支
@@ -246,6 +268,8 @@ trigger: /面试复盘
 - benefit SDK 权益组件库（24内置组件 + Register模式 + Rollup双模打包）
 - prd-tools AI工程工作流（团队推广版 **Claude Code 插件**，/reference 六文件SSOT + 证据链 + 三级门控；按 ADR-0005 实际口径是 **1-5 人小范围试用**，不是"20+人"——后者是早期简历美化、被追问穿帮，要软化）
 - prd2code-gen 端到端PRD→Code原型（个人独立项目，原型探索的几个阶段：蒸馏→分析→Plan→双路径生成→自验证自修复→eval反哺；**注意：不存在"6 步闭环"这种说法——是个人原型探索、非生产级闭环**，被问要诚实说；含断点续传progress.yaml / 震荡检测A→B→A / verified_by审计链file:line溯源 / drift-report漂移检测；未在团队大规模推广，定位为下一代探索）
+- Manager Agent 多智能体编排总管（agent-main/Manager_Agent，Nuxt + LangGraph 硬编码状态机、39 节点；**雷区锚点：模型阿里云 qwen-flash 非 Claude/GPT、12 Agent = 9 外 3 内、失败归因纯规则非 LLM、自动晋级默认关**；需源码级核实时读 `/Users/didi/work/agent-main/Manager_Agent/`）
+- Code Agent 工程化代码助手（agent-main/code_assistent_Agent，自研向量检索 + ReAct；**雷区锚点：向量自研 JSON+内存余弦非 Chroma、增量靠 sha256 非 git 钩子、无 Diff 预览确认/独立审查 Agent/HITL 写确认**；需源码级核实时读 `/Users/didi/work/agent-main/code_assistent_Agent/`）
 
 ## 硬性原则
 
