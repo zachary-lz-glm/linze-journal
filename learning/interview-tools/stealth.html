@@ -565,15 +565,15 @@ th{font-weight:600;color:#888;font-size:10.5px;letter-spacing:.02em}
 
 <div class="card" data-c="proj" data-kw="PRD 上线 链路 蒸馏 回流 完整流程 端到端 闭环 双轨 prd2code-gen 6步">
   <div class="card-head"><span class="tag proj">A10</span><div class="card-title">从 PRD 到上线的完整链路？</div></div>
-  <div class="core">双轨：团队推广版三阶段 PRD→Spec→Plan（20+ 人在用），端到端原型 prd2code-gen 6 步 PRD→Code 已跑通</div>
+  <div class="core">双轨：团队推广版三阶段 PRD→Spec→Plan（小范围团队约 1–5 人在用），端到端原型 prd2code-gen 6 个阶段 PRD→Code 已设计跑通（个人原型探索、非生产级闭环）</div>
   <div class="card-body">
-    <p><strong>双轨定位（先说清楚再展开）</strong>：① 团队推广版聚焦 ROI 最高的 PRD→Plan 环节（人工确认后才开发、风险低、提效明显），20+ 人团队在用；② 端到端原型 prd2code-gen（个人独立设计）跑通 PRD→Code 完整 6 步，作为下一代探索。</p>
+    <p><strong>双轨定位（先说清楚再展开）</strong>：① 团队推广版聚焦 ROI 最高的 PRD→Plan 环节（人工确认后才开发、风险低、提效明显），小范围团队约 1–5 人在用（ADR-0005 口径）；② 端到端原型 prd2code-gen（个人独立设计）跑通 PRD→Code 的 6 个阶段，是原型探索、不是生产级闭环，作为下一代探索。</p>
     <p><strong>团队推广版 · 第一阶段：Reference 构建知识库</strong>。跑一遍项目代码，把几万行代码蒸馏成 6 个领域知识文件——代码结构、编码规则、跨层契约、PRD 路由、业务领域 Map、代码实体索引。一次性构建，后续新需求自动回流更新。</p>
     <p><strong>团队推广版 · 第二阶段：PRD 蒸馏 11 步</strong>。能力面适配器 → PRD 摄入 → 证据账本 → 需求 AR 标注 → Reference 路由 → 源码精读 → 契约差异 → 生成 Spec（硬停止人工确认） → 生成 Plan → AI 五项自评 → 门禁脚本。每步产出是下一步输入，链条断任何一处都能定位。</p>
     <p><strong>团队推广版 · 第三阶段：人工确认后开发</strong>。Spec 确认后 AI 生成 Execution Plan，人工 Review 后各用各的开发工具（Copilot/Cursor/Windsurf），开发完新知识回流更新 Reference。</p>
-    <p><strong>端到端原型 prd2code-gen · 6 步完整闭环</strong>：① PRD 蒸馏 → ② 项目分析 → ③ 变更计划（人工确认）→ ④ <strong>双路径代码生成</strong>（Handlebars 模板优先 0 token + 无模板走 LLM 兜底）→ ⑤ <strong>自验证 + 自修复循环</strong>（4 类校验：语法/字段双向/规则/集成 + 3 次重试 + 震荡检测 A→B→A 切整段重写）→ ⑥ 输出报告（人工评分）+ eval/auto-tune 反哺。</p>
-    <p><strong>双轨协同逻辑（被问为啥不推广必答）</strong>：① 团队推广版要<strong>稳</strong>——执行段成熟工具多（Cursor/Copilot），各人偏好不一，强行推广代码生成涉及质量责任划分；② 端到端原型要<strong>快</strong>——验证可行性、积累工程化经验、等模型成本下降。前者追求落地稳定（20+ 人日活），后者探索链路完整性（R01/R02 对照）。详见"端到端原型→生产路径"卡片。</p>
-    <p class="hint">被追问"然后呢 / 出码后怎么保证质量 / 端到端闭环" → 翻这张卡，端到端 6 步是核心防御。被问"既然完整为啥不推广" → 用上面的"双轨协同逻辑"段落回答，指向"端到端原型→生产路径"卡片。</p>
+    <p><strong>端到端原型 prd2code-gen · 6 个阶段（原型探索、非生产级闭环）</strong>：① PRD 蒸馏 → ② 项目分析 → ③ 变更计划（人工确认）→ ④ <strong>双路径代码生成</strong>（Handlebars 模板优先 0 token + 无模板走 LLM 兜底）→ ⑤ <strong>自验证 + 自修复循环</strong>（4 类校验：语法/字段双向/规则/集成 + 3 次重试 + 震荡检测 A→B→A 切整段重写）→ ⑥ 输出报告（人工评分）+ eval/auto-tune 反哺。</p>
+    <p><strong>双轨协同逻辑（被问为啥不推广必答）</strong>：① 团队推广版要<strong>稳</strong>——执行段成熟工具多（Cursor/Copilot），各人偏好不一，强行推广代码生成涉及质量责任划分；② 端到端原型要<strong>快</strong>——验证可行性、积累工程化经验、等模型成本下降。前者追求落地稳定（小范围团队在用），后者探索链路完整性（R01/R02 对照）。详见"端到端原型→生产路径"卡片。</p>
+    <p class="hint">被追问"然后呢 / 出码后怎么保证质量 / 端到端闭环" → 翻这张卡，端到端 6 个阶段是核心防御（但要诚实说清是个人原型探索、非生产级闭环）。被问"既然完整为啥不推广" → 用上面的"双轨协同逻辑"段落回答，指向"端到端原型→生产路径"卡片。</p>
   </div>
 </div>
 
@@ -2507,7 +2507,7 @@ function buildTreeOptimized(list) {
   <div class="core">双轨协同：团队推广版稳态运营，端到端原型探索三步过渡——模板库扩展 + CI对齐 + 责任归属</div>
   <div class="card-body">
     <p>应对"既然完整为啥不推广"和"原型怎么过渡到生产"两个高频追问。</p>
-    <p><strong>双轨定位（先讲清楚）</strong>：① 团队推广版 = 稳态（人工确认后才开发、风险低、ROI 高），20+ 人团队在用；② 端到端原型 = 探索（验证可行性、积累工程化经验、等模型成本下降），用 R01/R02 对照实验做技术储备。</p>
+    <p><strong>双轨定位（先讲清楚）</strong>：① 团队推广版 = 稳态（人工确认后才开发、风险低、ROI 高），小范围团队约 1–5 人在用；② 端到端原型 = 探索（验证可行性、积累工程化经验、等模型成本下降），用 R01/R02 对照实验做技术储备。</p>
     <p><strong>三步过渡路径</strong>：</p>
     <p>· <strong>Step 1：模板库扩展到 80% 场景</strong>。原型阶段模板命中率约 40%（剩余走 LLM 兜底），目标 80%。每命中一次 LLM 兜底且评分>阈值，抽取为候选模板，Golden Sample 回归通过后入库。</p>
     <p>· <strong>Step 2：CI/CD 对齐</strong>。原型是独立 pipeline，生产化要：① 产物格式对齐团队 lint/tsc/test 流水线；② 接入 code review 工具（SonarQube 等）；③ 灰度发布机制（先 10% 需求走 AI 生成，逐步放量）。</p>
@@ -2885,10 +2885,10 @@ function buildTreeOptimized(list) {
 
 <div class="card" data-c="proj" data-g="PRD 工作流" data-kw="推广 ROI 成本收益 团队 落地 试点 量化 经营视角 鸿湖 提效 投入产出">
   <div class="card-head"><span class="tag proj">产品</span><div class="card-title">AI工作流推广ROI</div></div>
-  <div class="core">单团队建库1-2天，之后每需求省2.5h，5团队月省125h，但必须扣掉协同成本</div>
+  <div class="core">单团队建库1-2天，之后每需求省约2.5h（试点推算），但要扣掉协同成本</div>
   <div class="card-body">
     <p><strong>成本</strong>：单团队建知识库1-2天（跑Reference蒸馏），学习成本约半天（三步上手），之后自动回流不重复建库。</p>
-    <p><strong>收益</strong>：PRD→Plan环节每需求省2-3h人工评审，5个团队月均50需求 × 2.5h = 125h/月。纯开发环节一周缩到1-2天。</p>
+    <p><strong>收益</strong>：PRD→Plan环节每需求省2-3h人工评审（试点推算）；按单团队月均约10需求估，约省25h/月。纯开发环节一周缩到1-2天。</p>
     <p><strong>全链路修正</strong>：含联调、环境搭建、合作方依赖这些AI替代不了的，整体提效20-30%。排期10天的需求现在7-8天。主动给这个务实口径。</p>
     <p><strong>推广路径</strong>：先找1-2个意愿高的团队试点 → 产出前后对比数据 → 内部分享 → 逐步扩大。不要说"写个README就行"，业务面不买这个。</p>
     <p class="hint">业务面考的不是技术指标，是经营思维——你能不能算清投入产出比。</p>
@@ -2975,7 +2975,7 @@ function buildTreeOptimized(list) {
   <div class="card-body">
     <p><strong>第一，从业务抽共性做抽象</strong>。20+活动类型的if-else我抽象成Schema驱动，30-40个权益组件我统一成Register注册模式。不是需求来了就写代码，而是先看有没有共性可以做抽象。这个能力让我每次接新业务都不是从零开始。</p>
     <p><strong>第二，全流程质量把控</strong>。不只是写代码——预防层有Schema静态校验，校验层有联动引用检测，监控层有reason tag分类报警，生产层有灰度发布和自动化回归。400+权益 18 个月+零 breaking change 不是运气，是每个环节都有防控。</p>
-    <p><strong>第三，新技术从0到1落地闭环</strong>。AI工作流不是玩玩工具，是从知识库设计到质量门控到团队推广的完整闭环。5个团队在用，有量化的投入产出数据。</p>
+    <p><strong>第三，新技术从0到1落地闭环</strong>。AI工作流不是玩玩工具，是从知识库设计到质量门控到团队推广的一整条链路。小范围团队约 1–5 人在用（ADR-0005 口径），有量化的投入产出数据。</p>
     <p class="hint">不要说"我学习能力强"或者"我技术全面"。说具体的、可验证的能力，每句都跟产出挂钩。</p>
   </div>
 </div>
