@@ -654,6 +654,18 @@ th{font-weight:600;color:#888;font-size:10.5px;letter-spacing:.02em}
   <p><strong>沉淀成方法论</strong>就一句话:路由可解释、状态能恢复、高风险有兜底——我管它叫编排可信三件套,这套任何"AI 串多步高风险操作"的场景都能套。局限得讲清:没上生产,"越用越稳"缺长期流量验证;失败归因是纯规则十来类、不是 LLM,边缘 case 落 unclear 桶,下次想试 LLM 归因但得先解决成本和可复现;checkpoint 是 best-effort、没分布式锁,多实例状态不一致,是下一步工程债。栈是 Nuxt4 加 LangGraph。</p>
 </div>
 </div>
+<div class="card" data-c="proj" data-g="Manager 智能体" data-kw="具体实现 数据结构 怎么设计的 讲讲细节 状态图 graph 节点 边 条件边 谓词 拓扑 纯函数 addNode addEdge addConditionalEdges probe-before-plan 工程实现 LangGraph 状态机 怎么搭">
+  <div class="card-head"><span class="tag proj">实现</span><div class="card-title">39 节点状态图是怎么搭出来的</div></div>
+  <div class="core">graph.ts 一个文件把节点和边收死——节点是只写 state 的纯函数,分叉靠 addConditionalEdges 的内联谓词决定下一跳;probe 节点在 plan 前并发探一遍下游能力,把客观快照喂给规划,而不是让模型脑补下游活着。</div>
+  <div class="card-body">
+    <p><strong>数据结构 / 形态。</strong>整张图用 LangGraph 的三件套搭:addNode 注册节点、addEdge 串固定边(主干)、addConditionalEdges 在分叉处挂一个内联谓词函数读 state 决定下一跳(全图 39 个 addNode、固定边和条件边各约 20 处)。节点本身是纯函数——入参 state、返回部分 state(比如 probe 节点只 `return { probe }`),不感知图结构、不知道自己被谁调用下一站去哪;拓扑收口在 graph.ts 这一个文件,加节点改流向都动这里,节点文件不用碰。一个 DRY 点:13 个执行节点(db/rag/code/admin/crawler/gui/clean/visualize/report/multimodal/music/video/multi)共用同一个 afterExecution 出口谓词,统一分流到 synth/clarify/finalize,不重复写 13 遍。</p>
+    <p><strong>核心算法 / 流程。</strong>probe-before-plan 的实现是固定边把 probe 串在 plan 前面:tool_health → probe_node → metacog(第一个条件边分叉、可早退到 finalize/clarify)→ security_gate → decompose → intent_classify → route → prefetch →(条件边按 intent 分叉)→ planner。probe 节点内部用 Promise.allSettled 并发探 5 路下游:RAG `/api/probe`(发个 k=3 的轻查询看有没有文档命中)、DB `/api/probe`(schema 匹配 + ping 看可执行性)、crawler/gui 的 health 探活、code `/api/metrics`;超时分开配(DB/RAG 默认 12 秒、health 4 秒,都走 env 可覆盖),allSettled 保证任一路 fail 不阻塞其它。返回结构直接进 state.probe——`{ rag:{hasDocs,hits,sources,snippets}, db:{schemaMatched,pingOk,executable,tables}, crawler/gui:{healthy,ready}, code:{healthy} }`,下游 planner 读它定 allowedAgents:schemaMatched=false 就不派 NL2SQL、RAG 没命中就不硬加检索步。</p>
+    <p><strong>为什么自研、拒绝了什么。</strong>拓扑用硬编码状态机、拒绝 LLM Supervisor/Swarm 那种让模型自己决定下一步去哪个节点——硬编码的好处是每条边为什么被选在 LangSmith trace 里一目了然、节点纯函数可单测、misroute 能定位到具体谓词,代价是改流程要动 graph.ts 而不是图自己适应。probe 内联在图里并排在 plan 前,拒绝"plan 完再探下游"或"省掉 probe 让模型脑补可用性":前者规划建立在"假设下游活着"上,幻觉式路由就从这来;代价是多一个节点几百毫秒,用一次确定性的并发探活换掉路由环节一个幻觉源。节点和边的职责也强行切开:节点不查"下一步去哪"、边不产数据,这样节点能脱离图单测、图能脱离节点重构。</p>
+    <p><strong>踩坑和边界。</strong>39 是结果不是目标——每个节点对应一个显式决策或要拦的坑(probe 挡幻觉路由、decompose 挡一句两意图取平均、admin_confirm 挡高风险误操作、critic 挡质检漏审、fix 做修复回环),不是一上来画 39 个框;配套文档写 38、代码实数 39(fix 是后加的独立 addNode),面试说"接近 40"最稳。研究型项目没接真实业务流量,图正确性靠 LangSmith trace 看每条边的命中率,走不到的节点就是减法候选,没有线上 misroute 率。失败归因是纯规则(failureAttribution 十来类 if/else 分类,不是 LLM),边缘 case 落 unclear 桶。自动晋级默认关、要人工 promote;模型走阿里云 qwen-flash 的 OpenAI 兼容协议(DashScope),不是 Claude/GPT。</p>
+    <p><strong>代码在哪。</strong>`server/utils/managerGraph.graph.ts` 看全图拓扑(39 个 addNode、所有固定边和条件边谓词都在这一个文件),`managerGraph.probeNode.ts` 看 probe 的 Promise.allSettled 并发实现和返回结构。</p>
+  </div>
+</div>
+
 
 <div class="card" data-c="proj" data-g="Manager 智能体" data-kw="主干链路 graph 状态机 probe route plan execute synth critic finalize 画一下 为什么probe在plan前 探活 减少幻觉 为什么用LangGraph 路由错乱 怎么避免">
   <div class="card-head"><span class="tag proj">架构</span><div class="card-title">主干链路长什么样？</div></div>
@@ -817,6 +829,18 @@ th{font-weight:600;color:#888;font-size:10.5px;letter-spacing:.02em}
   <p><strong>沉淀成方法论</strong>就一句话:安全做在代码路径上、不写在 prompt 里求模型听话,加上探索式 ReAct 和路由式 Supervisor 按场景选——写代码这种不可预测的探索式用 ReAct,多意图能并行的编排用 Supervisor,这套任何"AI 有副作用能力"的场景都能套。局限得讲清:没上生产,长期稳定性缺流量验证;Diff 预览用户确认、独立审查 Agent、HITL 写确认这些是我设计目标里还没全落地的,目前是 chat-only 只读降级 + 写后自动校验 + 审计日志在兜底;A/B 有选择偏差,Manager 注入 facts 的样本系统性落 control,实验只覆盖窄假设。栈是 Nuxt4 加 LangGraph。</p>
 </div>
 </div>
+<div class="card" data-c="proj" data-g="Code 智能体" data-kw="具体实现 数据结构 怎么设计的 讲讲细节 向量检索 自研 余弦 相似度 JSON 内存 sha256 增量 不用Chroma 不用向量库 top-k 落盘 经验库 切块 缓存">
+  <div class="card-head"><span class="tag proj">实现</span><div class="card-title">向量检索不用 Chroma 自研，具体数据结构和算法怎么实现</div></div>
+  <div class="core">两套独立的自研 JSON 向量库——代码文件索引按 chunk 存向量、经验库存成功 Q&A；都是磁盘 JSON 加进程内 Map 缓存加内存余弦 top-k，sha256 逐文件比内容指纹、没变就跳过重算 embedding。</div>
+  <div class="card-body">
+    <p><strong>数据结构 / 形态。</strong>两套独立的自研向量库，磁盘 JSON 加进程内 Map 缓存。代码文件索引的 schema 是 <code>{version, root, embeddingModel, files: {路径: {sha256, chunks: [{startLine, endLine, vec, snippet}]}}}</code>，每个 <code>{root, embeddingModel}</code> 组合对应 <code>.data/vector-index/</code> 下一份哈希命名的 JSON；进程内 <code>vectorIndexCache</code> 按 key 单例加载、脏了才落盘，写盘走 tmp 文件加 rename 的原子写。经验库是另一份 <code>.data/code-experience-vectors.json</code>，一个数组每行 <code>{id, ts, question_norm, question, vector, hint, task_kind, hint_files}</code>，slice 保留最近 300 条，query embedding 还带短 TTL 的内存缓存避免重复算。两套都没有外部向量库进程，打开 JSON 就能 grep 调试。</p>
+    <p><strong>核心算法 / 流程。</strong>余弦是教科书公式 <code>dot/(|a|·|b|)</code>，一遍 for 循环算点积加两个模长，零模长直接返回 0；两处实现略有差别——文件索引用 <code>Math.min</code> 容忍不等长向量，经验库严格等长。文件检索 pipeline：walkFiles 捞全仓文件 → query 分词去停用词后按路径子串命中数打分取前 60 候选（廉价路径预筛，不是真 BM25）→ 逐个 <code>fileSha256</code> 比指纹、没变跳过重算 → 变了就 readText、按字符预算切块（相邻块重叠几行）、批量 embedDocuments 写回索引 → query 自己 embedQuery 后对每个候选文件挑余弦最高的 chunk、按文件排序取 top-10；两个 API 入口的默认上限是 800 文件 / 60 候选 / 10 结果。经验库召回是线性扫全表、<code>score ≥ 0.72</code> 过滤、按 task_kind 匹配加权、取 top-3。</p>
+    <p><strong>为什么自研、拒绝了什么。</strong>向量库自研 JSON 加内存余弦，拒绝 Chroma / Milvus 这类专业向量库：代码仓就几百到上千个 chunk、内存装得下，上专业库等于引入进程依赖、运维负担和调试黑盒，换来的 ANN 索引在这个规模用不上；代价是大仓库和低延迟并发扛不住（全量线性扫描、没 HNSW）。增量更新用 sha256 内容指纹而不是 git 钩子或全量重算：<code>fileSha256</code> 以固定大小缓冲流式读文件算哈希，索引里每个文件存的就是它内容的 sha256，查询时逐文件比、变了才重算 embedding、没变直接复用旧向量；拒绝 git 钩子是因为它耦合仓库生命周期、跟查询时机错位，内容指纹在查询时惰性算、不依赖外部事件，全量重算又每次都付 embedding 成本。</p>
+    <p><strong>踩坑和边界。</strong>研究型原型，跑的是 demo 级仓库，没接真实业务流量，召回质量小范围验证过、没建 labeled query set 测 recall@K / nDCG 这类检索排序指标，是已知评测债。规模上限要诚实承认：文件索引和经验库都是全量线性余弦、没 ANN，进程内 Map 缓存重启就丢，真上量级得换近似检索加专业落库。embedding 走 <code>@langchain/openai</code> 的 OpenAIEmbeddings、默认 <code>text-embedding-v3</code>，向量维度是模型决定的、源码里没硬编，不临时报数字。同一套 sha256 也用在写盘的乐观锁上——writeText 带 expectedSha256，文件读后被改过就抛 "File has changed" 拒写，跟向量增量是同一个内容指纹思路的两种应用。</p>
+    <p><strong>代码在哪。</strong><code>server/services/vectorSearch.ts</code> 看文件索引的 schema、cosineSimilarity、runVectorSearch 全流程；<code>server/utils/code_experience_vectors.ts</code> 看经验库 row 结构、question_norm dedup、top-3 召回；<code>server/utils/files.ts</code> 的 fileSha256 看流式分块哈希、writeText 看乐观锁；<code>server/api/vector-search.post.ts</code> 和 <code>retrieve.post.ts</code> 看默认参数（800 / 60 / 10）。</p>
+  </div>
+</div>
+
 
 <div class="card" data-c="proj" data-g="Code 智能体" data-kw="ReAct Tool Use 循环 think act obs 为什么选 范式选型 Plan-and-Execute ReWOO 探索式 token贵 Manager对比 自测">
   <div class="card-head"><span class="tag proj">范式</span><div class="card-title">ReAct / Tool Use 循环怎么转（自测①）</div></div>
@@ -2388,6 +2412,18 @@ function buildTreeOptimized(list) {
   <p><strong>沉淀成方法论</strong>就一句话:单一事实源 + 证据链 + 多层门控,我管它叫 AI 产出可信三支柱——只要 LLM 在产出结构化结论且要求可信,这套都成立。局限得讲清:团队模式准确率有明显损耗,大概 60% 对单仓的 80%,根因是 Pull-based 设计禁止主动搜源码、跨仓契约对不上;5h → 2h 是前后工时对比、不是严格 AB,团队规模小没法随机分组双盲,下次有条件会补。栈是 Claude Code 插件,/reference 加 /prd-distill。</p>
 </div>
 </div>
+<div class="card" data-c="proj" data-g="PRD 工作流" data-kw="具体实现 数据结构 怎么设计的 讲讲细节 reference 蒸馏 SSOT 单一事实源 6文件 领域文件 prd-distill Claude Code 插件 boundary 跨文件引用 去重 evidence Phase 扫描 6 个 yaml schema">
+  <div class="card-head"><span class="tag proj">实现</span><div class="card-title">/reference 蒸馏出来的 6 个文件具体怎么生成、怎么保证每条事实只存一处</div></div>
+  <div class="core">6 个 yaml 按知识在开发生命周期里的角色切，每条事实只在一个文件落户、其他文件用 contract_ref / ref_rule 这类 ID 引用；/reference 走 6 个 Phase，Phase 3 五个子阶段顺序产出五个领域 yaml、后生成的必须查先生成的去重。</div>
+  <div class="card-body">
+    <p><strong>数据结构 / 形态。</strong>6 个核心 yaml 按"知识在开发生命周期中的角色"单一维度切（ADR-0001），每个文件模板顶部都写 <code>boundary:</code> 一行声明只放/不放什么。<code>project-profile.yaml</code> 是项目画像——layer、tech_stack、entrypoints、capability_surfaces、related_repositories，回答"这是什么项目"。<code>01-codebase.yaml</code> 是静态清单——directory_tree、enums（每个值带从源码注释提取的 label）、modules、registries、data_flows、external_systems、structures，只列字段名不放字段类型。<code>02-coding-rules.yaml</code> 是编码规则——rules 用 <code>severity: fatal|warning|info</code> 区分软硬约束，外加 danger_zones 和 war_stories。<code>03-contracts.yaml</code> 是字段级契约的唯一权威源——request_fields/response_fields 的 type、required、producer、consumers、checked_by、alignment_status。<code>04-routing-playbooks.yaml</code> 是 PRD 路由——capability_inventory（已有能力清单）、prd_routing（信号→能力面映射）、playbooks（开发步骤只在这里）、golden_samples。<code>05-domain.yaml</code> 是业务领域——terms、implicit_rules、decision_log，术语如果能归到 01 的枚举就用 <code>see_enum:</code> 引用、不复制。每条事实带 <code>evidence[]</code>（kind: code|prd|tech_doc|git_diff|negative_code_search|human|api_doc）加 <code>confidence: high|medium|low</code>。</p>
+    <p><strong>核心算法 / 流程。</strong>/reference 走 6 个 Phase：Phase 1 上下文收集自动扫 <code>prd-docs/</code> 里的历史 PRD 和技术方案产出 context-enrichment.yaml；Phase 2 结构扫描用 rg/glob 限定本仓、按 frontend/bff/backend 选能力面适配器，产出 modules-index.yaml 同时沉淀 project-profile.yaml；Phase 3 深度分析有五个子阶段顺序生成五个领域 yaml——先 01-codebase，再 02-coding-rules（查 01 去重），再 03-contracts（字段级信息从 01 移出），再 04-routing-playbooks（查 02 去重），最后 05-domain 加 00-portal.md（导航入口），每个子阶段文件末尾有 Self-Check 清单、过了才进下一步；Phase 4 质量门控跑文件完整性、证据闭环、源码一致性、五条边界规则、幻觉检查加 golden sample 回归，产 quality-spec.yaml；Phase 5 跑 <code>build-index.py</code> 解析源码产出 entities.json/edges.json/inverted-index.json 给 /prd-distill 检索用。Mode F→A 走完整 Phase 1-5，Mode B 增量只跑受 git diff 影响的子阶段，Mode B2 健康检查只跑 Phase 4。跨文件引用规则是关键：字段 type/required 只在 03、其他用 contract_ref，编码规则只在 02、playbook 步骤用 ref_rule，开发步骤只在 04 的 playbook，术语只在 05，外部 endpoint 详情只在 03、01 用 contract_ref 引用——这就是"每条事实只存一处"靠的机制。</p>
+    <p><strong>为什么自研、拒绝了什么。</strong>SSOT 拒绝多处冗余存储：ADR-0001 做的 10 文件→6 文件重构，根因是旧版同一事实平均出现 2-5 次、模板字段语义重叠、7 个模板缺 boundary 声明生成时不知道该放哪；散多处正好给 AI 编造空间，它会挑一份顺口的用。三个机制堵——boundary 声明、跨文件 ID 引用、step-02 末尾五条去重检查；代价是去重目前主要靠 prompt 约束、还没有 deterministic duplicate checker（ADR-0001 自己列的已知风险）。按角色切 6 文件拒绝一个大文件或全量塞 PRD：单文件塞所有知识打爆 context window、人也读不动，6 文件按角色切让 /prd-distill 按需加载相关层、spec 阶段不必读全 6 个。Claude Code 插件形态拒绝独立 SDD 平台：复用 CC 的 rg/glob、Read、Skill 加载、slash 命令入口，零外部依赖、一个 install.sh 装到目标项目就跑，不重新发明编辑器集成、权限模型、UI，专注 PRD 蒸馏逻辑本身。</p>
+    <p><strong>踩坑和边界。</strong>团队模式 Pull-based 是有意取舍不是 bug——ADR-0012 选 pull-based 不选 push-based，团队仓只读成员仓 reference、禁止主动 rg/glob 跨仓搜源码（避免跨仓误读），代价是失去源码验证能力、跨层 contract-delta 大量标 pending、精度天花板受制于 min(各仓 reference 质量)；损耗数字是 readiness 评分推算、不是线上统计，Sprint 4 引入 A2A 协议向各仓 Agent 问源码来收窄。团队规模按 ADR-0005 实际口径是 1-5 人小范围试用、不是生产级铺开。5h→2h 是 5 个需求的前后工时对比、不是严格 AB（团队规模小没法随机分组双盲）。Evidence Index 当前只支持 TypeScript/JavaScript 和 Go，其他语言项目只能靠 reference 主产物、不能享受确定性代码锚点检索。reference 是 Claude Code 插件不直接生成代码——/prd-distill 产出 spec.md 和 plan.md（开发计划）就停，下游 Cursor / Claude Code 接着写代码、不重复造写代码的轮子。</p>
+    <p><strong>代码在哪。</strong><code>plugins/reference/skills/reference/workflow.md</code> 看 Phase 1-6 和 Mode→Phase 映射表；<code>plugins/reference/skills/reference/templates/</code> 下的 <code>project-profile.yaml</code> 加 <code>01-codebase.yaml</code> 到 <code>05-domain.yaml</code> 看每文件 schema 加 boundary 声明；<code>steps/step-02-deep-analysis.md</code> 看 Phase 3 五子阶段生成指令加 Self-Check；<code>steps/step-03-quality-gate.md</code> 看五条边界门控；<code>docs/adr/0001-reference-SSOT优化.md</code> 看 10→6 重构和去重收益数字；<code>docs/adr/0012-团队公共知识库聚合与继承.md</code> 看 Pull-based 团队模式设计取舍。</p>
+  </div>
+</div>
+
 
 <div class="card" data-c="proj" data-g="PRD 工作流" data-kw="Spec Plan 产物 章节格式 结构化 需求分析报告 开发计划">
   <div class="card-head"><span class="tag proj">架构</span><div class="card-title">AI工作流产出的Spec和Plan长什么样？</div></div>
@@ -2869,6 +2905,17 @@ function buildTreeOptimized(list) {
   <p class="hint">Schema 项目主陈述卡，被让展开项目时翻这张。五步每段约 20-30 秒、总 2 分钟左右；②本质矛盾和⑤方法论是加分点，别跳过直接讲技术。</p>
 </div>
 </div>
+<div class="card" data-c="proj" data-g="前端项目" data-kw="具体实现 数据结构 怎么设计的 讲讲细节 dAction 联动引擎 双求值 渲染 DSL 声明式 依赖图 静态校验 精确更新 求值 injectDActions 拓扑排序 反向追溯">
+  <div class="card-head"><span class="tag proj">实现</span><div class="card-title">联动引擎怎么从零造的：dAction 双求值</div></div>
+  <div class="core">一条 dAction 声明联动，injectDActions 在 BFF 和浏览器各求值一次，依赖图反向追溯做精确更新，而非全量重渲染。</div>
+  <div class="card-body">
+    <p><strong>数据结构 / 形态。</strong>dAction 是声明式联动 DSL，每条联动声明是一组字段：`source` 字段路径（如 `form.city`）+ 触发事件（change/input/blur）+ `target` 字段路径 + `action`（visible/disable/setValue/setEnum/required 之一）+ 一段表达式或函数引用；组件值通过路径拍平后用 `{{path}}` 模板表达式引用。Schema 解析阶段把所有 dAction 收集成依赖图——节点是字段，边是联动依赖并带 action 类型。这张图是静态校验和运行时精确更新的共同数据结构。</p>
+    <p><strong>核心算法 / 流程。</strong>injectDActions 双求值分两轮跑。渲染期在 BFF/SSR 侧：扫描 Schema 收集 dAction、对依赖图做拓扑排序、按序求值每条联动算出字段初始态（可见/禁用/默认值/选项），序列化进 HTML——首屏出来的就是联动后的正确状态，不等前端 JS 加载。运行期在浏览器：把同样的 dAction 规则重新建图，用户操作触发 source 字段变更，沿依赖图反向追溯到受影响的 target，只对这些字段重新求值并按 action 回写——不跑全量 diff。跨接口联动（需后端数据）走另一路：回 BFF 取新 Schema 片段再合并，本地 state 型联动不等网络。</p>
+    <p><strong>为什么自研、拒绝了什么。</strong>联动 DSL 和求值调度都自研。DSL 层不用 Formily/Ajv——Formily 联动描述力覆盖不了城市→产品线→价格策略这种跨接口联动、且实现黑盒不可控，Ajv 只做结构校验不做带副作用的联动求值。调度算法也自研：构建期把依赖图算死，拒绝 React Context + 状态提升那套全量订阅 diff——四百+ 组件配置页每改一个字段全量 diff 一次会卡；也拒绝 MobX 这类运行时自动收集依赖的方案，因为联动声明是静态的，构建期就能把依赖图算死，让运行时再 trace 依赖是浪费。</p>
+    <p><strong>踩坑和边界。</strong>静态校验在构建期能拦三类问题：dAction 引用了不存在的字段、联动形成循环依赖、action 类型跟 target 字段类型不匹配（比如对 string 字段下发 setEnum）。运行时跨接口联动的失败仍要靠 reason tag 分层报警兜底，不只靠引擎本身。诚实边界：这套引擎为<strong>配置类页面</strong>设计——表单结构稳定、联动可声明式描述；400+ 是<strong>组合数</strong>非组件数（底层 24 个基础组件 + 三十多个定制组件，组合出 400+ 配置形态）；它服务的是内部国际化 B 端业务，没接过 C 端真实流量，不直接迁移到 C 端自由布局或数据可视化大屏。</p>
+  </div>
+</div>
+
 
 <div class="card" data-c="proj" data-g="前端项目" data-kw="事故 线上故障 滴滴 崩溃 两地部署 华南 容灾 基础设施 吸取教训 监控 降级">
   <div class="card-head"><span class="tag proj">Schema</span><div class="card-title">线上事故反思 + 基础设施架构判断</div></div>
