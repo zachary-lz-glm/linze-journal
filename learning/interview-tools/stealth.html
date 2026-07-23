@@ -2759,9 +2759,9 @@ function buildTreeOptimized(list) {
 
 
 <!-- ==================== 微前端专项 ==================== -->
-<div class="card" data-c="proj" data-g="PRD 工作流" data-kw="上下文管理 context pack 能力面 适配器 搜索 代码定位 Reference 索引">
-  <div class="card-head"><span class="tag proj">架构</span><div class="card-title">代码上下文怎么精准定位？</div></div>
-  <div class="core">知识库路由优先定向 → 索引精确扫描 → 全局搜索补充，三轮逐步精准</div>
+<div class="card" data-c="proj" data-g="PRD 工作流" data-kw="上下文管理 context pack 能力面 适配器 搜索 代码定位 Reference 索引 超上下文 漏文件 怎么拆 调度 不超 token 全仓">
+  <div class="card-head"><span class="tag proj">架构</span><div class="card-title">代码上下文怎么定位、怎么不超 context 不漏文件？</div></div>
+  <div class="core">知识库路由优先定向 → 索引精确扫描 → 全局搜索补充，三轮逐步精准——本质是不喂全仓、把范围收窄到定向文件，上下文压到 ≤800 行</div>
   <div class="card-body">
     <p><strong>给AI提供了什么</strong>：两层。①静态层：6个YAML知识库（目录/枚举/契约/路由映射/编码规则/领域术语）+ 4个索引文件（实体/边/倒排索引/清单）；②动态层：运行时按需求搜索源码。</p>
     <p><strong>三阶段扫描</strong>：Phase1 Reference路由（04-routing-playbooks匹配关键词→定向文件路径）→ Phase2 Index精确扫描（context-pack.py构建查询计划匹配实体）→ Phase3 rg/glob补充（覆盖未命中）。</p>
