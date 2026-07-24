@@ -1,0 +1,14 @@
+<div class="card" data-c="proj" data-g="PRD 工作流" data-kw="追问 对比 Devin autonomous IDE 插件 开源 护城河 Copilot 追上 依赖 Claude Code 风险 prompt engineering 套壳 反驳 v0 bolt.new 团队推广">
+  <div class="card-head"><span class="tag proj">追问</span><div class="card-title">对比市面工具高频追问</div></div>
+  <div class="core">和 Devin / Copilot / Cursor / IDE 插件 / 套壳 反驳的预判追问,答案对照源码</div>
+  <div class="card-body"><ul class="points">
+    <li><strong>和 Devin 区别?</strong>Devin 是 autonomous 端到端 agent——给目标自己规划、写代码、跑测试、提 PR,人只在关键节点 review,赢在自主性、输在可控性。prd-tools 反过来:聚焦 PRD→Plan 这一段、产物是计划不是代码、Spec Review Gate 硬停等人确认才继续、每步挂 evidence_id 可回溯;窄管道人机协作。</li>
+    <li><strong>为何不做 IDE 插件?</strong>CC 插件靠一份 Skill 文件分发,团队推广成本最低;IDE 插件要适配 VS Code/JetBrains/Cursor 多家、维护 UI、版本升级分散重点。而且 prd-tools 产物是计划,本来就该喂给任何 IDE 让人执行、不该绑死某家 IDE。Skill 纯 Markdown 零外部依赖,CC 更新影响主要在工具调用约定。</li>
+    <li><strong>开源吗?</strong>目前是个人项目、内部小范围试用(git log 提交者 1–2 人、ADR-0005 自报团队 1–5 人),开源没排上日程。真要开源主要卡在 reference 模板和 layer 适配器需要按业务域调,直接放出去别人拿来跑不出效果,得先配几套不同技术栈的 demo 模板。</li>
+    <li><strong>护城河到底是什么?</strong>诚实讲不在单点技术——倒排索引、Markdown Skill、门控脚本单独都不难复制。护城河在组合:reference 知识库(5 yaml + entities/edges/inverted-index)+ 证据链 8 类 + 门禁阈值体系 + benchmark 回归,加踩过的坑(数据泄露、Pull-based 简化、MCP 路线)是真资产。但范围窄、可被追上,靠特定场景深度不靠技术壁垒。</li>
+    <li><strong>Copilot 会不会追上?</strong>codegen 部分(从 0 到 1、单文件补全)它们已经领先、追不上也不用追;但"针对几万行存量项目的需求理解 + 证据链 + 门控"这条线是产品定位差异——Copilot 走代码任务广度、prd-tools 走计划可信度深度。短期它们关注点不在这,长期会不会专门做不好讲;reference 加适配器是领域资产、迁移门槛在业务不在技术。</li>
+    <li><strong>依赖 Claude Code 的风险?</strong>Skill 是纯 Markdown 指令、不调 src/ TS 运行时、用 Agent 原生工具(Read/Edit/Glob/Grep/Bash),换到别的 agent 框架代价相对小、主要是工具调用约定和上下文管理细节。CC 版本升级可能影响 Skill 行为是真实风险,靠 benchmark oracle 回归发现劣化;MCP 化是 ADR-0009 列的后续路线(Phase 5)、不是当前版本门槛。</li>
+    <li><strong>别人说这就是 prompt engineering 套壳,怎么反驳?</strong>单看 Skill 文件确实是 Markdown 指令,但项目不止 Skill——reference 构建脚本(build-index.py)、Readiness 评分脚本(quality-gate.py)、4 类校验脚本(check-syntax/fields/rules/integration)、benchmark oracle 5 维评分、auto-tune 六模块(registry/scorer/gap-analyzer/pattern-detector/loop-controller/bmad-optimizer),都是 deterministic 资产不靠 prompt。证据链 8 类和 negative_code_search 是机制约束不是 prompt 约定——模型不标 evidence 就过不了 Spec Review Gate。</li>
+    <li><strong>和 v0 / bolt.new 比多了"开发计划"这一层,有价值吗?</strong>v0/bolt.new 偏从 0 到 1 直接出代码、适合原型或新页面;存量项目里新需求往往是要改已有组件、改契约、改路由,直接生成代码会忽略历史约束。"计划层"的价值是把"改哪里/为什么/有什么风险"显式化、挂证据、过门禁,再交给人或代码生成工具执行——错在了计划层能兜住,不错到代码层。</li>
+  </ul></div>
+</div>
