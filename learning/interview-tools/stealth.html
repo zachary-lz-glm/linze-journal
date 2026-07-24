@@ -542,7 +542,7 @@ th{font-weight:600;color:#888;font-size:10.5px;letter-spacing:.02em}
   <div class="card-body">
     <p><strong>选 prd-tools</strong>（面试官对 AI 感兴趣）：最大难点是架构选型错误导致瓶颈。</p>
     <p>背景：市面上有Cursor、Windsurf这些从0到1的工具，但针对已有项目（几万行代码、大量历史逻辑），怎么让AI理解需求是空白领域。</p>
-    <p>弯路：一开始用MCP做，两周发现不管怎么优化prompt准确率就是上不去。定位到根因——MCP是单次调用模式，需求分析需要多轮上下文和复杂论证，这是架构级瓶颈不是调优能解决的。</p>
+    <p>弯路：一开始用 MCP 做（当时它是给 AI 接工具的标准协议，很自然就选了），调试很长一段时间准确率就是上不去。定位到根因是问题形态错配——MCP 是"模型驱动、单次调用"的工具总线，而 PRD 蒸馏是多步、有状态、带门控的编排问题；用 MCP 等于把确定性的流水线交给概率，这是架构级瓶颈、不是调优能解决的。</p>
     <p>突破：转向Agent+Skill工作流模式，结合自研Reference六文件SSOT + 多轮搜索 + 证据链验证，PRD→Plan 从 5h/需求降到 2h/需求。</p>
     <p><strong>选 Schema 引擎</strong>（偏传统前端）：月均10+bug → 自研Schema渲染引擎 → 归零。</p>
     <p class="hint">优先选AI方向，先说背景痛点30秒→弯路30秒→突破方案1分钟，控制在2分钟内。</p>
@@ -3204,7 +3204,8 @@ function buildTreeOptimized(list) {
   <div class="card-body">
     <p><strong>整体长什么样。</strong>prd-tools 拆两个 Claude Code 插件:reference(DEFINE 阶段,长期知识库,8 模式覆盖构建、增量、反馈回流)+ prd-distill(PLAN 阶段,单次 PRD 蒸馏 11 步),各一个 Skill;prd2code-gen 再把 build-reference → prd-distill → bff-gen 三个 Skill 串起来,从 PRD 一路走到 BFF 代码。横在中间的是能力面适配器 layer-adapters,前端 9 个 surface、BFF 10 个、后端一组(api_surface、domain_model 等),把不同项目千差万别的目录抽象成统一的关注维度。</p>
     <p><strong>怎么跑。</strong>适配器先把 PRD 需求点映射到对应的代码能力面——走哪层、动哪个 surface,reference 按需只加载涉及的那一层、不全量塞。Skill 本身是纯 Markdown 指令,由 Claude Agent 用原生工具(Read、Edit、Glob、Grep、Bash)执行,不调用 src/ 下的 TS;那部分是离线开发辅助(模板引擎、评测、auto-tune),跟 Skill 运行时解耦。蒸馏每步产出 YAML 中间文件,下一步读上一步状态往下走。</p>
-    <p><strong>为什么选 Skill、不选 MCP。</strong>选 Skill(纯 Markdown、零外部依赖)而不是 MCP Server,是因为 MCP 过早实现维护成本高、会分散 MVP 重点——ADR-0009 把 MCP Server 化列为 Phase 5 后续路线,源码从没实现过 MCP、不是试过放弃,代价是暂时没有跨客户端复用能力。拆双插件同理是为上下文隔离:项目知识理解和需求分析是两种认知任务,上下文混一起 AI 容易跳步、幻觉,拆开后各自独立上下文窗口、按需加载,代价是多一次加载、reference 得先建好 distill 才能用。</p>
+    <p><strong>为什么一开始用 MCP、后来换 Skill。</strong>这项目最早是用 MCP 做的——当时它是给 AI 接工具的标准协议、很热,自然就选了。但调试很长一段时间准确率上不去,我定位到根因是问题形态错配:MCP 是"模型驱动、单次调用"的工具总线,解决的是"怎么把 N 个能力暴露给模型让它自己挑";而 PRD 蒸馏是一条 11 步、有状态、带硬门控的流水线,每步产出喂下一步、还要过证据门禁。用 MCP 等于在工具服务器之上再用 prompt 重写一遍编排,而编排恰恰是我要用确定性保证的——等于把确定性流水线交给概率。换成 Claude Code Skill(纯 Markdown、零外部依赖)+ Agent 工作流后,流水线顺序系统说了算、上下文跨步持续、门禁代码级硬停,效果和可控性都好很多;代价是暂时没有跨客户端复用(MCP Server 化留作后续,场景对了再做)。教训一句话:选型先对齐问题形态,MCP 适合"模型自主选工具",编排问题不该用它。</p>
+    <p><strong>为什么拆双插件。</strong>reference(建知识库)和 prd-distill(单次蒸馏)是两种认知任务,上下文混一起 AI 容易跳步、幻觉,拆开后各自独立上下文窗口、按需加载,代价是多一次加载、reference 得先建好 distill 才能用。</p>
     <p><strong>代价和边界。</strong>双插件多了协调成本,中间文件传递和状态一致性要靠门禁兜;能力面适配器换新项目得先把 surface 划分配置一遍,不能开箱即用;整条链路绑 Claude Code 运行时,跨客户端复用要等 MCP 化。目前是个人原型探索、非生产级闭环,reference 召回率还没有 labeled query set 量化,eval 是债。</p>
   </div>
 </div>
@@ -3249,7 +3250,7 @@ function buildTreeOptimized(list) {
   <div class="core">双插件为何不合一、MCP 为何不做、能力面怎么抽象、上下文隔离、耦合度、可扩展——一句话接</div>
   <div class="card-body"><ul class="points">
     <li><strong>双插件为什么不合并成一个?</strong> reference(建库、长期)和 prd-distill(蒸馏、单次)是两种认知任务,上下文混一起 AI 跳步幻觉;拆开各一个独立上下文窗口、按需加载,代价是多一次加载、reference 要先建好 distill 才能用。</li>
-    <li><strong>MCP 为什么不做?</strong> MCP 从没实现过、不是试过放弃;ADR-0009 把 MCP Server 化列为 Phase 5 后续路线,理由是过早实现维护成本高、分散 MVP 重点,Skill(纯 Markdown、零外部依赖)当前够用。</li>
+    <li><strong>MCP 为什么不做?</strong> 早期用 MCP 做过、调试很久效果不好——根因是问题形态错配(MCP 是模型驱动的工具总线,蒸馏是多步有状态的编排,用 MCP 等于把确定性交给概率);换成 Skill+Agent 工作流后效果和可控性都好很多。MCP Server 化列为后续路线(ADR-0009),等跨客户端复用需求强、场景对了再重新评估。</li>
     <li><strong>能力面是怎么抽象出来的?</strong> layer-adapters 定义前端 9 / BFF 10 / 后端一组 surface,每个是一种关注维度(路由、组件、契约、状态);按关注点不按目录,路径只是搜索候选、读源码确认才进 reference,换项目不用改模板。</li>
     <li><strong>上下文隔离具体怎么落?</strong> 先判 PRD 涉及哪层(前端/BFF/后端),只加载该层 reference 文件和能力面;reference 和 distill 分两个 Skill 独立上下文窗口,靠 YAML 中间文件传状态,不全量塞知识。</li>
     <li><strong>绑 Claude Code 运行时,耦合度多高?换框架代价?</strong> 耦合在 CC 的 Skill 机制 + 原生工具(Read/Edit/Grep);Skill 是纯 Markdown 理论可迁,但 8 模式、门禁脚本、评测围绕 CC 生态建,换 agent 框架要重做工具层;src/ 的 TS(模板/评测)与运行时解耦、可独立复用。</li>
@@ -3675,7 +3676,7 @@ function buildTreeOptimized(list) {
     <li><strong>怎么说服团队用它、不是继续手写?</strong> 王牌 case 示范(班次签到、油站做过对照实验有真实数据)+ 停 PRD→Plan 低风险环节先推(人工确认才开发)+ 赋能不替代定位;拒绝"写个 README 等别人来用"。</li>
     <li><strong>ROI 怎么算的、最硬的数字是哪个?</strong> 5h→2h 是前后工时、非严格 AB;单团队建库 1-2 天一次性投入,之后每需求省约 2-3h 评审(试点推算),含协同成本整体提效约 20-30%;没建严格 AB,都是试点推算口径。</li>
     <li><strong>推广失败过吗、栽在哪?</strong> 代码生成段推广最吃力——质量责任划分难落地是硬卡点,所以战略后退停在计划层;PRD→Plan 段也只敢在已完成需求上做前后对照、不是真实流量环境。</li>
-    <li><strong>后续怎么扩大、规划是什么?</strong> reference 知识库共建拉参与 + 试点数据内部分享 + 逐步扩大;MCP Server 化列为未来路线(ADR-0009 Phase 5),当前是 Claude Code Skill 形态、MCP 从未实现。</li>
+    <li><strong>后续怎么扩大、规划是什么?</strong> reference 知识库共建拉参与 + 试点数据内部分享 + 逐步扩大;MCP Server 化列为未来路线(ADR-0009),早期试过效果不好已换 Skill,后续若跨客户端复用需求强、场景对了会重新评估。</li>
     <li><strong>生成的代码不符合团队 code style/架构规范怎么办?</strong> 代码生成段是原型探索、非生产级、不主推;prd-tools 聚焦计划层(spec/plan)不直接生成代码,和 code style 无直接冲突。</li>
     <li><strong>现在算 PoC、内部工具,还是生产级?</strong> 研究型原型、个人/极小团队探索,没接真实业务流量;PRD→Plan 段小范围试用、代码生成段非生产级闭环,成熟度按"原型探索"口径讲最安全。</li>
   </ul></div>
