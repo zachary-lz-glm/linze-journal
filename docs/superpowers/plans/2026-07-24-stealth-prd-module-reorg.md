@@ -25,6 +25,23 @@
 - stealth.html 单页大文件,组装用 **Python 锚点 + 原子写**,不用多次 Edit;agent 产独立 fragment,主会话统一组装(并发改同文件防护,GUIDE §4.6)。
 - **每 agent prompt 写死「只产出指定 fragment 文件,禁碰 stealth.html、禁碰其他卡、禁碰 GUIDE/README/配置、禁改源码项目(只读)」**(memory [[agent-scope-constraint]])。
 
+## ⚠️ 源码核对修正(2026-07-24 · Task 4 产出 · 覆盖映射表冲突)
+
+源码核对 `learning/interview-tools/.prd-facts.md` 发现以下口径与映射表/简历/现有卡冲突,**写卡一律以 .prd-facts.md 为准**:
+
+1. **MCP 不是"踩坑放弃",是从未实现**(ADR-0009 列未来路线 Phase 5)。③主卡「为何自研」写:选 Skill(纯 Markdown)形态而非 MCP Server,因 MCP 过早实现维护成本高、分散 MVP 重点。**禁写"踩过 MCP 的坑/两周发现不行"**。(A5 卡 line546 有此叙事但出本 reorg 范围,已标记给用户。)
+2. **"60% 准确率"❌** = readiness warning 阈值,非准确率。②的 `2309` → **重写** `.prd-m2-loss.html`:损耗在 PRD 长尾细节(数值/枚举/边界)向 IR 转译;靠 source_blocks+evidence+coverage gate 防漏,别报百分比。
+3. **"map-reduce"❌** 源码未用(2293 core 有此词)。②的 `2293` → **重写** `.prd-m2-context.html`:图片分批并行(≤8张)+ 代码扫描三阶段(Reference 路由→补充扫描→汇总)+ context-pack ≤800 行。
+4. **auto-tune 无 llm-judge**❌ 评分是 deterministic 5 维规则(scorer.ts)。⑤的 `2534` → **重写** `.prd-m5-eval.html`:auto-tune = registry(用例注册)+ scorer(5维确定性)+ gap-analyzer + pattern-detector + loop-controller + bmad-optimizer(对抗评审)。**禁"LLM-as-Judge"**。
+5. **"Tool 识别率"❌** 源码无此指标(2609 premise)。⑦的 `2609` → **重写** `.prd-m7-stability.html`:prd-tools 纯 Skill 无 function-calling 识别率问题;输出稳定靠确定性优先(模板0token)+4类校验+3次差异重试+A→B→A 震荡检测。
+6. **"6 yaml"⚠️ 不严谨**:①主卡用"5 数据 yaml(01-codebase/02-coding-rules/03-contracts/04-routing-playbooks/05-domain)+ project-profile + 00-portal 导航;index 4 文件(entities/edges/inverted-index/manifest)"。自研索引 = "正则扫描的实体+倒排索引辅助层"(非知识图谱/AST/向量)。
+7. **R01/R02 不是"稳定提升14分"⚠️**:班次签到 case +14(54→68);油站清理数据泄露后真实 +9(38→47),泄露虚高 +35;benchmark oracle gasstation 单 case 97。⑤ m5-5h2h 按此诚实写。
+8. **"7层幻觉防御"❌**(ADR-0011 废弃未落地)。`2671` 说"四层"(证据链/negative search/Spec Review/Readiness,均真实机制)✅ 保留;主卡/追问**勿提"7层"**,用"多层"列真实机制。
+
+**assemble LAYOUT 已同步**:②`keep 2-3万字`→`frag .prd-m2-context`、`keep 团队模式准确率60`→`frag .prd-m2-loss`;⑤`keep AI工作流怎么优化`→`frag .prd-m5-eval`;⑦`keep Tool多了识别率`→`frag .prd-m7-stability`。Fragment 22→26(②+2/⑤+1/⑦+1 重写),keep-verbatim 32→28;最终 PRD-g 仍 55。
+
+---
+
 ## File Structure
 
 | 文件 | 责任 | 动作 |
