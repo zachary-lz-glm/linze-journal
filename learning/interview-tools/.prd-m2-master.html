@@ -1,0 +1,10 @@
+<div class="card" data-c="proj" data-g="PRD 工作流" data-kw="PRD 蒸馏 11步 流水线 pipeline 怎么跑 spec review gate 硬停 人确认 开发计划 拆步 一次性出plan 链条 落盘 可追溯 变更分类">
+  <div class="card-head"><span class="tag proj">◆ 蒸馏</span><div class="card-title">PRD 蒸馏这条 11 步流水线怎么跑</div></div>
+  <div class="core">11 步每步产出落盘可追溯，Spec 处硬停人确认才放行 Plan，拒绝一次性出 plan</div>
+  <div class="card-body">
+    <p><strong>数据结构 / 形态。</strong>/prd-distill 是一条 11 步流水线，每步产出独立落盘成文件：①PRD 摄入(<code>_ingest/document.md</code> + evidence-map) → ②证据账本(<code>evidence.yaml</code>) → ③需求 IR(<code>requirement-ir.yaml</code>) → ④代码搜索与层影响(<code>graph-context.md</code> + <code>context-pack.md</code> + <code>layer-impact.yaml</code>，这步内含 5 个子步骤 4.1-4.5) → ⑤契约差异(<code>contract-delta.yaml</code>) → ⑥Spec(<code>spec.md</code> §1-§9) → ⑦Spec 硬停人确认(<code>spec-confirmation.yaml</code>) → ⑧Plan(<code>plan.md</code> 11 章节) → ⑨Readiness 五维评分 → ⑩Reference 回流建议 → ⑪质量门禁脚本(<code>quality-gate.py final</code>)。</p>
+    <p><strong>核心算法 / 流程。</strong>链条式串联：前一步的产出文件就是下一步的唯一输入，不是模型靠上下文记忆。Evidence Ledger 产出 <code>evidence.yaml</code>，Requirement IR 消费它给每条需求挂 evidence ID；IR 产出后 Step 4 才知道去搜哪些代码符号；代码搜索产出 context-pack，Spec 才能写"这条改动锚到哪个文件"。链条断了——某步产出缺字段或置信度 low——下一步能直接定位是哪步漏了，不用重跑全程。</p>
+    <p><strong>为什么拆 11 步、拒绝了什么。</strong>拒绝一次性让 LLM 端到端出 Plan。一次性出 plan 质量全靠模型自觉、不可控：PRD 哪条需求没证据、改动是新增还是改旧、契约差在哪层，全糊在一个 prompt 里，错了没法定位是哪个环节错。拆成每步落盘 + Step 7 Spec Review Gate 硬停——<code>spec.md</code> 生成后必须 <code>status: approved</code> 才允许进 Plan，<code>pending / needs_revision / blocked</code> 都挡住——把质量责任明确压到人确认这个节点。代价是流程长、有硬停，换的是每步可审计、错误不向下传染、Plan 拿到的 Spec 一定是人审过的。</p>
+    <p><strong>踩坑和边界。</strong>变更分类(Step 3 IR 的 <code>change_type: ADD | MODIFY | DELETE | NO_CHANGE</code>)是最难一步——不知道项目现状就分不清新增还是改旧，MODIFY/DELETE 还必须有 code_anchor，这条深挖见「PRD 到代码最难的一步」。2-3 万字大 PRD 靠图片分批并行 + 代码三阶段扫描 + context-pack 压 800 行(见另卡)，不截断。蒸馏损耗主要在 PRD 长尾细节(数值约束/枚举/边界条件)向 IR 转译那一环，靠 source_blocks + evidence 追溯 + coverage gate 防漏，不报准确率百分比。11 步最不稳定的是变更分类和契约差异，都依赖代码现状判断；Readiness 是就绪度评分(85/60 阈值)，和 benchmark oracle、bff-gen scorer 是三套不同的评分别混。这是个人原型探索阶段的流水线，非生产级闭环。</p>
+  </div>
+</div>

@@ -1,0 +1,14 @@
+<div class="card" data-c="proj" data-g="PRD 工作流" data-kw="追问 11步 为什么 权重 阈值 哪步不稳定 spec门控 颗粒度 ground truth 信息丢 change_type 死循环 行号">
+  <div class="card-head"><span class="tag proj">追问</span><div class="card-title">11 步蒸馏这条流水线会被怎么追问</div></div>
+  <div class="core">本模块高频追问 + 一句话答案(对照源码)</div>
+  <div class="card-body"><ul class="points">
+    <li><strong>11 步为什么是 11 步不是 5 步?哪步冗余?</strong> 每步产出独立落盘、是下步唯一输入，拆细为可审计可定位；Step 4 内含 5 子步骤(查询计划/图上下文/层影响/代码锚点/context-pack)算最重；简单 PRD 上 Step 10 回流和 Step 11 门禁可省，没有为拆而拆的冗余。</li>
+    <li><strong>Readiness 五维权重怎么定的?冷启动用什么值?</strong> prd_ingestion 20% / evidence_coverage 25% / code_search 15% / contract_alignment 25% / plan_completeness 15%，按"哪维漏了最致命"定——证据覆盖和契约对齐各 25% 最重；冷启动就用默认值，没跑大规模数据校准(诚实债)。</li>
+    <li><strong>阈值 85/60 怎么定?低于阈值会误删关键实体吗?</strong> 85-100 pass、60-84 warning 交 owner 确认、0-59 fail 阻塞。低于阈值不删实体，是阻塞整个蒸馏交人工；硬性降级(extraction-quality block / P0 契约 blocked / 多层缺 contract-delta)直接 fail。</li>
+    <li><strong>11 步里哪步最不稳定?</strong> 变更分类(Step 3 IR 的 change_type)和契约差异(Step 5)，都依赖代码现状判断；靠 Step 4 代码搜索 + code_anchor 兜。知道某步出错靠下一步消费时校验——IR 缺 evidence 下步报、契约 delta 标 pending 拉低 Readiness 分。</li>
+    <li><strong>Spec 确认门控是人工还是自动重跑?会死循环吗?</strong> Step 7 是硬门控，spec.md 生成后 status=pending，必须人 approved 才进 Plan；needs_revision 让人改 PRD 或补 reference 后重跑上游，blocked 直接停。故意卡住等人，不自动重跑，不会死循环。</li>
+    <li><strong>Plan 颗粒度到哪一级?</strong> plan.md 到"需求点 → 文件 + 改动内容"，不是行级代码；code_anchor 锚到"文件 + 符号"不到行号——行号会随源码漂移，符号级更稳。</li>
+    <li><strong>有 ground truth 对比吗?</strong> 有 benchmark oracle 5 维(requirement_recall 35 / code_anchor_accuracy 30 / blocker_quality 20 / plan_actionability 15 / false_positive_penalty -10，通过线 60)，gasstation 单 case 97 分；但这是离线 oracle，labeled query set 测 recall@K 还没建(诚实债)。</li>
+    <li><strong>两步之间信息丢了会基于残缺往下编吗?</strong> 不会闷头编——每步产出是下步输入，缺字段下步校验报；关键事实缺 evidence 标 low confidence 进 spec 暴露成 Open Question；Spec Review Gate 硬停让人确认，链条断点可定位。</li>
+  </ul></div>
+</div>
