@@ -169,6 +169,10 @@ body{
 .card[data-c="ai"]{--card-color:var(--c-ai)}
 .card[data-c="emer"]{--card-color:var(--c-emer)}
 
+/* 模块主卡 — 左金色边 + 金色标题，作 9 簇的分隔/导览 */
+.card.master{border-left:3px solid var(--core)}
+.card.master .card-title{color:var(--core)}
+
 /* 掌握度状态 — 左上角小角标 + 顶条颜色覆写 */
 .card[data-m="ok"]::before{background:var(--ok)}
 .card[data-m="review"]::before{background:var(--review)}
