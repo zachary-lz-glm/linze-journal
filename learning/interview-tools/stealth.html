@@ -730,7 +730,7 @@ th{font-weight:600;color:#888;font-size:10.5px;letter-spacing:.02em}
     <p><strong>为什么用 WebSocket。</strong>多轮对话、流式输出、确认/取消事件都更适合长连接，HTTP 单向请求撑不住整段长会话。WebSocket 入口在 manager-ws。</p>
     <p><strong>阶段事件（phase 协议）。</strong>不是一次性把结果返回，而是按阶段推事件——路由了、规划了、在执行哪个 Agent、等确认了、合成完了，前端能边收边渲染进度，用户看得到"现在到哪一步"。</p>
     <p><strong>为什么这样设计。</strong>多 Agent 任务耗时长、中间状态多，阶段事件让交互不卡在"转圈等待"，确认/取消也能在任意阶段插进来，配合 HITL 的暂停恢复。</p>
-    <p><strong>我的取舍。</strong>按阶段推事件、而不是等整段结果一次性返回，是我定的交互协议——本可以用 HTTP 轮询或 SSE（服务器推送事件），但多 Agent 任务耗时长、中间还要插确认取消，HTTP 撑不住长会话、SSE 又是单向推不了 confirm/cancel。选 WebSocket 长连接，代价是连接管理和鉴权更复杂，换来的是任意阶段能暂停、能续跑、能边收边渲染。</p>
+    <p><strong>我的取舍。</strong>按阶段推事件、而不是等整段结果一次性返回，是我定的交互协议。备选是 HTTP 轮询或 SSE——HTTP 撑不住长会话；SSE 其实配一个独立 POST 也能做 confirm（OpenAI、Anthropic 流式都用 SSE），不是我"做不了"。但我这是多 agent 编排器、几乎每步都要人工确认和中断取消，频繁双向、还要在一个连接里维护会话状态，WebSocket 全双工延迟更低、状态更干净——选型不是"SSE 不行"，是"频繁双向场景它更合适"，代价是连接管理和鉴权更复杂，换来任意阶段能暂停、能续跑、边收边渲染。</p>
   </div>
 </div>
 
