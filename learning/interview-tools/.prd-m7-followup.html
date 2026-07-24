@@ -1,0 +1,14 @@
+<div class="card" data-c="proj" data-g="PRD 工作流" data-kw="追问 实现 幻觉 上下文 漏文件 skill tool 边界 输出飘 归因 工错流 拦不住 震荡 debug 技术债 识别率 防幻觉 三阶段">
+  <div class="card-head"><span class="tag proj">追问</span><div class="card-title">实现深坑模块·高频追问</div></div>
+  <div class="core">实现层踩坑的预判追问,答案对照源码不照搬通用说法</div>
+  <div class="card-body"><ul class="points">
+    <li><strong>幻觉到底怎么防?</strong> 多层防幻觉:reference 建库证据门控 + distill 消费源码二次确认 + bff-gen 字段子集校验 + auto-tune 检测幻觉字段;源码里没有统一的"N 层"表述,是散落的多道机制,别报具体层数。</li>
+    <li><strong>上下文怎么不漏文件?</strong> Step 4.2 三阶段单向流水线(Reference 路由定向 → rg/glob 补充扫描 → 汇总成 ≤800 行 context-pack),不是三轮迭代;MODIFY/DELETE 会追踪引用链评估 blast radius。</li>
+    <li><strong>Skill 和 Tool 边界?</strong> Tool 是原子无状态能力,Skill 是多步有状态的过程编排(Markdown 指令);prd-tools 全用 Skill + Agent 原生工具(Read/Edit/Grep/Bash),不注册外部 function-calling 工具,零外部依赖。</li>
+    <li><strong>输出飘怎么治?</strong> 确定性优先:有模板走 Handlebars 零 token、无模板才走 LLM;再叠 4 类校验(syntax/fields/rules/integration)+ 3 次差异重试(只修报错字段)+ A→B→A 震荡检测(切整段重写)。</li>
+    <li><strong>出错怎么归因?</strong> 三维度:知识库缺失(触发 reference 回流补数据)、模型能力不足(加 prompt 约束和硬校验)、上下文不够(扩源码扫描召回);门禁脚本先定位是哪类再选对应修复动作。</li>
+    <li><strong>工错流拦不住咋办?</strong> 生成字段 ⊆ 蒸馏字段卡幻觉字段;四层防线(证据链溯源/negative_code_search/Spec Review 硬停/Readiness 兜底)拦无引用和编引用;语义错和源码误读拦不住,靠人工 Review,没建 labeled set 量化漏检率。</li>
+    <li><strong>A→B→A 震荡怎么发现的?</strong> 修正历史记到 validation.json 的 history 数组,检测到反复修正模式就切整段重写;触发场景是逐字段修时改过去又改回来、在两个状态间横跳。</li>
+    <li><strong>最难调的坑是什么?</strong> LLM 输出不稳定最难兜底——同输入不同次结果不同,最后靠"能走模板就走模板"把确定性场景剥离开,才把问题面收窄到长尾;项目是研究型原型、没接真实流量。</li>
+  </ul></div>
+</div>

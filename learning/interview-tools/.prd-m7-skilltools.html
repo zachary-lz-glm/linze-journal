@@ -1,0 +1,10 @@
+<div class="card" data-c="proj" data-g="PRD 工作流" data-kw="Skill Tools Function Calling 区别 粒度 状态 编排 原子 多步 Markdown 指令 零外部依赖 Agent 原生工具 Read Edit Grep Bash 不用 MCP 写代码调AI 声明式 命令式">
+  <div class="card-head"><span class="tag proj">◆ 实现</span><div class="card-title">Skill、Tools、Function Calling 到底什么区别</div></div>
+  <div class="core">Tool 给模型能力(原子、无状态),Function Calling 是底层调用机制,Skill 给模型判断力(多步、有状态、纯 Markdown 指令)——prd-tools 选 Skill 是要过程编排,不要堆工具</div>
+  <div class="card-body">
+    <p><strong>三者不在一个层面。</strong>Function Calling 是底层机制——模型识别意图后产出结构化调用、结果回灌继续推理,Tool 和 Skill 底层都可以走它。Tool 是原子能力的外部集成,一次调用一个结果(查接口、读文件),无状态、调完即止。Skill 是可复用的过程知识,是一组 Markdown 指令,定义多步骤编排、前置条件、中间产物传递、质量门控,整个流程有生命周期。</p>
+    <p><strong>关键差异在粒度和状态。</strong>Tool 解决"能不能调通"(能力问题),给模型"能做什么";Skill 解决"怎么每次都做好"(质量问题),指导已有能力的使用方式、不增加新能力。Tool 是工人手里的锤子扳手,Skill 是施工手册——手册不替人长出新手艺,但规定每步做什么、产出什么、什么算合格。</p>
+    <p><strong>prd-tools 为什么用 Skill 而不堆 Tool。</strong>整个项目是纯 Markdown 指令形态:workflow.md 管流程顺序、steps/ 管每步约束、中间 YAML/MD 文件管状态传递,由 Claude Agent 用原生工具(Read/Edit/Glob/Grep/Bash)执行,零外部依赖。src/ 下的 TypeScript 是离线开发辅助(模板引擎、评测、auto-tune),不是 Skill 运行时依赖。不注册一堆 function-calling 工具,是因为本项目难点不是"模型能力不够"而是"过程不可控"——堆工具解决不了过程编排,反而引入工具选择的额外不确定性。</p>
+    <p><strong>从写代码调 AI 迁到 Skill 的原因。</strong>早期也写过把 prompt hardcode 在 TypeScript 里的形态,改动要改代码重新部署、流程逻辑散在 if-else 里换人看不懂全貌。迁成 Skill 后 prompt 即配置、改 Markdown 就能调整,流程声明式定义一目了然,中间文件传递和质量门控是内置机制不用自己造轮子。本质是把调用方式从命令式升到声明式,和把 if-else 升成配置是同一个判断。</p>
+  </div>
+</div>

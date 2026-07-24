@@ -1,0 +1,10 @@
+<div class="card" data-c="proj" data-g="PRD 工作流" data-kw="错误 编造 工错流 流到产物 拦截 证据链 溯源 negative_code_search 负向搜索 Spec Review 硬停 Readiness 兜底 字段子集 幻觉字段 人工 Review 错误传染 11步">
+  <div class="card-head"><span class="tag proj">◆ 实现</span><div class="card-title">错误和编造怎么流到产物里、怎么拦</div></div>
+  <div class="core">错误沿流水线向下传染——靠"生成字段必须 ⊆ 蒸馏字段"卡幻觉,再叠产物侧四层防线把无引用、编引用的结论拦下,没拦住的兜底交人工</div>
+  <div class="card-body">
+    <p><strong>错误怎么流进来。</strong>蒸馏阶段一旦混入幻觉(编了不存在的字段或路径),错误会沿 11 步流水线向下传染——从 Requirement IR 进 spec、再进 plan、最后进 bff-gen 生成的代码,每多走一步错误被放大一次。所以拦法不是最后总评,是步步前置门禁。</p>
+    <p><strong>第一道:生成字段必须 ⊆ 蒸馏字段。</strong>bff-gen step-04/05 做字段子集校验——生成的字段必须是蒸馏 JSON 里已有字段的子集,凭空多出来的字段直接判幻觉、不允许进产物。这是从源头堵"编字段",对应 step-04-generate 和 step-05-validate 的字段比对逻辑。</p>
+    <p><strong>产物侧四层防线。</strong>证据链溯源拦无引用(每条非显然结论必须挂 Evidence ID,可追溯到 PRD 或源码,挂不上就拦);negative_code_search 拦编造引用(AI 说改某文件,一搜不存在就是显性可拦信号,搜不到也是证据);Spec Review Gate 硬停(spec 生成后必须人工 approved 才进 plan,挡住完成倾向把错误放大);Readiness 五维兜底(跑完五维加权评分,低于 60 直接 blocked、60-84 标 warning 需 owner 确认)。</p>
+    <p><strong>没拦住的诚实承认。</strong>负向搜索拦得住"编的路径不存在",拦不住"编的路径恰好存在但语义错";reference 消费时要求源码二次确认,但若源码本身被误读仍会漏。这部分靠人工 Review 兜底,目前没建 labeled query set 量化漏检率,是实打实的 eval 债。</p>
+  </div>
+</div>
