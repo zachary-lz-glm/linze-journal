@@ -3055,7 +3055,7 @@ function buildTreeOptimized(list) {
   <div class="card-body">
     <p><strong>数据结构。</strong>reference v4.0 把旧版 10 文件按 SSOT 收敛成 5 个数据 yaml——01-codebase 静态清单、02-coding-rules 编码规则、03-contracts 字段级契约、04-routing-playbooks 路由打法、05-domain 业务领域,再加 project-profile 项目画像和 00-portal 导航入口;每个 yaml 顶部写 boundary 声明只放什么,字段级信息只落在 03、别处用 contract_ref 引用。主产物之外有一个辅助层 Evidence Index,四个文件:entities.json(代码实体 file/function/class/interface/enum/const 等)、edges.json(DEFINES/IMPORTS/RESOLVED_IMPORT/REGISTERS/REFERENCES 几种关系)、inverted-index.json(term→entity 倒排索引,只索引代码符号不含业务术语)、manifest.yaml(元数据)。辅助层不是主知识库,是给 /prd-distill 做确定性检索用的。</p>
     <p><strong>怎么跑。</strong>/reference 走 6 个 Phase:上下文收集 → 结构扫描 → 深度分析(五个子阶段顺序产出 01-05,后生成的必须查先生成的去重)→ 质量门控 → Evidence Index 构建 → 反馈回流。首次走 Mode F(上下文收集)→ Mode A(全量构建),日常用 Mode B 增量只跑受 git diff 影响的子阶段。关键是按需路由不全量塞——/prd-distill 蒸馏时从需求 IR 提取实体/字段/动作词,匹配 04-routing-playbooks 的路由打法,只加载相关层的 yaml 和命中的代码锚点,context-pack 压到 800 行内给模型消费。</p>
-    <p><strong>为什么索引自己造。</strong>Evidence Index 是基于正则扫描的代码实体索引加倒排索引,不是图数据库查询、不是编译器语法树解析、也不是把代码切片做 embedding 相似度。设计时参考过 GraphRAG“先结构化再检索”的思路,但大幅简化——只提取几种实体类型和关系边,不建完整语义图。拒绝全量塞 context 是因为几万行代码直接进 window 必然打爆 token;拒绝纯 embedding 相似度做路由是因为实体名、字段名这类精确匹配 embedding 会给语义近但符号错的结果,确定性的 term→entity 倒排更可控、可复现。代价是正则扫描的语言覆盖有限,目前只支持 TypeScript/JavaScript 和 Go,新语言要补 scanner。</p>
+    <p><strong>为什么索引自己造。</strong>Evidence Index 是基于正则扫描的代码实体索引加倒排索引,不是图数据库查询、不是编译器语法树解析、也不是把代码切片做 embedding 相似度。设计时参考过“先结构化再检索”的思路,但大幅简化——只提取几种实体类型和关系边,不建完整语义图。拒绝全量塞 context 是因为几万行代码直接进 window 必然打爆 token;拒绝纯 embedding 相似度做路由是因为实体名、字段名这类精确匹配 embedding 会给语义近但符号错的结果,确定性的 term→entity 倒排更可控、可复现。代价是正则扫描的语言覆盖有限,目前只支持 TypeScript/JavaScript 和 Go,新语言要补 scanner。</p>
     <p><strong>踩坑和边界。</strong>最大损耗在团队 Pull-based 模式——团队仓只读成员仓的 reference、禁止主动 rg/glob 跨仓搜源码(避免跨仓误读),代价是失去源码验证能力、跨层 contract-delta 大量标 pending、精度天花板受制于最弱的那个仓;Pull-based 方向对,但复杂的聚合策略后来简化成了原样收集。eval 层面有笔债:倒排索引本身的准确率和召回没建 labeled query set 测 recall@K,目前靠 benchmark oracle 单 case(gasstation 97 分)和 golden sample 回归间接看,不是针对索引本身 recall/precision 的严格度量。冷启动要人工引导——得在项目根目录放 prd-docs 装 2-3 份历史 PRD + 技术方案 + 接口文档先跑 Mode F,跳过直接 Mode A 质量显著下降;所以这套更适合中大型、文档相对稳定的项目,小仓库让编辑器原生 init 一遍增量价值有限。</p>
   </div>
 </div>
@@ -3102,7 +3102,7 @@ function buildTreeOptimized(list) {
   <div class="card-body">
     <p><strong>冷启动走 F→A。</strong>首次在项目根目录建 prd-docs/ 目录,放 2-3 份历史 PRD(.md/.docx/.txt 都行)+ 对应的技术方案 + 接口文档;先跑 Mode F 上下文收集,让 reference 把历史需求和代码结构关联起来产出 context-enrichment.yaml,再跑 Mode A 全量构建走完 6 个 Phase 生成 01-05 五个数据 yaml。跳过 Mode F 直接 Mode A 质量显著下降——没有历史 PRD 做锚,reference 不知道哪些代码结构对应哪类需求,路由打法(04-routing-playbooks)建不准。</p>
     <p><strong>没有历史样例也能建,但要诚实标。</strong>完全没历史 PRD 的项目也能跑 Mode A,reference 会基于代码扫描产出 01-codebase 和 02-coding-rules(静态事实不依赖 PRD),但 05-domain 业务领域和 04-routing-playbooks 的业务语义部分会标 confidence: low,意思是这是 AI 从代码推断的、没经过需求文档交叉验证。后续每跑一次 /prd-distill,Step 10 Reference Backflow 会把新需求确认过的领域知识回流,reference 越用越准。</p>
-    <p><strong>边界。</strong>冷启动成本不低——人工要准备质量过关的历史 PRD、首次 Mode A 全量构建耗时,所以这套更适合中大型、文档相对稳定、代码库几百个文件往上的项目;小仓库或需求频繁大改的项目投入产出比不划算,让编辑器原生 init 一遍可能就够了。</p>
+    <p><strong>边界。</strong>冷启动成本不低——人工要准备质量过关的历史 PRD、首次 Mode A 全量构建耗时,所以这套更适合中大型、文档相对稳定的项目;小仓库或需求频繁大改的项目投入产出比不划算,让编辑器原生 init 一遍可能就够了。</p>
   </div>
 </div>
 <div class="card" data-c="proj" data-g="PRD 工作流" data-kw="追问 reference 几个文件 倒排索引 RAG embedding BM25 全文检索 过时 stale code_anchor 行号 召回率 bad case 全量按需 幻想实体 谁维护 SSOT alternatives">
@@ -3333,7 +3333,7 @@ function buildTreeOptimized(list) {
   <div class="card-body">
     <p><strong>第一支柱 SSOT。</strong>每条事实只在一个领域文件落户、跨文件用 contract_ref / ref_rule 这类 ID 引用、不复制——字段 type/required 只在 03-contracts、编码规则只在 02-coding-rules、开发步骤只在 04-routing-playbooks、术语只在 05-domain、外部 endpoint 详情只在 03,这是 5 条显式边界规则要管的事。形态上每个模板顶部一行 boundary 声明只放/不放什么,加 step-02 末尾的去重检查。</p>
     <p><strong>第二支柱证据链。</strong>每条进 spec/plan 的结论必须挂 Evidence ID,8 种证据类型 prd / tech_doc / code / git_diff / negative_code_search / human / api_doc / reference,各带 high / medium / low 置信度。关键是 negative_code_search——"搜了源码确实没找到"本身也留痕,不是"我不知道",堵的是 AI 钻"没找到但你说的应该有"的空子。</p>
-    <p><strong>第三支柱门禁。</strong>Readiness 五维加权评分(prd 摄入 20 / 证据覆盖 25 / 代码搜索 15 / 契约对齐 25 / 计划完整 15)按 85 通过 / 60 需 owner 确认 / 小于 60 阻塞三档降级,Spec Review Gate 在 spec 未 approved 时下一阶段直接 exit 2 硬停。声明约束不够加门禁、门禁不够加评分、评分不够加人工硬停,逐级加码。</p>
+    <p><strong>第三支柱门禁。</strong>Readiness 五维加权评分(prd 摄入 20 / 证据覆盖 25 / 代码搜索 15 / 契约对齐 25 / 计划完整 15)按 85 通过 / 60 需 owner 确认 / 小于 60 阻塞三档降级,Spec Review Gate 在 spec 未 approved 时下一阶段直接硬停。声明约束不够加门禁、门禁不够加评分、评分不够加人工硬停,逐级加码。</p>
     <p><strong>为什么这么搭、拒绝了什么。</strong>拒绝多处冗余存储——同一事实散在多处正好给 AI 编造空间,它会挑一份顺口的用,所以坚持单一事实源加 ID 引用;拒绝只给一个总分置信度——总分遮盖了证据是哪一类、分不清"PRD 原文有"和"AI 推断的",所以拆成类型化证据加负向搜索;拒绝一次性端到端出 plan——质量全靠模型自觉、不可控,所以中间卡 Spec 硬停。代价是流程节点多、偶有过度拦截,换的是错误早发现早重跑、不向下传染。不可追溯的结论一旦进了产物,错误发现成本是从重做到抽查的量级差,这是这套设计真正的动机。</p>
     <p><strong>诚实边界。</strong>eval 有债——没建 labeled query set 测检索的 recall@K / nDCG,reference 价值目前靠对照实验和 benchmark oracle 单 case 佐证、不是统计意义上的稳定结论;5h→2h 是单需求理解的前后工时对比、不是严格 AB(团队小没法随机分组双盲)。reference 对 schema_driven 类改动有效、对复杂组件架构级扩展有盲区,这点不回避。这套链路偏研究型、个人原型探索、非生产级闭环,推广规模按 ADR-0005 实际口径是约 1–5 人小范围试用。</p>
   </div>
@@ -3395,7 +3395,7 @@ function buildTreeOptimized(list) {
   <div class="card-head"><span class="tag proj">◆ 质量</span><div class="card-title">5h→2h 和 reference 价值怎么测的</div></div>
   <div class="core">5h→2h 是单需求理解的前后工时、不是严格 AB;reference 价值有 R01/R02 对照实验,但要讲清泄露和盲区、别合成一个笼统的提升数字</div>
   <div class="card-body">
-    <p><strong>5h→2h 的真实口径。</strong>这不是严格意义的 AB 实验——没有随机分组、没有对照组,是同一个团队、同一类需求、改变流程前后的工时对比。对照组取过去已完成需求的工时记录(读 PRD + 评审会 + 写技术方案,均值 2-3 天含跨天等待),实验组是同一复杂度新需求走 prd-tools 从 PRD 到产出 Spec+Plan 的纯工作时间(1-2 小时,加人工确认 Spec 共 1.5-2.5 小时)。团队规模小没法随机分组双盲,选前后对比是因为现实可行。</p>
+    <p><strong>5h→2h 的真实口径。</strong>这不是严格意义的 AB 实验——没有随机分组、没有对照组,是同一个团队、同一类需求、改变流程前后的工时对比。过去一个需求从读 PRD、评审到写出技术方案,纯工作时间大概 5 小时上下(常跨几天才走完);走 prd-tools 从 PRD 到产出 Spec+Plan 压到 2 小时左右。团队规模小没法随机分组双盲,选前后对比是因为现实可行。</p>
     <p><strong>reference 价值的对照实验。</strong>R01/R02 做过对照,但两个 case 要分开讲、不能合成一个笼统的提升分。班次签到 ShiftCheckin 这个 case:reference 带来 +14 分(54→68),因为前端改动小、大部分判断对了 schema_driven 就够;油站 case 清理掉 ground truth 分支数据泄露后,reference 真实贡献只有 +9 分(38→47)——而泄露版本会虚高到 +35(38→73),其中 +26 来自数据泄露。说明 reference 对 schema_driven 类改动有效,对 CustomRewardRule 这种复杂组件的架构级扩展有盲区。</p>
     <p><strong>benchmark oracle 评分。</strong>用 5 维 oracle(requirement_recall 35 / code_anchor_accuracy 30 / blocker_quality 20 / plan_actionability 15 / false_positive_penalty -10)给产物打分,gasstation 单 case baseline 跑出 97 分、passed。注意这是单 case 不是所有 case 平均,通过线是 60 分且无 P0 missed。</p>
     <p><strong>诚实边界。</strong>5h→2h 是前后工时非严格 AB,R01/R02 是单 case 对照不是统计结论,reference 提升数字受数据泄露影响、真实值低于旧报告。这套度量偏原型探索阶段的内部验证、非生产级闭环,如果团队更大,理想设计是同一批需求随机分配给人工组和工具组、双盲评审产出质量,目前样本量只能支撑方向性结论。</p>
@@ -3663,7 +3663,7 @@ function buildTreeOptimized(list) {
     <p><strong>代码生成质量责任划分难落地。</strong>生成的代码出了 bug 算模型的、算工具的、还是算研发的,敢不敢直接合主线——这是推广代码生成段最硬的卡点。解法是战略后退:停在 PRD→Plan 段先推,生成的 plan 必须人工 approved 才进开发,质量责任始终在人、不在工具;代码生成段目前是原型探索、非生产级,不主推。</p>
     <p><strong>各人开发工具偏好不一。</strong>团队里有人用 Copilot、有人用 Cursor、有人用 Windsurf,各自习惯成型、不愿换栈。解法是不强求替换——prd-tools 聚焦 PRD→Plan 的需求分析层,和 IDE 里的代码补全/生成工具不在一个环节,定位成补充而不是替代,愿意的人叠加用、不愿意的不勉强。</p>
     <p><strong>信任问题:敢不敢信 AI 出的 plan。</strong>研发第一次用都会问"这玩意儿出的方案靠谱吗、出了错谁背锅"。解法是 Spec Review Gate 硬停——spec 生成后必须人工确认才进 plan,加上每条结论挂 Evidence ID 可追溯到 PRD 或源码,出错能定位到哪步、哪个证据引入;先让人审、审了才用,信任是慢慢建的,不是一次 demo 就能换来。</p>
-    <p><strong>学习成本和 reference 维护成本。</strong>建 reference 知识库要 1-2 天、学三步上手流程要半天,是真实门槛。解法:上手走 Reference 蒸馏一次跑通(冷启动需人工引导标注首批领域知识),之后 Mode B 增量更新和 Mode E 反馈回流自动维护、不重复建库;团队仓走 pull-based 聚合(已简化为原样收集模式),不主动搜成员仓源码、维护成本集中在团队仓一处。算 ROI 时把这笔一次性投入扣进去,别只报每需求省 2-3h 那一笔。</p>
+    <p><strong>学习成本和 reference 维护成本。</strong>建 reference 知识库、学三步上手流程都要投入时间(估摸一两天起步),是真实门槛。解法:上手走 Reference 蒸馏一次跑通(冷启动需人工引导标注首批领域知识),之后 Mode B 增量更新和 Mode E 反馈回流自动维护、不重复建库;团队仓走 pull-based 聚合(已简化为原样收集模式),不主动搜成员仓源码、维护成本集中在团队仓一处。算 ROI 时把这笔一次性投入扣进去,别只报每需求省 2-3h 那一笔。</p>
   </div>
 </div>
 <div class="card" data-c="proj" data-g="PRD 工作流" data-kw="追问 推广 多少人用 最大阻力 怎么说服 ROI怎么算 失败过吗 后续规划 试点 1-5人 ADR-0005 代码生成段 原型 MCP 成熟度 PoC 生产级 code style 责任划分 信任">
