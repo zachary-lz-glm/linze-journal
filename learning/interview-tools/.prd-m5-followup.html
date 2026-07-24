@@ -1,0 +1,14 @@
+<div class="card" data-c="proj" data-g="PRD 工作流" data-kw="追问 质量 SSOT 腐化 证据链 8种 阈值 怎么定 eval labeled set R01 R02 Readiness 不过 auto-tune 追溯 出bug 归因 reference价值 门禁卡掉">
+  <div class="card-head"><span class="tag proj">追问</span><div class="card-title">质量这块高频追问 + 一句话答案</div></div>
+  <div class="core">SSOT / 证据链 / 门禁 / 评估四个角度的预判追问,答案对照源码</div>
+  <div class="card-body"><ul class="points">
+    <li><strong>SSOT 怎么保证不腐化、谁负责?</strong> 靠三个机制——模板顶部 boundary 声明只放/不放什么、跨文件用 contract_ref/ref_rule 这类 ID 引用、step-02 末尾 5 条去重检查,再加 reference Phase 4 质量门控和漂移检测兜底。诚实讲:去重目前主要靠 prompt 约束、还没 deterministic duplicate checker,是 ADR-0001 自己列的已知风险。</li>
+    <li><strong>证据链 8 种是哪 8 种、negative_code_search 是啥?</strong> prd / tech_doc / code / git_diff / negative_code_search / human / api_doc / reference,各带 high/medium/low 置信度。negative_code_search 是"搜了源码确实没找到"也留痕,堵 AI 编造"没找到但你说的应该有"。注意 reference 建库时是 7 种(不含 reference),distill 消费时才加成 8 种。</li>
+    <li><strong>门禁阈值 85/60 怎么定的?</strong> 经验值,按"哪一维最影响可信"拍的权重(prd 20/证据 25/代码搜索 15/契约 25/计划 15),85-100 pass、60-84 需 owner 确认、0-59 阻塞。诚实讲:没有 labeled set 反复校验阈值、权重不是数据校准出来的,是已知调校债。</li>
+    <li><strong>到底有没有 eval 框架、还是看着对就行?</strong> 有 benchmark oracle 5 维评分 + 黄金 Case 回归 + auto-tune 六模块,但都是小样本内部验证。诚实债:没建 labeled query set 测检索的 recall@K/nDCG,只能说基准 case 没劣化、不能说统计显著提升。</li>
+    <li><strong>R01/R02 对照实验怎么做、reference 值多少?</strong> 班次签到 case reference +14(54→68);油站 case 清理数据泄露后真实 +9(38→47)、泄露会虚高到 +35。别报一个笼统的提升分——reference 对 schema_driven 类有效、对复杂组件架构级扩展有盲区。</li>
+    <li><strong>Readiness 不过怎么办?</strong> 三档分流——pass 进开发;warning 标 needs_owner_confirmation,owner 看是哪维拉胯决定返工还是接受;fail 直接 blocked 必须修。硬性降级:extraction-quality 为 block 或任一 P0 契约 blocked 直接 fail,不看总分。</li>
+    <li><strong>auto-tune 调的什么参数、依据什么信号?</strong> 依据是 5 维确定性评分的失分归因(gap-analyzer 把失败映射成 tuning target),不是模型当裁判。调的是 prompt / 门禁阈值 / 能力面配置;loop-controller 的震荡检测防越调越偏。</li>
+    <li><strong>产物上线出 bug 能追溯到蒸馏哪步或哪个 reference 吗?</strong> 能——每条结论挂 Evidence ID,PRD→evidence-map→evidence.yaml→requirement-ir→code_anchor→spec/plan 全链可回溯,bug 能定位到哪条 evidence、哪步引入。诚实讲:归因到"reference 条目过时"靠漂移检测,目前没接真实 stale 案例做线上验证。</li>
+  </ul></div>
+</div>

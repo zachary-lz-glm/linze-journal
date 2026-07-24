@@ -1,0 +1,10 @@
+<div class="card" data-c="proj" data-g="PRD 工作流" data-kw="门禁 质量门控 体系 三层 前置检查 蒸馏门禁 Readiness Spec Review Gate 硬停 final-quality-gate 就绪度 交付完整性 降级 事前事中事后 声明约束">
+  <div class="card-head"><span class="tag proj">◆ 质量</span><div class="card-title">质量门禁体系是怎么搭的</div></div>
+  <div class="core">三层逐级收紧——事前声明约束 + 事中产物完整性门禁 + 事后五维评分降级,加 Spec Review Gate 硬停;就绪度评分和交付完整性评分是两套、别混</div>
+  <div class="card-body">
+    <p><strong>门禁的形态。</strong>不是一个总分兜底,是三层叠在蒸馏流程上:事前每个 Step 开头用结构化声明必须做/不做的事(必须引用 Evidence ID、不允许凭空推断);事中下一步执行前自动检查上一步产物存在且非空(required files 命中),不通过就重跑上一步;事后链路跑完按维度评分分档。再加一道 Spec Review Gate——spec 生成后硬停,用户 approved 才允许生成 plan,status 卡在 pending 直接拦。</p>
+    <p><strong>评分怎么跑。</strong>事后评分有两套、检查对象不同,这是要先分清的:Readiness Score(readiness-spec)是蒸馏就绪度,五维加权 prd 摄入 20 / 证据覆盖 25 / 代码搜索 15 / 契约对齐 25 / 计划完整 15,85-100 pass 进开发、60-84 warning 需 owner 确认、0-59 fail 阻塞;final-quality-gate 是交付物完整性,跑独立 quality-gate.py 脚本查必传文件 / 上下文消费 / 锚点覆盖 / 计划完整 / 阻塞项质量,同样 85/60 分档。两套都设硬性降级——extraction-quality 为 block 直接 fail、任一 P0 契约 blocked 直接 fail。</p>
+    <p><strong>为什么层层收紧、拒绝了什么。</strong>拒绝只靠最后一道总分兜底——错误在前序步骤已经污染了上下文,最后才拦太晚、返工要重跑整条链;所以选声明约束不够加门禁、门禁不够加评分、评分不够加人工硬停逐级加码。本可以前序步骤全放开、只做 final 评分省一大半代码,但那样错误会向下传染。代价是流程节点多、偶有过度拦截,换的是错误早发现、早重跑、不向下传染。两套评分分开是刻意的——就绪度答"这份 plan 够不够可信进开发",交付完整性答"产物文件齐不齐",混成一个会遮盖问题来源。</p>
+    <p><strong>踩坑和边界。</strong>Readiness 权重(prd 20 / 证据 25 / 代码搜索 15 / 契约 25 / 计划 15)是按"哪一维最影响可信"拍的、不是数据校准出来的,冷启动用这套默认值;阈值 85/60 也是经验值、没有 labeled set 反复校验,是已知调校债。门禁拦截率本身是个度量信号——拦截太高说明产出质量差、太低说明门禁失效,但目前没接真实流量做线上监控,偏原型探索、非生产级闭环。</p>
+  </div>
+</div>

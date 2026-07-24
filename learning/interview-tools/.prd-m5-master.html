@@ -1,0 +1,11 @@
+<div class="card" data-c="proj" data-g="PRD 工作流" data-kw="质量 保证 可信 SSOT 单一事实源 证据链 门禁 可信链 三支柱 Readiness Spec Review 评估 eval债 度量 recall@K nDCG 可追溯 negative_code_search">
+  <div class="card-head"><span class="tag proj">◆ 质量</span><div class="card-title">质量怎么保证——SSOT、证据链、门禁怎么串成可信链</div></div>
+  <div class="core">三条可信支柱——单一事实源 + 8 类证据可追溯 + 多层门禁逐级收紧,每条结论挂源码事实,不可追溯的结论错误成本极高所以宁可在流程里拦</div>
+  <div class="card-body">
+    <p><strong>第一支柱 SSOT。</strong>每条事实只在一个领域文件落户、跨文件用 contract_ref / ref_rule 这类 ID 引用、不复制——字段 type/required 只在 03-contracts、编码规则只在 02-coding-rules、开发步骤只在 04-routing-playbooks、术语只在 05-domain、外部 endpoint 详情只在 03,这是 5 条显式边界规则要管的事。形态上每个模板顶部一行 boundary 声明只放/不放什么,加 step-02 末尾的去重检查。</p>
+    <p><strong>第二支柱证据链。</strong>每条进 spec/plan 的结论必须挂 Evidence ID,8 种证据类型 prd / tech_doc / code / git_diff / negative_code_search / human / api_doc / reference,各带 high / medium / low 置信度。关键是 negative_code_search——"搜了源码确实没找到"本身也留痕,不是"我不知道",堵的是 AI 钻"没找到但你说的应该有"的空子。</p>
+    <p><strong>第三支柱门禁。</strong>Readiness 五维加权评分(prd 摄入 20 / 证据覆盖 25 / 代码搜索 15 / 契约对齐 25 / 计划完整 15)按 85 通过 / 60 需 owner 确认 / 小于 60 阻塞三档降级,Spec Review Gate 在 spec 未 approved 时下一阶段直接 exit 2 硬停。声明约束不够加门禁、门禁不够加评分、评分不够加人工硬停,逐级加码。</p>
+    <p><strong>为什么这么搭、拒绝了什么。</strong>拒绝多处冗余存储——同一事实散在多处正好给 AI 编造空间,它会挑一份顺口的用,所以坚持单一事实源加 ID 引用;拒绝只给一个总分置信度——总分遮盖了证据是哪一类、分不清"PRD 原文有"和"AI 推断的",所以拆成类型化证据加负向搜索;拒绝一次性端到端出 plan——质量全靠模型自觉、不可控,所以中间卡 Spec 硬停。代价是流程节点多、偶有过度拦截,换的是错误早发现早重跑、不向下传染。不可追溯的结论一旦进了产物,错误发现成本是从重做到抽查的量级差,这是这套设计真正的动机。</p>
+    <p><strong>诚实边界。</strong>eval 有债——没建 labeled query set 测检索的 recall@K / nDCG,reference 价值目前靠对照实验和 benchmark oracle 单 case 佐证、不是统计意义上的稳定结论;5h→2h 是单需求理解的前后工时对比、不是严格 AB(团队小没法随机分组双盲)。reference 对 schema_driven 类改动有效、对复杂组件架构级扩展有盲区,这点不回避。这套链路偏研究型、个人原型探索、非生产级闭环,推广规模按 ADR-0005 实际口径是约 1–5 人小范围试用。</p>
+  </div>
+</div>
