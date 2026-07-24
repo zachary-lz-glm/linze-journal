@@ -1,0 +1,15 @@
+<div class="card" data-c="proj" data-g="PRD 工作流" data-kw="端到端 震荡检测 A-B-A 4类校验 syntax fields rules integration 3次重试 双路径 Handlebars LLM兜底 模板覆盖 5h 2h 6阶段 bff-gen 确定性 一致性 真实业务 推广代码生成 质量责任 工具偏好 团队版 原型">
+  <div class="card-head"><span class="tag proj">追问</span><div class="card-title">端到端原型会被追问什么</div></div>
+  <div class="core">bff-gen 6 阶段高频追问 + 对照源码的一句话答案</div>
+  <div class="card-body"><ul class="points">
+    <li><strong>A→B→A 震荡检测具体怎么实现?</strong> 检测修正序列出现回退(第一次改成 B、第二次又改回 A),判定补丁式修复无效,切整段重写不再打补丁;修正历史记到 validation.json 的 history 数组(workflow.md:109)。</li>
+    <li><strong>4 类校验具体哪 4 类?</strong> check-syntax(语法)/ check-fields(字段)/ check-rules(规则)/ check-integration(集成)四个脚本,每次修正后跑全量验证。</li>
+    <li><strong>3 次重试的边界,3 次没过怎么办?</strong> 差异修正最多 3 次,只修报错字段/行非全量重写;3 次仍未过暂停交人工,step-05 仅在失败 3 次时触发确认。</li>
+    <li><strong>双路径什么时候走哪条,模板覆盖多少?</strong> 确定性优先:有 Handlebars 模板匹配走模板路径(zero LLM Token consumption),无模板才走 LLM 兜底;模板资产覆盖 gas-station/shift-checkin/courier-rush 各 8 种组件类型(basic/group/message/detail/preview/batch-create/reward-condition/rules-index)。</li>
+    <li><strong>6 阶段哪些环节要人介入?</strong> step-01 蒸馏结果、step-03 变更范围、step-06 评分三处人工确认;按置信度分级——全 high 简要确认,有 medium 逐个列,有 low 强制逐个确认 + 引用 PRD 原文。</li>
+    <li><strong>同一份 PRD 跑两次输出一致吗?</strong> 模板路径确定性(0 token 不调 LLM);LLM 兜底路径靠 4 类校验 + 3 次差异重试 + 震荡检测收敛,但 LLM 本身不保证逐字一致。</li>
+    <li><strong>端到端原型和团队推广版什么关系?</strong> prd-tools(团队推广)主链路只到 Plan 不生成代码,定位是开发计划可信;bff-gen 是个人原型探索、非生产级闭环,生成 BFF 原型代码用于验证蒸馏链路,没全员铺开(ADR-0005 自报 1-5 人)。</li>
+    <li><strong>为何不推广代码生成?</strong> 质量责任难划分(生成代码上线谁担责)+ 各人工具偏好不同;定位是赋能不替代,主推 PRD→Plan 这一低风险环节先上,生成代码留原型探索。</li>
+    <li><strong>"5h→2h" 和成功率怎么测的?</strong> 5h→2h 是前后工时对比、非严格 AB,基线和样本规模没硬数据;成功率没接真实流量,benchmark oracle gasstation 单 case 97 分,班次签到 reference +14(54→68)、油站清理数据泄露后真实 +9(38→47),单 case 支撑别夸大规模。</li>
+  </ul></div>
+</div>
