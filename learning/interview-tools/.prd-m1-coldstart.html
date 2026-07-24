@@ -1,0 +1,9 @@
+<div class="card" data-c="proj" data-g="PRD 工作流" data-kw="冷启动 新项目 没有历史数据 bootstrap 首次构建 Mode F Mode A prd-docs 历史 PRD 技术方案 接口文档 低置信度 人工引导 中大型项目 回流">
+  <div class="card-head"><span class="tag proj">◆ reference</span><div class="card-title">新项目没有历史数据,reference 怎么冷启动</div></div>
+  <div class="core">先在 prd-docs 放 2-3 份历史 PRD + 技术方案 + 接口文档,走 Mode F 上下文收集再 Mode A 全量构建;没有历史样例也能建但业务语义标低置信度。</div>
+  <div class="card-body">
+    <p><strong>冷启动走 F→A。</strong>首次在项目根目录建 prd-docs/ 目录,放 2-3 份历史 PRD(.md/.docx/.txt 都行)+ 对应的技术方案 + 接口文档;先跑 Mode F 上下文收集,让 reference 把历史需求和代码结构关联起来产出 context-enrichment.yaml,再跑 Mode A 全量构建走完 6 个 Phase 生成 01-05 五个数据 yaml。跳过 Mode F 直接 Mode A 质量显著下降——没有历史 PRD 做锚,reference 不知道哪些代码结构对应哪类需求,路由打法(04-routing-playbooks)建不准。</p>
+    <p><strong>没有历史样例也能建,但要诚实标。</strong>完全没历史 PRD 的项目也能跑 Mode A,reference 会基于代码扫描产出 01-codebase 和 02-coding-rules(静态事实不依赖 PRD),但 05-domain 业务领域和 04-routing-playbooks 的业务语义部分会标 confidence: low,意思是这是 AI 从代码推断的、没经过需求文档交叉验证。后续每跑一次 /prd-distill,Step 10 Reference Backflow 会把新需求确认过的领域知识回流,reference 越用越准。</p>
+    <p><strong>边界。</strong>冷启动成本不低——人工要准备质量过关的历史 PRD、首次 Mode A 全量构建耗时,所以这套更适合中大型、文档相对稳定、代码库几百个文件往上的项目;小仓库或需求频繁大改的项目投入产出比不划算,让编辑器原生 init 一遍可能就够了。</p>
+  </div>
+</div>
