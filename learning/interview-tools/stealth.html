@@ -530,6 +530,19 @@ th{font-weight:600;color:#888;font-size:10.5px;letter-spacing:.02em}
   </div>
 </div>
 
+<div class="card" data-c="proj" data-g="PRD 工作流" data-kw="介绍项目 是什么 SDD平台 spec-driven PRD工作流 开场 一句话 平台 全流程 需求到代码 reference是什么 解决什么问题 这个项目干嘛的">
+  <div class="card-head"><span class="tag proj">总览</span><div class="card-title">这个项目是做什么的？</div></div>
+  <div class="core">一套 SDD 平台——把 PRD 自动蒸馏成可执行、可追溯的开发计划，把 AI 每条结论锁在“有证据、能审计”的边界里</div>
+  <div class="card-body">
+    <p><strong>是什么。</strong>一个 Spec-Driven Development 工作流，我主导做的，跑在 Claude Code 里。它解决的是需求到代码这条链路上的信息损耗——PM 写完 PRD、口口相传给开发、开发理解再写，每一步都在丢信息，最后返工；老员工脑子里的经验新人接不住；直接把 PRD 喂大模型，没项目上下文兜底，连该改哪个文件都会编。这套东西就是把这条链路标准化、给 AI 一个项目级的知识兜底。</p>
+    <p><strong>怎么运转。</strong>分两段。第一段先扫一遍项目，把几万行代码和历史 PRD 蒸馏成一套领域知识库，叫 reference——里面有项目画像、代码结构、编码规则、跨层契约、PRD 到能力面的路由、业务术语，还自带一套自研的实体和倒排索引，让 AI 拿到需求能快速定位到要改哪、不用把整个仓库塞进上下文。第二段拿到新 PRD，走一条 11 步的蒸馏流水线：摄入、建证据账本、拆需求点、定位代码、对齐契约、产出 Spec，然后硬停一步等人确认，确认完才产出开发计划，最后还有个加权评分的质量门控卡交付。</p>
+    <p><strong>平台怎么保证可信。</strong>三个机制贯穿全程：一是单一事实源，每条知识只存一处、别处用 ID 引用，从根上压缩 AI 编造的空间；二是证据链，每条改动都要挂上源码位置——改哪个文件、哪个符号、能追到行，挂不上就不让过；三是一路门控，从 Spec 确认到最后加权评分，每步都有卡点。这套做完，单需求理解从大概 5 小时降到 2 小时左右。</p>
+    <p><strong>代码生成那段。</strong>往下我还做了个端到端原型，把 PRD 一路打通到代码：模板优先、零 token 出代码，没模板再让大模型兜底；生成完自动跑四类校验、最多重试三次，还会盯来回震荡——发现 A 改成 B 又改回 A 就整段重写；跑完带一个自动调参的反馈环。但这段是个人原型探索，没上过真实业务流量；团队在用的是停在开发计划那一版——代码生成涉及质量责任，我先把链路跑通验证可行性，工程化投入再看。</p>
+    <p><strong>现状。</strong>团队里小范围在用，前端后端各跑各的，我负责基建和 review；搭了 6 个真实业务 case 的回归基准。我给它的定位是工程化探索——真正的价值不在“能生成代码”，在“怎么把 AI 每条结果变成可溯源、可验证的工程产物”。</p>
+    <p class="hint">约 90 秒。被问“介绍下这个项目 / 这是干嘛的 / 说说你的 SDD 平台”翻这张——reference 一句话带过（就说是项目知识库 + 倒排索引），别钻 6 个 yaml；追问“reference 具体怎么做”翻 2455 卡，“完整链路 / 为啥不推广代码生成”翻 A10。</p>
+  </div>
+</div>
+
 <div class="card" data-c="proj" data-kw="挑战 最难 技术挑战 项目选择 架构选型 MCP Agent">
   <div class="card-head"><span class="tag proj">A5</span><div class="card-title">最有技术挑战的项目？</div></div>
   <div class="core">AI工作流走过架构弯路：MCP单次调用是瓶颈，转向Agent+Skill模式才突破</div>
