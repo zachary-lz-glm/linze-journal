@@ -1,0 +1,14 @@
+<div class="card" data-c="proj" data-g="PRD 工作流" data-kw="追问 架构 双插件合并 MCP不做 能力面怎么抽象 上下文隔离 耦合度 可扩展 脆弱环节 CLI IDE插件 横向扩展">
+  <div class="card-head"><span class="tag proj">追问</span><div class="card-title">架构这块面试官还会追问什么</div></div>
+  <div class="core">双插件为何不合一、MCP 为何不做、能力面怎么抽象、上下文隔离、耦合度、可扩展——一句话接</div>
+  <div class="card-body"><ul class="points">
+    <li><strong>双插件为什么不合并成一个?</strong> reference(建库、长期)和 prd-distill(蒸馏、单次)是两种认知任务,上下文混一起 AI 跳步幻觉;拆开各一个独立上下文窗口、按需加载,代价是多一次加载、reference 要先建好 distill 才能用。</li>
+    <li><strong>MCP 为什么不做?</strong> MCP 从没实现过、不是试过放弃;ADR-0009 把 MCP Server 化列为 Phase 5 后续路线,理由是过早实现维护成本高、分散 MVP 重点,Skill(纯 Markdown、零外部依赖)当前够用。</li>
+    <li><strong>能力面是怎么抽象出来的?</strong> layer-adapters 定义前端 9 / BFF 10 / 后端一组 surface,每个是一种关注维度(路由、组件、契约、状态);按关注点不按目录,路径只是搜索候选、读源码确认才进 reference,换项目不用改模板。</li>
+    <li><strong>上下文隔离具体怎么落?</strong> 先判 PRD 涉及哪层(前端/BFF/后端),只加载该层 reference 文件和能力面;reference 和 distill 分两个 Skill 独立上下文窗口,靠 YAML 中间文件传状态,不全量塞知识。</li>
+    <li><strong>绑 Claude Code 运行时,耦合度多高?换框架代价?</strong> 耦合在 CC 的 Skill 机制 + 原生工具(Read/Edit/Grep);Skill 是纯 Markdown 理论可迁,但 8 模式、门禁脚本、评测围绕 CC 生态建,换 agent 框架要重做工具层;src/ 的 TS(模板/评测)与运行时解耦、可独立复用。</li>
+    <li><strong>架构里最脆弱的环节?</strong> 最脆在 reference 质量:reference 建错或过时,distill 全链路基于错前提产出,后面门禁拦不住"格式对但事实错"的结论;靠 reference Phase 4 幻觉检查 + distill 消费时源码二次确认兜,但没 labeled recall@K 量化,是债。</li>
+    <li><strong>多人同时跑会撞瓶颈吗?</strong> Skill 跑在各自 Claude Code 会话、无共享状态不互撞;瓶颈在 reference 全量构建的串行扫描 + Claude API 速率;横向扩展靠每开发者本地跑,团队仓 pull-based 聚合不主动搜成员仓源码。</li>
+    <li><strong>选 Skill 而不是独立 CLI 或 IDE 插件?</strong> Skill 纯 Markdown 零外部依赖,Agent 直接用原生工具执行,不用自己维护 CLI/IDE 的进程、权限、分发;代价是绑 CC 运行时,跨客户端复用要等 MCP 化(Phase 5)。</li>
+  </ul></div>
+</div>
