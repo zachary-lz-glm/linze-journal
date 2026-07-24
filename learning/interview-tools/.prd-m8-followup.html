@@ -1,0 +1,14 @@
+<div class="card" data-c="proj" data-g="PRD 工作流" data-kw="追问 推广 多少人用 最大阻力 怎么说服 ROI怎么算 失败过吗 后续规划 试点 1-5人 ADR-0005 代码生成段 原型 MCP 成熟度 PoC 生产级 code style 责任划分 信任">
+  <div class="card-head"><span class="tag proj">追问</span><div class="card-title">推广落地模块·高频追问</div></div>
+  <div class="core">推广落地的预判追问,答案对照源码和 ADR-0005 口径,团队规模和效果数字都不编</div>
+  <div class="card-body"><ul class="points">
+    <li><strong>这项目在团队推到什么程度了、多少人真在用?</strong> ADR-0005 自报团队 1-5 人小范围试用、以技术为主,git log 代码提交实际 1-2 人;没全员铺开,PRD→Plan 段小范围验证、代码生成段仍是原型探索。</li>
+    <li><strong>推广最大阻力是什么?</strong> 按人和责任排:信任(敢不敢信 AI 的计划)> 代码生成质量责任划分 > 工具偏好 > 学习成本;技术本身不是卡点,责任和信任才是。</li>
+    <li><strong>怎么说服团队用它、不是继续手写?</strong> 王牌 case 示范(班次签到、油站做过对照实验有真实数据)+ 停 PRD→Plan 低风险环节先推(人工确认才开发)+ 赋能不替代定位;拒绝"写个 README 等别人来用"。</li>
+    <li><strong>ROI 怎么算的、最硬的数字是哪个?</strong> 5h→2h 是前后工时、非严格 AB;单团队建库 1-2 天一次性投入,之后每需求省约 2-3h 评审(试点推算),含协同成本整体提效约 20-30%;没建严格 AB,都是试点推算口径。</li>
+    <li><strong>推广失败过吗、栽在哪?</strong> 代码生成段推广最吃力——质量责任划分难落地是硬卡点,所以战略后退停在计划层;PRD→Plan 段也只敢在已完成需求上做前后对照、不是真实流量环境。</li>
+    <li><strong>后续怎么扩大、规划是什么?</strong> reference 知识库共建拉参与 + 试点数据内部分享 + 逐步扩大;MCP Server 化列为未来路线(ADR-0009 Phase 5),当前是 Claude Code Skill 形态、MCP 从未实现。</li>
+    <li><strong>生成的代码不符合团队 code style/架构规范怎么办?</strong> 代码生成段是原型探索、非生产级、不主推;prd-tools 聚焦计划层(spec/plan)不直接生成代码,和 code style 无直接冲突。</li>
+    <li><strong>现在算 PoC、内部工具,还是生产级?</strong> 研究型原型、个人/极小团队探索,没接真实业务流量;PRD→Plan 段小范围试用、代码生成段非生产级闭环,成熟度按"原型探索"口径讲最安全。</li>
+  </ul></div>
+</div>
